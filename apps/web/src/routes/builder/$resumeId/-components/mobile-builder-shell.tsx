@@ -11,12 +11,12 @@ import { BuilderSidebarLeft } from "../-sidebar/left";
 import { BuilderSidebarRight } from "../-sidebar/right";
 import { BuilderHeader } from "./header";
 
-type MobileBuilderTab = "edit" | "preview" | "design";
+type MobileBuilderTab = "edit" | "design" | "preview";
 
 const MOBILE_BUILDER_TABS = [
 	{ value: "edit", icon: NotePencilIcon },
-	{ value: "preview", icon: EyeIcon },
 	{ value: "design", icon: PaletteIcon },
+	{ value: "preview", icon: EyeIcon },
 ] as const satisfies readonly { value: MobileBuilderTab; icon: Icon }[];
 
 type MobileSidebarPanelProps = {
