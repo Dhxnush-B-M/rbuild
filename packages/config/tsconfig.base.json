@@ -17,8 +17,25 @@
 		"noUncheckedIndexedAccess": true,
 		"noUncheckedSideEffectImports": true,
 		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
-		"types": ["node"]
+		"types": ["node"],
+		"paths": {
+			"@rbuilder/config": ["./packages/config"],
+			"@rbuilder/config/*": ["./packages/config/*"],
+			"@rbuilder/docx": ["./packages/docx/src/index.ts"],
+			"@rbuilder/docx/*": ["./packages/docx/src/*"],
+			"@rbuilder/fonts": ["./packages/fonts/src/index.ts"],
+			"@rbuilder/fonts/*": ["./packages/fonts/src/*"],
+			"@rbuilder/pdf": ["./packages/pdf/src/index.ts"],
+			"@rbuilder/pdf/*": ["./packages/pdf/src/*"],
+			"@rbuilder/resume": ["./packages/resume/src/index.ts"],
+			"@rbuilder/resume/*": ["./packages/resume/src/*"],
+			"@rbuilder/schema": ["./packages/schema/src/index.ts"],
+			"@rbuilder/schema/*": ["./packages/schema/src/*"],
+			"@rbuilder/ui": ["./packages/ui/src/index.ts"],
+			"@rbuilder/ui/*": ["./packages/ui/src/*"],
+			"@rbuilder/utils": ["./packages/utils/src/index.ts"],
+			"@rbuilder/utils/*": ["./packages/utils/src/*"],
+			"@/*": ["./apps/web/src/*"]
+		}
 	}
 }

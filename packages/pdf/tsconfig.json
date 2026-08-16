@@ -2,6 +2,16 @@
 	"extends": "@rbuilder/config/tsconfig.base.json",
 	"compilerOptions": {
 		"jsx": "preserve",
-		"lib": ["ESNext", "DOM"]
+		"lib": ["ESNext", "DOM"],
+		"paths": {
+			"@rbuilder/schema/*": ["../schema/src/*"],
+			"@rbuilder/schema": ["../schema/src/index.ts"],
+			"@rbuilder/utils/*": ["../utils/src/*"],
+			"@rbuilder/utils": ["../utils/src/index.ts"],
+			"@rbuilder/fonts/*": ["../fonts/src/*"],
+			"@rbuilder/fonts": ["../fonts/src/index.ts"],
+			"@rbuilder/resume/*": ["../resume/src/*"],
+			"@rbuilder/resume": ["../resume/src/index.ts"]
+		}
 	}
 }
