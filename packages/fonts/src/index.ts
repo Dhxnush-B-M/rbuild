@@ -175,7 +175,7 @@ export function sortFontWeights<T extends string>(fontWeights: T[]): T[] {
  */
 export function getPdfFallbackFontFamilies(
 	family: string,
-	options: { locale?: Locale; scripts?: Iterable<Script> } = {},
+	options: { locale?: Locale | string | undefined; scripts?: Iterable<Script> | undefined } = {},
 ): string[] {
 	const category = getFont(family)?.category ?? null;
 

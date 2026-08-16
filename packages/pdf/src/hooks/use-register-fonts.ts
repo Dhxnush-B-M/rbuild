@@ -11,7 +11,7 @@ import {
 	sortFontWeights,
 } from "@rbuilder/fonts";
 import { isCJKLocale } from "@rbuilder/utils/locale";
-import { Font } from "#react-pdf-renderer";
+import { Font } from "@react-pdf/renderer";
 
 type FontWeightRange = {
 	lowest: number;
@@ -201,7 +201,7 @@ export const resumeContentScripts = (data: ResumeData): Set<Script> => {
 
 export const registerFonts = (
 	typography: Typography,
-	locale: Locale,
+	locale?: Locale | string,
 	hasCjkContent = false,
 	scripts?: Set<Script>,
 ): PdfTypography => {

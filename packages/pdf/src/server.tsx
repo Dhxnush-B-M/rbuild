@@ -4,7 +4,7 @@ import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime, ResumePdfRenderResult } from "./semantic";
 import { createElement } from "react";
 import { parseResumeData } from "@rbuilder/schema/resume/data";
-import { renderToBuffer } from "#react-pdf-renderer";
+import { renderToBuffer } from "@react-pdf/renderer";
 import { ResumeDocument } from "./document";
 import { hasSemanticErrors, inspectResumePdf } from "./semantic";
 

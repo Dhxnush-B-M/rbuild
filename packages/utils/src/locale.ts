@@ -10,7 +10,7 @@ export function isLocale(value: unknown): value is Locale {
 	return localeSchema.safeParse(value).success;
 }
 
-export function isCJKLocale(_locale: Locale): boolean {
+export function isCJKLocale(_locale?: string): boolean {
 	return false;
 }
 
@@ -20,7 +20,7 @@ export function isCjkScript(_script: Script): boolean {
 	return false;
 }
 
-export function getLocaleScript(_locale?: Locale): Script | null {
+export function getLocaleScript(_locale?: string): Script | null {
 	return null;
 }
 

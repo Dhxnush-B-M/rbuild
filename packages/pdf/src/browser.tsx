@@ -6,7 +6,7 @@ import type { ResolvedResumeRuntime, ResumePdfRenderResult } from "./semantic";
 import type { PublicStyleProjection } from "./semantic/public-projection";
 import { createElement } from "react";
 import { parseResumeData } from "@rbuilder/schema/resume/data";
-import { pdf } from "#react-pdf-renderer";
+import { pdf } from "@react-pdf/renderer";
 import { ResumeDocument } from "./document";
 import { hasSemanticErrors, inspectResumePdf } from "./semantic";
 import { resolvePublicStyleProjectionRuntime } from "./semantic/public-projection";

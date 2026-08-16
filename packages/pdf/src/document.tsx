@@ -6,7 +6,7 @@ import type { ResumeRenderOptions } from "./context";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime } from "./semantic";
 import { useMemo } from "react";
-import { Document } from "#react-pdf-renderer";
+import { Document } from "@react-pdf/renderer";
 import { RenderProvider } from "./context";
 import { registerFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
