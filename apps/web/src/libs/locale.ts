@@ -5,7 +5,7 @@ import { msg } from "@lingui/core/macro";
 import Cookies from "js-cookie";
 import { defaultLocale, isLocale as isLocaleUtil, isRTL } from "@reactive-resume/utils/locale";
 // @ts-expect-error generated locale catalog
-import * as enUSCatalog from "../../locales/en-US.mjs";
+import { messages as compiledMessages } from "../../locales/en-US.mjs";
 
 export { isRTL };
 
@@ -24,7 +24,7 @@ const extractMessages = (mod: unknown): Messages => {
 	return mod as Messages;
 };
 
-const enUSMessages = extractMessages(enUSCatalog);
+const enUSMessages: Messages = (compiledMessages as Messages) || extractMessages(compiledMessages);
 
 const storageKey = "locale";
 
@@ -76,13 +76,19 @@ export const getLocaleMessages = (_locale: string) => {
 };
 
 export const loadLocale = (_locale: string) => {
-	i18n.load(defaultLocale, enUSMessages);
+	i18n.load({
+		"en-US": enUSMessages,
+		en: enUSMessages,
+	});
 	i18n.activate(defaultLocale);
 	return Promise.resolve();
 };
 
 // Immediately activate English locale synchronously with full English messages
-i18n.load(defaultLocale, enUSMessages);
+i18n.load({
+	"en-US": enUSMessages,
+	en: enUSMessages,
+});
 i18n.activate(defaultLocale);
 
 export const changeLocale = (value: string | null) => {
