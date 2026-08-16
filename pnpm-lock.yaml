@@ -663,40 +663,6 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  tooling:
-    dependencies:
-      '@reactive-resume/schema':
-        specifier: workspace:*
-        version: link:../packages/schema
-    devDependencies:
-      '@reactive-resume/config':
-        specifier: workspace:*
-        version: link:../packages/config
-      '@reactive-resume/env':
-        specifier: workspace:*
-        version: link:../packages/env
-      '@reactive-resume/resume':
-        specifier: workspace:*
-        version: link:../packages/resume
-      '@types/pg':
-        specifier: ^8.20.0
-        version: 8.20.0
-      '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260707.2
-        version: 7.0.0-dev.20260707.2
-      drizzle-orm:
-        specifier: 1.0.0-rc.4
-        version: 1.0.0-rc.4(@opentelemetry/api@1.9.1)(@types/pg@8.20.0)(pg@8.22.0)(zod@4.4.3)
-      pg:
-        specifier: ^8.22.0
-        version: 8.22.0
-      tsx:
-        specifier: ^4.23.1
-        version: 4.23.1
-      vitest:
-        specifier: ^4.1.10
-        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@26.1.2)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.1)(msw@2.14.6(@types/node@26.1.2)(typescript@7.0.2))(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.23.1)(yaml@2.9.0))
-
 packages:
 
   '@adobe/css-tools@4.5.0':
