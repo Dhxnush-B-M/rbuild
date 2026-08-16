@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" class="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#09090B" />
+		<meta name="application-name" content="rbuilder" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-title" content="rbuilder" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="description" content="rbuilder is a free and modern resume builder that simplifies creating and customizing professional resumes.">
+
+		<meta property="og:title" content="rbuilder — Professional Resume Builder" />
+		<meta property="og:description" content="rbuilder is a free and modern resume builder that simplifies creating and customizing professional resumes." />
+		<meta property="og:image" content="https://builder-az7.pages.dev/opengraph/banner.jpg" />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:type" content="website" />
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:title" content="rbuilder — Professional Resume Builder" />
+		<meta property="twitter:description" content="rbuilder is a free and modern resume builder that simplifies creating and customizing professional resumes." />
+		<meta property="twitter:image" content="https://builder-az7.pages.dev/opengraph/banner.jpg" />
+
+		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="128x128" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="256x256 any" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" type="image/png" sizes="180x180 any" />
+		<title>rbuilder — Professional Resume Builder</title>
+		<script>
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.getRegistrations().then((registrations) => {
+					for(const registration of registrations) {
+						registration.unregister();
+					}
+				});
+			}
+			if ('caches' in window) {
+				caches.keys().then((names) => {
+					for (const name of names) caches.delete(name);
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<!-- Keep #app empty: main.tsx only mounts React when rootElement has no children. -->
+		<div id="app"></div>
+		<!-- Branded first paint; hidden once React populates #app (higher-specificity rule below). -->
+		<div id="initial-loader">
+			<img src="/icon/dark.svg" width="64" height="64" alt="rbuilder" />
+			<div class="initial-loader__spinner"></div>
+			<span class="initial-loader__sr-only">Loading</span>
+		</div>
+		<style>
+			@keyframes app-spin { to { transform: rotate(360deg) } }
+			#initial-loader {
+				position: fixed;
+				inset: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 24px;
+				background: #09090b;
+			}
+			#app:not(:empty) ~ #initial-loader { display: none; }
+			.initial-loader__spinner {
+				width: 24px;
+				height: 24px;
+				border: 2px solid rgba(250, 250, 250, 0.2);
+				border-top-color: #fafafa;
+				border-radius: 9999px;
+				animation: app-spin 0.7s linear infinite;
+			}
+			.initial-loader__sr-only {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip: rect(0 0 0 0);
+			}
+		</style>
+		<script type="module" data-cfasync="false" src="/src/main.tsx"></script>
+	</body>
+</html>
