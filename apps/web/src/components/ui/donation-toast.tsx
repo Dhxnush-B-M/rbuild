@@ -68,7 +68,7 @@ function DonationToastCard({ onDismiss, onDonate }: DonationToastCardProps) {
 						<Trans>Please support the project</Trans>
 					</p>
 					<p className="text-pretty text-muted-foreground text-xs">
-						<Trans>Reactive Resume is free and open source. If it has helped you, please consider donating.</Trans>
+						<Trans>rbuilder is free and open source. If it has helped you, please consider donating.</Trans>
 					</p>
 				</div>
 			</div>

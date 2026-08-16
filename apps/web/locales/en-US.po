@@ -1438,14 +1438,14 @@ msgstr "Publisher"
 msgid "rbuilder (JSON)"
 msgstr "rbuilder (JSON)"
 
+#: src/components/ui/donation-toast.tsx
+msgid "rbuilder is free and open source. If it has helped you, please consider donating."
+msgstr "rbuilder is free and open source. If it has helped you, please consider donating."
+
 #. Import source option for legacy rbuilder v4 JSON format
 #: src/dialogs/resume/import.tsx
 msgid "rbuilder v4 (JSON)"
 msgstr "rbuilder v4 (JSON)"
-
-#: src/components/ui/donation-toast.tsx
-msgid "Reactive Resume is free and open source. If it has helped you, please consider donating."
-msgstr "Reactive Resume is free and open source. If it has helped you, please consider donating."
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Ready to activate"
