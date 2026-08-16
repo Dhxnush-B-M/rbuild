@@ -1,13 +1,13 @@
 import type { Style } from "@react-pdf/types";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { TemplateStyleSlots } from "../templates/shared/types";
 import { describe, expect, it, vi } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
 import { pdf } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { Document, Page } from "#react-pdf-renderer";
 import { RenderProvider } from "../context";
 import { ResumeDocument } from "../document";

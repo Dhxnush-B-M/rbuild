@@ -8,7 +8,7 @@ import type {
 	TemplateStyleSlots,
 } from "../shared/types";
 import { Fragment, useMemo } from "react";
-import { rgbaStringToHex } from "@reactive-resume/utils/color";
+import { rgbaStringToHex } from "@rbuilder/utils/color";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";

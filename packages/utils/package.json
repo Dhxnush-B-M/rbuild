@@ -1,5 +1,5 @@
 {
-	"name": "@reactive-resume/utils",
+	"name": "@rbuilder/utils",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
@@ -31,7 +31,7 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
-		"@reactive-resume/config": "workspace:*",
+		"@rbuilder/config": "workspace:*",
 		"@types/node": "^26.1.2",
 		"@typescript/native-preview": "7.0.0-dev.20260707.2",
 		"typescript": "^7.0.2"

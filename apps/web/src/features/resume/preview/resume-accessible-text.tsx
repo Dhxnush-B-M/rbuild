@@ -17,10 +17,10 @@ import type {
 	SkillItem,
 	SummaryItem,
 	VolunteerItem,
-} from "@reactive-resume/schema/resume/data";
+} from "@rbuilder/schema/resume/data";
 import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
-import { stripHtml } from "@reactive-resume/utils/string";
+import { stripHtml } from "@rbuilder/utils/string";
 import { useResumeData } from "@/features/resume/builder/draft";
 import { getSectionTitle } from "@/libs/resume/section";
 

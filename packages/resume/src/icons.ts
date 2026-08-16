@@ -1,4 +1,4 @@
-import type { IconName } from "@reactive-resume/schema/icons";
+import type { IconName } from "@rbuilder/schema/icons";
 
 const NETWORK_ICON_MAP: Array<{ match: string[]; icon: IconName }> = [
 	{ match: ["github"], icon: "github-logo" },

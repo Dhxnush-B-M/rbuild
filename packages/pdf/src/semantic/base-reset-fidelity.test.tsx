@@ -1,9 +1,9 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import { describe, expect, it } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { ResumeDocument } from "../document";
 
 type HostNode = {

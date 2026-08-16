@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { getResumeSectionIcon } from "./section-icon";
 
 describe("getResumeSectionIcon", () => {

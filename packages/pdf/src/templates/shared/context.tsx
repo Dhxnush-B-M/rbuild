@@ -1,4 +1,4 @@
-import type { StyleSlot } from "@reactive-resume/schema/resume/data";
+import type { StyleSlot } from "@rbuilder/schema/resume/data";
 import type { ReactNode } from "react";
 import type { SectionStyleRuleContext } from "./style-rules";
 import type { StyleInput, TemplatePlacement } from "./styles";

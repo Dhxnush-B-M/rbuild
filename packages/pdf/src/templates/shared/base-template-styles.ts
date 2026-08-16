@@ -1,8 +1,8 @@
 import type { Style } from "@react-pdf/types";
-import type { Picture, ResumeData } from "@reactive-resume/schema/resume/data";
+import type { Picture, ResumeData } from "@rbuilder/schema/resume/data";
 import type { getTemplateMetrics } from "./metrics";
 import type { createRtlStyleHelpers } from "./rtl";
-import { rgbaStringToHex } from "@reactive-resume/utils/color";
+import { rgbaStringToHex } from "@rbuilder/utils/color";
 
 type BaseTemplateStylesInput = {
 	metadata: ResumeData["metadata"];

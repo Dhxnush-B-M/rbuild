@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute, Outlet, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { SidebarProvider } from "@reactive-resume/ui/components/sidebar";
+import { SidebarProvider } from "@rbuilder/ui/components/sidebar";
 import { checkAuthAndOnboardingAccess, verifyUserSubscriptionAcrossDevices } from "@/libs/auth/guard";
 import { createNoindexFollowMeta } from "@/libs/seo";
 import { getDashboardSidebarState, setDashboardSidebarState } from "./-components/functions";

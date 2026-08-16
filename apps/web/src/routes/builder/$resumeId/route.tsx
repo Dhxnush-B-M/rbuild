@@ -2,7 +2,7 @@ import type { BuilderLayout } from "./-store/sidebar";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
 import { initializeStylesheetStore } from "@/features/resume/stylesheet/store";
 import { checkAuthAndOnboardingAccess, verifyUserSubscriptionAcrossDevices } from "@/libs/auth/guard";

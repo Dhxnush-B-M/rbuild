@@ -1,7 +1,7 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { SectionTitleResolver } from "./section-title";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { createPublicStyleProjection } from "./semantic/public-projection";
 
 const rendererMock = vi.hoisted(() => ({

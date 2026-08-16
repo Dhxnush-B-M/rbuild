@@ -1,5 +1,5 @@
-import type { Template } from "@reactive-resume/schema/templates";
-import { createSampleResumeData } from "@reactive-resume/schema/resume/sample";
+import type { Template } from "@rbuilder/schema/templates";
+import { createSampleResumeData } from "@rbuilder/schema/resume/sample";
 
 export const comprehensiveStylesheet = {
 	languageVersion: 1,

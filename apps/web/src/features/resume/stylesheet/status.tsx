@@ -1,9 +1,9 @@
-import type { SemanticCssDiagnostic } from "@reactive-resume/resume/stylesheet";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import { Trans } from "@lingui/react/macro";
 import { WarningCircleIcon, WarningIcon } from "@phosphor-icons/react";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
-import { Badge } from "@reactive-resume/ui/components/badge";
-import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "@rbuilder/ui/components/alert";
+import { Badge } from "@rbuilder/ui/components/badge";
+import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 
 export type StylesheetStatusProps = {
 	mode: "legacy" | "semantic";

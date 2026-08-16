@@ -7,7 +7,7 @@ import {
 	ContextMenuItem,
 	ContextMenuSeparator,
 	ContextMenuTrigger,
-} from "@reactive-resume/ui/components/context-menu";
+} from "@rbuilder/ui/components/context-menu";
 import { useResumeMenuActions } from "./use-resume-menu-actions";
 
 type Props = {

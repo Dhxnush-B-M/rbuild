@@ -1,7 +1,7 @@
 import canonicalize from "canonicalize";
 
 const HASH_DOMAIN_VERSION = 1;
-const HASH_DOMAIN_PREFIX = "reactive-resume:public-style-projection:v1\0";
+const HASH_DOMAIN_PREFIX = "rbuilder:public-style-projection:v1\0";
 
 export type RenderDataHashInput = {
 	domainVersion: number;

@@ -1,4 +1,4 @@
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
 type Props = {
 	variant?: "logo" | "icon";

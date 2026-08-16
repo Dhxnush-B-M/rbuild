@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createPublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { createPublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { resolvePublicResumePdfBlob } from "./public-pdf";
 
 const mocks = vi.hoisted(() => ({

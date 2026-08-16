@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { getResumeExportData, resumeHasCoverLetter } from "./export-sections";
 
 describe("resume export sections", () => {

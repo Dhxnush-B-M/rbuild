@@ -2,19 +2,19 @@ import { describe, expect, it } from "vitest";
 import { detectJsonImportType } from "./import.utils";
 
 describe("detectJsonImportType", () => {
-	it("detects JSON Resume by a top-level basics without Reactive Resume sections/metadata", () => {
+	it("detects JSON Resume by a top-level basics without rbuilder sections/metadata", () => {
 		expect(detectJsonImportType({ basics: { name: "A" }, work: [] })).toBe("json-resume-json");
 	});
 
-	it("detects the current Reactive Resume schema by metadata.page", () => {
+	it("detects the current rbuilder schema by metadata.page", () => {
 		expect(detectJsonImportType({ basics: {}, sections: {}, metadata: { page: { locale: "en-US" } } })).toBe(
-			"reactive-resume-json",
+			"rbuilder-json",
 		);
 	});
 
 	it("detects the legacy v4 schema by metadata without a page key", () => {
 		expect(detectJsonImportType({ basics: {}, sections: {}, metadata: { template: "azurill" } })).toBe(
-			"reactive-resume-v4-json",
+			"rbuilder-v4-json",
 		);
 	});
 

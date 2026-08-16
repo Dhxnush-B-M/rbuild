@@ -1,6 +1,6 @@
 import { m } from "motion/react";
 import { useRef, useState } from "react";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
 const textClassName = cn(
 	"select-none fill-transparent font-extrabold text-5xl leading-none tracking-wider md:text-6xl",

@@ -4,8 +4,8 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { GlobeIcon, HeadsetIcon, LockSimpleIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "@reactive-resume/ui/components/avatar";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
+import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,8 +19,8 @@ import {
 	SidebarMenuItem,
 	SidebarRail,
 	SidebarSeparator,
-} from "@reactive-resume/ui/components/sidebar";
-import { getInitials } from "@reactive-resume/utils/string";
+} from "@rbuilder/ui/components/sidebar";
+import { getInitials } from "@rbuilder/utils/string";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 
 type SidebarItem = {

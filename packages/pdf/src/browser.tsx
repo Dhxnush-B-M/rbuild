@@ -1,11 +1,11 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { ResumeRenderOptions } from "./context";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime, ResumePdfRenderResult } from "./semantic";
 import type { PublicStyleProjection } from "./semantic/public-projection";
 import { createElement } from "react";
-import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import { pdf } from "#react-pdf-renderer";
 import { ResumeDocument } from "./document";
 import { hasSemanticErrors, inspectResumePdf } from "./semantic";

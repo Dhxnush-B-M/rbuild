@@ -1,6 +1,6 @@
-import type { SemanticStylesheet, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
+import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createStylesheetStoreRuntime } from "./store";
 
 const source = (text: string): StylesheetSource => ({ languageVersion: 1, text });

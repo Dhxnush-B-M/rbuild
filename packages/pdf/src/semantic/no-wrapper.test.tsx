@@ -1,10 +1,10 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import { describe, expect, it, vi } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { ResumeDocument } from "../document";
 
 vi.mock("@react-pdf/renderer", async (importOriginal) => ({

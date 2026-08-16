@@ -1,7 +1,7 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { resolveLayoutSectionTitle } from "./title";
 
 const createResumeData = (): ResumeData => structuredClone(defaultResumeData);

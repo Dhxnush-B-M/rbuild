@@ -10,7 +10,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import { CometCard } from "@/components/animation/comet-card";
 import { Spotlight } from "@/components/animation/spotlight";
 

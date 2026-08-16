@@ -2,8 +2,8 @@
 
 import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createPublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { createPublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 
 const pdfViewerMock = vi.hoisted(() => {
 	const pdfDocument = {

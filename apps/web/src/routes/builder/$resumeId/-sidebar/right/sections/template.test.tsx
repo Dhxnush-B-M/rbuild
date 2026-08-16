@@ -69,7 +69,7 @@ describe("TemplateSectionBuilder", () => {
 	it("keeps the template preview inline instead of mounting a hover card", () => {
 		const source = readFileSync("src/routes/builder/$resumeId/-sidebar/right/sections/template.tsx", "utf8");
 
-		expect(source).not.toContain("@reactive-resume/ui/components/hover-card");
+		expect(source).not.toContain("@rbuilder/ui/components/hover-card");
 		expect(source).not.toContain("HoverCardContent");
 	});
 });

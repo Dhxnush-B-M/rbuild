@@ -7,7 +7,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
+} from "@rbuilder/ui/components/dropdown-menu";
 import { useResumeMenuActions } from "./use-resume-menu-actions";
 
 type Props = Omit<React.ComponentProps<typeof DropdownMenuContent>, "children"> & {

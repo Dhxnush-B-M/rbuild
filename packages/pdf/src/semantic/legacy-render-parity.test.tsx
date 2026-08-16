@@ -1,12 +1,12 @@
-import type { ResumeData, StyleRule } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { renderToBuffer } from "@react-pdf/renderer";
 import pixelmatch from "pixelmatch";
 import { createElement } from "react";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { styleRulesSchema } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { ResumeDocument } from "../document";
 import { convertLegacyStyleRules } from "./legacy-converter";
 import { rasterizePdf } from "./test/rasterize-pdf";

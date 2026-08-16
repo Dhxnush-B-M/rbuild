@@ -1,5 +1,5 @@
 {
-	"name": "@reactive-resume/pdf",
+	"name": "@rbuilder/pdf",
 	"version": "0.0.0",
 	"type": "module",
 	"private": true,
@@ -27,10 +27,10 @@
 	},
 	"dependencies": {
 		"@react-pdf/renderer": "^4.5.1",
-		"@reactive-resume/fonts": "workspace:*",
-		"@reactive-resume/resume": "workspace:*",
-		"@reactive-resume/schema": "workspace:*",
-		"@reactive-resume/utils": "workspace:*",
+		"@rbuilder/fonts": "workspace:*",
+		"@rbuilder/resume": "workspace:*",
+		"@rbuilder/schema": "workspace:*",
+		"@rbuilder/utils": "workspace:*",
 		"cjk-regex": "^3.4.0",
 		"node-html-parser": "^9.0.1",
 		"phosphor-icons-react-pdf": "^0.1.3",
@@ -40,7 +40,7 @@
 	"devDependencies": {
 		"@napi-rs/canvas": "1.0.3",
 		"@react-pdf/types": "^2.11.1",
-		"@reactive-resume/config": "workspace:*",
+		"@rbuilder/config": "workspace:*",
 		"@types/react": "^19.2.18",
 		"@typescript/native-preview": "7.0.0-dev.20260707.2",
 		"pdfjs-dist": "6.2.108",

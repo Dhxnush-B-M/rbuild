@@ -1,6 +1,6 @@
 import type { Style } from "@react-pdf/types";
 import type { IconName } from "phosphor-icons-react-pdf/dynamic";
-import { resolveLevelDisplaySizes } from "@reactive-resume/schema/resume/level-display-sizes";
+import { resolveLevelDisplaySizes } from "@rbuilder/schema/resume/level-display-sizes";
 import { View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";

@@ -139,7 +139,7 @@ describe("DonationToast", () => {
 			expires: new Date("2026-06-10T12:05:00.000Z"),
 		});
 		expect(window.open).toHaveBeenCalledWith(
-			"https://opencollective.com/reactive-resume/donate",
+			"https://opencollective.com/rbuilder/donate",
 			"_blank",
 			"noopener,noreferrer",
 		);

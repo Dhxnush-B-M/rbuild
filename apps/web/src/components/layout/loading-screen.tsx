@@ -1,5 +1,5 @@
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
+import { Spinner } from "@rbuilder/ui/components/spinner";
 
 export function LoadingScreen() {
 	return (

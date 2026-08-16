@@ -1,6 +1,6 @@
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet/types";
+import type { SemanticNode } from "@rbuilder/resume/stylesheet/types";
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createBindingInventory, SHARED_BINDING_REGISTRY } from "./binding-inventory";
 import { getTemplateSemanticBindingRegistry } from "./template-manifest";
 import { buildSemanticTree } from "./tree";

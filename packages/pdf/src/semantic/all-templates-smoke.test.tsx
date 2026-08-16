@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { ResumeDocument } from "../document";
 import { buildAllTemplatesFixture } from "./all-templates-fixture";
 

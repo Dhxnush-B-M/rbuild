@@ -1,5 +1,5 @@
 import { Switch as SwitchPrimitive } from "@base-ui/react/switch";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
 function Switch({
 	className,

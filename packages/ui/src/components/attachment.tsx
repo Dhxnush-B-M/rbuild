@@ -3,7 +3,7 @@ import type * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva } from "class-variance-authority";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 import { Button } from "./button";
 
 const attachmentVariants = cva(

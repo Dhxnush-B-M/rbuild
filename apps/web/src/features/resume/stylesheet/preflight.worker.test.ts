@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
 	inspectPdfPageCount: vi.fn(),
 }));
 
-vi.mock("@reactive-resume/pdf/preflight", () => ({
+vi.mock("@rbuilder/pdf/preflight", () => ({
 	renderPreflightPdf: mocks.renderPreflightPdf,
 }));
 

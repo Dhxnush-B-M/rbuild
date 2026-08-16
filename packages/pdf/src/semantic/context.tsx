@@ -1,5 +1,5 @@
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet";
-import type { StylesheetMode } from "@reactive-resume/schema/resume/stylesheet";
+import type { SemanticNode } from "@rbuilder/resume/stylesheet";
+import type { StylesheetMode } from "@rbuilder/schema/resume/stylesheet";
 import type { ReactNode } from "react";
 import type { ResolvedPdfNodePresentation } from "./adapter";
 import { createContext, use, useMemo } from "react";

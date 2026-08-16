@@ -5,7 +5,7 @@ import { DotsThreeVerticalIcon, LockSimpleIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import { ResumeContextMenu } from "../menus/context-menu";
 import { ResumeDropdownMenu } from "../menus/dropdown-menu";
 import { BaseCard } from "./base-card";

@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
+} from "@rbuilder/ui/components/dialog";
 
 type SectionItemDialogProps = {
 	/** Full dialog title — pass a Trans node so i18n extraction works per-file */

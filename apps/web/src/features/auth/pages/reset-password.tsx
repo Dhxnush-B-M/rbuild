@@ -5,9 +5,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
-import { Button } from "@reactive-resume/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Input } from "@reactive-resume/ui/components/input";
+import { Button } from "@rbuilder/ui/components/button";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 

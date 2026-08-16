@@ -1,7 +1,7 @@
 import type { Icon as IconType } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
-import { SidebarTrigger } from "@reactive-resume/ui/components/sidebar";
-import { cn } from "@reactive-resume/utils/style";
+import { SidebarTrigger } from "@rbuilder/ui/components/sidebar";
+import { cn } from "@rbuilder/utils/style";
 
 type Props = {
 	title: string;

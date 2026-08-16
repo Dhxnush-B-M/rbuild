@@ -1,4 +1,4 @@
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@rbuilder/schema/resume/data";
 
 type Sections = ResumeData["sections"];
 

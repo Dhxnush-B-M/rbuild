@@ -1,12 +1,12 @@
-import type { PublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { SemanticStylesheet } from "@reactive-resume/schema/resume/stylesheet";
+import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { SemanticStylesheet } from "@rbuilder/schema/resume/stylesheet";
 import {
 	getPublicStyleProjectionFingerprints,
 	PUBLIC_STYLE_PROJECTION_FORMAT_VERSION,
 	SEMANTIC_TREE_VERSION,
 	validatePublicStyleProjection,
-} from "@reactive-resume/pdf/public-projection";
+} from "@rbuilder/pdf/public-projection";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 
 export type PublicResumePdfOptions = {

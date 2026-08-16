@@ -1,9 +1,9 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { describe, expect, it, vi } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { ResumeDocument } from "../document";
 
 vi.mock("@react-pdf/renderer", async (importOriginal) => ({

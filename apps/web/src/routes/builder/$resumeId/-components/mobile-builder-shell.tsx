@@ -5,7 +5,7 @@ import { Trans } from "@lingui/react/macro";
 import { EyeIcon, NotePencilIcon, PaletteIcon } from "@phosphor-icons/react";
 import { Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { BuilderSidebarLeft } from "../-sidebar/left";
 import { BuilderSidebarRight } from "../-sidebar/right";

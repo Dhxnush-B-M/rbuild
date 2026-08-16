@@ -8,8 +8,8 @@ import {
 	ShieldCheckIcon,
 } from "@phosphor-icons/react";
 import { m } from "motion/react";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { cn } from "@reactive-resume/utils/style";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
+import { cn } from "@rbuilder/utils/style";
 
 type Feature = {
 	id: string;

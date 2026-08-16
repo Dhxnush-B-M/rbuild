@@ -1,8 +1,8 @@
 import type { Style } from "@react-pdf/types";
-import type { ResumeData, StyleIntent, StyleSlot } from "@reactive-resume/schema/resume/data";
-import type { SectionStyleRuleContext } from "@reactive-resume/schema/resume/style-rules";
-import { getSectionStyleRuleContext, resolveStyleIntentForSlot } from "@reactive-resume/schema/resume/style-rules";
-import { rgbaStringToHex } from "@reactive-resume/utils/color";
+import type { ResumeData, StyleIntent, StyleSlot } from "@rbuilder/schema/resume/data";
+import type { SectionStyleRuleContext } from "@rbuilder/schema/resume/style-rules";
+import { getSectionStyleRuleContext, resolveStyleIntentForSlot } from "@rbuilder/schema/resume/style-rules";
+import { rgbaStringToHex } from "@rbuilder/utils/color";
 
 export type { SectionStyleRuleContext };
 

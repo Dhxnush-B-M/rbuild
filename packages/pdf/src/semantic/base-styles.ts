@@ -1,6 +1,6 @@
-import type { ResolvedNodeStyle, SemanticNode } from "@reactive-resume/resume/stylesheet";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResolvedNodeStyle, SemanticNode } from "@rbuilder/resume/stylesheet";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 
 export type BuildPdfBaseStylesInput = {
 	data: ResumeData;

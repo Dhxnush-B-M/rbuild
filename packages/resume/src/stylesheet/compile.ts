@@ -1,4 +1,4 @@
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import type { CompileStylesheetResult } from "./types";
 import { stylesheetCacheKey, stylesheetCompilationCache } from "./cache";
 import { createDiagnostic } from "./diagnostics";

@@ -1,5 +1,5 @@
 import type { IconProps } from "@phosphor-icons/react";
-import type { Locale } from "@reactive-resume/utils/locale";
+import type { Locale } from "@rbuilder/utils/locale";
 import type { QueryClient } from "@tanstack/react-query";
 import type { AuthSession } from "@/libs/auth/session";
 import type { FeatureFlags, orpc } from "@/libs/orpc/client";
@@ -13,8 +13,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { createRootRouteWithContext, HeadContent, Outlet } from "@tanstack/react-router";
 import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
 import { useEffect } from "react";
-import { Toaster } from "@reactive-resume/ui/components/sonner";
-import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
+import { Toaster } from "@rbuilder/ui/components/sonner";
+import { TooltipProvider } from "@rbuilder/ui/components/tooltip";
 import { DialogManager } from "@/dialogs/manager";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";

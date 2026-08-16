@@ -1,7 +1,7 @@
 import { GithubLogoIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
-import { Button } from "@reactive-resume/ui/components/button";
-import { cn } from "@reactive-resume/utils/style";
+import { Button } from "@rbuilder/ui/components/button";
+import { cn } from "@rbuilder/utils/style";
 import { supabase } from "@/libs/supabase/client";
 
 type SocialAuthProps = {

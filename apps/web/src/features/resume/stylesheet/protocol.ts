@@ -2,15 +2,15 @@ import type {
 	BrowserPdfPreflightResult,
 	PdfPreflightPageLimits,
 	StylesheetPreflightInput,
-} from "@reactive-resume/pdf/preflight";
+} from "@rbuilder/pdf/preflight";
 import type {
 	AuthoredPageContext,
 	BaseSettingsSnapshot,
 	SemanticCssDiagnostic,
 	SemanticNode,
 	StyleProgram,
-} from "@reactive-resume/resume/stylesheet";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
+} from "@rbuilder/resume/stylesheet";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import type { SemanticCssColorToken } from "./color-tokens";
 
 export type SemanticCssEditorMetadata = {

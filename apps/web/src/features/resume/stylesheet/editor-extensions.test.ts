@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
+import type { SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Transaction } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
+import { compileStylesheet } from "@rbuilder/resume/stylesheet";
 import { collectCompiledColorTokens } from "./color-tokens";
 import {
 	compositionAwareDocumentListener,

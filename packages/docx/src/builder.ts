@@ -1,5 +1,5 @@
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import {
 	BorderStyle,
 	convertMillimetersToTwip,
@@ -14,7 +14,7 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
-import { parseColorString } from "@reactive-resume/utils/color";
+import { parseColorString } from "@rbuilder/utils/color";
 import { shouldShowResumeHeader } from "./cover-letter";
 import { toSafeDocxLink } from "./link-utils";
 import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";

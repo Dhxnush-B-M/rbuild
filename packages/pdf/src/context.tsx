@@ -1,8 +1,8 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { ReactNode } from "react";
 import type { SectionTitleResolver } from "./section-title";
 import { createContext, use, useMemo } from "react";
-import { isRTL } from "@reactive-resume/utils/locale";
+import { isRTL } from "@rbuilder/utils/locale";
 
 export type ResumeRenderOptions = {
 	includeCoverLetterHeader?: boolean;

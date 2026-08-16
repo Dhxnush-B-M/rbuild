@@ -2,7 +2,7 @@ import { ArrowRightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { m, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useRef } from "react";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { ThemeToggleButton } from "@/features/theme/toggle-button";
 
 export function Header() {

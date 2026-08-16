@@ -1,7 +1,7 @@
 import type { BaseSettingsSnapshot, ResolvedNodeStyle, ResolveStylesheetContext, SemanticNode } from "./types";
 import { describe, expect, it } from "vitest";
 import fc from "fast-check";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { resolveStylesheet } from "./cascade";
 import { compileStylesheet } from "./compile";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";

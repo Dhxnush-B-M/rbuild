@@ -10,8 +10,8 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Separator } from "@reactive-resume/ui/components/separator";
+import { Button } from "@rbuilder/ui/components/button";
+import { Separator } from "@rbuilder/ui/components/separator";
 import { DashboardHeader } from "../-components/header";
 
 export const Route = createFileRoute("/dashboard/support/")({

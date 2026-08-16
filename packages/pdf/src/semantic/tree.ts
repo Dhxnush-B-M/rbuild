@@ -1,6 +1,6 @@
-import type { SemanticNode, SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
-import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet/types";
+import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { HTMLElement, Node } from "node-html-parser";
 import type { StandardFieldRole } from "./binding-inventory";
 import type {
@@ -12,7 +12,7 @@ import type {
 	TemplateSemanticRegion,
 } from "./template-manifest";
 import { NodeType } from "node-html-parser";
-import { isRTL } from "@reactive-resume/utils/locale";
+import { isRTL } from "@rbuilder/utils/locale";
 import { getResumeSectionIcon } from "../section-icon";
 import { shouldUseSectionTimeline } from "../templates/shared/columns";
 import { getCustomFieldLinkUrl } from "../templates/shared/contact";

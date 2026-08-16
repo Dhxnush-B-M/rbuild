@@ -1,5 +1,5 @@
-import type { ResumeData, StyleRule } from "@reactive-resume/schema/resume/data";
-import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
+import { resumeDataSchema } from "@rbuilder/schema/resume/data";
 
 export type RenderDataProjection = {
 	picture: ResumeData["picture"];

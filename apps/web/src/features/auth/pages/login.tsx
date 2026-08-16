@@ -1,7 +1,7 @@
 import { UserIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { toast } from "sonner";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 import { initiateGoogleOAuth2 } from "@/libs/auth/oauth2";
 
 function GoogleColorIcon({ className }: { className?: string }) {

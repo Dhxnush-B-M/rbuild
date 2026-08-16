@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { ReadCvLogoIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Separator } from "@reactive-resume/ui/components/separator";
+import { Separator } from "@rbuilder/ui/components/separator";
 import { getResumesFromSupabase } from "@/libs/supabase/db";
 import { DashboardHeader } from "../-components/header";
 import { GridView } from "./-components/grid-view";

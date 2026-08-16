@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 
 let renderPreflightPdf: typeof import("./preflight-core").renderPreflightPdf;
 

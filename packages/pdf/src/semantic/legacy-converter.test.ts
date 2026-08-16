@@ -1,9 +1,9 @@
-import type { ResumeData, StyleRule } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { compileStylesheet } from "@reactive-resume/resume/stylesheet";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { compileStylesheet } from "@rbuilder/resume/stylesheet";
+import { styleRulesSchema } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { convertLegacyStyleRules } from "./legacy-converter";
 
 const fixtureUrl = (name: string) => new URL(`./__fixtures__/legacy/${name}`, import.meta.url);

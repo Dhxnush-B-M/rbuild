@@ -1,6 +1,6 @@
 import type { MessageDescriptor } from "@lingui/core";
-import type { SectionTitleResolver } from "@reactive-resume/pdf/section-title";
-import type { CustomSectionType, SectionType } from "@reactive-resume/schema/resume/data";
+import type { SectionTitleResolver } from "@rbuilder/pdf/section-title";
+import type { CustomSectionType, SectionType } from "@rbuilder/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 

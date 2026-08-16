@@ -1,14 +1,14 @@
 import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { metadataSchema } from "@reactive-resume/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
+import { metadataSchema } from "@rbuilder/schema/resume/data";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
 	InputGroupText,
-} from "@reactive-resume/ui/components/input-group";
-import { Slider } from "@reactive-resume/ui/components/slider";
+} from "@rbuilder/ui/components/input-group";
+import { Slider } from "@rbuilder/ui/components/slider";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";

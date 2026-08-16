@@ -1,6 +1,6 @@
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { SemanticStylesheet, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
+import type { SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import type { StoreApi } from "zustand/vanilla";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type {
@@ -17,7 +17,7 @@ import {
 	getTemplateSemanticManifest,
 	semanticNodeKeys,
 	shouldShowResumeHeader,
-} from "@reactive-resume/pdf/semantic-tree";
+} from "@rbuilder/pdf/semantic-tree";
 import { orpc } from "@/libs/orpc/client";
 import { createCompileWorkerClient, createPreflightWorkerClient } from "./worker-client";
 

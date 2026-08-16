@@ -1,4 +1,4 @@
-import type { SemanticNode, SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
+import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet/types";
 
 export type StandardFieldRole = "primary-text" | "secondary-text" | "structured-link";
 export type StandardFieldDefinition = Readonly<Record<string, readonly StandardFieldRole[]>>;

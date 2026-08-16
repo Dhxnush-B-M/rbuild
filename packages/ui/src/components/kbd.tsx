@@ -1,4 +1,4 @@
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
 	return (

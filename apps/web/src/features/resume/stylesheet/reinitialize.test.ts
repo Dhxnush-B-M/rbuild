@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
-import type { SemanticStylesheet } from "@reactive-resume/schema/resume/stylesheet";
+import type { SemanticStylesheet } from "@rbuilder/schema/resume/stylesheet";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 
 const mocks = vi.hoisted(() => ({
 	getState: vi.fn(),

@@ -3,8 +3,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
-import { createPublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { createPublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { useResumeExport } from "./use-resume-export";
 
 const mocks = vi.hoisted(() => ({
@@ -17,7 +17,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock("./pdf-document", () => ({
 	createResumePdfBlob: mocks.createResumePdfBlob,
 }));
-vi.mock("@reactive-resume/utils/file", () => ({
+vi.mock("@rbuilder/utils/file", () => ({
 	downloadWithAnchor: mocks.downloadWithAnchor,
 	generateFilename: (name: string, extension: string) => `${name}.${extension}`,
 }));

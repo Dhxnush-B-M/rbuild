@@ -1,4 +1,4 @@
-import type { Template } from "@reactive-resume/schema/templates";
+import type { Template } from "@rbuilder/schema/templates";
 import type { CSSProperties } from "react";
 import type { ResolvedResumePreviewProps } from "./preview.shared";
 import type { PreviewPageSize } from "./preview.shared.utils";
@@ -6,8 +6,8 @@ import { t } from "@lingui/core/macro";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { isRTL } from "@reactive-resume/utils/locale";
-import { cn } from "@reactive-resume/utils/style";
+import { isRTL } from "@rbuilder/utils/locale";
+import { cn } from "@rbuilder/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { useStylesheetStore } from "@/features/resume/stylesheet/store";
 import { usePreviewPausedStore, useResumeData, useResumeStore } from "../builder/draft";

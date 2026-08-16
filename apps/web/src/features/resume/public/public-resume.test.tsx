@@ -1,13 +1,13 @@
 // @vitest-environment happy-dom
 
-import type { PublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 
 type PdfViewerProps = {
 	className?: string;

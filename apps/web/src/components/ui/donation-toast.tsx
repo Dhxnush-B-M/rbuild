@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useTimeout } from "usehooks-ts";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 
 const TOAST_ID = "donation-toast";
 const SHOW_TOAST_DELAY_MS = 5 * 60 * 1000; // 5 minutes
@@ -14,7 +14,7 @@ const DISMISSED_COOKIE_EXPIRES_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 const getDismissedCookieExpiresAt = () => new Date(Date.now() + DISMISSED_COOKIE_EXPIRES_MS);
 
 export function DonationToast() {
-	// ponytail: inlined from @reactive-resume/ui/hooks/use-cookie — only consumer, one read + one set-with-expiry
+	// ponytail: inlined from @rbuilder/ui/hooks/use-cookie — only consumer, one read + one set-with-expiry
 	const [dismissed, setDismissedState] = useState<string | null>(() => Cookies.get(DISMISSED_COOKIE_NAME) ?? null);
 
 	const setDismissed = useCallback((value: string, options?: { expires?: Date }) => {
@@ -29,7 +29,7 @@ export function DonationToast() {
 		const onDonate = (t: string | number) => {
 			toast.dismiss(t);
 			setDismissed("true", { expires: getDismissedCookieExpiresAt() });
-			window.open("https://opencollective.com/reactive-resume/donate", "_blank", "noopener,noreferrer");
+			window.open("https://opencollective.com/rbuilder/donate", "_blank", "noopener,noreferrer");
 		};
 
 		const onDismiss = (t: string | number) => {

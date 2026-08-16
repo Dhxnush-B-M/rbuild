@@ -1,10 +1,10 @@
 import type { Style } from "@react-pdf/types";
-import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@reactive-resume/schema/resume/data";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "@reactive-resume/resume/stylesheet";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
-import { getSectionStyleRuleContext } from "@reactive-resume/schema/resume/style-rules";
-import { rgbaStringToHex } from "@reactive-resume/utils/color";
+import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@rbuilder/schema/resume/data";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "@rbuilder/resume/stylesheet";
+import { styleRulesSchema } from "@rbuilder/schema/resume/data";
+import { getSectionStyleRuleContext } from "@rbuilder/schema/resume/style-rules";
+import { rgbaStringToHex } from "@rbuilder/utils/color";
 import { resolveStyleRuleSlot } from "../templates/shared/style-rules";
 
 export type LegacyStyleConversion = {

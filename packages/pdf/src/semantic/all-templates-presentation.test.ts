@@ -1,7 +1,7 @@
-import type { SemanticNode, SemanticNodeKind } from "@reactive-resume/resume/stylesheet";
+import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet";
 import { describe, expect, it } from "vitest";
-import { SEMANTIC_REGISTRY_V1 } from "@reactive-resume/resume/stylesheet";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { SEMANTIC_REGISTRY_V1 } from "@rbuilder/resume/stylesheet";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { buildAllTemplatesFixture, comprehensiveStylesheet } from "./all-templates-fixture";
 import { STANDARD_FIELD_REGISTRY, STANDARD_ROLE_REGISTRY } from "./binding-inventory";
 import { resolveResumeRuntime } from "./resolve";

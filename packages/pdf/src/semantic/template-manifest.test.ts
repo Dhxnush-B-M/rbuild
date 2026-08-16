@@ -1,11 +1,11 @@
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet/types";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { SemanticNode } from "@rbuilder/resume/stylesheet/types";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { TemplateSemanticManifest } from "./template-manifest";
 import { describe, expect, it } from "vitest";
-import { TEMPLATE_PART_CHILD_KINDS_V1 } from "@reactive-resume/resume/stylesheet";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { TEMPLATE_PART_CHILD_KINDS_V1 } from "@rbuilder/resume/stylesheet";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { createBindingInventory } from "./binding-inventory";
 import {
 	getTemplateSemanticBindingRegistry,

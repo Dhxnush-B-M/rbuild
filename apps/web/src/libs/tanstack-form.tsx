@@ -1,9 +1,9 @@
-import type { Website } from "@reactive-resume/schema/resume/data";
+import type { Website } from "@rbuilder/schema/resume/data";
 import type * as React from "react";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Input } from "@reactive-resume/ui/components/input";
-import { InputGroupInput } from "@reactive-resume/ui/components/input-group";
+import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
+import { InputGroupInput } from "@rbuilder/ui/components/input-group";
 import { RichInput } from "@/components/input/rich-input";
 import { URLInput } from "@/components/input/url-input";
 

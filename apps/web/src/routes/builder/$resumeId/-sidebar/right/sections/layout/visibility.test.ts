@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
 const createResumeData = (): ResumeData => structuredClone(defaultResumeData);
@@ -9,7 +9,7 @@ describe("filterVisibleLayoutSectionIds", () => {
 	it("removes item-backed sections with no visible items", () => {
 		const data = createResumeData();
 		data.sections.experience.items = [
-			{ hidden: false, company: "Reactive Resume" },
+			{ hidden: false, company: "rbuilder" },
 			{ hidden: true, company: "Hidden Company" },
 		] as never;
 		data.sections.references.items = [{ hidden: true, name: "Hidden Reference" }] as never;

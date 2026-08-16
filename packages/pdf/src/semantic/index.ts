@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { StylesheetMode, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { StylesheetMode, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
 import type { ResolvedResumeRuntime } from "./resolve";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./resolve";
 

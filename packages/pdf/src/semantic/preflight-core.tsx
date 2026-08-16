@@ -1,10 +1,10 @@
-import type { SemanticCssDiagnostic } from "@reactive-resume/resume/stylesheet";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
 import type { PdfPreflightFailureCode } from "./preflight-reference";
 import { createElement } from "react";
-import { parseResumeData } from "@reactive-resume/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import { pdf } from "#react-pdf-renderer";
 import { ResumeDocument } from "../document";
 import { getTemplatePageSize } from "../templates/shared/page-size";

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { templateSchema } from "@rbuilder/schema/templates";
 
 const templatePages = templateSchema.options.map(
 	(template) =>
@@ -23,6 +23,6 @@ describe("RTL PDF fixture", () => {
 		// ponytail: alignEnd moved to createBaseTemplateStyles factory; either direct or factory counts.
 		expect(source.includes("alignEnd") || source.includes("createBaseTemplateStyles")).toBe(true);
 		expect(source).not.toContain("alignRight");
-		expect(source).not.toContain('from "@reactive-resume/utils/locale"');
+		expect(source).not.toContain('from "@rbuilder/utils/locale"');
 	});
 });

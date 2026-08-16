@@ -1,4 +1,4 @@
-import type { SectionType } from "@reactive-resume/schema/resume/data";
+import type { SectionType } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import {
@@ -10,7 +10,7 @@ import {
 	PencilSimpleLineIcon,
 	PlusIcon,
 } from "@phosphor-icons/react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -23,7 +23,7 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
+} from "@rbuilder/ui/components/dropdown-menu";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";

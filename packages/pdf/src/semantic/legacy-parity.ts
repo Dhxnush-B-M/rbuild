@@ -1,10 +1,10 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { PROPERTY_REGISTRY_V1 } from "@reactive-resume/resume/stylesheet";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
+import { PROPERTY_REGISTRY_V1 } from "@rbuilder/resume/stylesheet";
+import { styleRulesSchema } from "@rbuilder/schema/resume/data";
 import { ResumeDocument } from "../document";
 
 export type CompareLegacySemanticPresentationInput = {

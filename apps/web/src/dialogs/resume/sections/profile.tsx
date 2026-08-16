@@ -3,18 +3,18 @@ import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { AtIcon, PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
-import { profileItemSchema } from "@reactive-resume/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Input } from "@reactive-resume/ui/components/input";
+import { profileItemSchema } from "@rbuilder/schema/resume/data";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
 	InputGroupText,
-} from "@reactive-resume/ui/components/input-group";
-import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { Switch } from "@reactive-resume/ui/components/switch";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/input-group";
+import { PopoverTrigger } from "@rbuilder/ui/components/popover";
+import { Switch } from "@rbuilder/ui/components/switch";
+import { cn } from "@rbuilder/utils/style";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
 import { useDialogStore } from "@/dialogs/store";

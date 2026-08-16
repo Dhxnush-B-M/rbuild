@@ -8,8 +8,8 @@ import {
 	CopyIcon,
 	MagicWandIcon,
 } from "@phosphor-icons/react";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@reactive-resume/ui/components/tooltip";
+import { Button } from "@rbuilder/ui/components/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components/tooltip";
 import { copySourceToClipboard } from "./editor-extensions";
 
 type ToolbarButtonProps = {

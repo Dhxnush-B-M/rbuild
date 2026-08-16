@@ -2,7 +2,7 @@ import type { Completion, CompletionContext, CompletionResult, CompletionSource 
 import type { Diagnostic } from "@codemirror/lint";
 import type { EditorState, Extension } from "@codemirror/state";
 import type { DecorationSet, EditorView as EditorViewType, ViewUpdate } from "@codemirror/view";
-import type { SemanticCssDiagnostic, SemanticNode } from "@reactive-resume/resume/stylesheet/registry";
+import type { SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet/registry";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type { SemanticCssEditorMetadata } from "./protocol";
 import { autocompletion } from "@codemirror/autocomplete";
@@ -16,7 +16,7 @@ import {
 	SEMANTIC_NODE_KINDS,
 	SEMANTIC_REGISTRY_V1,
 	SYSTEM_VARIABLE_REGISTRY_V1,
-} from "@reactive-resume/resume/stylesheet/registry";
+} from "@rbuilder/resume/stylesheet/registry";
 
 export type SemanticCssColorSelection = (token: SemanticCssColorToken, rect: DOMRect) => void;
 

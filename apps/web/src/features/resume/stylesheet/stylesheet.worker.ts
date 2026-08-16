@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import type { CompileWorkerRequest, CompileWorkerResponse } from "./protocol";
-import { analyzeStylesheet, compileStylesheet } from "@reactive-resume/resume/stylesheet";
+import { analyzeStylesheet, compileStylesheet } from "@rbuilder/resume/stylesheet";
 import { collectCompiledColorTokens } from "./color-tokens";
 
 self.addEventListener("message", ({ data }: MessageEvent<CompileWorkerRequest>) => {

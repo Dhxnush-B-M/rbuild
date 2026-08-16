@@ -1,4 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { DialogProps } from "../store";
 import type { ImportType } from "./import.utils";
 import { t } from "@lingui/core/macro";
@@ -9,19 +9,19 @@ import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { Button } from "@reactive-resume/ui/components/button";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
-import { Input } from "@reactive-resume/ui/components/input";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { generateId, slugify } from "@reactive-resume/utils/string";
+} from "@rbuilder/ui/components/dialog";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
+import { Spinner } from "@rbuilder/ui/components/spinner";
+import { generateId, slugify } from "@rbuilder/utils/string";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { saveResumeToSupabase } from "@/libs/supabase/db";
@@ -35,13 +35,13 @@ const formSchema = z.discriminatedUnion("type", [
 		file: z.undefined(),
 	}),
 	z.object({
-		type: z.literal("reactive-resume-json"),
+		type: z.literal("rbuilder-json"),
 		file: z
 			.instanceof(File)
 			.refine((file) => file.type === "application/json", { message: "File must be a JSON file" }),
 	}),
 	z.object({
-		type: z.literal("reactive-resume-v4-json"),
+		type: z.literal("rbuilder-v4-json"),
 		file: z
 			.instanceof(File)
 			.refine((file) => file.type === "application/json", { message: "File must be a JSON file" }),
@@ -210,14 +210,14 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 											onValueChange={(value) => field.handleChange(value as ImportType)}
 											options={[
 												{
-													value: "reactive-resume-json",
+													value: "rbuilder-json",
 													label: t({
 														comment: "Import source option for current rbuilder JSON format",
 														message: "rbuilder (JSON)",
 													}),
 												},
 												{
-													value: "reactive-resume-v4-json",
+													value: "rbuilder-v4-json",
 													label: t({
 														comment: "Import source option for legacy rbuilder v4 JSON format",
 														message: "rbuilder v4 (JSON)",

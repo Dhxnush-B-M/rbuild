@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import * as m from "motion/react-m";
 import { useState } from "react";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { templateSchema } from "@rbuilder/schema/templates";
 
 export function TemplatesSection() {
 	const navigate = useNavigate();

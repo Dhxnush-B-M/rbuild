@@ -2,8 +2,8 @@ import type { Icon } from "@phosphor-icons/react";
 import { EnvelopeSimpleIcon, LinkedinLogoIcon, XLogoIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { useState } from "react";
-import { BrandIcon } from "@reactive-resume/ui/components/brand-icon";
-import { Button } from "@reactive-resume/ui/components/button";
+import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
+import { Button } from "@rbuilder/ui/components/button";
 
 type FooterLinkItem = {
 	url: string;

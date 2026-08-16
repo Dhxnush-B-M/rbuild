@@ -1,7 +1,7 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { Buffer } from "node:buffer";
 import { describe, expect, it, vi } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createResumePdfBlob } from "../browser";
 import { createResumePdfFile } from "../server";
 

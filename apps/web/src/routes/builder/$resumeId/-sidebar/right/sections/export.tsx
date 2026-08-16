@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import { DownloadSimpleIcon } from "@phosphor-icons/react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import { useResume } from "@/features/resume/builder/draft";
 import { ResumeDownloadDialog } from "@/features/resume/export/download-dialog";
 import { SectionBase } from "../shared/section-base";

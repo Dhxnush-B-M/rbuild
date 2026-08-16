@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import type { Website } from "@reactive-resume/schema/resume/data";
+import type { Website } from "@rbuilder/schema/resume/data";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";

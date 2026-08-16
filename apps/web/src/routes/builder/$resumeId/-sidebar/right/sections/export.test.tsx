@@ -4,8 +4,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 
 const downloadWithAnchor = vi.hoisted(() => vi.fn());
 const buildDocx = vi.hoisted(() => vi.fn().mockResolvedValue(new Blob(["x"], { type: "application/x-docx" })));
@@ -36,11 +36,11 @@ type SectionBaseProps = {
 vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
 }));
-vi.mock("@reactive-resume/utils/file", () => ({
+vi.mock("@rbuilder/utils/file", () => ({
 	downloadWithAnchor,
 	generateFilename: (name: string, ext: string) => `${name}.${ext}`,
 }));
-vi.mock("@reactive-resume/docx", () => ({ buildDocx }));
+vi.mock("@rbuilder/docx", () => ({ buildDocx }));
 vi.mock("@/features/resume/export/pdf-document", () => ({ createResumePdfBlob }));
 // DOCX/Markdown resolve locale-aware section titles; stub the async locale resolver so exports
 // fall back to the built-in English titles without loading real locale catalogs.

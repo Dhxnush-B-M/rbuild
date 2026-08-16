@@ -8,8 +8,8 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@reactive-resume/ui/components/alert-dialog";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/alert-dialog";
+import { cn } from "@rbuilder/utils/style";
 
 interface ConfirmOptions {
 	description?: string;

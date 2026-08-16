@@ -1,12 +1,12 @@
 // @vitest-environment happy-dom
 
-import type { SemanticCssDiagnostic } from "@reactive-resume/resume/stylesheet";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { EditorView } from "@codemirror/view";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
+import { TooltipProvider } from "@rbuilder/ui/components/tooltip";
 import StylesheetEditorShell, { StylesheetCodeEditor } from "./editor";
 import { LegacyStylesheetBanner } from "./legacy-banner";
 import { StylesheetStatus } from "./status";

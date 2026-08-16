@@ -1,4 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { ResumeRenderOptions } from "../../context";
 import { filterSections } from "./filtering";
 

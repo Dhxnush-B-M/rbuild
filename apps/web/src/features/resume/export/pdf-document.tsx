@@ -1,10 +1,10 @@
-import type { PublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { SemanticStylesheet, StylesheetSource } from "@reactive-resume/schema/resume/stylesheet";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
 import { useMemo } from "react";
-import { createResumePdfBlob as createPdfBlob } from "@reactive-resume/pdf/browser";
-import { ResumeDocument } from "@reactive-resume/pdf/document";
+import { createResumePdfBlob as createPdfBlob } from "@rbuilder/pdf/browser";
+import { ResumeDocument } from "@rbuilder/pdf/document";
 import { createSectionTitleResolverForLocale, useSectionTitleResolver } from "@/libs/resume/section-title-locale";
 
 type ResumePdfRenderOptions = {

@@ -1,11 +1,11 @@
-import type { ResumeData, StyleRule } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { LegacyParityHostNode } from "./legacy-parity";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { styleRulesSchema } from "@reactive-resume/schema/resume/data";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { styleRulesSchema } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { convertLegacyStyleRules } from "./legacy-converter";
 import { compareLegacyParityHostNodes, compareLegacySemanticPresentation } from "./legacy-parity";
 

@@ -35,8 +35,8 @@
 							{ "type": true },
 							["!:BUN:", ":NODE:"],
 							["vitest", "vitest/**", "@testing-library", "@testing-library/**"],
-							[":PACKAGE:", "!@reactive-resume/**"],
-							"@reactive-resume/**",
+							[":PACKAGE:", "!@rbuilder/**"],
+							"@rbuilder/**",
 							[":ALIAS:", ":PATH:"]
 						]
 					}
@@ -77,7 +77,7 @@
 					"options": {
 						"patterns": [
 							{
-								"group": ["@reactive-resume/*/src/**"],
+								"group": ["@rbuilder/*/src/**"],
 								"message": "Import through the package export map instead of another workspace's private src path."
 							},
 							{

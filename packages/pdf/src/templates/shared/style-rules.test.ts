@@ -1,6 +1,6 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { getSectionStyleRuleContext, resolveStyleRuleSlot } from "./style-rules";
 
 const createResumeData = (styleRules: ResumeData["metadata"]["styleRules"]): ResumeData => ({

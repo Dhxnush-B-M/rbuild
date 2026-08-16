@@ -1,7 +1,7 @@
 import type { RightSidebarSection } from "@/libs/resume/section";
 import { Fragment, useRef } from "react";
 import { match } from "ts-pattern";
-import { ScrollArea } from "@reactive-resume/ui/components/scroll-area";
+import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 import { Copyright } from "@/components/ui/copyright";
 import { rightSidebarSections } from "@/libs/resume/section";
 import { DesignSectionBuilder } from "./sections/design";

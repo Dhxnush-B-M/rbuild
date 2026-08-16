@@ -1,5 +1,5 @@
 import type { Extension } from "@codemirror/state";
-import type { SemanticCssDiagnostic } from "@reactive-resume/resume/stylesheet";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type { SemanticCssEditorMetadata } from "./protocol";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
@@ -19,8 +19,8 @@ import { Trans } from "@lingui/react/macro";
 import { BookOpenIcon } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { Sheet, SheetContent, SheetTitle } from "@reactive-resume/ui/components/sheet";
+import { PopoverTrigger } from "@rbuilder/ui/components/popover";
+import { Sheet, SheetContent, SheetTitle } from "@rbuilder/ui/components/sheet";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useTheme } from "@/features/theme/provider";
 import { useBuilderSidebarStore } from "@/routes/builder/$resumeId/-store/sidebar";

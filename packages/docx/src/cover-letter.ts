@@ -1,4 +1,4 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 
 const isCoverLetterSection = (data: ResumeData, sectionId: string) => {
 	const section = data.customSections.find((customSection) => customSection.id === sectionId);

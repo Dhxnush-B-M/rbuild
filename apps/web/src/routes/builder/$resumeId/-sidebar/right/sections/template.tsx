@@ -1,7 +1,7 @@
 import { useLingui } from "@lingui/react";
 import { SwapIcon } from "@phosphor-icons/react";
-import { Badge } from "@reactive-resume/ui/components/badge";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Badge } from "@rbuilder/ui/components/badge";
+import { Button } from "@rbuilder/ui/components/button";
 import { templates } from "@/dialogs/resume/template/data";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume } from "@/features/resume/builder/draft";

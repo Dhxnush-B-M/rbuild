@@ -1,7 +1,7 @@
-import type { Locale, Script } from "@reactive-resume/utils/locale";
-import { getLocaleScript, isCjkScript } from "@reactive-resume/utils/locale";
+import type { Locale, Script } from "@rbuilder/utils/locale";
+import { getLocaleScript, isCjkScript } from "@rbuilder/utils/locale";
 
-// ponytail: inlined from @reactive-resume/utils/field (sole consumer)
+// ponytail: inlined from @rbuilder/utils/field (sole consumer)
 const unique = <T>(items: T[]): T[] => [...new Set(items)];
 
 import webFontListJSON from "./webfontlist.json";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import { getResumeExportData } from "./export-sections";
 import { buildMarkdown, htmlToMarkdown } from "./markdown";
 

@@ -1,5 +1,5 @@
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { supabase } from "./client";
 
 export interface SupabaseUserProfile {

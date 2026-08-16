@@ -17,7 +17,7 @@ import type {
 	SkillItem,
 	SummaryItem,
 	VolunteerItem,
-} from "@reactive-resume/schema/resume/data";
+} from "@rbuilder/schema/resume/data";
 import type { IconName } from "phosphor-icons-react-pdf/dynamic";
 import type { ReactElement, ReactNode } from "react";
 import type { CombinedTextName } from "../../semantic/node-keys";

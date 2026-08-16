@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, InfoIcon } from "@phosphor-icons/react";
-import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Alert, AlertDescription, AlertTitle } from "@rbuilder/ui/components/alert";
+import { Button } from "@rbuilder/ui/components/button";
 
 export type LegacyStylesheetBannerProps = {
 	disabled: boolean;

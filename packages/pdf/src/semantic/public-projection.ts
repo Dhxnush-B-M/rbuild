@@ -1,5 +1,5 @@
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { SemanticNode } from "@rbuilder/resume/stylesheet";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { ResolvedPdfNodePresentation } from "./adapter";
 import type { ResolvedResumeRuntime } from "./resolve";
 import {
@@ -9,8 +9,8 @@ import {
 	SEMANTIC_REGISTRY_V1,
 	SUPPORTED_SEMANTIC_CSS_VERSIONS,
 	TEMPLATE_PART_CHILD_KINDS_V1,
-} from "@reactive-resume/resume/stylesheet";
-import { EMPTY_SEMANTIC_CSS_SOURCE } from "@reactive-resume/schema/resume/stylesheet";
+} from "@rbuilder/resume/stylesheet";
+import { EMPTY_SEMANTIC_CSS_SOURCE } from "@rbuilder/schema/resume/stylesheet";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./resolve";
 import { getTemplateSemanticRegistryFingerprintInput } from "./template-manifest";
 

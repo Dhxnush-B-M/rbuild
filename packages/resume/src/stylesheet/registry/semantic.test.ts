@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { sectionTypeSchema } from "@reactive-resume/schema/resume/data";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { sectionTypeSchema } from "@rbuilder/schema/resume/data";
+import { templateSchema } from "@rbuilder/schema/templates";
 import * as semanticRegistry from "./semantic";
 import { canContainNode, SEMANTIC_NODE_KINDS, SEMANTIC_REGISTRY_V1, TEMPLATE_PART_CHILD_KINDS_V1 } from "./semantic";
 

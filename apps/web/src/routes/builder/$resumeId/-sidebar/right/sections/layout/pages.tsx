@@ -1,5 +1,5 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
 import type { CSSProperties, HTMLAttributes, Ref } from "react";
 import {
 	closestCorners,
@@ -25,7 +25,7 @@ import {
 } from "@phosphor-icons/react";
 import { useCallback, useId, useState } from "react";
 import { match } from "ts-pattern";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -36,9 +36,9 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
-import { Switch } from "@reactive-resume/ui/components/switch";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dropdown-menu";
+import { Switch } from "@rbuilder/ui/components/switch";
+import { cn } from "@rbuilder/utils/style";
 import { templates } from "@/dialogs/resume/template/data";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { resolveLayoutSectionTitle } from "./title";

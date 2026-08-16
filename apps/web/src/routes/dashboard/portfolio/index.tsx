@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { GlobeIcon, LockSimpleIcon } from "@phosphor-icons/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Separator } from "@reactive-resume/ui/components/separator";
+import { Button } from "@rbuilder/ui/components/button";
+import { Separator } from "@rbuilder/ui/components/separator";
 import { DashboardHeader } from "../-components/header";
 
 export const Route = createFileRoute("/dashboard/portfolio/")({

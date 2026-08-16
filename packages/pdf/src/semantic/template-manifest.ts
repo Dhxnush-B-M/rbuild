@@ -1,8 +1,8 @@
-import type { SemanticNodeKind } from "@reactive-resume/resume/stylesheet/types";
-import type { CustomSectionType } from "@reactive-resume/schema/resume/data";
-import type { Template } from "@reactive-resume/schema/templates";
+import type { SemanticNodeKind } from "@rbuilder/resume/stylesheet/types";
+import type { CustomSectionType } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import type { PrimitiveBinding, SemanticBindingRegistry } from "./binding-inventory";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { azurillSemanticManifest } from "../templates/azurill/semantic";
 import { bronzorSemanticManifest } from "../templates/bronzor/semantic";
 import { chikoritaSemanticManifest } from "../templates/chikorita/semantic";

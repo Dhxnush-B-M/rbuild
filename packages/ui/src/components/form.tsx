@@ -1,7 +1,7 @@
 import { useRender } from "@base-ui/react";
 import * as React from "react";
-import { Label } from "@reactive-resume/ui/components/label";
-import { cn } from "@reactive-resume/utils/style";
+import { Label } from "@rbuilder/ui/components/label";
+import { cn } from "@rbuilder/utils/style";
 
 type FormItemContextValue = {
 	id: string;

@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import type { PdfPreflightFailure } from "@reactive-resume/pdf/preflight";
+import type { PdfPreflightFailure } from "@rbuilder/pdf/preflight";
 import type {
 	PreflightWorkerError,
 	PreflightWorkerRequest,
@@ -34,7 +34,7 @@ const serializeZodCause = (cause: unknown): SerializedPreflightCause | undefined
 	return { name: cause.name, message: cause.message, issues: cause.issues };
 };
 
-const initialization = Promise.all([import("@reactive-resume/pdf/preflight"), initializePdfInspection()] as const);
+const initialization = Promise.all([import("@rbuilder/pdf/preflight"), initializePdfInspection()] as const);
 void initialization.then(() => self.postMessage({ type: "preflight_ready" }));
 
 self.addEventListener("message", async ({ data }: MessageEvent<PreflightWorkerRequest>) => {

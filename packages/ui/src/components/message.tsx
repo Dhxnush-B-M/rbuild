@@ -1,5 +1,5 @@
 import type * as React from "react";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
 	return <div data-slot="message-group" className={cn("flex min-w-0 flex-col gap-2", className)} {...props} />;

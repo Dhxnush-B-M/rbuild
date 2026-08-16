@@ -1,6 +1,6 @@
 import type { PublicStyleProjection } from "./public-projection";
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import {
 	createPublicStyleProjection,
 	PUBLIC_STYLE_PROJECTION_FORMAT_VERSION,

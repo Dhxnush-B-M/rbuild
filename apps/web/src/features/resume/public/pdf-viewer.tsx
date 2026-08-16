@@ -1,12 +1,12 @@
-import type { PublicStyleProjection } from "@reactive-resume/pdf/public-projection";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import type { SemanticStylesheet } from "@reactive-resume/schema/resume/stylesheet";
+import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { SemanticStylesheet } from "@rbuilder/schema/resume/stylesheet";
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { AnnotationMode, GlobalWorkerOptions, getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { EventBus, LinkTarget, PDFLinkService, PDFViewer } from "pdfjs-dist/legacy/web/pdf_viewer.mjs";
 import { useEffect, useReducer, useRef } from "react";
-import { Spinner } from "@reactive-resume/ui/components/spinner";
-import { cn } from "@reactive-resume/utils/style";
+import { Spinner } from "@rbuilder/ui/components/spinner";
+import { cn } from "@rbuilder/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { resolvePublicResumePdfBlob } from "./public-pdf";
 import "pdfjs-dist/legacy/web/pdf_viewer.css";

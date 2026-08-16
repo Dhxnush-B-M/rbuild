@@ -2,7 +2,7 @@ import type { ReactElement, ReactNode } from "react";
 import { Trans } from "@lingui/react/macro";
 import { CircleNotchIcon, DownloadSimpleIcon, FileDocIcon, FilePdfIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { Button } from "@reactive-resume/ui/components/button";
+import { Button } from "@rbuilder/ui/components/button";
 import {
 	Dialog,
 	DialogContent,
@@ -10,8 +10,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@reactive-resume/ui/components/dialog";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dialog";
+import { cn } from "@rbuilder/utils/style";
 import { useResumeExport } from "./use-resume-export";
 
 type DownloadableResume = Parameters<typeof useResumeExport>[0];

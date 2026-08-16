@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 import { useIsClient } from "usehooks-ts";
-import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
-import { templateSchema } from "@reactive-resume/schema/templates";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { useLocalizedResumeDocument } from "@/features/resume/export/pdf-document";
 import { createNoindexFollowMeta } from "@/libs/seo";
 

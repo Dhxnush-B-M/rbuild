@@ -3,11 +3,11 @@ import type {
 	ResolvedNodeStyle,
 	ResolveStylesheetContext,
 	SemanticNode,
-} from "@reactive-resume/resume/stylesheet";
+} from "@rbuilder/resume/stylesheet";
 import { describe, expect, it } from "vitest";
 import { createElement } from "react";
-import { compileStylesheet, PROPERTY_REGISTRY_V1, resolveStylesheet } from "@reactive-resume/resume/stylesheet";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { compileStylesheet, PROPERTY_REGISTRY_V1, resolveStylesheet } from "@rbuilder/resume/stylesheet";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { Document, Image, Page, renderToBuffer, Text, View } from "#react-pdf-renderer";
 import { adaptResolvedPdfNode, resolvedPdfFlowProps, resolvedPdfTextProps } from "./adapter";
 

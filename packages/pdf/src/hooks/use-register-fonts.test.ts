@@ -1,7 +1,7 @@
-import type { ResumeData, Typography } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, Typography } from "@rbuilder/schema/resume/data";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { getWebFontSource } from "@reactive-resume/fonts";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { getWebFontSource } from "@rbuilder/fonts";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { Font } from "#react-pdf-renderer";
 
 const typography = {
@@ -364,7 +364,7 @@ describe("resumeContentScripts", () => {
 
 	it("returns an empty set for Latin-only content", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect(resumeContentScripts(withSummary("Reactive Resume")).size).toBe(0);
+		expect(resumeContentScripts(withSummary("rbuilder")).size).toBe(0);
 	});
 
 	it("does not scan private metadata notes", async () => {

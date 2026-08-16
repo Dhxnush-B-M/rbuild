@@ -1,5 +1,5 @@
 import { m } from "motion/react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@rbuilder/ui/components/accordion";
 
 type FAQItemData = {
 	question: string;

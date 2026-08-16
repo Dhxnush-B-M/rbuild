@@ -1,5 +1,5 @@
-import { Badge } from "@reactive-resume/ui/components/badge";
-import { cn } from "@reactive-resume/utils/style";
+import { Badge } from "@rbuilder/ui/components/badge";
+import { cn } from "@rbuilder/utils/style";
 import { CometCard } from "@/components/animation/comet-card";
 
 type BaseCardProps = React.ComponentProps<"div"> & {

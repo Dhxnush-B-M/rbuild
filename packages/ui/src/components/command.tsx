@@ -7,9 +7,9 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
-import { InputGroup, InputGroupAddon } from "@reactive-resume/ui/components/input-group";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dialog";
+import { InputGroup, InputGroupAddon } from "@rbuilder/ui/components/input-group";
+import { cn } from "@rbuilder/utils/style";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
 	return (

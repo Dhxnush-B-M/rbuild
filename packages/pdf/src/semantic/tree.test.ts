@@ -1,7 +1,7 @@
-import type { SemanticNode } from "@reactive-resume/resume/stylesheet/types";
-import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import type { SemanticNode } from "@rbuilder/resume/stylesheet/types";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { semanticNodeKeys } from "./node-keys";
 import { buildSemanticTree } from "./tree";
 

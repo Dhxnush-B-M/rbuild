@@ -1,5 +1,5 @@
 import type { IconProps } from "@phosphor-icons/react";
-import type { SectionType } from "@reactive-resume/schema/resume/data";
+import type { SectionType } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import {
 	BookOpenIcon,
@@ -30,9 +30,9 @@ import {
 	UsersThreeIcon,
 } from "@phosphor-icons/react";
 import { match } from "ts-pattern";
-import { cn } from "@reactive-resume/utils/style";
+import { cn } from "@rbuilder/utils/style";
 
-export { defaultSectionIconNames } from "@reactive-resume/schema/resume/section-icons";
+export { defaultSectionIconNames } from "@rbuilder/schema/resume/section-icons";
 
 export type LeftSidebarSection = "picture" | "basics" | "summary" | SectionType | "custom";
 

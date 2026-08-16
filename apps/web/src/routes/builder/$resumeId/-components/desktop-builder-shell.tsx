@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { Outlet } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { usePanelRef } from "react-resizable-panels";
-import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@reactive-resume/ui/components/resizable";
+import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@rbuilder/ui/components/resizable";
 import { BuilderSidebarLeft } from "../-sidebar/left";
 import { BuilderSidebarRight } from "../-sidebar/right";
 import {

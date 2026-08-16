@@ -1,4 +1,4 @@
-import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
+import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
 import type { WritableDraft } from "immer";
 
 /**

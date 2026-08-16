@@ -41,19 +41,19 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { match } from "ts-pattern";
 import z from "zod";
-import { Button } from "@reactive-resume/ui/components/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@reactive-resume/ui/components/dialog";
+import { Button } from "@rbuilder/ui/components/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@rbuilder/ui/components/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@reactive-resume/ui/components/dropdown-menu";
-import { PopoverHeader, PopoverTitle, PopoverTrigger } from "@reactive-resume/ui/components/popover";
-import { Toggle } from "@reactive-resume/ui/components/toggle";
-import { isDarkColor } from "@reactive-resume/utils/color";
-import { cn } from "@reactive-resume/utils/style";
+} from "@rbuilder/ui/components/dropdown-menu";
+import { PopoverHeader, PopoverTitle, PopoverTrigger } from "@rbuilder/ui/components/popover";
+import { Toggle } from "@rbuilder/ui/components/toggle";
+import { isDarkColor } from "@rbuilder/utils/color";
+import { cn } from "@rbuilder/utils/style";
 import { usePrompt } from "@/hooks/use-prompt";
 import { isRTL } from "@/libs/locale";
 import { ColorPicker } from "./color-picker";

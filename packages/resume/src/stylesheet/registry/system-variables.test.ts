@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultResumeData } from "@reactive-resume/schema/resume/default";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createSystemVariables, SYSTEM_VARIABLE_REGISTRY_V1 } from "./system-variables";
 
 const baseSettings = {
