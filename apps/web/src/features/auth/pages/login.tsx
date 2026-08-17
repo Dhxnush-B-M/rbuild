@@ -1,4 +1,9 @@
-import { SparkleIcon, UserIcon } from "@phosphor-icons/react";
+import {
+	LightningIcon,
+	ShieldCheckIcon,
+	SparkleIcon,
+	TargetIcon,
+} from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -28,13 +33,11 @@ function GoogleColorIcon({ className }: { className?: string }) {
 }
 
 export function LoginPage() {
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
 	const [loading, setLoading] = useState(false);
 
 	const handleGoogleLogin = async () => {
 		setLoading(true);
-		toast.loading("Redirecting to Google...");
+		toast.loading("Connecting with Google...");
 		const success = await initiateGoogleOAuth2();
 		if (!success) {
 			setLoading(false);
@@ -43,125 +46,169 @@ export function LoginPage() {
 		}
 	};
 
-	const handleInstantEnter = (e?: React.FormEvent) => {
-		e?.preventDefault();
-		setLoading(true);
-		toast.success("Opening your workspace...");
-
-		const userName = name.trim() || "Resume Creator";
-		const userEmail = email.trim().toLowerCase() || "user@rbuilder.app";
-
-		const profile = {
-			id: `user_${Date.now()}`,
-			email: userEmail,
-			name: userName,
-			avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
-			onboarding_completed: true,
-			subscription_status: "active",
-		};
-
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
-		localStorage.setItem("rbuilder_google_user", JSON.stringify(profile));
-
-		setTimeout(() => {
-			window.location.href = `${window.location.origin}/dashboard/resumes`;
-		}, 300);
-	};
-
 	return (
-		<div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-200 via-gray-100 to-slate-300 p-4 dark:from-zinc-950 dark:via-neutral-900 dark:to-zinc-900">
-			{/* Ambient Fluid Glow Spheres */}
+		<div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#F5F3FF] via-[#EDE9FE] to-[#FAF5FF] p-4 sm:p-6 dark:from-[#0B0C16] dark:via-[#111222] dark:to-[#17182E]">
+			{/* Ambient Fluid Background Blobs */}
 			<div
 				aria-hidden="true"
-				className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-40"
+				className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-60 dark:opacity-30"
 			>
-				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-cyan-400/20 via-blue-500/20 to-indigo-500/20 blur-3xl" />
+				<div className="size-[650px] animate-pulse rounded-full bg-gradient-to-tr from-purple-300/40 via-indigo-300/40 to-pink-200/40 blur-3xl" />
 			</div>
 			<div
 				aria-hidden="true"
-				className="pointer-events-none fixed top-10 left-10 opacity-30"
+				className="pointer-events-none fixed top-10 left-10 opacity-40 dark:opacity-20"
 			>
-				<div className="size-[350px] rounded-full bg-gradient-to-br from-white/30 to-slate-400/20 blur-2xl" />
+				<div className="size-[300px] rounded-full bg-purple-400/20 blur-2xl" />
 			</div>
 
-			{/* Outer Frame */}
+			{/* Center Floating App Card (Image 3 UI/UX) */}
 			<m.div
-				initial={{ opacity: 0, scale: 0.95, y: 20 }}
+				initial={{ opacity: 0, scale: 0.96, y: 15 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
-				transition={{ duration: 0.5, ease: "easeOut" }}
-				className="relative w-full max-w-[480px] rounded-[44px] border-[6px] border-neutral-800/80 bg-neutral-900/5 p-4 shadow-[0_30px_70px_rgba(0,0,0,0.25)] backdrop-blur-3xl sm:p-8 dark:border-neutral-700/80"
+				transition={{ duration: 0.45, ease: "easeOut" }}
+				className="relative w-full max-w-[430px] overflow-hidden rounded-[38px] border border-white/80 bg-white/95 p-6 shadow-[0_20px_60px_rgba(109,40,217,0.08)] backdrop-blur-2xl sm:p-8 dark:border-white/10 dark:bg-[#141523]/95 dark:shadow-[0_25px_60px_rgba(0,0,0,0.5)]"
 			>
-				{/* Inner Frosted Glass Card */}
-				<div className="relative overflow-hidden rounded-[36px] border-2 border-white/70 bg-white/40 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] backdrop-blur-2xl dark:border-white/20 dark:bg-white/10 dark:shadow-[0_20px_50px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.2)]">
-					{/* Header */}
-					<div className="mb-6 flex flex-col items-center justify-center">
-						<div className="relative flex size-20 items-center justify-center rounded-full border-2 border-white/80 bg-white/50 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_5px_rgba(255,255,255,0.9)] backdrop-blur-xl dark:border-white/30 dark:bg-white/15 dark:shadow-[0_8px_20px_rgba(0,0,0,0.3),inset_0_2px_5px_rgba(255,255,255,0.3)]">
-							<div className="flex size-12 items-center justify-center rounded-full bg-neutral-800 text-white shadow-md dark:bg-white dark:text-neutral-900">
-								<UserIcon className="size-6" weight="fill" />
-							</div>
+				{/* Brand Logo Header */}
+				<div className="flex flex-col items-center text-center">
+					<div className="flex items-center gap-2">
+						<div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/25">
+							<SparkleIcon className="size-5" weight="fill" />
 						</div>
-
-						<h2 className="mt-4 font-extrabold text-2xl text-foreground tracking-tight">
-							Sign in to rbuilder
-						</h2>
-						<p className="mt-1 text-muted-foreground text-xs">
-							Build, customize, and export professional resumes
-						</p>
+						<span className="font-extrabold text-2xl text-foreground tracking-tight">
+							rbuilder
+						</span>
 					</div>
+					<p className="mt-1 font-medium text-muted-foreground text-xs tracking-wide">
+						Build. Customize. Succeed.
+					</p>
 
-					{/* Google Sign-In */}
-					<div className="space-y-4">
-						<button
-							type="button"
-							onClick={handleGoogleLogin}
-							disabled={loading}
-							className="group relative flex h-14 w-full items-center justify-center gap-3.5 rounded-full border-2 border-white/90 bg-gradient-to-b from-white/95 to-white/75 px-6 font-bold text-base text-neutral-900 shadow-[0_12px_28px_rgba(0,0,0,0.12),inset_0_2px_3px_rgba(255,255,255,1)] backdrop-blur-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_16px_36px_rgba(0,0,0,0.16)] active:scale-[0.98] dark:border-white/30 dark:from-white/25 dark:to-white/10 dark:text-white dark:shadow-[0_12px_28px_rgba(0,0,0,0.4),inset_0_2px_3px_rgba(255,255,255,0.4)]"
+					{/* Stylized Illustrated Character with Laptop */}
+					<div className="relative my-4 flex h-36 w-full items-center justify-center">
+						<div className="absolute size-32 rounded-full bg-purple-100/80 blur-lg dark:bg-purple-950/40" />
+						<svg
+							className="relative z-10 h-32 w-auto"
+							viewBox="0 0 200 160"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
 						>
-							<GoogleColorIcon className="size-6 transition-transform duration-300 group-hover:scale-110" />
-							<span>Continue with Google</span>
-						</button>
+							{/* Background Books & Leaves */}
+							<rect x="145" y="115" width="35" height="8" rx="2" fill="#C4B5FD" />
+							<rect x="140" y="125" width="45" height="10" rx="2" fill="#7C3AED" />
+							<rect x="142" y="137" width="42" height="9" rx="2" fill="#A78BFA" />
 
-						{/* Divider */}
-						<div className="relative flex items-center justify-center py-2">
-							<div className="w-full border-border/60 border-t" />
-							<span className="absolute bg-white/80 px-3 font-semibold text-[11px] text-muted-foreground uppercase dark:bg-neutral-900/80">
-								Or Direct Access
-							</span>
+							{/* Plant pot */}
+							<path d="M22 130L26 148H36L40 130H22Z" fill="#DDD6FE" />
+							<circle cx="28" cy="120" r="6" fill="#8B5CF6" />
+							<circle cx="34" cy="115" r="5" fill="#6D28D9" />
+
+							{/* Character Body */}
+							<circle cx="100" cy="50" r="22" fill="#FCD34D" />
+							{/* Hair */}
+							<path
+								d="M78 50C78 36 90 28 100 28C110 28 122 36 122 50C122 56 120 64 120 64L116 52L84 52L80 64C80 64 78 56 78 50Z"
+								fill="#1E1B4B"
+							/>
+							<circle cx="94" cy="48" r="2" fill="#1E1B4B" />
+							<circle cx="106" cy="48" r="2" fill="#1E1B4B" />
+							<path
+								d="M97 55C98 57 102 57 103 55"
+								stroke="#1E1B4B"
+								strokeWidth="1.5"
+								strokeLinecap="round"
+							/>
+							{/* Purple Sweater */}
+							<path
+								d="M72 82C72 70 82 66 100 66C118 66 128 70 128 82L132 120H68L72 82Z"
+								fill="#6D28D9"
+							/>
+							{/* Laptop */}
+							<path
+								d="M62 105L75 75H125L138 105H62Z"
+								fill="#E2E8F0"
+								stroke="#CBD5E1"
+								strokeWidth="2"
+							/>
+							<circle cx="100" cy="90" r="4" fill="#94A3B8" />
+							<rect x="54" y="105" width="92" height="6" rx="3" fill="#94A3B8" />
+						</svg>
+					</div>
+
+					<h2 className="font-extrabold text-xl text-foreground tracking-tight sm:text-2xl">
+						Welcome back!
+					</h2>
+					<p className="mt-1 text-muted-foreground text-xs">
+						Sign in to continue your resume journey
+					</p>
+				</div>
+
+				{/* 3 Value Propositions with Purple Icon Badges */}
+				<div className="mt-5 space-y-3 text-left">
+					<div className="flex items-center gap-3 rounded-2xl border border-purple-100/80 bg-purple-50/50 p-2.5 transition-colors dark:border-white/5 dark:bg-white/5">
+						<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
+							<ShieldCheckIcon className="size-5" weight="duotone" />
 						</div>
-
-						{/* Quick Access Form */}
-						<form onSubmit={handleInstantEnter} className="space-y-3">
-							<input
-								type="text"
-								placeholder="Your Name"
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								className="h-11 w-full rounded-2xl border border-white/70 bg-white/50 px-4 font-medium text-foreground text-sm placeholder:text-muted-foreground/70 focus:border-indigo-500 focus:outline-none dark:border-white/20 dark:bg-white/10"
-							/>
-							<input
-								type="email"
-								placeholder="Your Email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className="h-11 w-full rounded-2xl border border-white/70 bg-white/50 px-4 font-medium text-foreground text-sm placeholder:text-muted-foreground/70 focus:border-indigo-500 focus:outline-none dark:border-white/20 dark:bg-white/10"
-							/>
-							<button
-								type="submit"
-								disabled={loading}
-								className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/80 bg-gradient-to-r from-blue-600 to-indigo-600 font-bold text-sm text-white shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
-							>
-								<SparkleIcon className="size-4" weight="fill" />
-								<span>{loading ? "Loading..." : "Enter Workspace"}</span>
-							</button>
-						</form>
+						<div className="flex flex-col">
+							<span className="font-bold text-foreground text-xs">Secure & Private</span>
+							<span className="text-[11px] text-muted-foreground">Your data is safe with us</span>
+						</div>
 					</div>
 
-					{/* Trust Notice */}
-					<div className="mt-6 text-center">
-						<p className="text-[11px] text-muted-foreground/80">
-							Privacy-First • No Spam • SSL Encrypted
-						</p>
+					<div className="flex items-center gap-3 rounded-2xl border border-purple-100/80 bg-purple-50/50 p-2.5 transition-colors dark:border-white/5 dark:bg-white/5">
+						<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
+							<LightningIcon className="size-5" weight="fill" />
+						</div>
+						<div className="flex flex-col">
+							<span className="font-bold text-foreground text-xs">Quick & Easy</span>
+							<span className="text-[11px] text-muted-foreground">One tap sign-in with Google</span>
+						</div>
 					</div>
+
+					<div className="flex items-center gap-3 rounded-2xl border border-purple-100/80 bg-purple-50/50 p-2.5 transition-colors dark:border-white/5 dark:bg-white/5">
+						<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300">
+							<TargetIcon className="size-5" weight="duotone" />
+						</div>
+						<div className="flex flex-col">
+							<span className="font-bold text-foreground text-xs">ATS-Optimized Resumes</span>
+							<span className="text-[11px] text-muted-foreground">Tailored templates to land interviews</span>
+						</div>
+					</div>
+				</div>
+
+				{/* Divider */}
+				<div className="relative my-5 flex items-center justify-center">
+					<div className="w-full border-border/70 border-t" />
+					<span className="absolute bg-white px-3 font-medium text-[11px] text-muted-foreground lowercase dark:bg-[#141523]">
+						or
+					</span>
+				</div>
+
+				{/* Google Sign-In Button */}
+				<div>
+					<button
+						type="button"
+						onClick={handleGoogleLogin}
+						disabled={loading}
+						className="group relative flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-neutral-200 bg-white px-5 font-bold text-neutral-800 text-sm shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-neutral-50/90 hover:shadow-md active:scale-[0.98] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+					>
+						<GoogleColorIcon className="size-5 transition-transform duration-200 group-hover:scale-110" />
+						<span>{loading ? "Redirecting..." : "Continue with Google"}</span>
+					</button>
+				</div>
+
+				{/* Footer Policy Notice */}
+				<div className="mt-5 text-center">
+					<p className="text-[11px] text-muted-foreground/80 leading-relaxed">
+						<ShieldCheckIcon className="mr-1 inline-block size-3.5 align-text-bottom text-purple-600 dark:text-purple-400" />
+						By continuing, you agree to our{" "}
+						<a href="/#terms" className="font-medium text-foreground underline hover:text-purple-600">
+							Terms of Service
+						</a>{" "}
+						and{" "}
+						<a href="/#privacy" className="font-medium text-foreground underline hover:text-purple-600">
+							Privacy Policy
+						</a>
+					</p>
 				</div>
 			</m.div>
 		</div>
