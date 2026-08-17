@@ -29,10 +29,6 @@ export const env = createEnv({
 		SUPABASE_ANON_KEY: z.string().min(1).optional(),
 		SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
 
-		// Razorpay Payment Integration
-		RAZORPAY_KEY_ID: z.string().min(1).optional(),
-		RAZORPAY_KEY_SECRET: z.string().min(1).optional(),
-
 		// Authentication
 		AUTH_SECRET: z.string().min(1),
 		BETTER_AUTH_API_KEY: z.string().min(1).optional(),
