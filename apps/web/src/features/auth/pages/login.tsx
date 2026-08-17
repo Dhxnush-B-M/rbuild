@@ -72,8 +72,8 @@ export function LoginPage() {
 				{/* Brand Logo Header */}
 				<div className="flex flex-col items-center text-center">
 					<div className="flex items-center gap-2.5">
-						<BrandLogoSvg className="size-9 shadow-md shadow-purple-500/25 transition-transform hover:scale-105" />
-						<span className="bg-gradient-to-r from-foreground via-purple-600 to-indigo-600 bg-clip-text font-extrabold text-2xl text-transparent tracking-tight">
+						<BrandLogoSvg className="size-10 drop-shadow-[0_0_12px_rgba(0,232,122,0.4)] transition-transform hover:scale-105" />
+						<span className="bg-gradient-to-r from-[#3DFFA0] via-[#00E87A] to-[#00C060] bg-clip-text font-extrabold text-2xl text-transparent tracking-tight">
 							rbuilder
 						</span>
 					</div>
