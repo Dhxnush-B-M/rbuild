@@ -1,13 +1,20 @@
-<svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="360" height="80" viewBox="0 0 360 80" fill="none" xmlns="http://www.w3.org/2000/svg">
   <title>rbuilder</title>
-  <rect width="100" height="100" rx="25" fill="url(#brand-grad)"/>
-  <text x="50" y="66" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="50" font-weight="900" fill="#FFFFFF" text-anchor="middle">rB</text>
-  <text x="125" y="65" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="800" fill="#09090B">rbuilder</text>
   <defs>
-    <linearGradient id="brand-grad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3B82F6"/>
-      <stop offset="0.5" stop-color="#6366F1"/>
-      <stop offset="1" stop-color="#8B5CF6"/>
+    <linearGradient id="rb-g" x1="8" y1="5" x2="92" y2="76" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00B857"/>
+      <stop offset="55%" stop-color="#00994A"/>
+      <stop offset="100%" stop-color="#007A3C"/>
     </linearGradient>
   </defs>
+  <!-- rb mark scaled to ~84x70, centered vertically in 80px -->
+  <g transform="translate(4, 5) scale(0.45) translate(0, -14)">
+    <path fill="url(#rb-g)" d="M18 170 L18 98 C18 55 48 22 92 22 L115 22 L115 48 L92 48 C65 48 48 64 48 98 L48 170 Z"/>
+    <path fill="url(#rb-g)" d="M100 14 L126 14 L126 170 L100 170 Z"/>
+    <path fill="url(#rb-g)" d="M126 82 C126 82 142 76 158 76 C188 76 204 96 204 124 C204 152 188 172 158 172 C142 172 126 166 126 166 L126 142 C126 142 142 148 158 148 C172 148 178 138 178 124 C178 110 172 100 158 100 C142 100 126 106 126 106 Z"/>
+  </g>
+  <!-- wordmark — dark text for light mode backgrounds -->
+  <text x="104" y="57"
+        font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        font-size="46" font-weight="800" fill="#09090B" letter-spacing="-0.5">rbuilder</text>
 </svg>

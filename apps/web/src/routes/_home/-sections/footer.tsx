@@ -42,7 +42,7 @@ export function Footer() {
 		>
 			<div className="grid grid-cols-1 gap-8 pb-8 sm:grid-cols-2 lg:grid-cols-3">
 				<div className="space-y-4">
-					<BrandIcon variant="logo" className="size-10" />
+					<BrandIcon variant="logo" className="h-9" />
 
 					<div className="space-y-2">
 						<h2 className="font-semibold text-lg tracking-tight">rbuilder</h2>

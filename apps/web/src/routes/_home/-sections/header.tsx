@@ -52,7 +52,7 @@ export function Header() {
 					className="flex items-center gap-x-2 transition-transform duration-300 hover:scale-105"
 					aria-label="rbuilder - Go to homepage"
 				>
-					<BrandIcon className="size-9" />
+					<BrandIcon className="h-9" />
 				</Link>
 
 				{/* Controls */}

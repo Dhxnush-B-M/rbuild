@@ -17,7 +17,7 @@ import { Link } from "@tanstack/react-router";
 export function ErrorScreen({ error, reset }: ErrorComponentProps) {
 	return (
 		<div className="mx-auto flex h-svh max-w-md flex-col items-center justify-center gap-y-4 px-4">
-			<BrandIcon variant="logo" className="size-12" />
+			<BrandIcon variant="logo" className="h-10" />
 
 			<Alert variant="destructive">
 				<WarningIcon />
