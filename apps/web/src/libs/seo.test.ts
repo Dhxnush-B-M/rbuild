@@ -6,13 +6,13 @@ import {
 } from "./seo";
 
 describe("getCanonicalRootUrl", () => {
-	it("uses localhost default when no origin is available", () => {
-		expect(getCanonicalRootUrl()).toBe("http://localhost:3000/");
+	it("uses production default when no origin is available", () => {
+		expect(getCanonicalRootUrl()).toBe("https://rbuilder.space/");
 	});
 
 	it("normalizes an app origin to the root URL", () => {
-		expect(getCanonicalRootUrl("http://localhost:3000")).toBe(
-			"http://localhost:3000/",
+		expect(getCanonicalRootUrl("https://rbuilder.space")).toBe(
+			"https://rbuilder.space/",
 		);
 	});
 });
@@ -29,10 +29,10 @@ describe("createNoindexFollowMeta", () => {
 describe("createResumeSocialMeta", () => {
 	it("generates clean social meta tags", () => {
 		const meta = createResumeSocialMeta({
-			canonicalUrl: "http://localhost:3000/user/sample",
+			canonicalUrl: "https://rbuilder.space/user/sample",
 			title: "Resume Title",
 			description: "Resume Description",
-			imageUrl: "http://localhost:3000/image.jpg",
+			imageUrl: "https://rbuilder.space/image.jpg",
 		});
 
 		expect(meta.length).toBeGreaterThan(0);

@@ -4,4 +4,4 @@ Disallow: /auth/
 Disallow: /builder/
 Disallow: /dashboard/
 
-Sitemap: https://rbuild.pages.dev/sitemap.xml
+Sitemap: https://rbuilder.space/sitemap.xml

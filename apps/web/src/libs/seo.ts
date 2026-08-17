@@ -2,7 +2,7 @@ export const getCanonicalRootUrl = (origin?: string): string => {
 	if (!origin && typeof window !== "undefined") {
 		return `${window.location.origin}/`;
 	}
-	if (!origin) return "http://localhost:3000/";
+	if (!origin) return "https://rbuilder.space/";
 
 	try {
 		const url = new URL(origin);
@@ -11,7 +11,7 @@ export const getCanonicalRootUrl = (origin?: string): string => {
 		url.hash = "";
 		return url.toString();
 	} catch {
-		return "http://localhost:3000/";
+		return "https://rbuilder.space/";
 	}
 };
 
