@@ -12,17 +12,14 @@ export function checkAuthAndOnboardingAccess(): AccessStatus {
 		if (cached) {
 			const profile = JSON.parse(cached);
 			if (profile?.email) {
-				if (profile.onboarding_completed && profile.subscription_status === "active") {
-					return "allowed";
-				}
-				return "needs_onboarding";
+				return "allowed";
 			}
 		}
 
 		const googleUser = localStorage.getItem("rbuilder_google_user");
 		if (googleUser) {
 			const parsed = JSON.parse(googleUser);
-			if (parsed?.onboarding_completed && parsed?.subscription_status === "active") {
+			if (parsed?.email) {
 				return "allowed";
 			}
 		}
@@ -35,7 +32,6 @@ export function checkAuthAndOnboardingAccess(): AccessStatus {
 
 /**
  * Asynchronous cross-device check querying Supabase directly by Gmail/Email.
- * If the user has subscribed on ANY device, grants instant access to dashboard.
  */
 export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatus> {
 	if (typeof window === "undefined") return "allowed";
@@ -47,10 +43,8 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 		// 1. Check current Supabase session
 		const currentProfile = await getCurrentSupabaseUser();
 		if (currentProfile?.email) {
-			if (currentProfile.onboarding_completed && currentProfile.subscription_status === "active") {
-				localStorage.setItem("rbuilder_user_profile", JSON.stringify(currentProfile));
-				return "allowed";
-			}
+			localStorage.setItem("rbuilder_user_profile", JSON.stringify(currentProfile));
+			return "allowed";
 		}
 
 		// 2. Check if a google account email was registered
@@ -59,11 +53,10 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 			const googleUser = JSON.parse(googleUserRaw);
 			if (googleUser?.email) {
 				const dbProfile = await getProfileByEmailFromSupabase(googleUser.email);
-				if (dbProfile?.onboarding_completed && dbProfile?.subscription_status === "active") {
+				if (dbProfile?.email) {
 					localStorage.setItem("rbuilder_user_profile", JSON.stringify(dbProfile));
 					return "allowed";
 				}
-				return "needs_onboarding";
 			}
 		}
 

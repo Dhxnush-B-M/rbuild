@@ -14,35 +14,16 @@ export interface GoogleOAuthUser {
 /**
  * Initiates standard Google OAuth 2.0 login
  */
-export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?: string }) {
+export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?: string }): boolean {
 	const clientId =
 		options?.clientId ||
 		(import.meta.env.VITE_GOOGLE_CLIENT_ID as string) ||
 		(import.meta.env.GOOGLE_CLIENT_ID as string);
 
-	const redirectUri = options?.redirectTo || `${window.location.origin}/onboarding`;
+	const redirectUri = options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
 
 	if (!clientId) {
-		// Fallback Google OAuth 2.0 Demo / Direct Authentication for quick setup
-		const demoUser: GoogleOAuthUser = {
-			id: `google_${Date.now()}`,
-			email: "alex.google@example.com",
-			name: "Alex Johnson",
-			picture: "https://api.dicebear.com/7.x/avataaars/svg?seed=AlexGoogle",
-		};
-
-		if (typeof window !== "undefined") {
-			localStorage.setItem("rbuilder_google_user", JSON.stringify(demoUser));
-			saveUserToSupabase({
-				id: demoUser.id,
-				email: demoUser.email,
-				name: demoUser.name,
-				avatar_url: demoUser.picture,
-				provider: "google_oauth2",
-			});
-			window.location.href = redirectUri;
-		}
-		return;
+		return false;
 	}
 
 	const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
@@ -59,6 +40,37 @@ export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?:
 	});
 
 	window.location.href = `${rootUrl}?${params.toString()}`;
+	return true;
+}
+
+/**
+ * Initiates transparent guest / local workspace access
+ */
+export function initiateGuestSession(options?: { redirectTo?: string }) {
+	const redirectUri = options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
+	const guestUser: GoogleOAuthUser = {
+		id: `user_${Date.now()}`,
+		email: "user@rbuilder.app",
+		name: "Resume Creator",
+		picture: "https://api.dicebear.com/7.x/avataaars/svg?seed=rbuilder",
+		onboarding_completed: true,
+		subscription_status: "active",
+	};
+
+	if (typeof window !== "undefined") {
+		localStorage.setItem("rbuilder_user_profile", JSON.stringify(guestUser));
+		localStorage.setItem("rbuilder_google_user", JSON.stringify(guestUser));
+		saveUserToSupabase({
+			id: guestUser.id,
+			email: guestUser.email,
+			name: guestUser.name,
+			avatar_url: guestUser.picture,
+			provider: "local",
+			subscription_status: "active",
+			onboarding_completed: true,
+		});
+		window.location.href = redirectUri;
+	}
 }
 
 /**

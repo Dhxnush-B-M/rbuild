@@ -56,7 +56,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
 			{ name: "theme-color", content: "#09090B" },
 			{ name: "application-name", content: "rbuilder" },
-			{ name: "robots", content: "noindex, nofollow" },
+			{ name: "robots", content: "index, follow" },
 		],
 	}),
 	beforeLoad: async () => {

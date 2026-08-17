@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createNoindexFollowMeta } from "@/libs/seo";
 import { ResumeBackground } from "./-components/resume-background";
 import { Faq } from "./-sections/faq";
 import { Features } from "./-sections/features";
@@ -15,7 +14,7 @@ import { Testimonials } from "./-sections/testimonials";
 export const Route = createFileRoute("/_home/")({
 	component: RouteComponent,
 	head: () => ({
-		meta: [createNoindexFollowMeta()],
+		meta: [{ name: "robots", content: "index, follow" }],
 	}),
 });
 

@@ -2,7 +2,7 @@ import { UserIcon } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { toast } from "sonner";
 import { cn } from "@rbuilder/utils/style";
-import { initiateGoogleOAuth2 } from "@/libs/auth/oauth2";
+import { initiateGoogleOAuth2, initiateGuestSession } from "@/libs/auth/oauth2";
 
 function GoogleColorIcon({ className }: { className?: string }) {
 	return (
@@ -29,9 +29,22 @@ function GoogleColorIcon({ className }: { className?: string }) {
 
 export function LoginPage() {
 	const handleGoogleSignIn = () => {
-		toast.loading("Connecting to Google OAuth 2.0...");
-		initiateGoogleOAuth2({
-			redirectTo: `${window.location.origin}/onboarding`,
+		const success = initiateGoogleOAuth2({
+			redirectTo: `${window.location.origin}/dashboard/resumes`,
+		});
+
+		if (!success) {
+			toast.info("Google OAuth is not configured. Entering local guest workspace...");
+			initiateGuestSession({
+				redirectTo: `${window.location.origin}/dashboard/resumes`,
+			});
+		}
+	};
+
+	const handleGuestAccess = () => {
+		toast.loading("Entering workspace...");
+		initiateGuestSession({
+			redirectTo: `${window.location.origin}/dashboard/resumes`,
 		});
 	};
 
@@ -45,14 +58,14 @@ export function LoginPage() {
 				<div className="size-[350px] rounded-full bg-gradient-to-br from-white/30 to-slate-400/20 blur-2xl" />
 			</div>
 
-			{/* Outer Tablet Frame (Matching Mockup Tablet Device) */}
+			{/* Outer Tablet Frame */}
 			<m.div
 				initial={{ opacity: 0, scale: 0.95, y: 20 }}
 				animate={{ opacity: 1, scale: 1, y: 0 }}
 				transition={{ duration: 0.5, ease: "easeOut" }}
 				className="relative w-full max-w-[480px] rounded-[44px] border-[6px] border-neutral-800/80 bg-neutral-900/5 p-4 shadow-[0_30px_70px_rgba(0,0,0,0.25)] backdrop-blur-3xl sm:p-8 dark:border-neutral-700/80"
 			>
-				{/* Inner Frosted Water-Glass Card (Exact Mockup Bubble Card) */}
+				{/* Inner Frosted Water-Glass Card */}
 				<div className="relative overflow-hidden rounded-[36px] border-2 border-white/70 bg-white/40 p-8 shadow-[0_20px_50px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8)] backdrop-blur-2xl dark:border-white/20 dark:bg-white/10 dark:shadow-[0_20px_50px_rgba(0,0,0,0.4),inset_0_2px_4px_rgba(255,255,255,0.2)]">
 					{/* Top Frosted Avatar Silhouette */}
 					<div className="mb-8 flex flex-col items-center justify-center">
@@ -62,12 +75,12 @@ export function LoginPage() {
 							</div>
 						</div>
 
-						<h2 className="mt-4 font-extrabold text-2xl text-foreground tracking-tight">Welcome Back</h2>
-						<p className="mt-1 text-muted-foreground text-xs">Sign in with your Google account to continue</p>
+						<h2 className="mt-4 font-extrabold text-2xl text-foreground tracking-tight">Welcome to rbuilder</h2>
+						<p className="mt-1 text-muted-foreground text-xs">Sign in or continue directly to build your resume</p>
 					</div>
 
-					{/* Frosted Glass Pill Button: Sign In with Google */}
-					<div className="space-y-4 pt-2">
+					{/* Action Buttons */}
+					<div className="space-y-3 pt-2">
 						<button
 							type="button"
 							onClick={handleGoogleSignIn}
@@ -76,12 +89,20 @@ export function LoginPage() {
 							<GoogleColorIcon className="size-6 transition-transform duration-300 group-hover:scale-110" />
 							<span>Sign in with Google</span>
 						</button>
+
+						<button
+							type="button"
+							onClick={handleGuestAccess}
+							className="group relative flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/60 bg-white/40 px-6 font-semibold text-neutral-800 text-sm shadow-sm backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:bg-white/60 active:scale-[0.98] dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+						>
+							<span>Continue as Guest</span>
+						</button>
 					</div>
 
-					{/* Subtle Bottom Trust Notice */}
+					{/* Bottom Trust Notice */}
 					<div className="mt-8 text-center">
 						<p className="text-[11px] text-muted-foreground/80">
-							OAuth 2.0 Secure Authentication • Instant 1-Click Access
+							Privacy-First • No Tracking • Instant Free Access
 						</p>
 					</div>
 				</div>

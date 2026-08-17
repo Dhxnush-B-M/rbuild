@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /builder/
+Disallow: /dashboard/
+
+Sitemap: https://rbuild.pages.dev/sitemap.xml

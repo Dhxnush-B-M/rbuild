@@ -162,7 +162,7 @@ export function Support() {
 							</div>
 
 							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">
-								24/7 Full Calling & Live Support
+								24/7 Dedicated Email Support
 							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
