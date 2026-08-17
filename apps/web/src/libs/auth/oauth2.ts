@@ -1,3 +1,4 @@
+import { supabase } from "@/libs/supabase/client";
 import { getProfileByEmailFromSupabase, saveUserToSupabase } from "@/libs/supabase/db";
 
 export interface GoogleOAuthUser {
@@ -12,35 +13,39 @@ export interface GoogleOAuthUser {
 }
 
 /**
- * Initiates standard Google OAuth 2.0 login
+ * Initiates standard Supabase Google OAuth 2.0 flow
  */
-export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?: string }): boolean {
-	const clientId =
-		options?.clientId ||
-		(import.meta.env.VITE_GOOGLE_CLIENT_ID as string) ||
-		(import.meta.env.GOOGLE_CLIENT_ID as string);
+export async function initiateGoogleOAuth2(options?: { redirectTo?: string }): Promise<boolean> {
+	const redirectUri =
+		options?.redirectTo ||
+		(typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : "https://rbuilder.space/auth/callback");
 
-	const redirectUri = options?.redirectTo || `${window.location.origin}/auth/callback`;
+	try {
+		const { data, error } = await supabase.auth.signInWithOAuth({
+			provider: "google",
+			options: {
+				redirectTo: redirectUri,
+				queryParams: {
+					access_type: "offline",
+					prompt: "select_account",
+				},
+			},
+		});
 
-	if (!clientId) {
+		if (error) {
+			console.error("Supabase signInWithOAuth Error:", error);
+			return false;
+		}
+
+		if (data?.url) {
+			window.location.href = data.url;
+			return true;
+		}
+		return true;
+	} catch (e) {
+		console.error("Failed to initiate Google OAuth via Supabase:", e);
 		return false;
 	}
-
-	const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-
-	const params = new URLSearchParams({
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: "token id_token",
-		scope: "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
-		include_granted_scopes: "true",
-		state: "rbuilder_google_auth",
-		nonce: Math.random().toString(36).substring(2),
-		prompt: "select_account",
-	});
-
-	window.location.href = `${rootUrl}?${params.toString()}`;
-	return true;
 }
 
 /**
@@ -74,9 +79,10 @@ export function initiateGuestSession(options?: { redirectTo?: string }) {
 }
 
 /**
- * Parse Google OAuth 2.0 hash fragment on return.
- * Checks Supabase to see if this Gmail already has an active subscription.
- * If yes -> immediately navigates to /dashboard/resumes without asking for payment again!
+ * Parse Google OAuth 2.0 callback / session on return.
+ * Checks Supabase to see if this user already has an active subscription.
+ * If yes -> navigates to /dashboard/resumes.
+ * If unpaid -> navigates to /onboarding for plan selection.
  */
 export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	user: GoogleOAuthUser | null;
@@ -85,9 +91,50 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	if (typeof window === "undefined") return { user: null, redirectTo: "/auth/login" };
 
 	let googleUser: GoogleOAuthUser | null = null;
-	const hash = window.location.hash;
 
-	if (hash?.includes("access_token")) {
+	// 1. Handle PKCE code exchange if present
+	try {
+		const searchParams = new URLSearchParams(window.location.search);
+		const code = searchParams.get("code");
+		if (code) {
+			const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+			if (!error && data?.session?.user) {
+				const u = data.session.user;
+				const userEmail = (u.email || "").toLowerCase().trim();
+				googleUser = {
+					id: u.id,
+					email: userEmail,
+					name: (u.user_metadata?.full_name as string) || (u.user_metadata?.name as string) || userEmail.split("@")[0] || "User",
+					picture: (u.user_metadata?.avatar_url as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+				};
+			}
+		}
+	} catch (e) {
+		console.warn("PKCE code exchange check:", e);
+	}
+
+	// 2. Check current Supabase session
+	if (!googleUser) {
+		try {
+			const { data: { session } } = await supabase.auth.getSession();
+			if (session?.user?.email) {
+				const u = session.user;
+				const userEmail = (u.email || "").toLowerCase().trim();
+				googleUser = {
+					id: u.id,
+					email: userEmail,
+					name: (u.user_metadata?.full_name as string) || (u.user_metadata?.name as string) || userEmail.split("@")[0] || "User",
+					picture: (u.user_metadata?.avatar_url as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+				};
+			}
+		} catch (e) {
+			console.warn("Supabase session check in oauth2:", e);
+		}
+	}
+
+	// 3. Fallback: Parse URL hash if implicit tokens were passed
+	const hash = window.location.hash;
+	if (!googleUser && hash?.includes("access_token")) {
 		const params = new URLSearchParams(hash.replace(/^#/, ""));
 		const idToken = params.get("id_token");
 
@@ -103,7 +150,7 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 				);
 
 				const payload = JSON.parse(jsonPayload);
-				const userEmail = (payload.email || "").toLowerCase();
+				const userEmail = (payload.email || "").toLowerCase().trim();
 
 				googleUser = {
 					id: payload.sub || `google_${Date.now()}`,
@@ -113,32 +160,31 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 						payload.picture ||
 						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
 				};
-
-				localStorage.setItem("rbuilder_google_user", JSON.stringify(googleUser));
-				// Clean URL hash to eliminate lingering tokens
-				try {
-					window.history.replaceState(null, "", window.location.pathname);
-				} catch {}
 			} catch (e) {
 				console.warn("Failed to parse OAuth2 id_token:", e);
 			}
 		}
 	}
 
+	// Clean URL hash / query parameters to avoid lingering tokens
+	try {
+		window.history.replaceState(null, "", window.location.pathname);
+	} catch {}
+
 	if (!googleUser) {
 		const stored = localStorage.getItem("rbuilder_google_user");
 		if (stored) {
 			try {
 				googleUser = JSON.parse(stored);
-			} catch {
-				// ignore
-			}
+			} catch {}
 		}
 	}
 
 	if (!googleUser?.email) {
 		return { user: null, redirectTo: "/auth/login" };
 	}
+
+	localStorage.setItem("rbuilder_google_user", JSON.stringify(googleUser));
 
 	const userEmail = googleUser.email.toLowerCase().trim();
 

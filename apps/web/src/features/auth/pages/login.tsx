@@ -32,16 +32,14 @@ export function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [loading, setLoading] = useState(false);
 
-	const handleGoogleLogin = () => {
+	const handleGoogleLogin = async () => {
 		setLoading(true);
-		toast.loading("Connecting to Google...");
-		const success = initiateGoogleOAuth2();
+		toast.loading("Redirecting to Google...");
+		const success = await initiateGoogleOAuth2();
 		if (!success) {
+			setLoading(false);
 			toast.dismiss();
-			toast.info("Google OAuth is initializing. Entering workspace...");
-			setTimeout(() => {
-				window.location.href = `${window.location.origin}/dashboard/resumes`;
-			}, 300);
+			toast.error("Failed to connect with Google. Please try again.");
 		}
 	};
 
