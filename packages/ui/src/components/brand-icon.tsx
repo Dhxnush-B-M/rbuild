@@ -29,9 +29,9 @@ export function BrandLogoSvg({ className }: { className?: string }) {
 					y2="200"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop offset="0%" stopColor="#3DFFA0" />
-					<stop offset="55%" stopColor="#00E87A" />
-					<stop offset="100%" stopColor="#00C060" />
+					<stop offset="0%" stopColor="#3FFFA3" />
+					<stop offset="55%" stopColor="#00EB7C" />
+					<stop offset="100%" stopColor="#00C262" />
 				</linearGradient>
 			</defs>
 
