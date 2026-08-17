@@ -18,6 +18,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { BrandLogoSvg } from "@rbuilder/ui/components/brand-icon";
 import {
 	initiateRazorpayPayment,
 	SUBSCRIPTION_PLANS,
@@ -166,8 +167,12 @@ function OnboardingPage() {
 				transition={{ duration: 0.45 }}
 				className="relative z-10 w-full max-w-[440px] overflow-hidden rounded-[38px] border border-white/90 bg-white p-6 shadow-[0_20px_60px_rgba(109,40,217,0.09)] sm:p-8 dark:border-white/10 dark:bg-[#151624]"
 			>
-				{/* Top Step Counter */}
+				{/* Top Step Counter & Logo */}
 				<div className="mb-6 text-center">
+					<div className="mb-3 flex items-center justify-center gap-2">
+						<BrandLogoSvg className="size-7 shadow-sm shadow-purple-500/20" />
+						<span className="font-extrabold text-foreground text-lg tracking-tight">rbuilder</span>
+					</div>
 					<p className="font-semibold text-[13px] text-muted-foreground">
 						Step {currentStep} of 4
 					</p>

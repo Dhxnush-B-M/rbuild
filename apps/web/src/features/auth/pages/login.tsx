@@ -1,12 +1,12 @@
 import {
 	LightningIcon,
 	ShieldCheckIcon,
-	SparkleIcon,
 	TargetIcon,
 } from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { BrandLogoSvg } from "@rbuilder/ui/components/brand-icon";
 import { initiateGoogleOAuth2 } from "@/libs/auth/oauth2";
 
 function GoogleColorIcon({ className }: { className?: string }) {
@@ -71,11 +71,9 @@ export function LoginPage() {
 			>
 				{/* Brand Logo Header */}
 				<div className="flex flex-col items-center text-center">
-					<div className="flex items-center gap-2">
-						<div className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/25">
-							<SparkleIcon className="size-5" weight="fill" />
-						</div>
-						<span className="font-extrabold text-2xl text-foreground tracking-tight">
+					<div className="flex items-center gap-2.5">
+						<BrandLogoSvg className="size-9 shadow-md shadow-purple-500/25 transition-transform hover:scale-105" />
+						<span className="bg-gradient-to-r from-foreground via-purple-600 to-indigo-600 bg-clip-text font-extrabold text-2xl text-transparent tracking-tight">
 							rbuilder
 						</span>
 					</div>
