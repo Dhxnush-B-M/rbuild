@@ -1,5 +1,5 @@
 {
-	"$schema": "https://v2-10-7.turborepo.dev/schema.json",
+	"$schema": "https://turbo.build/schema.json",
 	"ui": "stream",
 	"boundaries": {
 		"dependencies": {
