@@ -33,7 +33,9 @@ function RouteComponent() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const { sidebarState } = Route.useLoaderData();
-	const [access, setAccess] = useState<"checking" | "allowed">("checking");
+	const [access, setAccess] = useState<"checking" | "allowed">(() =>
+		checkAuthAndOnboardingAccess() === "allowed" ? "allowed" : "checking",
+	);
 
 	useEffect(() => {
 		const syncStatus = checkAuthAndOnboardingAccess();

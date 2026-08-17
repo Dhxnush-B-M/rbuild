@@ -21,8 +21,7 @@ import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { PromptDialogProvider } from "@/hooks/use-prompt";
 import type { AuthSession } from "@/libs/auth/session";
-import { getSession } from "@/libs/auth/session";
-import { getLocale, isRTL, loadLocale } from "@/libs/locale";
+import { getLocale, isRTL } from "@/libs/locale";
 import type { FeatureFlags, orpc } from "@/libs/orpc/client";
 import { defaultFeatureFlags } from "@/libs/orpc/client";
 import type { Theme } from "@/libs/theme";
@@ -82,13 +81,44 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 			{ name: "robots", content: "index, follow" },
 		],
 	}),
-	beforeLoad: async () => {
+	beforeLoad: () => {
 		const theme = getTheme();
 		const locale = getLocale();
-		const session = await getSession().catch(() => null);
 		const flags = defaultFeatureFlags;
 
-		await loadLocale(locale);
+		let session: AuthSession | null = null;
+		if (typeof window !== "undefined") {
+			try {
+				const cached =
+					localStorage.getItem("rbuilder_user_profile") ||
+					localStorage.getItem("rbuilder_google_user");
+				if (cached) {
+					const profile = JSON.parse(cached);
+					if (profile?.email) {
+						session = {
+							user: {
+								id: profile.id || "user",
+								name: profile.name || "User",
+								email: profile.email,
+								image: profile.avatar_url || profile.picture || null,
+								emailVerified: true,
+								createdAt: new Date(),
+								updatedAt: new Date(),
+								username: profile.username || profile.email.split("@")[0],
+							},
+							session: {
+								id: "session-token",
+								userId: profile.id || "user",
+								token: "token",
+								expiresAt: new Date(Date.now() + 30 * 86400000),
+								createdAt: new Date(),
+								updatedAt: new Date(),
+							},
+						};
+					}
+				}
+			} catch {}
+		}
 
 		return { theme, locale, session, flags };
 	},
