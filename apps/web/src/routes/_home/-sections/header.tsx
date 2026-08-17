@@ -44,7 +44,7 @@ export function Header() {
 		>
 			<nav
 				aria-label="Main navigation"
-				className="pointer-events-auto mx-auto mt-3 flex max-w-6xl items-center justify-between rounded-full border border-white/20 bg-background/60 px-4 py-2.5 shadow-2xl shadow-black/10 backdrop-blur-2xl transition-all duration-300 sm:mt-4 dark:border-white/10"
+				className="pointer-events-auto mx-auto mt-3 flex max-w-6xl items-center justify-between rounded-full bg-background/60 px-4 py-2.5 shadow-2xl shadow-black/10 backdrop-blur-2xl transition-all duration-300 sm:mt-4"
 			>
 				{/* Brand Logo */}
 				<Link
