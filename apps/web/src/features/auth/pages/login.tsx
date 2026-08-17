@@ -41,13 +41,6 @@ export function LoginPage() {
 		}
 	};
 
-	const handleGuestAccess = () => {
-		toast.loading("Entering workspace...");
-		initiateGuestSession({
-			redirectTo: `${window.location.origin}/dashboard/resumes`,
-		});
-	};
-
 	return (
 		<div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-200 via-gray-100 to-slate-300 p-4 dark:from-zinc-950 dark:via-neutral-900 dark:to-zinc-900">
 			{/* Ambient Fluid Glow Spheres */}
@@ -88,14 +81,6 @@ export function LoginPage() {
 						>
 							<GoogleColorIcon className="size-6 transition-transform duration-300 group-hover:scale-110" />
 							<span>Sign in with Google</span>
-						</button>
-
-						<button
-							type="button"
-							onClick={handleGuestAccess}
-							className="group relative flex h-12 w-full items-center justify-center gap-2 rounded-full border border-white/60 bg-white/40 px-6 font-semibold text-neutral-800 text-sm shadow-sm backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:bg-white/60 active:scale-[0.98] dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
-						>
-							<span>Continue as Guest</span>
 						</button>
 					</div>
 
