@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 vi.stubGlobal("__APP_VERSION__", "9.9.9");
 
@@ -24,7 +24,9 @@ describe("Copyright", () => {
 	it("renders the MIT license link", () => {
 		renderCopyright();
 		const link = screen.getByRole("link", { name: "MIT" });
-		expect(link.getAttribute("href")).toBe("https://github.com/AmruthPillai/Reactive-Resume/blob/main/LICENSE");
+		expect(link.getAttribute("href")).toBe(
+			"https://github.com/AmruthPillai/Reactive-Resume/blob/main/LICENSE",
+		);
 		expect(link.getAttribute("rel")).toBe("noopener noreferrer");
 	});
 

@@ -1,8 +1,3 @@
-import type {
-	CustomSection,
-	CustomSectionItem as CustomSectionItemType,
-	CustomSectionType,
-} from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import {
@@ -14,7 +9,11 @@ import {
 	PencilSimpleLineIcon,
 	TrashSimpleIcon,
 } from "@phosphor-icons/react";
-import { AnimatePresence, Reorder } from "motion/react";
+import type {
+	CustomSection,
+	CustomSectionItem as CustomSectionItemType,
+	CustomSectionType,
+} from "@rbuilder/schema/resume/data";
 import { Badge } from "@rbuilder/ui/components/badge";
 import {
 	DropdownMenu,
@@ -31,8 +30,12 @@ import {
 } from "@rbuilder/ui/components/dropdown-menu";
 import { stripHtml } from "@rbuilder/utils/string";
 import { cn } from "@rbuilder/utils/style";
+import { AnimatePresence, Reorder } from "motion/react";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getSectionTitle } from "@/libs/resume/section";
 import { SectionBase } from "../shared/section-base";
@@ -72,19 +75,24 @@ function truncateHtml(html: string, max = 50): string {
 	return stripped.length > max ? `${stripped.slice(0, max)}...` : stripped;
 }
 
-function getItemTitle(type: CustomSectionType, item: CustomSectionItemType): string {
+function getItemTitle(
+	type: CustomSectionType,
+	item: CustomSectionItemType,
+): string {
 	if (type === "summary") {
 		if ("content" in item) {
 			return (
 				truncateHtml(item.content) ||
 				t({
-					comment: "Fallback title for a custom summary item in resume builder when content is empty",
+					comment:
+						"Fallback title for a custom summary item in resume builder when content is empty",
 					message: "Summary",
 				})
 			);
 		}
 		return t({
-			comment: "Fallback title for a custom summary item in resume builder when content is unavailable",
+			comment:
+				"Fallback title for a custom summary item in resume builder when content is unavailable",
 			message: "Summary",
 		});
 	}
@@ -93,21 +101,28 @@ function getItemTitle(type: CustomSectionType, item: CustomSectionItemType): str
 			return (
 				truncateHtml(item.recipient) ||
 				t({
-					comment: "Fallback title for a custom cover letter item in resume builder when recipient is empty",
+					comment:
+						"Fallback title for a custom cover letter item in resume builder when recipient is empty",
 					message: "Cover Letter",
 				})
 			);
 		}
 		return t({
-			comment: "Fallback title for a custom cover letter item in resume builder when recipient is unavailable",
+			comment:
+				"Fallback title for a custom cover letter item in resume builder when recipient is unavailable",
 			message: "Cover Letter",
 		});
 	}
 	const field = TITLE_FIELD[type];
-	return field && field in item ? String((item as Record<string, unknown>)[field]) : "";
+	return field && field in item
+		? String((item as Record<string, unknown>)[field])
+		: "";
 }
 
-function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): string | undefined {
+function getItemSubtitle(
+	type: CustomSectionType,
+	item: CustomSectionItemType,
+): string | undefined {
 	if (type === "cover-letter") {
 		if ("content" in item) {
 			const result = truncateHtml(item.content);
@@ -122,10 +137,18 @@ function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): 
 }
 
 export function CustomSectionBuilder() {
-	const customSections = useCurrentBuilderResumeSelector((resume) => resume.data.customSections);
+	const customSections = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.customSections,
+	);
 
 	return (
-		<SectionBase type="custom" className={cn("space-y-4", customSections.length === 0 && "border-dashed")}>
+		<SectionBase
+			type="custom"
+			className={cn(
+				"space-y-4",
+				customSections.length === 0 && "border-dashed",
+			)}
+		>
 			<AnimatePresence>
 				{customSections.map((section) => (
 					<CustomSectionContainer key={section.id} section={section} />
@@ -133,7 +156,11 @@ export function CustomSectionBuilder() {
 			</AnimatePresence>
 
 			{/* Add Custom Section Button */}
-			<SectionAddItemButton type="custom" variant="outline" className="rounded-md">
+			<SectionAddItemButton
+				type="custom"
+				variant="outline"
+				className="rounded-md"
+			>
 				<Trans>Add a new custom section</Trans>
 			</SectionAddItemButton>
 		</SectionBase>
@@ -154,7 +181,9 @@ function CustomSectionContainer({ section }: CustomSectionContainerProps) {
 
 	const handleReorder = (items: CustomSectionItemType[]) => {
 		updateResumeData((draft) => {
-			const sectionIndex = draft.customSections.findIndex((_section) => _section.id === section.id);
+			const sectionIndex = draft.customSections.findIndex(
+				(_section) => _section.id === section.id,
+			);
 			if (sectionIndex === -1) return;
 			draft.customSections[sectionIndex].items = items;
 		});
@@ -175,7 +204,9 @@ function CustomSectionContainer({ section }: CustomSectionContainerProps) {
 					<Badge variant="secondary" className="mb-1.5 rounded-md">
 						{getSectionTitle(section.type)}
 					</Badge>
-					<span className="line-clamp-1 text-wrap font-medium text-base">{section.title}</span>
+					<span className="line-clamp-1 text-wrap font-medium text-base">
+						{section.title}
+					</span>
 					<span className="text-muted-foreground text-xs">
 						<Plural value={section.items.length} one="# item" other="# items" />
 					</span>
@@ -187,7 +218,11 @@ function CustomSectionContainer({ section }: CustomSectionContainerProps) {
 			{/* Section Items */}
 			{section.items.length > 0 && (
 				<div className={cn("border-t", section.hidden && "opacity-50")}>
-					<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
+					<Reorder.Group
+						axis="y"
+						values={section.items}
+						onReorder={handleReorder}
+					>
 						<AnimatePresence>
 							{section.items.map((item) => (
 								<SectionItem
@@ -218,16 +253,21 @@ type CustomSectionDropdownMenuProps = {
 	section: CustomSection;
 };
 
-function CustomSectionDropdownMenu({ section }: CustomSectionDropdownMenuProps) {
+function CustomSectionDropdownMenu({
+	section,
+}: CustomSectionDropdownMenuProps) {
 	const confirm = useConfirm();
 	const { openDialog } = useDialogStore();
 	const updateResumeData = useUpdateResumeData();
 
 	const onToggleSectionVisibility = () => {
 		updateResumeData((draft) => {
-			const sectionIndex = draft.customSections.findIndex((_section) => _section.id === section.id);
+			const sectionIndex = draft.customSections.findIndex(
+				(_section) => _section.id === section.id,
+			);
 			if (sectionIndex === -1) return;
-			draft.customSections[sectionIndex].hidden = !draft.customSections[sectionIndex].hidden;
+			draft.customSections[sectionIndex].hidden =
+				!draft.customSections[sectionIndex].hidden;
 		});
 	};
 
@@ -241,28 +281,37 @@ function CustomSectionDropdownMenu({ section }: CustomSectionDropdownMenuProps) 
 
 	const onSetColumns = (value: string) => {
 		updateResumeData((draft) => {
-			const sectionIndex = draft.customSections.findIndex((_section) => _section.id === section.id);
+			const sectionIndex = draft.customSections.findIndex(
+				(_section) => _section.id === section.id,
+			);
 			if (sectionIndex === -1) return;
 			draft.customSections[sectionIndex].columns = Number.parseInt(value, 10);
 		});
 	};
 
 	const onDeleteSection = async () => {
-		const confirmed = await confirm(t`Are you sure you want to delete this custom section?`, {
-			confirmText: t({
-				comment: "Destructive confirmation button label when deleting a custom section in resume builder",
-				message: "Delete",
-			}),
-			cancelText: t({
-				comment: "Confirmation dialog button label to abort deleting a custom section in resume builder",
-				message: "Cancel",
-			}),
-		});
+		const confirmed = await confirm(
+			t`Are you sure you want to delete this custom section?`,
+			{
+				confirmText: t({
+					comment:
+						"Destructive confirmation button label when deleting a custom section in resume builder",
+					message: "Delete",
+				}),
+				cancelText: t({
+					comment:
+						"Confirmation dialog button label to abort deleting a custom section in resume builder",
+					message: "Cancel",
+				}),
+			},
+		);
 
 		if (!confirmed) return;
 
 		updateResumeData((draft) => {
-			draft.customSections = draft.customSections.filter((_section) => _section.id !== section.id);
+			draft.customSections = draft.customSections.filter(
+				(_section) => _section.id !== section.id,
+			);
 			draft.metadata.layout.pages = draft.metadata.layout.pages.map((page) => ({
 				...page,
 				main: page.main.filter((id) => id !== section.id),
@@ -301,7 +350,10 @@ function CustomSectionDropdownMenu({ section }: CustomSectionDropdownMenuProps) 
 						</DropdownMenuSubTrigger>
 
 						<DropdownMenuSubContent>
-							<DropdownMenuRadioGroup value={section.columns.toString()} onValueChange={onSetColumns}>
+							<DropdownMenuRadioGroup
+								value={section.columns.toString()}
+								onValueChange={onSetColumns}
+							>
 								{[1, 2, 3, 4, 5, 6].map((column) => (
 									<DropdownMenuRadioItem key={column} value={column.toString()}>
 										<Plural value={column} one="# Column" other="# Columns" />

@@ -6,7 +6,9 @@ import { Button } from "./button";
 describe("Button", () => {
 	it("renders children", () => {
 		render(<Button>Click me</Button>);
-		expect(screen.getByRole("button", { name: "Click me" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Click me" }),
+		).toBeInTheDocument();
 	});
 
 	it("defaults to type='button' to prevent accidental form submits", () => {
@@ -52,21 +54,31 @@ describe("Button", () => {
 		expect(screen.getByRole("button")).toBeDisabled();
 	});
 
-	it.each([["default"], ["outline"], ["secondary"], ["ghost"], ["destructive"], ["link"]] as const)(
-		"renders variant=%s without throwing",
-		(variant) => {
-			render(<Button variant={variant}>x</Button>);
-			expect(screen.getByRole("button")).toBeInTheDocument();
-		},
-	);
+	it.each([
+		["default"],
+		["outline"],
+		["secondary"],
+		["ghost"],
+		["destructive"],
+		["link"],
+	] as const)("renders variant=%s without throwing", (variant) => {
+		render(<Button variant={variant}>x</Button>);
+		expect(screen.getByRole("button")).toBeInTheDocument();
+	});
 
-	it.each([["default"], ["xs"], ["sm"], ["lg"], ["icon"], ["icon-xs"], ["icon-sm"], ["icon-lg"]] as const)(
-		"renders size=%s without throwing",
-		(size) => {
-			render(<Button size={size}>x</Button>);
-			expect(screen.getByRole("button")).toBeInTheDocument();
-		},
-	);
+	it.each([
+		["default"],
+		["xs"],
+		["sm"],
+		["lg"],
+		["icon"],
+		["icon-xs"],
+		["icon-sm"],
+		["icon-lg"],
+	] as const)("renders size=%s without throwing", (size) => {
+		render(<Button size={size}>x</Button>);
+		expect(screen.getByRole("button")).toBeInTheDocument();
+	});
 
 	it("forwards aria-label", () => {
 		render(<Button aria-label="Close">×</Button>);

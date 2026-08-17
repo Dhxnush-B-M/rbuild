@@ -16,11 +16,19 @@ const basePicture = {
 
 describe("hasTemplatePicture", () => {
 	it("returns true when not hidden and url is non-empty", () => {
-		expect(hasTemplatePicture({ ...basePicture, url: "/uploads/me.png" })).toBe(true);
+		expect(hasTemplatePicture({ ...basePicture, url: "/uploads/me.png" })).toBe(
+			true,
+		);
 	});
 
 	it("returns false when hidden", () => {
-		expect(hasTemplatePicture({ ...basePicture, url: "/uploads/me.png", hidden: true })).toBe(false);
+		expect(
+			hasTemplatePicture({
+				...basePicture,
+				url: "/uploads/me.png",
+				hidden: true,
+			}),
+		).toBe(false);
 	});
 
 	it("returns false when url is empty", () => {

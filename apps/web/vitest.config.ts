@@ -13,5 +13,9 @@ export default createVitestProjectConfig({
 			"@": fileURLToPath(new URL("./src", import.meta.url)),
 		},
 	},
-	plugins: [tailwindcss(), lingui(), babel({ presets: [linguiTransformerBabelPreset()] })],
+	plugins: [
+		tailwindcss(),
+		lingui(),
+		babel({ presets: [linguiTransformerBabelPreset()] }),
+	],
 });

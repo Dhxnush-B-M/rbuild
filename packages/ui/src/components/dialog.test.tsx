@@ -85,7 +85,10 @@ describe("DialogTitle", () => {
 				</DialogContent>
 			</Dialog>,
 		);
-		expect(screen.getByText("My Title")).toHaveAttribute("data-slot", "dialog-title");
+		expect(screen.getByText("My Title")).toHaveAttribute(
+			"data-slot",
+			"dialog-title",
+		);
 	});
 });
 
@@ -99,21 +102,30 @@ describe("DialogDescription", () => {
 				</DialogContent>
 			</Dialog>,
 		);
-		expect(screen.getByText("My Description")).toHaveAttribute("data-slot", "dialog-description");
+		expect(screen.getByText("My Description")).toHaveAttribute(
+			"data-slot",
+			"dialog-description",
+		);
 	});
 });
 
 describe("DialogHeader", () => {
 	it("uses data-slot='dialog-header'", () => {
 		render(<DialogHeader data-testid="h">x</DialogHeader>);
-		expect(screen.getByTestId("h")).toHaveAttribute("data-slot", "dialog-header");
+		expect(screen.getByTestId("h")).toHaveAttribute(
+			"data-slot",
+			"dialog-header",
+		);
 	});
 });
 
 describe("DialogFooter", () => {
 	it("uses data-slot='dialog-footer'", () => {
 		render(<DialogFooter data-testid="f">x</DialogFooter>);
-		expect(screen.getByTestId("f")).toHaveAttribute("data-slot", "dialog-footer");
+		expect(screen.getByTestId("f")).toHaveAttribute(
+			"data-slot",
+			"dialog-footer",
+		);
 	});
 
 	it("renders close button when showCloseButton=true", () => {

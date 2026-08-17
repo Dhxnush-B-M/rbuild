@@ -26,7 +26,10 @@ export function ExportSectionBuilder() {
 								<Trans>Download</Trans>
 							</h6>
 							<p className="text-muted-foreground text-xs leading-normal">
-								<Trans>Choose PDF or DOCX. Export your resume in professional high-quality formats.</Trans>
+								<Trans>
+									Choose PDF or DOCX. Export your resume in professional
+									high-quality formats.
+								</Trans>
 							</p>
 						</div>
 					</Button>

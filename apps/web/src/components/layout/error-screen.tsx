@@ -1,10 +1,18 @@
-import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Trans } from "@lingui/react/macro";
-import { ArrowClockwiseIcon, HouseIcon, WarningIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
-import { Alert, AlertDescription, AlertTitle } from "@rbuilder/ui/components/alert";
+import {
+	ArrowClockwiseIcon,
+	HouseIcon,
+	WarningIcon,
+} from "@phosphor-icons/react";
+import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@rbuilder/ui/components/alert";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { Button, buttonVariants } from "@rbuilder/ui/components/button";
+import type { ErrorComponentProps } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export function ErrorScreen({ error, reset }: ErrorComponentProps) {
 	return (
@@ -17,7 +25,9 @@ export function ErrorScreen({ error, reset }: ErrorComponentProps) {
 					<Trans>Something went wrong</Trans>
 				</AlertTitle>
 				<AlertDescription className="break-words font-mono text-xs">
-					{error?.message || <Trans>An unexpected error stopped this page from loading.</Trans>}
+					{error?.message || (
+						<Trans>An unexpected error stopped this page from loading.</Trans>
+					)}
 				</AlertDescription>
 			</Alert>
 
@@ -27,7 +37,10 @@ export function ErrorScreen({ error, reset }: ErrorComponentProps) {
 					<Trans>Try again</Trans>
 				</Button>
 
-				<Link to="/dashboard" className={buttonVariants({ variant: "secondary" })}>
+				<Link
+					to="/dashboard"
+					className={buttonVariants({ variant: "secondary" })}
+				>
 					<HouseIcon />
 					<Trans>Go to dashboard</Trans>
 				</Link>

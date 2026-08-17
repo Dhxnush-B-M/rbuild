@@ -1,19 +1,33 @@
-import type { LayoutPage, ResumeData, Typography } from "@rbuilder/schema/resume/data";
+import type {
+	LayoutPage,
+	ResumeData,
+	Typography,
+} from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
 import type { Locale } from "@rbuilder/utils/locale";
+import { Document } from "@react-pdf/renderer";
 import type { ComponentType } from "react";
+import { useMemo } from "react";
 import type { ResumeRenderOptions } from "./context";
+import { RenderProvider } from "./context";
+import {
+	registerFonts,
+	resumeContentContainsCJK,
+	resumeContentScripts,
+} from "./hooks/use-register-fonts";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime } from "./semantic";
-import { useMemo } from "react";
-import { Document } from "@react-pdf/renderer";
-import { RenderProvider } from "./context";
-import { registerFonts, resumeContentContainsCJK, resumeContentScripts } from "./hooks/use-register-fonts";
 import { SemanticRenderProvider } from "./semantic/context";
-import { resolveResumeRuntime, resolveStylesheetMode } from "./semantic/resolve";
+import {
+	resolveResumeRuntime,
+	resolveStylesheetMode,
+} from "./semantic/resolve";
 import { getTemplatePage } from "./templates";
 import { shouldShowResumeHeader } from "./templates/shared/cover-letter";
-import { getTemplatePageMinHeightStyle, getTemplatePageSize } from "./templates/shared/page-size";
+import {
+	getTemplatePageMinHeightStyle,
+	getTemplatePageSize,
+} from "./templates/shared/page-size";
 
 export type TemplatePageProps = {
 	page: LayoutPage;
@@ -57,13 +71,26 @@ export const ResumeDocument = ({
 	// `registerFonts` widens `fontFamily` to `string | string[]` for CJK
 	// fallback (#2986); the cast carries that wider runtime value through
 	// `ResumeData` without changing the public schema.
-	const resumeData = useMemo(() => ({ ...data, metadata: { ...data.metadata, typography } }), [data, typography]);
+	const resumeData = useMemo(
+		() => ({ ...data, metadata: { ...data.metadata, typography } }),
+		[data, typography],
+	);
 	const pageSize = getTemplatePageSize(resumeData.metadata.page.format);
-	const pageMinHeightStyle = getTemplatePageMinHeightStyle(resumeData.metadata.page.format);
-	const headerResumeData = renderOptions ? { ...resumeData, renderOptions } : resumeData;
+	const pageMinHeightStyle = getTemplatePageMinHeightStyle(
+		resumeData.metadata.page.format,
+	);
+	const headerResumeData = renderOptions
+		? { ...resumeData, renderOptions }
+		: resumeData;
 	const stylesheetMode = resolveStylesheetMode(resumeData);
 	const runtime = useMemo(
-		() => semanticRuntime ?? resolveResumeRuntime({ data: resumeData, template, mode: stylesheetMode }),
+		() =>
+			semanticRuntime ??
+			resolveResumeRuntime({
+				data: resumeData,
+				template,
+				mode: stylesheetMode,
+			}),
 		[resumeData, semanticRuntime, stylesheetMode, template],
 	);
 	const semanticMode = semanticRuntime ? "semantic" : stylesheetMode;
@@ -75,7 +102,11 @@ export const ResumeDocument = ({
 			sourceTree={runtime.sourceTree}
 			renderTree={runtime.renderTree}
 		>
-			<RenderProvider data={resumeData} resolveSectionTitle={resolveSectionTitle} renderOptions={renderOptions}>
+			<RenderProvider
+				data={resumeData}
+				resolveSectionTitle={resolveSectionTitle}
+				renderOptions={renderOptions}
+			>
 				<Document
 					pageMode="useNone"
 					creationDate={creationDate}

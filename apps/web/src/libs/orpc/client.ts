@@ -55,7 +55,11 @@ export const client = {
 		list: async (): Promise<SupabaseResumeRecord[]> => {
 			return await getResumesFromSupabase();
 		},
-		getById: async ({ id }: { id: string }): Promise<SupabaseResumeRecord | null> => {
+		getById: async ({
+			id,
+		}: {
+			id: string;
+		}): Promise<SupabaseResumeRecord | null> => {
 			return await getResumeByIdFromSupabase(id);
 		},
 		getBySlug: async ({
@@ -67,7 +71,13 @@ export const client = {
 		}): Promise<SupabaseResumeRecord | null> => {
 			return await getResumeBySlugFromSupabase(slug, username);
 		},
-		update: async ({ id, data }: { id: string; data: ResumeData }): Promise<SupabaseResumeRecord> => {
+		update: async ({
+			id,
+			data,
+		}: {
+			id: string;
+			data: ResumeData;
+		}): Promise<SupabaseResumeRecord> => {
 			return (await saveResumeToSupabase({
 				id,
 				name: data.basics?.name || "My Resume",
@@ -77,17 +87,34 @@ export const client = {
 		delete: async ({ id }: { id: string }): Promise<boolean> => {
 			return await deleteResumeFromSupabase(id);
 		},
-		lock: async ({ id, isLocked }: { id: string; isLocked: boolean }): Promise<SupabaseResumeRecord> => {
-			return (await saveResumeToSupabase({ id, name: "Resume", isLocked })) as unknown as SupabaseResumeRecord;
+		lock: async ({
+			id,
+			isLocked,
+		}: {
+			id: string;
+			isLocked: boolean;
+		}): Promise<SupabaseResumeRecord> => {
+			return (await saveResumeToSupabase({
+				id,
+				name: "Resume",
+				isLocked,
+			})) as unknown as SupabaseResumeRecord;
 		},
-		import: async ({ data }: { data: ResumeData }): Promise<SupabaseResumeRecord> => {
+		import: async ({
+			data,
+		}: {
+			data: ResumeData;
+		}): Promise<SupabaseResumeRecord> => {
 			return (await saveResumeToSupabase({
 				id: `resume_${Date.now()}`,
 				name: data.basics?.name || "Imported Resume",
 				data,
 			})) as unknown as SupabaseResumeRecord;
 		},
-		restore: (_args: { resumeId: string; versionId: string }): Promise<null> => {
+		restore: (_args: {
+			resumeId: string;
+			versionId: string;
+		}): Promise<null> => {
 			return Promise.resolve(null);
 		},
 		stylesheet: {
@@ -104,7 +131,11 @@ export const client = {
 		},
 	},
 	auth: {
-		verifyPassword: (_args: { username: string; slug: string; password: string }): Promise<boolean> => {
+		verifyPassword: (_args: {
+			username: string;
+			slug: string;
+			password: string;
+		}): Promise<boolean> => {
 			return Promise.resolve(true);
 		},
 	},
@@ -133,7 +164,9 @@ export const orpc = {
 	},
 	resume: {
 		list: {
-			queryOptions: (_args?: { input?: { tags?: string[]; sort?: string } }) => ({
+			queryOptions: (_args?: {
+				input?: { tags?: string[]; sort?: string };
+			}) => ({
 				queryKey: ["resumes"],
 				queryFn: () => getResumesFromSupabase(),
 			}),
@@ -147,14 +180,22 @@ export const orpc = {
 			call: ({ id }: { id: string }) => getResumeByIdFromSupabase(id),
 		},
 		getBySlug: {
-			queryOptions: ({ input }: { input: { username: string; slug: string } }) => ({
+			queryOptions: ({
+				input,
+			}: {
+				input: { username: string; slug: string };
+			}) => ({
 				queryKey: ["resume", "slug", input.slug],
 				queryFn: () => getResumeBySlugFromSupabase(input.slug, input.username),
 			}),
-			call: ({ slug, username }: { slug: string; username?: string }) => getResumeBySlugFromSupabase(slug, username),
+			call: ({ slug, username }: { slug: string; username?: string }) =>
+				getResumeBySlugFromSupabase(slug, username),
 		},
 		getStyleProjection: {
-			queryOptions: (_args?: { input?: { username: string; slug: string }; enabled?: boolean }) => ({
+			queryOptions: (_args?: {
+				input?: { username: string; slug: string };
+				enabled?: boolean;
+			}) => ({
 				queryKey: ["styleProjection"],
 				queryFn: () => null,
 			}),
@@ -172,7 +213,11 @@ export const orpc = {
 			},
 			mutate: {
 				call: (
-					mutation: { expectedRevision?: number; expectedRenderDataVersion?: number; editGeneration?: number },
+					mutation: {
+						expectedRevision?: number;
+						expectedRenderDataVersion?: number;
+						editGeneration?: number;
+					},
 					_options?: { signal?: AbortSignal },
 				) =>
 					Promise.resolve({
@@ -202,41 +247,58 @@ export const orpc = {
 		},
 		update: {
 			call: ({ id, data }: { id: string; data: ResumeData }) =>
-				saveResumeToSupabase({ id, name: data.basics?.name || "My Resume", data }),
+				saveResumeToSupabase({
+					id,
+					name: data.basics?.name || "My Resume",
+					data,
+				}),
 		},
 		listVersions: {
 			queryOptions: (_args?: { input?: { resumeId: string } }) => ({
 				queryKey: ["versions"],
-				queryFn: () => [] as Array<{ id: string; label: string; createdAt: string }>,
+				queryFn: () =>
+					[] as Array<{ id: string; label: string; createdAt: string }>,
 			}),
 			queryKey: (_args?: { input?: { resumeId: string } }) => ["versions"],
 		},
 		restoreVersion: {
 			mutationOptions: () => ({
-				mutationFn: (_args: { resumeId: string; versionId: string }) => Promise.resolve(null),
+				mutationFn: (_args: { resumeId: string; versionId: string }) =>
+					Promise.resolve(null),
 			}),
 		},
 		delete: {
 			call: ({ id }: { id: string }) => deleteResumeFromSupabase(id),
 			mutationOptions: () => ({
-				mutationFn: async ({ id }: { id: string }) => deleteResumeFromSupabase(id),
+				mutationFn: async ({ id }: { id: string }) =>
+					deleteResumeFromSupabase(id),
 			}),
 		},
 		setLocked: {
 			mutationOptions: () => ({
-				mutationFn: async ({ id, isLocked }: { id: string; isLocked: boolean }) =>
-					saveResumeToSupabase({ id, name: "Resume", isLocked }),
+				mutationFn: async ({
+					id,
+					isLocked,
+				}: {
+					id: string;
+					isLocked: boolean;
+				}) => saveResumeToSupabase({ id, name: "Resume", isLocked }),
 			}),
 		},
 		import: {
 			call: ({ data }: { data: ResumeData }) => client.resume.import({ data }),
 			mutationOptions: () => ({
-				mutationFn: async ({ data }: { data: ResumeData }) => client.resume.import({ data }),
+				mutationFn: async ({ data }: { data: ResumeData }) =>
+					client.resume.import({ data }),
 			}),
 		},
 		verifyPassword: {
 			mutationOptions: () => ({
-				mutationFn: (args: { username: string; slug: string; password: string }) => client.auth.verifyPassword(args),
+				mutationFn: (args: {
+					username: string;
+					slug: string;
+					password: string;
+				}) => client.auth.verifyPassword(args),
 			}),
 		},
 	},
@@ -246,7 +308,9 @@ export const orpc = {
 		},
 		uploadFile: {
 			mutationOptions: (_options?: { meta?: { noInvalidate?: boolean } }) => ({
-				mutationFn: async (file: File) => ({ url: await uploadPictureToSupabase(file) }),
+				mutationFn: async (file: File) => ({
+					url: await uploadPictureToSupabase(file),
+				}),
 			}),
 		},
 		delete: {
@@ -260,7 +324,8 @@ export const orpc = {
 	},
 	auth: {
 		verifyPassword: {
-			call: (args: { username: string; slug: string; password: string }) => client.auth.verifyPassword(args),
+			call: (args: { username: string; slug: string; password: string }) =>
+				client.auth.verifyPassword(args),
 		},
 	},
 };

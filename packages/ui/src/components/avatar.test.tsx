@@ -1,6 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "./avatar";
+import {
+	Avatar,
+	AvatarBadge,
+	AvatarFallback,
+	AvatarGroup,
+	AvatarGroupCount,
+	AvatarImage,
+} from "./avatar";
 
 describe("Avatar", () => {
 	it("renders with data-slot='avatar'", () => {
@@ -36,7 +43,9 @@ describe("AvatarFallback", () => {
 		const fb = screen.queryByTestId("fb");
 		// AvatarFallback may or may not be in the DOM depending on image state.
 		// Just ensure it doesn't throw on render.
-		expect(fb === null || fb.getAttribute("data-slot") === "avatar-fallback").toBe(true);
+		expect(
+			fb === null || fb.getAttribute("data-slot") === "avatar-fallback",
+		).toBe(true);
 	});
 });
 
@@ -71,7 +80,10 @@ describe("AvatarGroup", () => {
 describe("AvatarGroupCount", () => {
 	it("renders count children", () => {
 		render(<AvatarGroupCount>+3</AvatarGroupCount>);
-		expect(screen.getByText("+3")).toHaveAttribute("data-slot", "avatar-group-count");
+		expect(screen.getByText("+3")).toHaveAttribute(
+			"data-slot",
+			"avatar-group-count",
+		);
 	});
 });
 

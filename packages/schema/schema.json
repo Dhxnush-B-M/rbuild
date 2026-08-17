@@ -139,7 +139,15 @@
 					"description": "The custom fields to display on the resume."
 				}
 			},
-			"required": ["name", "headline", "email", "phone", "location", "website", "customFields"],
+			"required": [
+				"name",
+				"headline",
+				"email",
+				"phone",
+				"location",
+				"website",
+				"customFields"
+			],
 			"additionalProperties": false,
 			"description": "Basic information about the author, such as name, email, phone, location, and website"
 		},
@@ -259,7 +267,15 @@
 										"additionalProperties": false
 									}
 								},
-								"required": ["id", "hidden", "icon", "iconColor", "network", "username", "website"],
+								"required": [
+									"id",
+									"hidden",
+									"icon",
+									"iconColor",
+									"network",
+									"username",
+									"website"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the profiles section."
@@ -590,7 +606,14 @@
 										"description": "The description of the project. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "name", "period", "website", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"name",
+									"period",
+									"website",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the projects section."
@@ -670,7 +693,16 @@
 										}
 									}
 								},
-								"required": ["id", "hidden", "icon", "iconColor", "name", "proficiency", "level", "keywords"],
+								"required": [
+									"id",
+									"hidden",
+									"icon",
+									"iconColor",
+									"name",
+									"proficiency",
+									"level",
+									"keywords"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the skills section."
@@ -802,7 +834,14 @@
 										}
 									}
 								},
-								"required": ["id", "hidden", "icon", "iconColor", "name", "keywords"],
+								"required": [
+									"id",
+									"hidden",
+									"icon",
+									"iconColor",
+									"name",
+									"keywords"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the interests section."
@@ -892,7 +931,15 @@
 										"description": "The description of the award. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "title", "awarder", "date", "website", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"title",
+									"awarder",
+									"date",
+									"website",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the awards section."
@@ -982,7 +1029,15 @@
 										"description": "The description of the certification. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "title", "issuer", "date", "website", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"title",
+									"issuer",
+									"date",
+									"website",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the certifications section."
@@ -1072,7 +1127,15 @@
 										"description": "The description of the publication. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "title", "publisher", "date", "website", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"title",
+									"publisher",
+									"date",
+									"website",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the publications section."
@@ -1162,7 +1225,15 @@
 										"description": "The description of the volunteer experience. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "organization", "location", "period", "website", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"organization",
+									"location",
+									"period",
+									"website",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the volunteer section."
@@ -1252,7 +1323,15 @@
 										"description": "The description of the reference. Can be used to display a quote, a testimonial, etc. This should be a HTML-formatted string."
 									}
 								},
-								"required": ["id", "hidden", "name", "position", "website", "phone", "description"],
+								"required": [
+									"id",
+									"hidden",
+									"name",
+									"position",
+									"website",
+									"phone",
+									"description"
+								],
 								"additionalProperties": false
 							},
 							"description": "The items to display in the references section."
@@ -1431,7 +1510,15 @@
 											"additionalProperties": false
 										}
 									},
-									"required": ["id", "hidden", "icon", "iconColor", "network", "username", "website"],
+									"required": [
+										"id",
+										"hidden",
+										"icon",
+										"iconColor",
+										"network",
+										"username",
+										"website"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1666,7 +1753,14 @@
 											"description": "The description of the project. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "name", "period", "website", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"name",
+										"period",
+										"website",
+										"description"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1714,7 +1808,16 @@
 											}
 										}
 									},
-									"required": ["id", "hidden", "icon", "iconColor", "name", "proficiency", "level", "keywords"],
+									"required": [
+										"id",
+										"hidden",
+										"icon",
+										"iconColor",
+										"name",
+										"proficiency",
+										"level",
+										"keywords"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1782,7 +1885,14 @@
 											}
 										}
 									},
-									"required": ["id", "hidden", "icon", "iconColor", "name", "keywords"],
+									"required": [
+										"id",
+										"hidden",
+										"icon",
+										"iconColor",
+										"name",
+										"keywords"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1840,7 +1950,15 @@
 											"description": "The description of the award. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "title", "awarder", "date", "website", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"title",
+										"awarder",
+										"date",
+										"website",
+										"description"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1898,7 +2016,15 @@
 											"description": "The description of the certification. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "title", "issuer", "date", "website", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"title",
+										"issuer",
+										"date",
+										"website",
+										"description"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -1956,7 +2082,15 @@
 											"description": "The description of the publication. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "title", "publisher", "date", "website", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"title",
+										"publisher",
+										"date",
+										"website",
+										"description"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -2014,7 +2148,15 @@
 											"description": "The description of the volunteer experience. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "organization", "location", "period", "website", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"organization",
+										"location",
+										"period",
+										"website",
+										"description"
+									],
 									"additionalProperties": false
 								},
 								{
@@ -2072,7 +2214,15 @@
 											"description": "The description of the reference. Can be used to display a quote, a testimonial, etc. This should be a HTML-formatted string."
 										}
 									},
-									"required": ["id", "hidden", "name", "position", "website", "phone", "description"],
+									"required": [
+										"id",
+										"hidden",
+										"name",
+										"position",
+										"website",
+										"phone",
+										"description"
+									],
 									"additionalProperties": false
 								}
 							]
@@ -2080,7 +2230,15 @@
 						"description": "The items to display in the custom section. Items follow the schema of the section type."
 					}
 				},
-				"required": ["title", "icon", "columns", "hidden", "id", "type", "items"],
+				"required": [
+					"title",
+					"icon",
+					"columns",
+					"hidden",
+					"id",
+					"type",
+					"items"
+				],
 				"additionalProperties": false
 			},
 			"description": "Custom sections of the resume, such as a custom section for notes, etc."
@@ -2230,7 +2388,15 @@
 								},
 								"type": {
 									"type": "string",
-									"enum": ["hidden", "circle", "square", "rectangle", "rectangle-full", "progress-bar", "icon"],
+									"enum": [
+										"hidden",
+										"circle",
+										"square",
+										"rectangle",
+										"rectangle-full",
+										"progress-bar",
+										"icon"
+									],
 									"description": "The type of the level design. 'hidden' will hide the level design, 'circle' will display a circle, 'square' will display a square, 'rectangle' will display a rectangle, 'rectangle-full' will display a full rectangle, 'progress-bar' will display a progress bar, and 'icon' will display an icon. If 'icon' is selected, the icon to display should be specified in the 'icon' field."
 								}
 							},
@@ -2277,7 +2443,17 @@
 									"type": "array",
 									"items": {
 										"type": "string",
-										"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+										"enum": [
+											"100",
+											"200",
+											"300",
+											"400",
+											"500",
+											"600",
+											"700",
+											"800",
+											"900"
+										]
 									}
 								},
 								"fontSize": {
@@ -2295,7 +2471,12 @@
 									"maximum": 4
 								}
 							},
-							"required": ["fontFamily", "fontWeights", "fontSize", "lineHeight"],
+							"required": [
+								"fontFamily",
+								"fontWeights",
+								"fontSize",
+								"lineHeight"
+							],
 							"additionalProperties": false,
 							"description": "The typography for the body of the resume."
 						},
@@ -2312,7 +2493,17 @@
 									"type": "array",
 									"items": {
 										"type": "string",
-										"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+										"enum": [
+											"100",
+											"200",
+											"300",
+											"400",
+											"500",
+											"600",
+											"700",
+											"800",
+											"900"
+										]
 									}
 								},
 								"fontSize": {
@@ -2330,7 +2521,12 @@
 									"maximum": 4
 								}
 							},
-							"required": ["fontFamily", "fontWeights", "fontSize", "lineHeight"],
+							"required": [
+								"fontFamily",
+								"fontWeights",
+								"fontSize",
+								"lineHeight"
+							],
 							"additionalProperties": false,
 							"description": "The typography for the headings of the resume."
 						}
@@ -2456,7 +2652,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -2586,7 +2792,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -2716,7 +2932,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -2846,7 +3072,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -2976,7 +3212,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3106,7 +3352,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3236,7 +3492,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3366,7 +3632,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3496,7 +3772,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3626,7 +3912,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3756,7 +4052,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -3886,7 +4192,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -4016,7 +4332,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -4146,7 +4472,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -4276,7 +4612,17 @@
 											},
 											"fontWeight": {
 												"type": "string",
-												"enum": ["100", "200", "300", "400", "500", "600", "700", "800", "900"]
+												"enum": [
+													"100",
+													"200",
+													"300",
+													"400",
+													"500",
+													"600",
+													"700",
+													"800",
+													"900"
+												]
 											},
 											"fontStyle": {
 												"type": "string",
@@ -4389,11 +4735,26 @@
 					}
 				}
 			},
-			"required": ["template", "layout", "page", "design", "typography", "notes", "styleRules"],
+			"required": [
+				"template",
+				"layout",
+				"page",
+				"design",
+				"typography",
+				"notes",
+				"styleRules"
+			],
 			"additionalProperties": false,
 			"description": "Metadata for the resume, such as template, layout, typography, etc. This section describes the overall design and appearance of the resume."
 		}
 	},
-	"required": ["picture", "basics", "summary", "sections", "customSections", "metadata"],
+	"required": [
+		"picture",
+		"basics",
+		"summary",
+		"sections",
+		"customSections",
+		"metadata"
+	],
 	"additionalProperties": {}
 }

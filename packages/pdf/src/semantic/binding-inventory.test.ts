@@ -1,18 +1,28 @@
 import type { SemanticNode } from "@rbuilder/resume/stylesheet/types";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { createBindingInventory, SHARED_BINDING_REGISTRY } from "./binding-inventory";
+import { describe, expect, it } from "vitest";
+import {
+	createBindingInventory,
+	SHARED_BINDING_REGISTRY,
+} from "./binding-inventory";
 import { getTemplateSemanticBindingRegistry } from "./template-manifest";
 import { buildSemanticTree } from "./tree";
 
-const node = (key: string, kind: SemanticNode["kind"], children: SemanticNode[] = []): SemanticNode => ({
+const node = (
+	key: string,
+	kind: SemanticNode["kind"],
+	children: SemanticNode[] = [],
+): SemanticNode => ({
 	key,
 	kind,
 	attributes: {},
 	roles: [],
 	children,
 });
-const findNode = (tree: SemanticNode, predicate: (candidate: SemanticNode) => boolean): SemanticNode | undefined => {
+const findNode = (
+	tree: SemanticNode,
+	predicate: (candidate: SemanticNode) => boolean,
+): SemanticNode | undefined => {
 	if (predicate(tree)) return tree;
 
 	for (const child of tree.children) {
@@ -20,17 +30,26 @@ const findNode = (tree: SemanticNode, predicate: (candidate: SemanticNode) => bo
 		if (match) return match;
 	}
 };
-const required = (candidate: SemanticNode | undefined, label: string): SemanticNode => {
+const required = (
+	candidate: SemanticNode | undefined,
+	label: string,
+): SemanticNode => {
 	if (!candidate) throw new Error(`Missing ${label}`);
 	return candidate;
 };
 
 describe("semantic binding inventory", () => {
 	it("reports missing and synthetic bindings instead of claiming success", () => {
-		const tree = node("resume", "resume", [node("resume/part", "template-part")]);
+		const tree = node("resume", "resume", [
+			node("resume/part", "template-part"),
+		]);
 		const inventory = createBindingInventory(tree, {
 			...SHARED_BINDING_REGISTRY,
-			"template-part": { type: "primitive", primitive: "View", source: "synthetic" },
+			"template-part": {
+				type: "primitive",
+				primitive: "View",
+				source: "synthetic",
+			},
 		});
 
 		expect(inventory.unboundNodeKeys).toEqual(["resume/part"]);
@@ -52,15 +71,18 @@ describe("semantic binding inventory", () => {
 	});
 
 	it("reports a rich-text alias unbound when its existing canonical node has the wrong kind", () => {
-		const inventory = createBindingInventory(node("owner", "item", [node("rich", "rich-text")]), {
-			item: { type: "primitive", primitive: "View", source: "existing" },
-			"rich-text": {
-				type: "alias",
-				canonicalKind: "field",
-				canonicalNodeKey: "owner",
-				token: "rich-text",
+		const inventory = createBindingInventory(
+			node("owner", "item", [node("rich", "rich-text")]),
+			{
+				item: { type: "primitive", primitive: "View", source: "existing" },
+				"rich-text": {
+					type: "alias",
+					canonicalKind: "field",
+					canonicalNodeKey: "owner",
+					token: "rich-text",
+				},
 			},
-		});
+		);
 
 		expect(inventory.bindings.rich).toBeUndefined();
 		expect(inventory.unboundNodeKeys).toContain("rich");
@@ -68,17 +90,22 @@ describe("semantic binding inventory", () => {
 	});
 
 	it("reports a rich-text alias unbound when its field owner binding is synthetic or non-primitive", () => {
-		const synthetic = createBindingInventory(node("field", "field", [node("rich-synthetic", "rich-text")]), {
-			field: { type: "primitive", primitive: "View", source: "synthetic" },
-			"rich-text": {
-				type: "alias",
-				canonicalKind: "field",
-				canonicalNodeKey: "field",
-				token: "rich-text",
+		const synthetic = createBindingInventory(
+			node("field", "field", [node("rich-synthetic", "rich-text")]),
+			{
+				field: { type: "primitive", primitive: "View", source: "synthetic" },
+				"rich-text": {
+					type: "alias",
+					canonicalKind: "field",
+					canonicalNodeKey: "field",
+					token: "rich-text",
+				},
 			},
-		});
+		);
 		const nonPrimitive = createBindingInventory(
-			node("item", "item", [node("field", "field", [node("rich-non-primitive", "rich-text")])]),
+			node("item", "item", [
+				node("field", "field", [node("rich-non-primitive", "rich-text")]),
+			]),
 			{
 				item: { type: "primitive", primitive: "View", source: "existing" },
 				field: {
@@ -98,10 +125,12 @@ describe("semantic binding inventory", () => {
 
 		expect({
 			syntheticBinding: synthetic.bindings["rich-synthetic"],
-			syntheticAliasUnbound: synthetic.unboundNodeKeys.includes("rich-synthetic"),
+			syntheticAliasUnbound:
+				synthetic.unboundNodeKeys.includes("rich-synthetic"),
 			syntheticInventoryClean: synthetic.unboundNodeKeys.length === 0,
 			nonPrimitiveBinding: nonPrimitive.bindings["rich-non-primitive"],
-			nonPrimitiveAliasUnbound: nonPrimitive.unboundNodeKeys.includes("rich-non-primitive"),
+			nonPrimitiveAliasUnbound:
+				nonPrimitive.unboundNodeKeys.includes("rich-non-primitive"),
 			nonPrimitiveInventoryClean: nonPrimitive.unboundNodeKeys.length === 0,
 		}).toEqual({
 			syntheticBinding: undefined,
@@ -114,14 +143,35 @@ describe("semantic binding inventory", () => {
 	});
 
 	it("resolves conditional bindings to the primitive the existing renderer uses", () => {
-		const heading = node("heading", "section-heading", [node("heading/icon", "icon")]);
-		const shape = { ...node("level/shape", "icon"), attributes: { type: "circle" }, roles: ["active"] };
-		const icon = { ...node("level/icon", "icon"), attributes: { type: "icon" }, roles: ["inactive"] };
-		const inventory = createBindingInventory(node("resume", "resume", [heading, shape, icon]));
+		const heading = node("heading", "section-heading", [
+			node("heading/icon", "icon"),
+		]);
+		const shape = {
+			...node("level/shape", "icon"),
+			attributes: { type: "circle" },
+			roles: ["active"],
+		};
+		const icon = {
+			...node("level/icon", "icon"),
+			attributes: { type: "icon" },
+			roles: ["inactive"],
+		};
+		const inventory = createBindingInventory(
+			node("resume", "resume", [heading, shape, icon]),
+		);
 
-		expect(inventory.bindings.heading).toMatchObject({ primitive: "View", source: "existing" });
-		expect(inventory.bindings["level/shape"]).toMatchObject({ primitive: "View", source: "existing" });
-		expect(inventory.bindings["level/icon"]).toMatchObject({ primitive: "Svg", source: "existing" });
+		expect(inventory.bindings.heading).toMatchObject({
+			primitive: "View",
+			source: "existing",
+		});
+		expect(inventory.bindings["level/shape"]).toMatchObject({
+			primitive: "View",
+			source: "existing",
+		});
+		expect(inventory.bindings["level/icon"]).toMatchObject({
+			primitive: "Svg",
+			source: "existing",
+		});
 	});
 
 	it("binds every emitted shared node to one existing primitive without synthetic wrappers", () => {
@@ -151,16 +201,25 @@ describe("semantic binding inventory", () => {
 			},
 		];
 		const page = { fullWidth: false, main: ["summary", "skills"], sidebar: [] };
-		const tree = buildSemanticTree({ data, template: "onyx", page, pageNumber: 1, showHeader: true });
+		const tree = buildSemanticTree({
+			data,
+			template: "onyx",
+			page,
+			pageNumber: 1,
+			showHeader: true,
+		});
 		const inventory = createBindingInventory(tree);
 		const nodeCount = (candidate: SemanticNode): number =>
-			1 + candidate.children.reduce((count, child) => count + nodeCount(child), 0);
+			1 +
+			candidate.children.reduce((count, child) => count + nodeCount(child), 0);
 
 		expect(inventory.unboundNodeKeys).toEqual([]);
 		expect(inventory.syntheticWrapperCount).toBe(0);
 		expect(Object.keys(inventory.bindings)).toHaveLength(nodeCount(tree));
 		expect(
-			Object.values(inventory.bindings).every((binding) => binding.type === "alias" || binding.source === "existing"),
+			Object.values(inventory.bindings).every(
+				(binding) => binding.type === "alias" || binding.source === "existing",
+			),
 		).toBe(true);
 		for (const binding of Object.values(inventory.bindings)) {
 			if (binding.type !== "alias") continue;
@@ -175,7 +234,13 @@ describe("semantic binding inventory", () => {
 	it("does not claim item-header Views for direct language and reference Text siblings", () => {
 		const data = structuredClone(defaultResumeData);
 		data.sections.languages.items = [
-			{ id: "language-1", hidden: false, language: "English", fluency: "Native", level: 0 },
+			{
+				id: "language-1",
+				hidden: false,
+				language: "English",
+				fluency: "Native",
+				level: 0,
+			},
 		];
 		data.sections.references.items = [
 			{
@@ -199,16 +264,23 @@ describe("semantic binding inventory", () => {
 
 		for (const itemId of ["language-1", "reference-1"]) {
 			const item = required(
-				findNode(tree, (candidate) => candidate.kind === "item" && candidate.id === itemId),
+				findNode(
+					tree,
+					(candidate) => candidate.kind === "item" && candidate.id === itemId,
+				),
 				`${itemId} item`,
 			);
 
-			expect(item.children.some(({ kind }) => kind === "item-header")).toBe(false);
+			expect(item.children.some(({ kind }) => kind === "item-header")).toBe(
+				false,
+			);
 			expect(
 				item.children
 					.filter(({ kind }) => kind === "field")
 					.every(
-						({ key }) => inventory.bindings[key]?.type === "primitive" && inventory.bindings[key].primitive === "Text",
+						({ key }) =>
+							inventory.bindings[key]?.type === "primitive" &&
+							inventory.bindings[key].primitive === "Text",
 					),
 			).toBe(true);
 		}
@@ -253,7 +325,11 @@ describe("semantic binding inventory", () => {
 		const tree = buildSemanticTree({
 			data,
 			template: "onyx",
-			page: { fullWidth: true, main: ["summary", "experience", "cover"], sidebar: [] },
+			page: {
+				fullWidth: true,
+				main: ["summary", "experience", "cover"],
+				sidebar: [],
+			},
 			pageNumber: 1,
 			showHeader: false,
 		});
@@ -267,11 +343,20 @@ describe("semantic binding inventory", () => {
 
 		for (const [sectionId, fieldName] of cases) {
 			const section = required(
-				findNode(tree, (candidate) => candidate.kind === "section" && candidate.id === sectionId),
+				findNode(
+					tree,
+					(candidate) =>
+						candidate.kind === "section" && candidate.id === sectionId,
+				),
 				`${sectionId} section`,
 			);
 			const field = required(
-				findNode(section, (candidate) => candidate.kind === "field" && candidate.attributes.name === fieldName),
+				findNode(
+					section,
+					(candidate) =>
+						candidate.kind === "field" &&
+						candidate.attributes.name === fieldName,
+				),
 				`${sectionId}.${fieldName} field`,
 			);
 			const richText = required(
@@ -290,44 +375,54 @@ describe("semantic binding inventory", () => {
 				canonicalNodeKey: field.key,
 				token: "rich-text",
 			});
-			expect([field.key, richText.key].filter((key) => inventory.bindings[key]?.type === "primitive")).toEqual([
-				field.key,
-			]);
+			expect(
+				[field.key, richText.key].filter(
+					(key) => inventory.bindings[key]?.type === "primitive",
+				),
+			).toEqual([field.key]);
 		}
 	});
 
 	it.each([
 		["en-US", "ltr", "View"],
 		["ar-SA", "rtl", "Text"],
-	] as const)("binds %s list item content through the renderer direction seam", (locale, direction, primitive) => {
-		const data = structuredClone(defaultResumeData);
-		data.metadata.page.locale = locale;
-		data.summary.content = "<ul><li>Item</li></ul>";
-		const tree = buildSemanticTree({
-			data,
-			template: "onyx",
-			page: { fullWidth: true, main: ["summary"], sidebar: [] },
-			pageNumber: 1,
-			showHeader: false,
-		});
-		const content = required(
-			findNode(tree, (candidate) => candidate.kind === "list-item-content"),
-			`${direction} list item content`,
-		);
+	] as const)(
+		"binds %s list item content through the renderer direction seam",
+		(locale, direction, primitive) => {
+			const data = structuredClone(defaultResumeData);
+			data.metadata.page.locale = locale;
+			data.summary.content = "<ul><li>Item</li></ul>";
+			const tree = buildSemanticTree({
+				data,
+				template: "onyx",
+				page: { fullWidth: true, main: ["summary"], sidebar: [] },
+				pageNumber: 1,
+				showHeader: false,
+			});
+			const content = required(
+				findNode(tree, (candidate) => candidate.kind === "list-item-content"),
+				`${direction} list item content`,
+			);
 
-		expect(content.attributes).toEqual({ direction });
-		expect(createBindingInventory(tree).bindings[content.key]).toEqual({
-			type: "primitive",
-			primitive,
-			source: "existing",
-		});
-	});
+			expect(content.attributes).toEqual({ direction });
+			expect(createBindingInventory(tree).bindings[content.key]).toEqual({
+				type: "primitive",
+				primitive,
+				source: "existing",
+			});
+		},
+	);
 
 	it("uses the renderer's trimmed custom contact link decision", () => {
 		const data = structuredClone(defaultResumeData);
 		data.basics.customFields = [
 			{ id: "whitespace", icon: "link", text: "No link", link: "   " },
-			{ id: "linked", icon: "link", text: "Linked", link: " https://example.com " },
+			{
+				id: "linked",
+				icon: "link",
+				text: "Linked",
+				link: " https://example.com ",
+			},
 		];
 		const tree = buildSemanticTree({
 			data,
@@ -347,10 +442,18 @@ describe("semantic binding inventory", () => {
 		);
 
 		expect(whitespace.roles).toEqual([]);
-		expect(inventory.bindings[whitespace.key]).toMatchObject({ type: "primitive", primitive: "View" });
-		expect(findNode(whitespace, (candidate) => candidate.kind === "link")).toBeUndefined();
+		expect(inventory.bindings[whitespace.key]).toMatchObject({
+			type: "primitive",
+			primitive: "View",
+		});
+		expect(
+			findNode(whitespace, (candidate) => candidate.kind === "link"),
+		).toBeUndefined();
 		expect(linked.roles).toEqual(["structured-link"]);
-		expect(inventory.bindings[linked.key]).toMatchObject({ type: "primitive", primitive: "Link" });
+		expect(inventory.bindings[linked.key]).toMatchObject({
+			type: "primitive",
+			primitive: "Link",
+		});
 		const linkedAlias = required(
 			findNode(linked, (candidate) => candidate.kind === "link"),
 			"linked contact semantic link",
@@ -361,46 +464,63 @@ describe("semantic binding inventory", () => {
 			canonicalNodeKey: linked.key,
 			token: "structured-link",
 		});
-		expect([linked.key, linkedAlias.key].filter((key) => inventory.bindings[key]?.type === "primitive")).toEqual([
-			linked.key,
-		]);
+		expect(
+			[linked.key, linkedAlias.key].filter(
+				(key) => inventory.bindings[key]?.type === "primitive",
+			),
+		).toEqual([linked.key]);
 	});
 
 	it.each([
 		["chikorita", "contact-row-primary", "View"],
 		["chikorita", "contact-row-secondary", "View"],
 		["meowth", "education-grade-row", "Text"],
-	] as const)("binds %s's %s descriptor to its existing %s host", (template, partName, primitive) => {
-		const data = structuredClone(defaultResumeData);
-		data.basics.email = "ada@example.com";
-		data.sections.education.items = [
-			{
-				id: "education-1",
-				hidden: false,
-				school: "University of London",
-				area: "Mathematics",
-				degree: "BSc",
-				grade: "First",
-				location: "London",
-				period: "1835",
-				website: { url: "", label: "", inlineLink: false },
-				description: "",
-			},
-		];
-		const tree = buildSemanticTree({
-			data,
-			template,
-			page: { fullWidth: true, main: ["education"], sidebar: [] },
-			pageNumber: 1,
-			showHeader: true,
-		});
-		const part = required(
-			findNode(tree, (candidate) => candidate.kind === "template-part" && candidate.attributes.name === partName),
-			partName,
-		);
-		const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry(template));
+	] as const)(
+		"binds %s's %s descriptor to its existing %s host",
+		(template, partName, primitive) => {
+			const data = structuredClone(defaultResumeData);
+			data.basics.email = "ada@example.com";
+			data.sections.education.items = [
+				{
+					id: "education-1",
+					hidden: false,
+					school: "University of London",
+					area: "Mathematics",
+					degree: "BSc",
+					grade: "First",
+					location: "London",
+					period: "1835",
+					website: { url: "", label: "", inlineLink: false },
+					description: "",
+				},
+			];
+			const tree = buildSemanticTree({
+				data,
+				template,
+				page: { fullWidth: true, main: ["education"], sidebar: [] },
+				pageNumber: 1,
+				showHeader: true,
+			});
+			const part = required(
+				findNode(
+					tree,
+					(candidate) =>
+						candidate.kind === "template-part" &&
+						candidate.attributes.name === partName,
+				),
+				partName,
+			);
+			const inventory = createBindingInventory(
+				tree,
+				getTemplateSemanticBindingRegistry(template),
+			);
 
-		expect(inventory.bindings[part.key]).toEqual({ type: "primitive", primitive, source: "existing" });
-		expect(inventory.syntheticWrapperCount).toBe(0);
-	});
+			expect(inventory.bindings[part.key]).toEqual({
+				type: "primitive",
+				primitive,
+				source: "existing",
+			});
+			expect(inventory.syntheticWrapperCount).toBe(0);
+		},
+	);
 });

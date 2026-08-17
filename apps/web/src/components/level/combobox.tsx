@@ -1,9 +1,9 @@
-import type z from "zod";
-import type { SingleComboboxProps } from "@/components/ui/combobox";
 import { t } from "@lingui/core/macro";
+import { levelDesignSchema } from "@rbuilder/schema/resume/data";
 import { useMemo } from "react";
 import { match } from "ts-pattern";
-import { levelDesignSchema } from "@rbuilder/schema/resume/data";
+import type z from "zod";
+import type { SingleComboboxProps } from "@/components/ui/combobox";
 import { Combobox } from "@/components/ui/combobox";
 
 type LevelType = z.infer<typeof levelDesignSchema>["type"];

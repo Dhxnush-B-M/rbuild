@@ -1,23 +1,32 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { skillItemSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormDescription,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
 import { Slider } from "@rbuilder/ui/components/slider";
 import { cn } from "@rbuilder/utils/style";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
 import { ChipInput } from "@/components/input/chip-input";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -36,7 +45,9 @@ const defaultValues: FormValues = {
 	keywords: [],
 };
 
-export function CreateSkillDialog({ data }: DialogProps<"resume.sections.skills.create">) {
+export function CreateSkillDialog({
+	data,
+}: DialogProps<"resume.sections.skills.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -68,7 +79,9 @@ export function CreateSkillDialog({ data }: DialogProps<"resume.sections.skills.
 	);
 }
 
-export function UpdateSkillDialog({ data }: DialogProps<"resume.sections.skills.update">) {
+export function UpdateSkillDialog({
+	data,
+}: DialogProps<"resume.sections.skills.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -105,7 +118,8 @@ const SkillForm = withForm({
 	render: function SkillFormRenderer({ form }) {
 		const nameMeta = useStore(form.store, (s) => s.fieldMeta?.name);
 
-		const isNameInvalid = (nameMeta?.isTouched ?? false) && (nameMeta?.errors?.length ?? 0) > 0;
+		const isNameInvalid =
+			(nameMeta?.isTouched ?? false) && (nameMeta?.errors?.length ?? 0) > 0;
 
 		return (
 			<>
@@ -131,7 +145,13 @@ const SkillForm = withForm({
 
 					<form.Field name="name">
 						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								className="flex-1"
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Name</Trans>
 								</FormLabel>
@@ -142,7 +162,9 @@ const SkillForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -165,7 +187,10 @@ const SkillForm = withForm({
 												<PopoverTrigger className="h-9 rounded-e border-input border-y border-e px-2">
 													<div
 														className="size-4 shrink-0 cursor-pointer rounded-full border border-foreground/60 transition-all hover:scale-105 focus-visible:outline-hidden"
-														style={{ backgroundColor: field.state.value ?? "currentColor" }}
+														style={{
+															backgroundColor:
+																field.state.value ?? "currentColor",
+														}}
 													/>
 												</PopoverTrigger>
 											}
@@ -185,7 +210,9 @@ const SkillForm = withForm({
 					{(field) => (
 						<FormItem
 							className="gap-4 sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormLabel>
 								<Trans>Level</Trans>
@@ -198,14 +225,18 @@ const SkillForm = withForm({
 										step={1}
 										value={[field.state.value]}
 										onValueChange={(value) => {
-											field.handleChange(Array.isArray(value) ? value[0] : value);
+											field.handleChange(
+												Array.isArray(value) ? value[0] : value,
+											);
 										}}
 									/>
 								}
 							/>
 							<FormMessage errors={field.state.meta.errors} />
 							<FormDescription>
-								{Number(field.state.value) === 0 ? t`Hidden` : `${field.state.value} / 5`}
+								{Number(field.state.value) === 0
+									? t`Hidden`
+									: `${field.state.value} / 5`}
 							</FormDescription>
 						</FormItem>
 					)}
@@ -215,7 +246,9 @@ const SkillForm = withForm({
 					{(field) => (
 						<FormItem
 							className="sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormLabel>
 								<Trans>Keywords</Trans>

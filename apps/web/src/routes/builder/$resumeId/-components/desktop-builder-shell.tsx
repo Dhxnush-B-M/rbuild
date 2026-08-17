@@ -1,12 +1,16 @@
-import type { Layout } from "react-resizable-panels";
-import type { BuilderLayout } from "../-store/sidebar";
 import { Trans } from "@lingui/react/macro";
+import {
+	ResizableGroup,
+	ResizablePanel,
+	ResizableSeparator,
+} from "@rbuilder/ui/components/resizable";
 import { Outlet } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
+import type { Layout } from "react-resizable-panels";
 import { usePanelRef } from "react-resizable-panels";
-import { ResizableGroup, ResizablePanel, ResizableSeparator } from "@rbuilder/ui/components/resizable";
 import { BuilderSidebarLeft } from "../-sidebar/left";
 import { BuilderSidebarRight } from "../-sidebar/right";
+import type { BuilderLayout } from "../-store/sidebar";
 import {
 	mapPanelLayoutToBuilderLayout,
 	setBuilderLayout,
@@ -19,18 +23,29 @@ export type BuilderLayoutShellProps = {
 	initialLayout: BuilderLayout;
 };
 
-export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) {
+export function DesktopBuilderShell({
+	initialLayout,
+}: BuilderLayoutShellProps) {
 	// Only rendered when `BuilderLayoutShell` has already decided we're on desktop, so sidebar sizing is unconditional.
 	const canPersistLayoutRef = useRef(false);
 
 	const leftSidebarRef = usePanelRef();
 	const rightSidebarRef = usePanelRef();
 
-	const setLeftSidebar = useBuilderSidebarStore((state) => state.setLeftSidebar);
-	const setRightSidebar = useBuilderSidebarStore((state) => state.setRightSidebar);
+	const setLeftSidebar = useBuilderSidebarStore(
+		(state) => state.setLeftSidebar,
+	);
+	const setRightSidebar = useBuilderSidebarStore(
+		(state) => state.setRightSidebar,
+	);
 	const setLayout = useBuilderSidebarStore((state) => state.setLayout);
 
-	const { maxSidebarSize, minSidebarSize, collapsedSidebarSize, groupResizeBehavior } = useBuilderSidebar();
+	const {
+		maxSidebarSize,
+		minSidebarSize,
+		collapsedSidebarSize,
+		groupResizeBehavior,
+	} = useBuilderSidebar();
 
 	useEffect(() => {
 		setLayout(initialLayout);
@@ -60,13 +75,22 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 	return (
 		<div className="relative flex h-svh flex-col overflow-hidden bg-background">
 			{/* Ambient Fluid Water-Like Light Glow Reflections */}
-			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-30">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-30"
+			>
 				<div className="size-[800px] animate-pulse rounded-full bg-gradient-to-tr from-cyan-500/20 via-blue-600/20 to-indigo-600/20 blur-3xl" />
 			</div>
-			<div aria-hidden="true" className="pointer-events-none fixed top-10 left-1/4 opacity-25">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed top-10 left-1/4 opacity-25"
+			>
 				<div className="size-[450px] rounded-full bg-gradient-to-br from-teal-400/20 to-emerald-500/20 blur-3xl" />
 			</div>
-			<div aria-hidden="true" className="pointer-events-none fixed right-1/4 bottom-10 opacity-25">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed right-1/4 bottom-10 opacity-25"
+			>
 				<div className="size-[500px] rounded-full bg-gradient-to-tl from-purple-500/20 to-pink-500/20 blur-3xl" />
 			</div>
 
@@ -79,7 +103,11 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 
 			<BuilderHeader />
 
-			<ResizableGroup orientation="horizontal" className="relative z-10 mt-14 flex-1" onLayoutChanged={onLayoutChanged}>
+			<ResizableGroup
+				orientation="horizontal"
+				className="relative z-10 mt-14 flex-1"
+				onLayoutChanged={onLayoutChanged}
+			>
 				<ResizablePanel
 					collapsible
 					id="left"
@@ -94,7 +122,11 @@ export function DesktopBuilderShell({ initialLayout }: BuilderLayoutShellProps) 
 					<BuilderSidebarLeft />
 				</ResizablePanel>
 				<ResizableSeparator withHandle className="z-50 border-white/10" />
-				<ResizablePanel id="artboard" defaultSize={artboardSize} className="h-[calc(100svh-3.5rem)]">
+				<ResizablePanel
+					id="artboard"
+					defaultSize={artboardSize}
+					className="h-[calc(100svh-3.5rem)]"
+				>
 					<main id="main-content" className="h-full">
 						<Outlet />
 					</main>

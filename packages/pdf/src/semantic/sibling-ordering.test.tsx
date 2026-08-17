@@ -1,10 +1,10 @@
 import type { SemanticNode } from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import type { Template } from "@rbuilder/schema/templates";
-import { describe, expect, it } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { ResumeDocument } from "../document";
 import { resolveResumeRuntime } from "./resolve";
 
@@ -29,8 +29,14 @@ const findSemanticNode = (
 	}
 };
 
-const renderTextValues = async (data: ResumeData, template: Template): Promise<string[]> => {
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
+const renderTextValues = async (
+	data: ResumeData,
+	template: Template,
+): Promise<string[]> => {
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	return textValues(instance.container.document as HostNode);
@@ -49,11 +55,19 @@ const semanticFixture = (rule: string): ResumeData => {
 		customFields: [],
 	};
 	const stylesheet = { languageVersion: 1, text: `@version 1; ${rule}` };
-	data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
+	data.metadata.stylesheet = {
+		mode: "semantic",
+		source: stylesheet,
+		applied: stylesheet,
+	};
 	return data;
 };
 
-const expectBefore = (values: readonly string[], first: string, second: string) => {
+const expectBefore = (
+	values: readonly string[],
+	first: string,
+	second: string,
+) => {
 	const firstIndex = values.indexOf(first);
 	const secondIndex = values.indexOf(second);
 	expect(firstIndex, `${first} is present`).toBeGreaterThanOrEqual(0);
@@ -89,7 +103,9 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 		data.basics.phone = "+44 123";
 		data.basics.location = "London";
 		data.basics.website = { url: "https://example.com", label: "example.com" };
-		data.basics.customFields = [{ id: "custom-1", icon: "", text: "portfolio.example", link: "" }];
+		data.basics.customFields = [
+			{ id: "custom-1", icon: "", text: "portfolio.example", link: "" },
+		];
 		data.metadata.layout.pages = [{ fullWidth: true, main: [], sidebar: [] }];
 
 		const values = await renderTextValues(data, "chikorita");
@@ -113,16 +129,27 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 				position: "",
 				location: "",
 				period: "",
-				website: { url: "https://example.com/company", label: "Company site", inlineLink: false },
+				website: {
+					url: "https://example.com/company",
+					label: "Company site",
+					inlineLink: false,
+				},
 				description: "",
 				roles: [
 					{ id: "role-1", position: "First role", period: "", description: "" },
-					{ id: "role-2", position: "Hidden role", period: "", description: "" },
+					{
+						id: "role-2",
+						position: "Hidden role",
+						period: "",
+						description: "",
+					},
 					{ id: "role-3", position: "Last role", period: "", description: "" },
 				],
 			},
 		];
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["experience"], sidebar: [] },
+		];
 
 		const values = await renderTextValues(data, "onyx");
 
@@ -149,7 +176,9 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 				roles: [],
 			},
 		];
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["experience"], sidebar: [] },
+		];
 
 		const values = await renderTextValues(data, "meowth");
 
@@ -177,7 +206,9 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 				description: "",
 			},
 		];
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["education"], sidebar: [] }];
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["education"], sidebar: [] },
+		];
 
 		const values = await renderTextValues(data, "meowth");
 
@@ -204,7 +235,9 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 				description: "",
 			},
 		];
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["education"], sidebar: [] }];
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["education"], sidebar: [] },
+		];
 
 		const values = await renderTextValues(data, "meowth");
 
@@ -218,8 +251,11 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 			rich-text > list { display: none; }
 			paragraph > underline { order: -1; }
 		`);
-		data.summary.content = "<ul><li>Hidden run</li></ul><p><strong>First run</strong><u>Last run</u></p>";
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
+		data.summary.content =
+			"<ul><li>Hidden run</li></ul><p><strong>First run</strong><u>Last run</u></p>";
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["summary"], sidebar: [] },
+		];
 
 		const values = await renderTextValues(data, "onyx");
 
@@ -236,13 +272,26 @@ describe("semantic sibling ordering reaches final PDF output", () => {
 			const data = semanticFixture(rule);
 			data.metadata.page.locale = locale;
 			data.summary.content = "<ul><li>List content</li></ul>";
-			data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
-			const runtime = resolveResumeRuntime({ data, template: "onyx", mode: "semantic" });
-			const renderedItem = findSemanticNode(runtime.renderTree, (node) => node.kind === "list-item");
+			data.metadata.layout.pages = [
+				{ fullWidth: true, main: ["summary"], sidebar: [] },
+			];
+			const runtime = resolveResumeRuntime({
+				data,
+				template: "onyx",
+				mode: "semantic",
+			});
+			const renderedItem = findSemanticNode(
+				runtime.renderTree,
+				(node) => node.kind === "list-item",
+			);
 
-			expect(runtime.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
+			expect(
+				runtime.diagnostics.filter(({ severity }) => severity === "error"),
+			).toEqual([]);
 			expect(renderedItem?.children.map(({ kind }) => kind)).toEqual(
-				rule.includes("display") ? ["list-item-content"] : ["list-marker", "list-item-content"],
+				rule.includes("display")
+					? ["list-item-content"]
+					: ["list-marker", "list-item-content"],
 			);
 
 			const values = await renderTextValues(data, "onyx");

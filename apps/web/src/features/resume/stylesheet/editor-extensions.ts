@@ -1,14 +1,31 @@
-import type { Completion, CompletionContext, CompletionResult, CompletionSource } from "@codemirror/autocomplete";
-import type { Diagnostic } from "@codemirror/lint";
-import type { EditorState, Extension } from "@codemirror/state";
-import type { DecorationSet, EditorView as EditorViewType, ViewUpdate } from "@codemirror/view";
-import type { SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet/registry";
-import type { SemanticCssColorToken } from "./color-tokens";
-import type { SemanticCssEditorMetadata } from "./protocol";
+import type {
+	Completion,
+	CompletionContext,
+	CompletionResult,
+	CompletionSource,
+} from "@codemirror/autocomplete";
 import { autocompletion } from "@codemirror/autocomplete";
+import type { Diagnostic } from "@codemirror/lint";
 import { linter, lintGutter } from "@codemirror/lint";
 import { search, searchKeymap } from "@codemirror/search";
-import { Decoration, EditorView, hoverTooltip, keymap, ViewPlugin, WidgetType } from "@codemirror/view";
+import type { EditorState, Extension } from "@codemirror/state";
+import type {
+	DecorationSet,
+	EditorView as EditorViewType,
+	ViewUpdate,
+} from "@codemirror/view";
+import {
+	Decoration,
+	EditorView,
+	hoverTooltip,
+	keymap,
+	ViewPlugin,
+	WidgetType,
+} from "@codemirror/view";
+import type {
+	SemanticCssDiagnostic,
+	SemanticNode,
+} from "@rbuilder/resume/stylesheet/registry";
 import {
 	escapeCssIdentifier,
 	escapeCssString,
@@ -17,8 +34,13 @@ import {
 	SEMANTIC_REGISTRY_V1,
 	SYSTEM_VARIABLE_REGISTRY_V1,
 } from "@rbuilder/resume/stylesheet/registry";
+import type { SemanticCssColorToken } from "./color-tokens";
+import type { SemanticCssEditorMetadata } from "./protocol";
 
-export type SemanticCssColorSelection = (token: SemanticCssColorToken, rect: DOMRect) => void;
+export type SemanticCssColorSelection = (
+	token: SemanticCssColorToken,
+	rect: DOMRect,
+) => void;
 
 const directives = ["@media", "@version 1;"] as const;
 
@@ -43,21 +65,30 @@ function selectorLabels(metadata: SemanticCssEditorMetadata): string[] {
 	const attributes = unique([
 		"id",
 		"role",
-		...Object.values(SEMANTIC_REGISTRY_V1).flatMap(({ attributes }) => attributes),
+		...Object.values(SEMANTIC_REGISTRY_V1).flatMap(
+			({ attributes }) => attributes,
+		),
 	]);
-	const roles = unique(Object.values(SEMANTIC_REGISTRY_V1).flatMap(({ roles }) => roles));
+	const roles = unique(
+		Object.values(SEMANTIC_REGISTRY_V1).flatMap(({ roles }) => roles),
+	);
 	return unique([
 		...SEMANTIC_NODE_KINDS,
 		"*",
-		...nodes.flatMap((node) => (node.id ? [`#${escapeCssIdentifier(node.id)}`] : [])),
+		...nodes.flatMap((node) =>
+			node.id ? [`#${escapeCssIdentifier(node.id)}`] : [],
+		),
 		...attributes.map((attribute) => `[${escapeCssIdentifier(attribute)}]`),
 		...nodes.flatMap((node) =>
 			Object.entries(node.attributes).map(
-				([name, value]) => `[${escapeCssIdentifier(name)}=${escapeCssString(value)}]`,
+				([name, value]) =>
+					`[${escapeCssIdentifier(name)}=${escapeCssString(value)}]`,
 			),
 		),
 		...roles.map((role) => `[role~=${escapeCssString(role)}]`),
-		...metadata.templateParts.map((name) => `template-part[name=${escapeCssString(name)}]`),
+		...metadata.templateParts.map(
+			(name) => `template-part[name=${escapeCssString(name)}]`,
+		),
 		":root",
 		":first-child",
 		":last-child",
@@ -71,10 +102,17 @@ function selectorLabels(metadata: SemanticCssEditorMetadata): string[] {
 }
 
 function userVariables(source: string): string[] {
-	return unique([...source.matchAll(/(--(?!resume-)[-_a-zA-Z0-9]+)\s*:/g)].map((match) => match[1] as string));
+	return unique(
+		[...source.matchAll(/(--(?!resume-)[-_a-zA-Z0-9]+)\s*:/g)].map(
+			(match) => match[1] as string,
+		),
+	);
 }
 
-function completionKind(source: string, position: number): "directive" | "property" | "selector" | "system" | "value" {
+function completionKind(
+	source: string,
+	position: number,
+): "directive" | "property" | "selector" | "system" | "value" {
 	const before = source.slice(0, position);
 	if (/--resume-[-\w]*$/.test(before)) return "system";
 	if (/@[-\w]*$/.test(before)) return "directive";
@@ -85,7 +123,10 @@ function completionKind(source: string, position: number): "directive" | "proper
 	return declaration.includes(":") ? "value" : "property";
 }
 
-function declarationProperty(source: string, position: number): string | undefined {
+function declarationProperty(
+	source: string,
+	position: number,
+): string | undefined {
 	const before = source.slice(0, position);
 	const open = before.lastIndexOf("{");
 	const close = before.lastIndexOf("}");
@@ -97,7 +138,11 @@ function declarationProperty(source: string, position: number): string | undefin
 	return property || undefined;
 }
 
-function completionLabels(source: string, position: number, metadata: SemanticCssEditorMetadata): string[] {
+function completionLabels(
+	source: string,
+	position: number,
+	metadata: SemanticCssEditorMetadata,
+): string[] {
 	switch (completionKind(source, position)) {
 		case "directive":
 			return [...directives];
@@ -132,7 +177,8 @@ export function getSemanticCssHoverDocumentation(
 	label: string,
 	metadata: SemanticCssEditorMetadata,
 ): string | undefined {
-	const semantic = SEMANTIC_REGISTRY_V1[label as keyof typeof SEMANTIC_REGISTRY_V1];
+	const semantic =
+		SEMANTIC_REGISTRY_V1[label as keyof typeof SEMANTIC_REGISTRY_V1];
 	if (semantic) {
 		return `Semantic element ${label}. Attributes: ${semantic.attributes.join(", ") || "none"}. Roles: ${semantic.roles.join(", ") || "none"}.`;
 	}
@@ -140,13 +186,20 @@ export function getSemanticCssHoverDocumentation(
 	if (property) {
 		return `Semantic CSS ${property.category} property ${label}. ${property.inheritable ? "Inherited" : "Not inherited"}. Applies to: ${property.appliesTo.join(", ")}.`;
 	}
-	const systemVariable = SYSTEM_VARIABLE_REGISTRY_V1[label as keyof typeof SYSTEM_VARIABLE_REGISTRY_V1];
-	if (systemVariable) return `Read-only Semantic CSS system variable. ${systemVariable.description}`;
+	const systemVariable =
+		SYSTEM_VARIABLE_REGISTRY_V1[
+			label as keyof typeof SYSTEM_VARIABLE_REGISTRY_V1
+		];
+	if (systemVariable)
+		return `Read-only Semantic CSS system variable. ${systemVariable.description}`;
 	const normalized = label.startsWith("#") ? label.slice(1) : label;
-	const currentNode = walk(metadata.semanticTree).find((node) => node.id === normalized);
+	const currentNode = walk(metadata.semanticTree).find(
+		(node) => node.id === normalized,
+	);
 	if (currentNode) return `Current resume ${currentNode.kind} ID.`;
 	const part = label.match(/^template-part\[name="(.+)"\]$/)?.[1] ?? label;
-	if (metadata.templateParts.includes(part)) return `Current template part ${part}.`;
+	if (metadata.templateParts.includes(part))
+		return `Current template part ${part}.`;
 	return;
 }
 
@@ -156,7 +209,10 @@ export function mapCompilerDiagnostics(
 ): readonly Diagnostic[] {
 	return diagnostics.map(({ message, severity, range, code }) => ({
 		from: Math.max(0, Math.min(docLength, range.start.offset)),
-		to: Math.max(0, Math.min(docLength, Math.max(range.start.offset, range.end.offset))),
+		to: Math.max(
+			0,
+			Math.min(docLength, Math.max(range.start.offset, range.end.offset)),
+		),
 		severity,
 		message,
 		source: code,
@@ -181,12 +237,15 @@ export function compositionAwareDocumentListener(
 			},
 		}),
 		EditorView.updateListener.of((update) => {
-			if (update.docChanged && !composing && !ignore?.(update)) onChange(update.state.doc.toString());
+			if (update.docChanged && !composing && !ignore?.(update))
+				onChange(update.state.doc.toString());
 		}),
 	];
 }
 
-function completionSource(metadata: SemanticCssEditorMetadata): CompletionSource {
+function completionSource(
+	metadata: SemanticCssEditorMetadata,
+): CompletionSource {
 	return (context: CompletionContext): CompletionResult | null => {
 		const source = context.state.doc.toString();
 		const labels = completionLabels(source, context.pos, metadata);
@@ -194,16 +253,31 @@ function completionSource(metadata: SemanticCssEditorMetadata): CompletionSource
 		if (!context.explicit && (!word || word.from === word.to)) return null;
 		const options: Completion[] = labels.map((label) => ({
 			label,
-			type: label.startsWith("@") ? "keyword" : label.startsWith("#") || label.includes("[") ? "text" : "property",
+			type: label.startsWith("@")
+				? "keyword"
+				: label.startsWith("#") || label.includes("[")
+					? "text"
+					: "property",
 		}));
-		return { from: word?.from ?? context.pos, options, validFor: /[-_@#a-zA-Z0-9]*/ };
+		return {
+			from: word?.from ?? context.pos,
+			options,
+			validFor: /[-_@#a-zA-Z0-9]*/,
+		};
 	};
 }
 
-function tokenAt(state: EditorState, position: number): { from: number; to: number; label: string } | undefined {
+function tokenAt(
+	state: EditorState,
+	position: number,
+): { from: number; to: number; label: string } | undefined {
 	const line = state.doc.lineAt(position);
-	const before = line.text.slice(0, position - line.from).match(/(?:--|[#@])?[-_a-zA-Z0-9]+$/)?.[0] ?? "";
-	const after = line.text.slice(position - line.from).match(/^[-_a-zA-Z0-9]+/)?.[0] ?? "";
+	const before =
+		line.text
+			.slice(0, position - line.from)
+			.match(/(?:--|[#@])?[-_a-zA-Z0-9]+$/)?.[0] ?? "";
+	const after =
+		line.text.slice(position - line.from).match(/^[-_a-zA-Z0-9]+/)?.[0] ?? "";
 	if (!before && !after) return;
 	const from = position - before.length;
 	return { from, to: position + after.length, label: `${before}${after}` };
@@ -213,7 +287,10 @@ function hoverExtension(metadata: SemanticCssEditorMetadata): Extension {
 	return hoverTooltip((view, position) => {
 		const token = tokenAt(view.state, position);
 		if (!token) return null;
-		const documentation = getSemanticCssHoverDocumentation(token.label, metadata);
+		const documentation = getSemanticCssHoverDocumentation(
+			token.label,
+			metadata,
+		);
 		if (!documentation) return null;
 		return {
 			pos: token.from,
@@ -239,7 +316,9 @@ class ColorSwatch extends WidgetType {
 
 	eq(other: ColorSwatch): boolean {
 		return (
-			other.token.from === this.token.from && other.token.to === this.token.to && other.token.value === this.token.value
+			other.token.from === this.token.from &&
+			other.token.to === this.token.to &&
+			other.token.value === this.token.value
 		);
 	}
 
@@ -250,7 +329,9 @@ class ColorSwatch extends WidgetType {
 		button.title = `Edit color ${this.token.value}`;
 		button.setAttribute("aria-label", button.title);
 		button.style.backgroundColor = this.token.value;
-		button.addEventListener("click", () => this.onSelect(this.token, button.getBoundingClientRect()));
+		button.addEventListener("click", () =>
+			this.onSelect(this.token, button.getBoundingClientRect()),
+		);
 		return button;
 	}
 
@@ -269,13 +350,23 @@ function colorDecorations(
 			(token) =>
 				token.from >= 0 &&
 				token.to <= view.state.doc.length &&
-				view.visibleRanges.some(({ from, to }) => token.to >= from && token.from <= to),
+				view.visibleRanges.some(
+					({ from, to }) => token.to >= from && token.from <= to,
+				),
 		)
-		.map((token) => Decoration.widget({ widget: new ColorSwatch(token, onSelect), side: 1 }).range(token.to));
+		.map((token) =>
+			Decoration.widget({
+				widget: new ColorSwatch(token, onSelect),
+				side: 1,
+			}).range(token.to),
+		);
 	return Decoration.set(ranges, true);
 }
 
-function colorExtension(tokens: readonly SemanticCssColorToken[], onSelect: SemanticCssColorSelection): Extension {
+function colorExtension(
+	tokens: readonly SemanticCssColorToken[],
+	onSelect: SemanticCssColorSelection,
+): Extension {
 	return [
 		EditorView.baseTheme({
 			".semantic-css-color-swatch": {
@@ -321,7 +412,11 @@ export function createSemanticCssEditorExtensions(input: {
 		search({ top: true }),
 		keymap.of(searchKeymap),
 		lintGutter(),
-		linter((view) => mapCompilerDiagnostics(view.state.doc.length, input.diagnostics), { delay: 0 }),
+		linter(
+			(view) =>
+				mapCompilerDiagnostics(view.state.doc.length, input.diagnostics),
+			{ delay: 0 },
+		),
 		colorExtension(input.colorTokens, input.onColorSelect),
 	];
 }

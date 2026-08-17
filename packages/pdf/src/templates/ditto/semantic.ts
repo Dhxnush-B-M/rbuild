@@ -26,7 +26,11 @@ export const dittoSemanticManifest = {
 			key: "picture-anchor",
 			owner: { kind: "header", key: "header" },
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "header-band", at: "start", take: [{ kind: "picture" }] },
+			route: {
+				parent: "header-band",
+				at: "start",
+				take: [{ kind: "picture" }],
+			},
 		},
 		{
 			name: "contact-offset",

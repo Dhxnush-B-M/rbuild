@@ -1,10 +1,18 @@
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { basicsSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
+import type z from "zod";
 import { URLInput } from "@/components/input/url-input";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -23,7 +31,9 @@ const formSchema = basicsSchema;
 type FormValues = z.infer<typeof formSchema>;
 
 function BasicsSectionForm() {
-	const basics = useCurrentBuilderResumeSelector((resume) => resume.data.basics);
+	const basics = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.basics,
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const persist = (data: FormValues) => {
@@ -60,7 +70,11 @@ function BasicsSectionForm() {
 		>
 			<form.Field name="name">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Name</Trans>
 						</FormLabel>
@@ -83,7 +97,11 @@ function BasicsSectionForm() {
 
 			<form.Field name="headline">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Headline</Trans>
 						</FormLabel>
@@ -106,7 +124,11 @@ function BasicsSectionForm() {
 
 			<form.Field name="email">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Email</Trans>
 						</FormLabel>
@@ -130,7 +152,11 @@ function BasicsSectionForm() {
 
 			<form.Field name="phone">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Phone</Trans>
 						</FormLabel>
@@ -153,7 +179,11 @@ function BasicsSectionForm() {
 
 			<form.Field name="location">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Location</Trans>
 						</FormLabel>
@@ -176,7 +206,11 @@ function BasicsSectionForm() {
 
 			<form.Field name="website">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Website</Trans>
 						</FormLabel>

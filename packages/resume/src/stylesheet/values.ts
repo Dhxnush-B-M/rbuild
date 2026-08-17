@@ -1,16 +1,6 @@
 import type { CssLocation, CssNode } from "css-tree";
-import type { SemanticCssCompilerDiagnosticCode } from "./diagnostics";
-import type {
-	CompiledDeclaration,
-	CompiledMediaQuery,
-	CompiledStyleRule,
-	MediaFeature,
-	ParsedStylesheet,
-	SemanticCssDiagnostic,
-	SourceRange,
-	StyleProgram,
-} from "./types";
 import * as csstree from "css-tree";
+import type { SemanticCssCompilerDiagnosticCode } from "./diagnostics";
 import { createDiagnostic, EMPTY_SOURCE_RANGE } from "./diagnostics";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
 import {
@@ -22,6 +12,16 @@ import {
 	SEMANTIC_CSS_LENGTH_VALUE_KEYWORDS_V1,
 } from "./registry/properties";
 import { compileSelector } from "./selector";
+import type {
+	CompiledDeclaration,
+	CompiledMediaQuery,
+	CompiledStyleRule,
+	MediaFeature,
+	ParsedStylesheet,
+	SemanticCssDiagnostic,
+	SourceRange,
+	StyleProgram,
+} from "./types";
 
 export type CompileProgramResult = {
 	program: StyleProgram | null;
@@ -50,9 +50,13 @@ const spacingShorthands = new Set(["margin", "padding"]);
 const sides = ["top", "right", "bottom", "left"] as const;
 const borderStyles = new Set<string>(SEMANTIC_CSS_BORDER_STYLE_VALUES_V1);
 const cssWideKeywords = new Set<string>(SEMANTIC_CSS_CSS_WIDE_KEYWORDS_V1);
-const lengthValueKeywords = new Set<string>(SEMANTIC_CSS_LENGTH_VALUE_KEYWORDS_V1);
+const lengthValueKeywords = new Set<string>(
+	SEMANTIC_CSS_LENGTH_VALUE_KEYWORDS_V1,
+);
 const maxMediaQueryBranches = SEMANTIC_CSS_LIMITS_V1.maxRules;
-const lengthUnitPattern = SEMANTIC_CSS_LENGTH_UNITS_V1.map((unit) => (unit === "%" ? "%" : unit)).join("|");
+const lengthUnitPattern = SEMANTIC_CSS_LENGTH_UNITS_V1.map((unit) =>
+	unit === "%" ? "%" : unit,
+).join("|");
 const borderWidthPattern = new RegExp(
 	`^(?:thin|medium|thick|[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?(?:${lengthUnitPattern})?)$`,
 	"i",
@@ -64,18 +68,27 @@ function isCssWideKeyword(value: string): boolean {
 
 function isRegisteredPropertyValue(property: string, value: string): boolean {
 	return (
-		PROPERTY_REGISTRY_V1[property]?.values.some((candidate) => candidate.toLowerCase() === value.toLowerCase()) ?? false
+		PROPERTY_REGISTRY_V1[property]?.values.some(
+			(candidate) => candidate.toLowerCase() === value.toLowerCase(),
+		) ?? false
 	);
 }
 
-function isRegisteredShorthandComponent(property: string, value: string): boolean {
+function isRegisteredShorthandComponent(
+	property: string,
+	value: string,
+): boolean {
 	return !isCssWideKeyword(value) && isRegisteredPropertyValue(property, value);
 }
 
-export const SEMANTIC_CSS_LENGTH_PROPERTIES = new Set<string>(SEMANTIC_CSS_LENGTH_PROPERTIES_V1);
+export const SEMANTIC_CSS_LENGTH_PROPERTIES = new Set<string>(
+	SEMANTIC_CSS_LENGTH_PROPERTIES_V1,
+);
 
 function range(location: CssLocation | null | undefined): SourceRange {
-	return location ? { start: { ...location.start }, end: { ...location.end } } : EMPTY_SOURCE_RANGE;
+	return location
+		? { start: { ...location.start }, end: { ...location.end } }
+		: EMPTY_SOURCE_RANGE;
 }
 
 export function decodeCssEscapes(value: string): string {
@@ -83,7 +96,11 @@ export function decodeCssEscapes(value: string): string {
 		/\\([0-9a-f]{1,6})[ \t\r\n\f]?|\\(.)/gi,
 		(_match, hex: string | undefined, escaped: string | undefined) => {
 			const codePoint = hex ? Number.parseInt(hex, 16) : 0;
-			return hex ? String.fromCodePoint(codePoint === 0 || codePoint > 0x10ffff ? 0xfffd : codePoint) : (escaped ?? "");
+			return hex
+				? String.fromCodePoint(
+						codePoint === 0 || codePoint > 0x10ffff ? 0xfffd : codePoint,
+					)
+				: (escaped ?? "");
 		},
 	);
 }
@@ -175,7 +192,10 @@ function splitValue(value: string): string[] {
 	return parts.filter(Boolean);
 }
 
-function fourSides(property: string, values: readonly string[]): readonly [property: string, value: string][] | null {
+function fourSides(
+	property: string,
+	values: readonly string[],
+): readonly [property: string, value: string][] | null {
 	if (values.length < 1 || values.length > 4) return null;
 	const [top, right = top, bottom = top, left = right] =
 		values.length === 3
@@ -183,10 +203,15 @@ function fourSides(property: string, values: readonly string[]): readonly [prope
 			: values.length === 2
 				? [values[0], values[1], values[0], values[1]]
 				: values;
-	return sides.map((side, index) => [`${property}-${side}`, [top, right, bottom, left][index] as string]);
+	return sides.map((side, index) => [
+		`${property}-${side}`,
+		[top, right, bottom, left][index] as string,
+	]);
 }
 
-function borderComponents(value: string): readonly [component: string, value: string][] | null {
+function borderComponents(
+	value: string,
+): readonly [component: string, value: string][] | null {
 	if (isCssWideKeyword(value)) {
 		return [
 			["width", value],
@@ -215,9 +240,17 @@ function borderComponents(value: string): readonly [component: string, value: st
 	];
 }
 
-export function expandShorthand(property: string, value: string): readonly [property: string, value: string][] | null {
+export function expandShorthand(
+	property: string,
+	value: string,
+): readonly [property: string, value: string][] | null {
 	const valueParts = splitValue(value);
-	if (PROPERTY_REGISTRY_V1[property] && valueParts.length > 1 && valueParts.some(isCssWideKeyword)) return null;
+	if (
+		PROPERTY_REGISTRY_V1[property] &&
+		valueParts.length > 1 &&
+		valueParts.some(isCssWideKeyword)
+	)
+		return null;
 
 	if (!spacingShorthands.has(property)) {
 		if (property.endsWith("-horizontal")) {
@@ -250,9 +283,16 @@ export function expandShorthand(property: string, value: string): readonly [prop
 				];
 			const values = splitValue(value);
 			if (values.length < 1 || values.length > 2) return null;
-			const direction = values.find((part) => isRegisteredShorthandComponent("flex-direction", part)) ?? "row";
-			const wrap = values.find((part) => isRegisteredShorthandComponent("flex-wrap", part)) ?? "nowrap";
-			if (values.some((part) => part !== direction && part !== wrap)) return null;
+			const direction =
+				values.find((part) =>
+					isRegisteredShorthandComponent("flex-direction", part),
+				) ?? "row";
+			const wrap =
+				values.find((part) =>
+					isRegisteredShorthandComponent("flex-wrap", part),
+				) ?? "nowrap";
+			if (values.some((part) => part !== direction && part !== wrap))
+				return null;
 			return [
 				["flex-direction", direction],
 				["flex-wrap", wrap],
@@ -279,7 +319,8 @@ export function expandShorthand(property: string, value: string): readonly [prop
 				];
 			const values = splitValue(value);
 			if (values.length < 1 || values.length > 3) return null;
-			const numeric = (part: string | undefined) => part !== undefined && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(part);
+			const numeric = (part: string | undefined) =>
+				part !== undefined && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(part);
 			if (!numeric(values[0])) {
 				return values.length === 1
 					? [
@@ -304,7 +345,9 @@ export function expandShorthand(property: string, value: string): readonly [prop
 			const components = borderComponents(value);
 			return (
 				components?.flatMap(([component, componentValue]) =>
-					sides.map((side) => [`border-${side}-${component}`, componentValue] as const),
+					sides.map(
+						(side) => [`border-${side}-${component}`, componentValue] as const,
+					),
 				) ?? null
 			);
 		}
@@ -313,25 +356,39 @@ export function expandShorthand(property: string, value: string): readonly [prop
 			const components = borderComponents(value);
 			return (
 				components?.map(
-					([component, componentValue]) => [`border-${sideBorder[1]}-${component}`, componentValue] as [string, string],
+					([component, componentValue]) =>
+						[`border-${sideBorder[1]}-${component}`, componentValue] as [
+							string,
+							string,
+						],
 				) ?? null
 			);
 		}
 		if (/^border-(width|style|color)$/.test(property)) {
 			const component = property.slice("border-".length);
 			return (
-				fourSides("border", splitValue(value))?.map(([sideProperty, sideValue]) => [
-					`${sideProperty}-${component}`,
-					sideValue,
-				]) ?? null
+				fourSides("border", splitValue(value))?.map(
+					([sideProperty, sideValue]) => [
+						`${sideProperty}-${component}`,
+						sideValue,
+					],
+				) ?? null
 			);
 		}
 		if (property === "border-radius") {
 			if (value.includes("/")) return null;
 			const corners = fourSides("border", splitValue(value));
 			if (!corners) return null;
-			const cornerNames = ["top-left", "top-right", "bottom-right", "bottom-left"] as const;
-			return corners.map(([, cornerValue], index) => [`border-${cornerNames[index]}-radius`, cornerValue]);
+			const cornerNames = [
+				"top-left",
+				"top-right",
+				"bottom-right",
+				"bottom-left",
+			] as const;
+			return corners.map(([, cornerValue], index) => [
+				`border-${cornerNames[index]}-radius`,
+				cornerValue,
+			]);
 		}
 		return [[property, value]];
 	}
@@ -341,19 +398,34 @@ export function expandShorthand(property: string, value: string): readonly [prop
 }
 
 function parseAbsoluteLength(value: string): number | null {
-	const match = value.trim().match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(pt|px|in|mm|cm)?$/i);
+	const match = value
+		.trim()
+		.match(
+			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(pt|px|in|mm|cm)?$/i,
+		);
 	if (!match) return null;
 	const number = Number(match[1]);
-	const unit = (match[2]?.toLowerCase() ?? "pt") as keyof typeof absoluteUnitToPt;
+	const unit = (match[2]?.toLowerCase() ??
+		"pt") as keyof typeof absoluteUnitToPt;
 	return number * absoluteUnitToPt[unit];
 }
 
-const lengthPattern = new RegExp(`^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?(?:${lengthUnitPattern})?$`, "i");
+const lengthPattern = new RegExp(
+	`^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[+-]?\\d+)?(?:${lengthUnitPattern})?$`,
+	"i",
+);
 
-export function valueSyntaxError(property: string, value: string): string | null {
+export function valueSyntaxError(
+	property: string,
+	value: string,
+): string | null {
 	const normalized = value.trim().toLowerCase();
 	if (!normalized) return "Values cannot be empty.";
-	if (cssWideKeywords.has(normalized) || /var\s*\(/i.test(decodeCssEscapes(value))) return null;
+	if (
+		cssWideKeywords.has(normalized) ||
+		/var\s*\(/i.test(decodeCssEscapes(value))
+	)
+		return null;
 	if (SEMANTIC_CSS_LENGTH_PROPERTIES.has(property)) {
 		if (lengthPattern.test(normalized)) {
 			if (property === "font-size" && Number.parseFloat(normalized) < 0) {
@@ -367,23 +439,39 @@ export function valueSyntaxError(property: string, value: string): string | null
 	if (property === "size") {
 		const parts = splitValue(normalized);
 		return isRegisteredPropertyValue(property, normalized) ||
-			(parts.length >= 1 && parts.length <= 2 && parts.every((part) => lengthPattern.test(part)))
+			(parts.length >= 1 &&
+				parts.length <= 2 &&
+				parts.every((part) => lengthPattern.test(part)))
 			? null
 			: "size requires A4, letter, or one or two PDF lengths.";
 	}
 	if (property === "display")
-		return isRegisteredPropertyValue(property, normalized) ? null : "display supports flex or none.";
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "display supports flex or none.";
 	if (property === "direction")
-		return isRegisteredPropertyValue(property, normalized) ? null : "direction supports ltr or rtl.";
-	if (/^(?:border-style|border-(?:top|right|bottom|left)-style)$/.test(property)) {
-		return isRegisteredPropertyValue(property, normalized) ? null : "border styles support dotted, dashed, or solid.";
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "direction supports ltr or rtl.";
+	if (
+		/^(?:border-style|border-(?:top|right|bottom|left)-style)$/.test(property)
+	) {
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "border styles support dotted, dashed, or solid.";
 	}
 	if (property === "break-before")
-		return isRegisteredPropertyValue(property, normalized) ? null : "break-before supports auto or page.";
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "break-before supports auto or page.";
 	if (property === "break-inside")
-		return isRegisteredPropertyValue(property, normalized) ? null : "break-inside supports auto or avoid.";
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "break-inside supports auto or avoid.";
 	if (property === "-resume-fixed")
-		return isRegisteredPropertyValue(property, normalized) ? null : "-resume-fixed requires a boolean.";
+		return isRegisteredPropertyValue(property, normalized)
+			? null
+			: "-resume-fixed requires a boolean.";
 	if (
 		property === "order" ||
 		property === "orphans" ||
@@ -394,24 +482,41 @@ export function valueSyntaxError(property: string, value: string): string | null
 		const number = Number(normalized);
 		return Number.isInteger(number) ? null : `${property} requires an integer.`;
 	}
-	if (property === "opacity" || property === "flex-grow" || property === "flex-shrink") {
+	if (
+		property === "opacity" ||
+		property === "flex-grow" ||
+		property === "flex-shrink"
+	) {
 		const number = Number(normalized);
-		if (!Number.isFinite(number)) return `${property} requires a finite number.`;
-		if (property === "opacity" && (number < 0 || number > 1)) return "opacity must be between 0 and 1.";
+		if (!Number.isFinite(number))
+			return `${property} requires a finite number.`;
+		if (property === "opacity" && (number < 0 || number > 1))
+			return "opacity must be between 0 and 1.";
 		return null;
 	}
 	if (property === "line-height") {
-		return isRegisteredPropertyValue(property, normalized) || lengthPattern.test(normalized)
+		return isRegisteredPropertyValue(property, normalized) ||
+			lengthPattern.test(normalized)
 			? null
 			: "line-height requires a number or PDF length.";
 	}
 	return null;
 }
 
-function validateValue(property: string, value: string, node: AstNode, diagnostics: SemanticCssDiagnostic[]): void {
+function validateValue(
+	property: string,
+	value: string,
+	node: AstNode,
+	diagnostics: SemanticCssDiagnostic[],
+): void {
 	const decoded = decodeCssEscapes(value).toLowerCase();
 	if (property === "src" || /\burl\s*\(/i.test(decoded)) {
-		diagnostic(diagnostics, "FORBIDDEN_CSS_VALUE", "External CSS resources are not supported.", node);
+		diagnostic(
+			diagnostics,
+			"FORBIDDEN_CSS_VALUE",
+			"External CSS resources are not supported.",
+			node,
+		);
 		return;
 	}
 
@@ -419,7 +524,11 @@ function validateValue(property: string, value: string, node: AstNode, diagnosti
 		/(^|[\s,(])([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(pt|px|in|mm|cm)(?=$|[\s,)])/gi,
 	)) {
 		const points = parseAbsoluteLength(`${match[2]}${match[3]}`);
-		if (points === null || !Number.isFinite(points) || Math.abs(points) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt) {
+		if (
+			points === null ||
+			!Number.isFinite(points) ||
+			Math.abs(points) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt
+		) {
 			diagnostic(
 				diagnostics,
 				"INVALID_VALUE",
@@ -429,25 +538,46 @@ function validateValue(property: string, value: string, node: AstNode, diagnosti
 			return;
 		}
 		if (property === "font-size" && (points < 4 || points > 72)) {
-			diagnostic(diagnostics, "EXTREME_VALUE", "This font size is renderable but unusually extreme.", node, "warning");
+			diagnostic(
+				diagnostics,
+				"EXTREME_VALUE",
+				"This font size is renderable but unusually extreme.",
+				node,
+				"warning",
+			);
 		}
 	}
 }
 
 function parseMediaFeature(source: string): MediaFeature | null {
-	const orientation = source.match(/^\(\s*orientation\s*:\s*(portrait|landscape)\s*\)$/i);
-	if (orientation) return { name: "orientation", value: orientation[1]?.toLowerCase() as "portrait" | "landscape" };
+	const orientation = source.match(
+		/^\(\s*orientation\s*:\s*(portrait|landscape)\s*\)$/i,
+	);
+	if (orientation)
+		return {
+			name: "orientation",
+			value: orientation[1]?.toLowerCase() as "portrait" | "landscape",
+		};
 
-	const dimensions = source.match(/^\(\s*(min-|max-)?(width|height)\s*:\s*([^)]+)\s*\)$/i);
+	const dimensions = source.match(
+		/^\(\s*(min-|max-)?(width|height)\s*:\s*([^)]+)\s*\)$/i,
+	);
 	if (!dimensions) return null;
 	return {
 		name: dimensions[2]?.toLowerCase() as "width" | "height",
-		comparison: dimensions[1] ? (dimensions[1].toLowerCase().startsWith("min") ? "min" : "max") : "equal",
+		comparison: dimensions[1]
+			? dimensions[1].toLowerCase().startsWith("min")
+				? "min"
+				: "max"
+			: "equal",
 		value: dimensions[3]?.trim() ?? "",
 	};
 }
 
-function splitOutsideParentheses(value: string, separator: "," | "and"): string[] {
+function splitOutsideParentheses(
+	value: string,
+	separator: "," | "and",
+): string[] {
 	const parts: string[] = [];
 	let start = 0;
 	let depth = 0;
@@ -473,16 +603,30 @@ function splitOutsideParentheses(value: string, separator: "," | "and"): string[
 	return parts;
 }
 
-function parseMedia(node: AstNode, diagnostics: SemanticCssDiagnostic[]): readonly CompiledMediaQuery[] | null {
+function parseMedia(
+	node: AstNode,
+	diagnostics: SemanticCssDiagnostic[],
+): readonly CompiledMediaQuery[] | null {
 	const source = node.prelude ? csstree.generate(node.prelude) : "";
 	const querySources = splitOutsideParentheses(source, ",");
 	if (querySources.length > maxMediaQueryBranches) {
-		diagnostic(diagnostics, "RESOURCE_LIMIT", "The media query list exceeds the Semantic CSS branch limit.", node);
+		diagnostic(
+			diagnostics,
+			"RESOURCE_LIMIT",
+			"The media query list exceeds the Semantic CSS branch limit.",
+			node,
+		);
 		return null;
 	}
 	const queries = querySources.map((query) => {
-		const features = splitOutsideParentheses(query, "and").map(parseMediaFeature);
-		return features.every((feature): feature is MediaFeature => feature !== null) ? { features } : null;
+		const features = splitOutsideParentheses(query, "and").map(
+			parseMediaFeature,
+		);
+		return features.every(
+			(feature): feature is MediaFeature => feature !== null,
+		)
+			? { features }
+			: null;
 	});
 	const invalidValue = queries.some((query) =>
 		query?.features.some((feature) => {
@@ -497,11 +641,16 @@ function parseMedia(node: AstNode, diagnostics: SemanticCssDiagnostic[]): readon
 			const absolute = parseAbsoluteLength(feature.value);
 			return (
 				absolute !== null &&
-				(!Number.isFinite(absolute) || Math.abs(absolute) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt)
+				(!Number.isFinite(absolute) ||
+					Math.abs(absolute) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt)
 			);
 		}),
 	);
-	if (queries.length === 0 || queries.some((query) => query === null) || invalidValue) {
+	if (
+		queries.length === 0 ||
+		queries.some((query) => query === null) ||
+		invalidValue
+	) {
 		diagnostic(
 			diagnostics,
 			"INVALID_MEDIA_QUERY",
@@ -518,12 +667,18 @@ function combineMedia(
 	child: readonly CompiledMediaQuery[],
 ): readonly CompiledMediaQuery[] | null {
 	const parentBranches = Math.max(parent.length, 1);
-	if (child.length > Math.floor(maxMediaQueryBranches / parentBranches)) return null;
+	if (child.length > Math.floor(maxMediaQueryBranches / parentBranches))
+		return null;
 	if (parent.length === 0) return child;
-	return parent.flatMap((left) => child.map((right) => ({ features: [...left.features, ...right.features] })));
+	return parent.flatMap((left) =>
+		child.map((right) => ({ features: [...left.features, ...right.features] })),
+	);
 }
 
-export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: number): CompileProgramResult {
+export function compileProgram(
+	stylesheet: ParsedStylesheet,
+	languageVersion: number,
+): CompileProgramResult {
 	const diagnostics: SemanticCssDiagnostic[] = [];
 	const rules: CompiledStyleRule[] = [];
 	let ruleCount = 0;
@@ -533,7 +688,12 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 	const compileRule = (node: AstNode, media: readonly CompiledMediaQuery[]) => {
 		if (++ruleCount > SEMANTIC_CSS_LIMITS_V1.maxRules) {
 			if (ruleCount === SEMANTIC_CSS_LIMITS_V1.maxRules + 1) {
-				diagnostic(diagnostics, "RESOURCE_LIMIT", "The stylesheet has too many rules.", node);
+				diagnostic(
+					diagnostics,
+					"RESOURCE_LIMIT",
+					"The stylesheet has too many rules.",
+					node,
+				);
 			}
 			return;
 		}
@@ -542,8 +702,15 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 			? compileSelector(node.prelude)
 			: { selector: null, error: "Missing selector." };
 		if (!selectorResult.selector) {
-			const code = /too many|too long/i.test(selectorResult.error ?? "") ? "RESOURCE_LIMIT" : "INVALID_SELECTOR";
-			diagnostic(diagnostics, code, selectorResult.error ?? "Invalid selector.", node.prelude ?? node);
+			const code = /too many|too long/i.test(selectorResult.error ?? "")
+				? "RESOURCE_LIMIT"
+				: "INVALID_SELECTOR";
+			diagnostic(
+				diagnostics,
+				code,
+				selectorResult.error ?? "Invalid selector.",
+				node.prelude ?? node,
+			);
 			return;
 		}
 
@@ -552,13 +719,20 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 			if (declaration.type !== "Declaration" || !declaration.property) continue;
 			if (++declarationCount > SEMANTIC_CSS_LIMITS_V1.maxDeclarations) {
 				if (declarationCount === SEMANTIC_CSS_LIMITS_V1.maxDeclarations + 1) {
-					diagnostic(diagnostics, "RESOURCE_LIMIT", "The stylesheet has too many declarations.", declaration);
+					diagnostic(
+						diagnostics,
+						"RESOURCE_LIMIT",
+						"The stylesheet has too many declarations.",
+						declaration,
+					);
 				}
 				continue;
 			}
 
 			const decodedProperty = identifier(declaration.property);
-			const property = decodedProperty.startsWith("--") ? decodedProperty : decodedProperty.toLowerCase();
+			const property = decodedProperty.startsWith("--")
+				? decodedProperty
+				: decodedProperty.toLowerCase();
 			const lowerProperty = property.toLowerCase();
 			if (lowerProperty.startsWith("--resume-")) {
 				diagnostic(
@@ -579,28 +753,50 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 				continue;
 			}
 			if (media.length > 0 && property === "size") {
-				diagnostic(diagnostics, "MEDIA_PAGE_SIZE", "The size property is not allowed inside @media.", declaration);
+				diagnostic(
+					diagnostics,
+					"MEDIA_PAGE_SIZE",
+					"The size property is not allowed inside @media.",
+					declaration,
+				);
 				continue;
 			}
 
 			const value =
-				typeof declaration.value === "string" ? declaration.value : csstree.generate(declaration.value as CssNode);
+				typeof declaration.value === "string"
+					? declaration.value
+					: csstree.generate(declaration.value as CssNode);
 			const trimmedValue = value.trim();
 			const expanded = /var\s*\(/i.test(decodeCssEscapes(trimmedValue))
 				? ([[property, trimmedValue]] as const)
 				: expandShorthand(property, trimmedValue);
 			if (!expanded) {
-				diagnostic(diagnostics, "INVALID_VALUE", `Invalid ${property} shorthand.`, declaration);
+				diagnostic(
+					diagnostics,
+					"INVALID_VALUE",
+					`Invalid ${property} shorthand.`,
+					declaration,
+				);
 				continue;
 			}
 			for (const [expandedProperty, expandedValue] of expanded) {
-				validateValue(expandedProperty, expandedValue, declaration, diagnostics);
-				const syntaxError = property.startsWith("--") ? null : valueSyntaxError(expandedProperty, expandedValue);
-				if (syntaxError) diagnostic(diagnostics, "INVALID_VALUE", syntaxError, declaration);
+				validateValue(
+					expandedProperty,
+					expandedValue,
+					declaration,
+					diagnostics,
+				);
+				const syntaxError = property.startsWith("--")
+					? null
+					: valueSyntaxError(expandedProperty, expandedValue);
+				if (syntaxError)
+					diagnostic(diagnostics, "INVALID_VALUE", syntaxError, declaration);
 				declarations.push({
 					property: expandedProperty,
 					value: expandedValue,
-					important: declaration.important === true || declaration.important === "important",
+					important:
+						declaration.important === true ||
+						declaration.important === "important",
 					sourceOrder: sourceOrder++,
 					range: range(declaration.loc),
 				});
@@ -615,7 +811,11 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 		});
 	};
 
-	const visit = (nodes: readonly AstNode[], media: readonly CompiledMediaQuery[], mediaDepth: number): void => {
+	const visit = (
+		nodes: readonly AstNode[],
+		media: readonly CompiledMediaQuery[],
+		mediaDepth: number,
+	): void => {
 		for (const node of nodes) {
 			if (node.type === "Rule") {
 				compileRule(node, media);
@@ -627,21 +827,33 @@ export function compileProgram(stylesheet: ParsedStylesheet, languageVersion: nu
 			if (name !== "media") {
 				diagnostic(
 					diagnostics,
-					name === "import" || name === "font-face" ? "FORBIDDEN_AT_RULE" : "UNSUPPORTED_AT_RULE",
+					name === "import" || name === "font-face"
+						? "FORBIDDEN_AT_RULE"
+						: "UNSUPPORTED_AT_RULE",
 					`@${name} is not supported by Semantic CSS.`,
 					node,
 				);
 				continue;
 			}
 			if (mediaDepth >= SEMANTIC_CSS_LIMITS_V1.maxMediaNesting) {
-				diagnostic(diagnostics, "RESOURCE_LIMIT", "Media nesting exceeds the Semantic CSS limit.", node);
+				diagnostic(
+					diagnostics,
+					"RESOURCE_LIMIT",
+					"Media nesting exceeds the Semantic CSS limit.",
+					node,
+				);
 				continue;
 			}
 			const compiledMedia = parseMedia(node, diagnostics);
 			if (!compiledMedia) continue;
 			const combinedMedia = combineMedia(media, compiledMedia);
 			if (!combinedMedia) {
-				diagnostic(diagnostics, "RESOURCE_LIMIT", "Nested media queries exceed the Semantic CSS branch limit.", node);
+				diagnostic(
+					diagnostics,
+					"RESOURCE_LIMIT",
+					"Nested media queries exceed the Semantic CSS branch limit.",
+					node,
+				);
 				continue;
 			}
 			visit(children(node.block), combinedMedia, mediaDepth + 1);

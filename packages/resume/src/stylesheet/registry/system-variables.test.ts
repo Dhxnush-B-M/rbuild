@@ -1,6 +1,9 @@
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { createSystemVariables, SYSTEM_VARIABLE_REGISTRY_V1 } from "./system-variables";
+import { describe, expect, it } from "vitest";
+import {
+	createSystemVariables,
+	SYSTEM_VARIABLE_REGISTRY_V1,
+} from "./system-variables";
 
 const baseSettings = {
 	picture: defaultResumeData.picture,
@@ -13,7 +16,10 @@ const baseSettings = {
 
 describe("system-variable registry", () => {
 	it("injects builder values without exposing fonts or assets", () => {
-		const variables = createSystemVariables(baseSettings, { width: 595.28, height: 841.89 });
+		const variables = createSystemVariables(baseSettings, {
+			width: 595.28,
+			height: 841.89,
+		});
 
 		expect(Object.keys(SYSTEM_VARIABLE_REGISTRY_V1)).toEqual([
 			"--resume-primary-color",

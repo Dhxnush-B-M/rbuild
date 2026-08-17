@@ -5,7 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const pdfjsMock = vi.hoisted(() => {
 	const page = {
 		cleanup: vi.fn(),
-		getViewport: vi.fn(({ scale }: { scale: number }) => ({ height: 200 * scale, width: 100 * scale })),
+		getViewport: vi.fn(({ scale }: { scale: number }) => ({
+			height: 200 * scale,
+			width: 100 * scale,
+		})),
 		render: vi.fn(() => ({ promise: Promise.resolve() })),
 	};
 
@@ -35,7 +38,9 @@ const pdfjsMock = vi.hoisted(() => {
 });
 
 vi.mock("pdfjs-dist", () => {
-	throw new Error("Modern pdfjs-dist runtime should not be imported by browser preview code.");
+	throw new Error(
+		"Modern pdfjs-dist runtime should not be imported by browser preview code.",
+	);
 });
 
 vi.mock("pdfjs-dist/legacy/build/pdf.mjs", () => pdfjsMock.legacyModule);
@@ -77,17 +82,25 @@ describe("PDF.js browser entrypoints", () => {
 	);
 
 	it("creates thumbnails with the legacy PDF.js runtime", async () => {
-		vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as CanvasRenderingContext2D);
-		vi.spyOn(HTMLCanvasElement.prototype, "toBlob").mockImplementation((callback) => {
-			callback(new Blob(["png"], { type: "image/png" }));
-		});
-		vi.spyOn(URL, "createObjectURL").mockImplementation(pdfjsMock.createObjectURL);
+		vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+			{} as CanvasRenderingContext2D,
+		);
+		vi.spyOn(HTMLCanvasElement.prototype, "toBlob").mockImplementation(
+			(callback) => {
+				callback(new Blob(["png"], { type: "image/png" }));
+			},
+		);
+		vi.spyOn(URL, "createObjectURL").mockImplementation(
+			pdfjsMock.createObjectURL,
+		);
 
 		const { createPdfFirstPageImageUrl } = await import("./pdf-thumbnail");
 
-		await expect(createPdfFirstPageImageUrl(new Blob(["%PDF"], { type: "application/pdf" }))).resolves.toBe(
-			"blob:thumbnail",
-		);
+		await expect(
+			createPdfFirstPageImageUrl(
+				new Blob(["%PDF"], { type: "application/pdf" }),
+			),
+		).resolves.toBe("blob:thumbnail");
 
 		expect(pdfjsMock.legacyModule.GlobalWorkerOptions.workerSrc).toContain(
 			"pdfjs-dist/legacy/build/pdf.worker.min.mjs",

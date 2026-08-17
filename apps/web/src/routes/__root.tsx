@@ -1,27 +1,31 @@
-import type { IconProps } from "@phosphor-icons/react";
-import type { Locale } from "@rbuilder/utils/locale";
-import type { QueryClient } from "@tanstack/react-query";
-import type { AuthSession } from "@/libs/auth/session";
-import type { FeatureFlags, orpc } from "@/libs/orpc/client";
-import type { Theme } from "@/libs/theme";
 import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import type { IconProps } from "@phosphor-icons/react";
 import { IconContext } from "@phosphor-icons/react";
-import { HotkeysProvider } from "@tanstack/react-hotkeys";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Outlet } from "@tanstack/react-router";
-import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
-import { useEffect } from "react";
 import { Toaster } from "@rbuilder/ui/components/sonner";
 import { TooltipProvider } from "@rbuilder/ui/components/tooltip";
+import type { Locale } from "@rbuilder/utils/locale";
+import { HotkeysProvider } from "@tanstack/react-hotkeys";
+import type { QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Outlet,
+} from "@tanstack/react-router";
+import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
+import { useEffect } from "react";
 import { DialogManager } from "@/dialogs/manager";
 import { ThemeProvider } from "@/features/theme/provider";
 import { ConfirmDialogProvider } from "@/hooks/use-confirm";
 import { PromptDialogProvider } from "@/hooks/use-prompt";
+import type { AuthSession } from "@/libs/auth/session";
 import { getSession } from "@/libs/auth/session";
 import { getLocale, isRTL, loadLocale } from "@/libs/locale";
+import type { FeatureFlags, orpc } from "@/libs/orpc/client";
 import { defaultFeatureFlags } from "@/libs/orpc/client";
+import type { Theme } from "@/libs/theme";
 import { getTheme } from "@/libs/theme";
 
 type RouterContext = {
@@ -44,10 +48,29 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 	head: () => ({
 		links: [
-			{ rel: "icon", href: "/favicon.ico", type: "image/x-icon", sizes: "128x128" },
-			{ rel: "icon", href: "/favicon.svg", type: "image/svg+xml", sizes: "256x256 any" },
-			{ rel: "apple-touch-icon", href: "/apple-touch-icon-180x180.png", type: "image/png", sizes: "180x180 any" },
-			{ rel: "manifest", href: "/manifest.webmanifest", crossOrigin: "use-credentials" },
+			{
+				rel: "icon",
+				href: "/favicon.ico",
+				type: "image/x-icon",
+				sizes: "128x128",
+			},
+			{
+				rel: "icon",
+				href: "/favicon.svg",
+				type: "image/svg+xml",
+				sizes: "256x256 any",
+			},
+			{
+				rel: "apple-touch-icon",
+				href: "/apple-touch-icon-180x180.png",
+				type: "image/png",
+				sizes: "180x180 any",
+			},
+			{
+				rel: "manifest",
+				href: "/manifest.webmanifest",
+				crossOrigin: "use-credentials",
+			},
 		],
 		meta: [
 			{ title },

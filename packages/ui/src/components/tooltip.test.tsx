@@ -1,6 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "./tooltip";
 
 describe("Tooltip", () => {
 	it("trigger has data-slot='tooltip-trigger'", () => {
@@ -12,7 +17,10 @@ describe("Tooltip", () => {
 				</Tooltip>
 			</TooltipProvider>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "tooltip-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"tooltip-trigger",
+		);
 	});
 
 	it("does not show content by default", () => {
@@ -48,7 +56,10 @@ describe("Tooltip", () => {
 				</Tooltip>
 			</TooltipProvider>,
 		);
-		expect(screen.getByText("Helpful info")).toHaveAttribute("data-slot", "tooltip-content");
+		expect(screen.getByText("Helpful info")).toHaveAttribute(
+			"data-slot",
+			"tooltip-content",
+		);
 	});
 });
 

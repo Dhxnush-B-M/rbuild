@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { Fragment, useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { Fragment, useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -31,6 +30,11 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type DittoStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -60,16 +64,32 @@ type DittoHeaderProps = {
 	styles: DittoStyles;
 };
 
-export const DittoPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const DittoPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata, picture } = data;
 	const { colors, styles } = useDittoTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
 	const hasPicture = hasTemplatePicture(picture);
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
 
 	return (
 		<Page
@@ -77,17 +97,26 @@ export const DittoPage = ({ page, pageSize, pageMinHeightStyle, showHeader, page
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showHeader && <Header styles={styles} />}
 
-				<View style={composeStyles(styles.contentRow, { paddingTop: metrics.headerGap })}>
+				<View
+					style={composeStyles(styles.contentRow, {
+						paddingTop: metrics.headerGap,
+					})}
+				>
 					<SemanticRegionView
 						region="sidebar"
 						style={composeStyles(styles.sidebarColumn, {
 							display: page.fullWidth ? "none" : "flex",
 							width: `${metadata.layout.sidebarWidth}%`,
 							paddingLeft: metrics.page.paddingHorizontal,
-							paddingTop: showHeader && hasPicture ? metrics.page.paddingVertical : 0,
+							paddingTop:
+								showHeader && hasPicture ? metrics.page.paddingVertical : 0,
 							rowGap: metrics.sectionGap,
 						})}
 					>
@@ -122,9 +151,17 @@ const Header = ({ styles }: DittoHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			<SemanticTemplatePartView partKeys={["header-band"]} style={styles.headerBand}>
-				<SemanticTemplatePartView partKeys={["header-band", "picture-anchor"]} style={styles.pictureAnchor}>
-					{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			<SemanticTemplatePartView
+				partKeys={["header-band"]}
+				style={styles.headerBand}
+			>
+				<SemanticTemplatePartView
+					partKeys={["header-band", "picture-anchor"]}
+					style={styles.pictureAnchor}
+				>
+					{hasPicture && (
+						<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+					)}
 				</SemanticTemplatePartView>
 
 				<View style={styles.headerTitle}>
@@ -136,15 +173,28 @@ const Header = ({ styles }: DittoHeaderProps) => {
 			</SemanticTemplatePartView>
 
 			<View style={styles.contactRow}>
-				<SemanticTemplatePartView partKeys={["contact-offset"]} style={styles.contactOffset} />
+				<SemanticTemplatePartView
+					partKeys={["contact-offset"]}
+					style={styles.contactOffset}
+				/>
 
 				<SemanticContactListView style={styles.contactList}>
 					<EmailContactItem email={basics.email} style={styles.contactItem} />
 					<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-					<LocationContactItem location={basics.location} style={styles.contactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+					<LocationContactItem
+						location={basics.location}
+						style={styles.contactItem}
+					/>
+					<WebsiteContactItem
+						website={basics.website}
+						style={styles.contactItem}
+					/>
 					{basics.customFields.map((field) => (
-						<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
+						<CustomFieldContactItem
+							key={field.id}
+							field={field}
+							style={styles.contactItem}
+						/>
 					))}
 				</SemanticContactListView>
 			</View>
@@ -164,7 +214,14 @@ const useDittoTemplate = (): DittoTemplate => {
 		const metrics = getTemplateMetrics(metadata.page);
 		const hasPicture = hasTemplatePicture(picture);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -269,22 +326,45 @@ const useDittoTemplate = (): DittoTemplate => {
 			},
 		});
 
-		const foregroundFor = ({ colors }: TemplateStyleContext) => colors.foreground;
+		const foregroundFor = ({ colors }: TemplateStyleContext) =>
+			colors.foreground;
 
 		return {
 			colors,
 			styles: {
 				...baseStyles,
-				text: (context) => ({ ...baseStyles.text, color: foregroundFor(context) }),
-				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
-				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				richParagraph: (context) => ({ ...baseStyles.richParagraph, color: foregroundFor(context) }),
-				richListItemMarker: (context) => ({ ...baseStyles.richListItemMarker, color: foregroundFor(context) }),
-				richListItemContent: (context) => ({ ...baseStyles.richListItemContent, color: foregroundFor(context) }),
+				text: (context) => ({
+					...baseStyles.text,
+					color: foregroundFor(context),
+				}),
+				heading: (context) => ({
+					...baseStyles.heading,
+					color: foregroundFor(context),
+				}),
+				link: (context) => ({
+					...baseStyles.link,
+					color: foregroundFor(context),
+				}),
+				richParagraph: (context) => ({
+					...baseStyles.richParagraph,
+					color: foregroundFor(context),
+				}),
+				richListItemMarker: (context) => ({
+					...baseStyles.richListItemMarker,
+					color: foregroundFor(context),
+				}),
+				richListItemContent: (context) => ({
+					...baseStyles.richListItemContent,
+					color: foregroundFor(context),
+				}),
 				splitRow: (context) => ({
 					...baseStyles.splitRow,
 					...(context.placement === "sidebar"
-						? { flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start" }
+						? {
+								flexDirection: "column",
+								alignItems: "flex-start",
+								justifyContent: "flex-start",
+							}
 						: {}),
 				}),
 				alignEnd: (context) => ({

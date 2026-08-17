@@ -1,5 +1,8 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { StylesheetMode, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type {
+	StylesheetMode,
+	StylesheetSource,
+} from "@rbuilder/schema/resume/stylesheet";
 import type { Template } from "@rbuilder/schema/templates";
 import type { ResolvedResumeRuntime } from "./resolve";
 import { resolveResumeRuntime, resolveStylesheetMode } from "./resolve";
@@ -28,17 +31,19 @@ export const inspectResumePdf = ({
 		...(applied ? { applied } : {}),
 	});
 
-export const hasSemanticErrors = ({ diagnostics }: Pick<ResolvedResumeRuntime, "diagnostics">): boolean =>
+export const hasSemanticErrors = ({
+	diagnostics,
+}: Pick<ResolvedResumeRuntime, "diagnostics">): boolean =>
 	diagnostics.some(({ severity }) => severity === "error");
 
-export type {
-	ResolvedResumeRuntime,
-	ResolveResumePresentationInput,
-} from "./resolve";
 export * from "./legacy-converter";
 export * from "./legacy-parity";
 export * from "./preflight-core";
 export * from "./public-projection";
+export type {
+	ResolvedResumeRuntime,
+	ResolveResumePresentationInput,
+} from "./resolve";
 export {
 	resolveResumePresentation,
 	resolveResumeRuntime,

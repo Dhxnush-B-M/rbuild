@@ -1,15 +1,25 @@
-import type { ResolveStylesheetResult, SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet";
+import type {
+	ResolveStylesheetResult,
+	SemanticCssDiagnostic,
+	SemanticNode,
+} from "@rbuilder/resume/stylesheet";
+import {
+	compileStylesheet,
+	resolveStylesheet,
+} from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { StylesheetMode, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
-import type { Template } from "@rbuilder/schema/templates";
-import type { ResolvedResumePresentation } from "./context";
-import { compileStylesheet, resolveStylesheet } from "@rbuilder/resume/stylesheet";
+import type {
+	StylesheetMode,
+	StylesheetSource,
+} from "@rbuilder/schema/resume/stylesheet";
 import { EMPTY_SEMANTIC_CSS_SOURCE } from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
 import { shouldShowResumeHeader } from "../templates/shared/cover-letter";
 import { getTemplatePageSize } from "../templates/shared/page-size";
 import { adaptResolvedPdfNode } from "./adapter";
 import { buildPdfBaseStyles } from "./base-styles";
 import { createBindingInventory } from "./binding-inventory";
+import type { ResolvedResumePresentation } from "./context";
 import { semanticNodeKeys } from "./node-keys";
 import { getTemplateSemanticBindingRegistry } from "./template-manifest";
 import { buildSemanticTree } from "./tree";
@@ -28,9 +38,14 @@ export type ResolvedResumeRuntime = {
 	diagnostics: readonly SemanticCssDiagnostic[];
 };
 
-const EMPTY_PRESENTATION = Object.freeze({}) satisfies ResolvedResumePresentation;
+const EMPTY_PRESENTATION = Object.freeze(
+	{},
+) satisfies ResolvedResumePresentation;
 
-const mergeAuthoredPageTrees = (data: ResumeData, template: Template): SemanticNode => {
+const mergeAuthoredPageTrees = (
+	data: ResumeData,
+	template: Template,
+): SemanticNode => {
 	const pageTrees = data.metadata.layout.pages.map((page, index) =>
 		buildSemanticTree({
 			data,
@@ -73,7 +88,10 @@ const toPresentation = (
 ): ResolvedResumePresentation => {
 	return Object.freeze(
 		Object.fromEntries(
-			Object.entries(resolved).map(([nodeKey, node]) => [nodeKey, adaptResolvedPdfNode(node, base[nodeKey])]),
+			Object.entries(resolved).map(([nodeKey, node]) => [
+				nodeKey,
+				adaptResolvedPdfNode(node, base[nodeKey]),
+			]),
 		),
 	) as ResolvedResumePresentation;
 };
@@ -90,7 +108,12 @@ export function resolveResumeRuntime({
 }: ResolveResumePresentationInput): ResolvedResumeRuntime {
 	const sourceTree = mergeAuthoredPageTrees(data, template);
 	if (mode !== "semantic") {
-		return { presentation: EMPTY_PRESENTATION, sourceTree, renderTree: sourceTree, diagnostics: [] };
+		return {
+			presentation: EMPTY_PRESENTATION,
+			sourceTree,
+			renderTree: sourceTree,
+			diagnostics: [],
+		};
 	}
 
 	const source = applied ??
@@ -100,15 +123,26 @@ export function resolveResumeRuntime({
 		};
 	const compiled = compileStylesheet(source);
 	if (!compiled.program) {
-		return { presentation: EMPTY_PRESENTATION, sourceTree, renderTree: sourceTree, diagnostics: compiled.diagnostics };
+		return {
+			presentation: EMPTY_PRESENTATION,
+			sourceTree,
+			renderTree: sourceTree,
+			diagnostics: compiled.diagnostics,
+		};
 	}
 
 	const baseStyles = buildPdfBaseStyles({ data, template, tree: sourceTree });
-	const inventory = createBindingInventory(sourceTree, getTemplateSemanticBindingRegistry(template));
+	const inventory = createBindingInventory(
+		sourceTree,
+		getTemplateSemanticBindingRegistry(template),
+	);
 	const aliases: Record<string, string[]> = {};
 	for (const [aliasKey, binding] of Object.entries(inventory.bindings)) {
 		if (binding.type !== "alias") continue;
-		aliases[binding.canonicalNodeKey] = [...(aliases[binding.canonicalNodeKey] ?? []), aliasKey];
+		aliases[binding.canonicalNodeKey] = [
+			...(aliases[binding.canonicalNodeKey] ?? []),
+			aliasKey,
+		];
 	}
 	const resolved = resolveStylesheet(compiled.program, sourceTree, {
 		baseStyles,
@@ -140,6 +174,8 @@ export function resolveResumeRuntime({
 	};
 }
 
-export function resolveResumePresentation(input: ResolveResumePresentationInput): ResolvedResumePresentation {
+export function resolveResumePresentation(
+	input: ResolveResumePresentationInput,
+): ResolvedResumePresentation {
 	return resolveResumeRuntime(input).presentation;
 }

@@ -1,7 +1,11 @@
 import type { Style } from "@react-pdf/types";
-import type { StyleInput } from "./styles";
 import { NodeType } from "node-html-parser";
-import { parseFiniteNumber, parsePxValue, parseStyleFontSize } from "./icon-size";
+import {
+	parseFiniteNumber,
+	parsePxValue,
+	parseStyleFontSize,
+} from "./icon-size";
+import type { StyleInput } from "./styles";
 import { composeStyles } from "./styles";
 
 type RichTextSpacingElement = {
@@ -23,16 +27,21 @@ const parseLineHeight = (
 	lineHeight: Style["lineHeight"],
 ): { type: "multiplier" | "absolute"; value: number } | undefined => {
 	const multiplier = parseFiniteNumber(lineHeight);
-	if (multiplier !== undefined) return { type: "multiplier", value: multiplier };
+	if (multiplier !== undefined)
+		return { type: "multiplier", value: multiplier };
 
 	const absoluteLineHeight = parsePxValue(lineHeight);
-	if (absoluteLineHeight !== undefined) return { type: "absolute", value: absoluteLineHeight };
+	if (absoluteLineHeight !== undefined)
+		return { type: "absolute", value: absoluteLineHeight };
 
 	return undefined;
 };
 
 const isElementNode = (node: unknown): node is RichTextSpacingElement =>
-	typeof node === "object" && node !== null && "nodeType" in node && node.nodeType === NodeType.ELEMENT_NODE;
+	typeof node === "object" &&
+	node !== null &&
+	"nodeType" in node &&
+	node.nodeType === NodeType.ELEMENT_NODE;
 
 const readTagName = (
 	element: RichTextSpacingElement,
@@ -47,7 +56,9 @@ const readTagName = (
 	}
 };
 
-const normalizeTagName = (element: RichTextSpacingElement): string | undefined =>
+const normalizeTagName = (
+	element: RichTextSpacingElement,
+): string | undefined =>
 	(
 		readTagName(element, "tag") ??
 		readTagName(element, "localName") ??
@@ -55,13 +66,20 @@ const normalizeTagName = (element: RichTextSpacingElement): string | undefined =
 		readTagName(element, "tagName")
 	)?.toLowerCase();
 
-const isRichTextTag = (element: RichTextSpacingElement, ...tagNames: string[]): boolean => {
+const isRichTextTag = (
+	element: RichTextSpacingElement,
+	...tagNames: string[]
+): boolean => {
 	const normalizedTagName = normalizeTagName(element);
 
-	return normalizedTagName !== undefined && tagNames.includes(normalizedTagName);
+	return (
+		normalizedTagName !== undefined && tagNames.includes(normalizedTagName)
+	);
 };
 
-const getRootElement = (element: RichTextSpacingElement): RichTextSpacingElement => {
+const getRootElement = (
+	element: RichTextSpacingElement,
+): RichTextSpacingElement => {
 	let root = element;
 
 	while (root.parentNode) {
@@ -71,7 +89,9 @@ const getRootElement = (element: RichTextSpacingElement): RichTextSpacingElement
 	return root;
 };
 
-const getTopLevelFlowElements = (root: RichTextSpacingElement): RichTextSpacingElement[] => {
+const getTopLevelFlowElements = (
+	root: RichTextSpacingElement,
+): RichTextSpacingElement[] => {
 	const flowElements: RichTextSpacingElement[] = [];
 
 	for (const childNode of root.childNodes ?? []) {
@@ -95,7 +115,9 @@ const getTopLevelFlowElements = (root: RichTextSpacingElement): RichTextSpacingE
 	return flowElements;
 };
 
-export const createRichTextProseSpacing = (bodyLineHeight: number | undefined): RichTextProseSpacing => {
+export const createRichTextProseSpacing = (
+	bodyLineHeight: number | undefined,
+): RichTextProseSpacing => {
 	if (bodyLineHeight === undefined) return { paragraph: {}, listItem: {} };
 
 	const sideMargin = bodyLineHeight * 0.2;
@@ -112,7 +134,9 @@ export const createRichTextProseSpacing = (bodyLineHeight: number | undefined): 
 	};
 };
 
-export const resolveRichTextBodyLineHeight = (...styles: StyleInput[]): number | undefined => {
+export const resolveRichTextBodyLineHeight = (
+	...styles: StyleInput[]
+): number | undefined => {
 	let bodyFontSize: number | undefined;
 	let bodyLineHeight: ReturnType<typeof parseLineHeight>;
 
@@ -124,12 +148,17 @@ export const resolveRichTextBodyLineHeight = (...styles: StyleInput[]): number |
 		if (lineHeight !== undefined) bodyLineHeight = lineHeight;
 	}
 
-	if (bodyFontSize === undefined || bodyLineHeight === undefined) return undefined;
+	if (bodyFontSize === undefined || bodyLineHeight === undefined)
+		return undefined;
 
-	return bodyLineHeight.type === "multiplier" ? bodyFontSize * bodyLineHeight.value : bodyLineHeight.value;
+	return bodyLineHeight.type === "multiplier"
+		? bodyFontSize * bodyLineHeight.value
+		: bodyLineHeight.value;
 };
 
-export const getRichTextEdgeTrimStyle = (element: RichTextSpacingElement): Style => {
+export const getRichTextEdgeTrimStyle = (
+	element: RichTextSpacingElement,
+): Style => {
 	const flowElements = getTopLevelFlowElements(getRootElement(element));
 	const flowIndex = flowElements.indexOf(element);
 
@@ -141,7 +170,9 @@ export const getRichTextEdgeTrimStyle = (element: RichTextSpacingElement): Style
 	};
 };
 
-export const isRichTextElementInsideListItem = (element: RichTextSpacingElement): boolean => {
+export const isRichTextElementInsideListItem = (
+	element: RichTextSpacingElement,
+): boolean => {
 	let current = element.parentNode;
 
 	while (current) {
@@ -152,7 +183,9 @@ export const isRichTextElementInsideListItem = (element: RichTextSpacingElement)
 	return false;
 };
 
-export const isRichTextElementInsideOrderedList = (element: RichTextSpacingElement): boolean => {
+export const isRichTextElementInsideOrderedList = (
+	element: RichTextSpacingElement,
+): boolean => {
 	let current = element.parentNode;
 
 	while (current) {

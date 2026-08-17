@@ -1,6 +1,10 @@
-import type { CustomSectionType } from "./data";
 import z from "zod";
-import { customSectionItemDefinitionByType, resumeDataSchema, sectionTypeSchema } from "./data";
+import type { CustomSectionType } from "./data";
+import {
+	customSectionItemDefinitionByType,
+	resumeDataSchema,
+	sectionTypeSchema,
+} from "./data";
 
 const toInputJsonSchema = (schema: z.ZodType) =>
 	z.toJSONSchema(schema, {

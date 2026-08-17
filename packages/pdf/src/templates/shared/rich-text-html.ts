@@ -1,7 +1,10 @@
+import { isDarkColor } from "@rbuilder/utils/color";
 import type { HTMLElement, Node } from "node-html-parser";
 import { NodeType, parse } from "node-html-parser";
-import { isDarkColor } from "@rbuilder/utils/color";
-import { getRichTextSemanticKind, getRichTextSemanticNodeKey } from "../../semantic/rich-text-keys";
+import {
+	getRichTextSemanticKind,
+	getRichTextSemanticNodeKey,
+} from "../../semantic/rich-text-keys";
 
 export const richTextMarkClassName = "rr-pdf-mark";
 export const richTextSemanticNodeKeyAttribute = "data-resume-semantic-node-key";
@@ -30,7 +33,9 @@ const inlineTags = new Set([
 const getTagName = (node: Node) => node.rawTagName.toLowerCase();
 
 const hasBlockDescendant = (node: Node): boolean =>
-	node.childNodes.some((child) => child.nodeType === NodeType.ELEMENT_NODE && !isInlineNode(child));
+	node.childNodes.some(
+		(child) => child.nodeType === NodeType.ELEMENT_NODE && !isInlineNode(child),
+	);
 
 const mergeClassNames = (...classNames: (string | undefined)[]): string => {
 	const uniqueClassNames = new Set<string>();
@@ -51,7 +56,10 @@ const normalizeMarkElements = (root: ReturnType<typeof parse>) => {
 		const dataColor = mark.getAttribute("data-color");
 
 		mark.tagName = "span";
-		mark.setAttribute("class", mergeClassNames(mark.getAttribute("class"), richTextMarkClassName));
+		mark.setAttribute(
+			"class",
+			mergeClassNames(mark.getAttribute("class"), richTextMarkClassName),
+		);
 
 		// Preserve custom highlight color as inline background-color for react-pdf-html.
 		// Legacy marks without data-color fall back to the .rr-pdf-mark stylesheet (yellow).
@@ -59,7 +67,10 @@ const normalizeMarkElements = (root: ReturnType<typeof parse>) => {
 			const existingStyle = mark.getAttribute("style") ?? "";
 			let inlineStyle = `background-color: ${dataColor}`;
 			if (isDarkColor(dataColor)) inlineStyle += "; color: #ffffff";
-			mark.setAttribute("style", existingStyle ? `${existingStyle}; ${inlineStyle}` : inlineStyle);
+			mark.setAttribute(
+				"style",
+				existingStyle ? `${existingStyle}; ${inlineStyle}` : inlineStyle,
+			);
 		}
 	}
 };
@@ -67,7 +78,8 @@ const normalizeMarkElements = (root: ReturnType<typeof parse>) => {
 const isMeaningfulNode = (node: Node): boolean =>
 	node.nodeType !== NodeType.TEXT_NODE || node.toString().trim().length > 0;
 
-const isElement = (node: Node): node is HTMLElement => node.nodeType === NodeType.ELEMENT_NODE;
+const isElement = (node: Node): node is HTMLElement =>
+	node.nodeType === NodeType.ELEMENT_NODE;
 
 const unwrapSingleParagraphListItems = (root: ReturnType<typeof parse>) => {
 	for (const listItem of root.querySelectorAll("li")) {
@@ -82,7 +94,11 @@ const unwrapSingleParagraphListItems = (root: ReturnType<typeof parse>) => {
 };
 
 const isInlineNode = (node: Node): boolean => {
-	if (node.nodeType === NodeType.TEXT_NODE || node.nodeType === NodeType.COMMENT_NODE) return true;
+	if (
+		node.nodeType === NodeType.TEXT_NODE ||
+		node.nodeType === NodeType.COMMENT_NODE
+	)
+		return true;
 	if (node.nodeType !== NodeType.ELEMENT_NODE) return false;
 
 	return inlineTags.has(getTagName(node)) && !hasBlockDescendant(node);
@@ -97,9 +113,13 @@ const stripEmptyInlineWrappers = (html: string): string =>
 // Treat a bare <br> or one wrapped in an inline tag (e.g. `<strong><br></strong>` from
 // the editor) as the segment separator.
 const splitByBreaks = (html: string): string[] =>
-	html.split(/(?:<(?:strong|b|em|i|u|span)\b[^>]*>\s*<br\b[^>]*\/?>\s*<\/(?:strong|b|em|i|u|span)>)|<br\b[^>]*\/?>/gi);
+	html.split(
+		/(?:<(?:strong|b|em|i|u|span)\b[^>]*>\s*<br\b[^>]*\/?>\s*<\/(?:strong|b|em|i|u|span)>)|<br\b[^>]*\/?>/gi,
+	);
 
-const tryConvertPseudoBulletParagraph = (paragraphInnerHtml: string): string | null => {
+const tryConvertPseudoBulletParagraph = (
+	paragraphInnerHtml: string,
+): string | null => {
 	const cleaned = stripEmptyInlineWrappers(paragraphInnerHtml);
 	if (!/<br\b/i.test(cleaned)) return null;
 
@@ -110,9 +130,12 @@ const tryConvertPseudoBulletParagraph = (paragraphInnerHtml: string): string | n
 	}
 
 	if (segments.length < 2) return null;
-	if (!segments.every((segment) => PSEUDO_BULLET_LEAD.test(segment))) return null;
+	if (!segments.every((segment) => PSEUDO_BULLET_LEAD.test(segment)))
+		return null;
 
-	const items = segments.map((segment) => segment.replace(PSEUDO_BULLET_LEAD, ""));
+	const items = segments.map((segment) =>
+		segment.replace(PSEUDO_BULLET_LEAD, ""),
+	);
 
 	return `<ul>${items.map((item) => `<li>${item}</li>`).join("")}</ul>`;
 };
@@ -172,8 +195,10 @@ export const normalizeRichTextHtml = (
 	);
 };
 
-export const parseNormalizedRichTextHtml = (html: string, options?: NormalizeRichTextHtmlOptions) =>
-	parse(normalizeRichTextHtml(html, options), { comment: false });
+export const parseNormalizedRichTextHtml = (
+	html: string,
+	options?: NormalizeRichTextHtmlOptions,
+) => parse(normalizeRichTextHtml(html, options), { comment: false });
 
 export const projectNormalizedRichTextHtml = (
 	html: string,
@@ -211,14 +236,20 @@ export const projectNormalizedRichTextHtml = (
 		const renderedChildKeys = renderedChildKeysFor(parentNodeKey);
 		if (!renderedChildKeys) return;
 
-		const childByNodeKey = new Map(keyedChildren.map(({ nodeKey, child }) => [nodeKey, child]));
+		const childByNodeKey = new Map(
+			keyedChildren.map(({ nodeKey, child }) => [nodeKey, child]),
+		);
 		const projected = renderedChildKeys.flatMap((nodeKey) => {
 			const child = childByNodeKey.get(nodeKey);
 			return child ? [child] : [];
 		});
 		let projectedIndex = 0;
 		const nextChildren = parent.childNodes.flatMap((child) => {
-			if (!isElement(child) || !child.getAttribute(richTextSemanticNodeKeyAttribute)) return [child];
+			if (
+				!isElement(child) ||
+				!child.getAttribute(richTextSemanticNodeKeyAttribute)
+			)
+				return [child];
 			const projectedChild = projected[projectedIndex++];
 			return projectedChild ? [projectedChild] : [];
 		});

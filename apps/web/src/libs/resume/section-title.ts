@@ -1,8 +1,11 @@
 import type { MessageDescriptor } from "@lingui/core";
-import type { SectionTitleResolver } from "@rbuilder/pdf/section-title";
-import type { CustomSectionType, SectionType } from "@rbuilder/schema/resume/data";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
+import type { SectionTitleResolver } from "@rbuilder/pdf/section-title";
+import type {
+	CustomSectionType,
+	SectionType,
+} from "@rbuilder/schema/resume/data";
 
 type SectionTranslator = {
 	_: (descriptor: MessageDescriptor) => string;
@@ -23,12 +26,24 @@ const sectionTitleMessages = {
 	volunteer: msg`Volunteer`,
 	references: msg`References`,
 	"cover-letter": msg`Cover Letter`,
-} satisfies Record<"summary" | SectionType | CustomSectionType, MessageDescriptor>;
+} satisfies Record<
+	"summary" | SectionType | CustomSectionType,
+	MessageDescriptor
+>;
 
-export const createSectionTitleResolver = (translator: SectionTranslator = i18n): SectionTitleResolver => {
-	return ({ sectionId, sectionKind, customSectionType, defaultEnglishTitle }) => {
-		const sectionType = sectionKind === "custom" ? customSectionType : sectionId;
-		const message = sectionTitleMessages[sectionType as keyof typeof sectionTitleMessages];
+export const createSectionTitleResolver = (
+	translator: SectionTranslator = i18n,
+): SectionTitleResolver => {
+	return ({
+		sectionId,
+		sectionKind,
+		customSectionType,
+		defaultEnglishTitle,
+	}) => {
+		const sectionType =
+			sectionKind === "custom" ? customSectionType : sectionId;
+		const message =
+			sectionTitleMessages[sectionType as keyof typeof sectionTitleMessages];
 
 		if (!message) return defaultEnglishTitle ?? sectionId;
 

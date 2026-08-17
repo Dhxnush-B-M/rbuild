@@ -1,7 +1,7 @@
-import type * as React from "react";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { CaretRightIcon, CheckIcon } from "@phosphor-icons/react";
 import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
 	return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -16,7 +16,10 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
 }
 
 type DropdownMenuContentProps = MenuPrimitive.Popup.Props &
-	Pick<MenuPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+	Pick<
+		MenuPrimitive.Positioner.Props,
+		"align" | "alignOffset" | "side" | "sideOffset"
+	> & {
 		positionerClassName?: string;
 	};
 
@@ -66,7 +69,10 @@ function DropdownMenuLabel({
 		<MenuPrimitive.GroupLabel
 			data-slot="dropdown-menu-label"
 			data-inset={inset}
-			className={cn("px-1.5 py-1 font-medium text-muted-foreground text-xs data-inset:ps-7", className)}
+			className={cn(
+				"px-1.5 py-1 font-medium text-muted-foreground text-xs data-inset:ps-7",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -181,7 +187,12 @@ function DropdownMenuCheckboxItem({
 }
 
 function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
-	return <MenuPrimitive.RadioGroup data-slot="dropdown-menu-radio-group" {...props} />;
+	return (
+		<MenuPrimitive.RadioGroup
+			data-slot="dropdown-menu-radio-group"
+			{...props}
+		/>
+	);
 }
 
 function DropdownMenuRadioItem({
@@ -215,7 +226,10 @@ function DropdownMenuRadioItem({
 	);
 }
 
-function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.Props) {
+function DropdownMenuSeparator({
+	className,
+	...props
+}: MenuPrimitive.Separator.Props) {
 	return (
 		<MenuPrimitive.Separator
 			data-slot="dropdown-menu-separator"
@@ -225,7 +239,10 @@ function DropdownMenuSeparator({ className, ...props }: MenuPrimitive.Separator.
 	);
 }
 
-function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<"span">) {
+function DropdownMenuShortcut({
+	className,
+	...props
+}: React.ComponentProps<"span">) {
 	return (
 		<span
 			data-slot="dropdown-menu-shortcut"

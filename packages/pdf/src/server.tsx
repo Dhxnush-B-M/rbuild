@@ -1,11 +1,11 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
+import { renderToBuffer } from "@react-pdf/renderer";
+import { createElement } from "react";
+import { ResumeDocument } from "./document";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime, ResumePdfRenderResult } from "./semantic";
-import { createElement } from "react";
-import { parseResumeData } from "@rbuilder/schema/resume/data";
-import { renderToBuffer } from "@react-pdf/renderer";
-import { ResumeDocument } from "./document";
 import { hasSemanticErrors, inspectResumePdf } from "./semantic";
 
 export type {
@@ -29,7 +29,12 @@ export type CreateResumePdfFileResultOptions = CreateResumePdfFileOptions & {
 	inspection?: ResolvedResumeRuntime | undefined;
 };
 
-const renderResumePdfFile = async ({ data, filename, template, resolveSectionTitle }: CreateResumePdfFileOptions) => {
+const renderResumePdfFile = async ({
+	data,
+	filename,
+	template,
+	resolveSectionTitle,
+}: CreateResumePdfFileOptions) => {
 	const document = createElement(ResumeDocument, {
 		data,
 		template: template ?? data.metadata.template,
@@ -59,10 +64,14 @@ export const createResumePdfFileResult = async ({
 	};
 };
 
-export const createResumePdfFile = async (options: CreateResumePdfFileOptions): Promise<File> => {
+export const createResumePdfFile = async (
+	options: CreateResumePdfFileOptions,
+): Promise<File> => {
 	const result = await createResumePdfFileResult(options);
 	if (!result.ok) {
-		throw new Error("The semantic stylesheet could not be rendered.", { cause: result.diagnostics });
+		throw new Error("The semantic stylesheet could not be rendered.", {
+			cause: result.diagnostics,
+		});
 	}
 	return result.value;
 };

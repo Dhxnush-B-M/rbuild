@@ -6,7 +6,11 @@ describe("useDialogStore", () => {
 	beforeEach(() => {
 		vi.useFakeTimers();
 		// Reset store state between tests
-		useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });
+		useDialogStore.setState({
+			open: false,
+			activeDialog: null,
+			onBeforeClose: null,
+		});
 	});
 
 	afterEach(() => {
@@ -15,9 +19,14 @@ describe("useDialogStore", () => {
 
 	describe("openDialog", () => {
 		it("uses schema entries from domain registries", () => {
-			expect(dialogSchemaRegistries.map((registry) => registry.domain)).toEqual(["auth", "resume"]);
+			expect(dialogSchemaRegistries.map((registry) => registry.domain)).toEqual(
+				["auth", "resume"],
+			);
 			expect(dialogTypeSchema.options).toHaveLength(
-				dialogSchemaRegistries.reduce((total, registry) => total + registry.schemas.length, 0),
+				dialogSchemaRegistries.reduce(
+					(total, registry) => total + registry.schemas.length,
+					0,
+				),
 			);
 		});
 

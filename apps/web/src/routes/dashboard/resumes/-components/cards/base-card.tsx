@@ -10,7 +10,14 @@ type BaseCardProps = React.ComponentProps<"div"> & {
 	children?: React.ReactNode;
 };
 
-export function BaseCard({ title, description, tags, className, children, ...props }: BaseCardProps) {
+export function BaseCard({
+	title,
+	description,
+	tags,
+	className,
+	children,
+	...props
+}: BaseCardProps) {
 	return (
 		<CometCard translateDepth={4} rotateDepth={8} glareOpacity={0.15}>
 			<div
@@ -29,9 +36,16 @@ export function BaseCard({ title, description, tags, className, children, ...pro
 						<h3 className="truncate font-bold text-foreground text-sm tracking-tight transition-colors group-hover:text-primary">
 							{title}
 						</h3>
-						<p className="truncate text-muted-foreground text-xs">{description}</p>
+						<p className="truncate text-muted-foreground text-xs">
+							{description}
+						</p>
 
-						<div className={cn("mt-1.5 hidden flex-wrap items-center gap-1", tags && tags.length > 0 && "flex")}>
+						<div
+							className={cn(
+								"mt-1.5 hidden flex-wrap items-center gap-1",
+								tags && tags.length > 0 && "flex",
+							)}
+						>
 							{tags?.map((tag) => (
 								<Badge
 									key={tag}

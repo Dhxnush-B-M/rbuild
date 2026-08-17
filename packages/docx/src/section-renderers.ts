@@ -1,6 +1,19 @@
-import type { CustomSection, CustomSectionType, ResumeData, SectionType } from "@rbuilder/schema/resume/data";
+import type {
+	CustomSection,
+	CustomSectionType,
+	ResumeData,
+	SectionType,
+} from "@rbuilder/schema/resume/data";
+import {
+	BorderStyle,
+	ExternalHyperlink,
+	HeadingLevel,
+	Paragraph,
+	TabStopPosition,
+	TabStopType,
+	TextRun,
+} from "docx";
 import type { HtmlStyleConfig } from "./html-to-docx";
-import { BorderStyle, ExternalHyperlink, HeadingLevel, Paragraph, TabStopPosition, TabStopType, TextRun } from "docx";
 import { htmlToParagraphs } from "./html-to-docx";
 import { toSafeDocxLink } from "./link-utils";
 
@@ -64,7 +77,11 @@ function sectionHeading(title: string, colorHex: string): Paragraph {
 		heading: HeadingLevel.HEADING_6,
 		spacing: { before: 240, after: 120 },
 		border: {
-			bottom: { style: BorderStyle.SINGLE, size: 1, color: colorHex.replace("#", "") },
+			bottom: {
+				style: BorderStyle.SINGLE,
+				size: 1,
+				color: colorHex.replace("#", ""),
+			},
 		},
 		children: [
 			new TextRun({
@@ -78,16 +95,25 @@ function sectionHeading(title: string, colorHex: string): Paragraph {
 	});
 }
 
-function titleAndSubtitle(primary: string, secondary: string, rightText?: string, bold = true): Paragraph {
+function titleAndSubtitle(
+	primary: string,
+	secondary: string,
+	rightText?: string,
+	bold = true,
+): Paragraph {
 	const baseRun = getBaseRun();
-	const children: (TextRun | ExternalHyperlink)[] = [new TextRun({ text: primary, bold, ...baseRun })];
+	const children: (TextRun | ExternalHyperlink)[] = [
+		new TextRun({ text: primary, bold, ...baseRun }),
+	];
 
 	if (secondary) {
 		children.push(new TextRun({ text: ` — ${secondary}`, ...baseRun }));
 	}
 
 	if (rightText) {
-		children.push(new TextRun({ text: `\t${rightText}`, italics: true, ...baseRun }));
+		children.push(
+			new TextRun({ text: `\t${rightText}`, italics: true, ...baseRun }),
+		);
 	}
 
 	return new Paragraph({
@@ -140,7 +166,10 @@ function websiteParagraph(url: string, label: string): Paragraph | null {
 
 // --- Section-specific renderers ---
 
-export function renderSummary(summary: ResumeData["summary"], colorHex: string): Paragraph[] {
+export function renderSummary(
+	summary: ResumeData["summary"],
+	colorHex: string,
+): Paragraph[] {
 	if (summary.hidden || !summary.content) return [];
 
 	const paragraphs: Paragraph[] = [];
@@ -151,7 +180,10 @@ export function renderSummary(summary: ResumeData["summary"], colorHex: string):
 	return paragraphs;
 }
 
-function renderExperience(section: Sections["experience"], colorHex: string): Paragraph[] {
+function renderExperience(
+	section: Sections["experience"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -170,17 +202,34 @@ function renderExperience(section: Sections["experience"], colorHex: string): Pa
 					new Paragraph({
 						spacing: { before: 80 },
 						children: [
-							new TextRun({ text: role.position, bold: true, italics: true, ...baseRun }),
-							...(role.period ? [new TextRun({ text: ` — ${role.period}`, italics: true, ...baseRun })] : []),
+							new TextRun({
+								text: role.position,
+								bold: true,
+								italics: true,
+								...baseRun,
+							}),
+							...(role.period
+								? [
+										new TextRun({
+											text: ` — ${role.period}`,
+											italics: true,
+											...baseRun,
+										}),
+									]
+								: []),
 						],
 					}),
 				);
 				if (role.description) {
-					paragraphs.push(...htmlToParagraphs(role.description, getHtmlStyle()));
+					paragraphs.push(
+						...htmlToParagraphs(role.description, getHtmlStyle()),
+					);
 				}
 			}
 		} else {
-			paragraphs.push(titleAndSubtitle(item.company, item.position, item.period));
+			paragraphs.push(
+				titleAndSubtitle(item.company, item.position, item.period),
+			);
 
 			const loc = locationAndPeriod(item.location, "");
 			if (loc) paragraphs.push(loc);
@@ -197,7 +246,10 @@ function renderExperience(section: Sections["experience"], colorHex: string): Pa
 	return paragraphs;
 }
 
-function renderEducation(section: Sections["education"], colorHex: string): Paragraph[] {
+function renderEducation(
+	section: Sections["education"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -211,7 +263,13 @@ function renderEducation(section: Sections["education"], colorHex: string): Para
 		if (item.grade) {
 			paragraphs.push(
 				new Paragraph({
-					children: [new TextRun({ text: `Grade: ${item.grade}`, italics: true, ...baseRun })],
+					children: [
+						new TextRun({
+							text: `Grade: ${item.grade}`,
+							italics: true,
+							...baseRun,
+						}),
+					],
 				}),
 			);
 		}
@@ -230,7 +288,10 @@ function renderEducation(section: Sections["education"], colorHex: string): Para
 	return paragraphs;
 }
 
-function renderProjects(section: Sections["projects"], colorHex: string): Paragraph[] {
+function renderProjects(
+	section: Sections["projects"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -250,7 +311,10 @@ function renderProjects(section: Sections["projects"], colorHex: string): Paragr
 	return paragraphs;
 }
 
-function renderSkills(section: Sections["skills"], colorHex: string): Paragraph[] {
+function renderSkills(
+	section: Sections["skills"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -258,14 +322,20 @@ function renderSkills(section: Sections["skills"], colorHex: string): Paragraph[
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
+		const children: TextRun[] = [
+			new TextRun({ text: item.name, bold: true, ...baseRun }),
+		];
 
 		if (item.proficiency) {
-			children.push(new TextRun({ text: ` — ${item.proficiency}`, ...baseRun }));
+			children.push(
+				new TextRun({ text: ` — ${item.proficiency}`, ...baseRun }),
+			);
 		}
 
 		if (item.keywords.length > 0) {
-			children.push(new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }));
+			children.push(
+				new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }),
+			);
 		}
 
 		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
@@ -274,7 +344,10 @@ function renderSkills(section: Sections["skills"], colorHex: string): Paragraph[
 	return paragraphs;
 }
 
-function renderLanguages(section: Sections["languages"], colorHex: string): Paragraph[] {
+function renderLanguages(
+	section: Sections["languages"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -282,7 +355,9 @@ function renderLanguages(section: Sections["languages"], colorHex: string): Para
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.language, bold: true, ...baseRun })];
+		const children: TextRun[] = [
+			new TextRun({ text: item.language, bold: true, ...baseRun }),
+		];
 
 		if (item.fluency) {
 			children.push(new TextRun({ text: ` — ${item.fluency}`, ...baseRun }));
@@ -294,7 +369,10 @@ function renderLanguages(section: Sections["languages"], colorHex: string): Para
 	return paragraphs;
 }
 
-function renderInterests(section: Sections["interests"], colorHex: string): Paragraph[] {
+function renderInterests(
+	section: Sections["interests"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -302,10 +380,14 @@ function renderInterests(section: Sections["interests"], colorHex: string): Para
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
+		const children: TextRun[] = [
+			new TextRun({ text: item.name, bold: true, ...baseRun }),
+		];
 
 		if (item.keywords.length > 0) {
-			children.push(new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }));
+			children.push(
+				new TextRun({ text: `: ${item.keywords.join(", ")}`, ...baseRun }),
+			);
 		}
 
 		paragraphs.push(new Paragraph({ spacing: { before: 60 }, children }));
@@ -314,14 +396,19 @@ function renderInterests(section: Sections["interests"], colorHex: string): Para
 	return paragraphs;
 }
 
-function renderAwards(section: Sections["awards"], colorHex: string): Paragraph[] {
+function renderAwards(
+	section: Sections["awards"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
 	const paragraphs: Paragraph[] = [sectionHeading(section.title, colorHex)];
 
 	for (const item of items) {
-		paragraphs.push(titleAndSubtitle(item.title, item.awarder, item.date, false));
+		paragraphs.push(
+			titleAndSubtitle(item.title, item.awarder, item.date, false),
+		);
 
 		if (item.description) {
 			paragraphs.push(...htmlToParagraphs(item.description, getHtmlStyle()));
@@ -334,7 +421,10 @@ function renderAwards(section: Sections["awards"], colorHex: string): Paragraph[
 	return paragraphs;
 }
 
-function renderCertifications(section: Sections["certifications"], colorHex: string): Paragraph[] {
+function renderCertifications(
+	section: Sections["certifications"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -354,7 +444,10 @@ function renderCertifications(section: Sections["certifications"], colorHex: str
 	return paragraphs;
 }
 
-function renderPublications(section: Sections["publications"], colorHex: string): Paragraph[] {
+function renderPublications(
+	section: Sections["publications"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -374,7 +467,10 @@ function renderPublications(section: Sections["publications"], colorHex: string)
 	return paragraphs;
 }
 
-function renderVolunteer(section: Sections["volunteer"], colorHex: string): Paragraph[] {
+function renderVolunteer(
+	section: Sections["volunteer"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -397,7 +493,10 @@ function renderVolunteer(section: Sections["volunteer"], colorHex: string): Para
 	return paragraphs;
 }
 
-function renderReferences(section: Sections["references"], colorHex: string): Paragraph[] {
+function renderReferences(
+	section: Sections["references"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -405,7 +504,9 @@ function renderReferences(section: Sections["references"], colorHex: string): Pa
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const children: TextRun[] = [new TextRun({ text: item.name, bold: true, ...baseRun })];
+		const children: TextRun[] = [
+			new TextRun({ text: item.name, bold: true, ...baseRun }),
+		];
 
 		if (item.position) {
 			children.push(new TextRun({ text: ` — ${item.position}`, ...baseRun }));
@@ -432,7 +533,10 @@ function renderReferences(section: Sections["references"], colorHex: string): Pa
 	return paragraphs;
 }
 
-function renderProfiles(section: Sections["profiles"], colorHex: string): Paragraph[] {
+function renderProfiles(
+	section: Sections["profiles"],
+	colorHex: string,
+): Paragraph[] {
 	const items = section.items.filter((item) => !item.hidden);
 	if (section.hidden || items.length === 0) return [];
 
@@ -440,7 +544,9 @@ function renderProfiles(section: Sections["profiles"], colorHex: string): Paragr
 	const baseRun = getBaseRun();
 
 	for (const item of items) {
-		const children: (TextRun | ExternalHyperlink)[] = [new TextRun({ text: item.network, bold: true, ...baseRun })];
+		const children: (TextRun | ExternalHyperlink)[] = [
+			new TextRun({ text: item.network, bold: true, ...baseRun }),
+		];
 
 		if (item.username) {
 			children.push(new TextRun({ text: ` — ${item.username}`, ...baseRun }));
@@ -458,25 +564,68 @@ function renderProfiles(section: Sections["profiles"], colorHex: string): Paragr
 /**
  * Mapping from built-in section type to its renderer.
  */
-const sectionRenderers: Record<SectionType, (section: Sections[SectionType], colorHex: string) => Paragraph[]> = {
-	experience: renderExperience as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	education: renderEducation as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	projects: renderProjects as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	skills: renderSkills as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	languages: renderLanguages as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	interests: renderInterests as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	awards: renderAwards as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	certifications: renderCertifications as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	publications: renderPublications as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	volunteer: renderVolunteer as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	references: renderReferences as (section: Sections[SectionType], colorHex: string) => Paragraph[],
-	profiles: renderProfiles as (section: Sections[SectionType], colorHex: string) => Paragraph[],
+const sectionRenderers: Record<
+	SectionType,
+	(section: Sections[SectionType], colorHex: string) => Paragraph[]
+> = {
+	experience: renderExperience as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	education: renderEducation as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	projects: renderProjects as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	skills: renderSkills as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	languages: renderLanguages as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	interests: renderInterests as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	awards: renderAwards as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	certifications: renderCertifications as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	publications: renderPublications as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	volunteer: renderVolunteer as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	references: renderReferences as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
+	profiles: renderProfiles as (
+		section: Sections[SectionType],
+		colorHex: string,
+	) => Paragraph[],
 };
 
 /**
  * Renders a built-in section by type.
  */
-export function renderBuiltInSection(type: SectionType, section: Sections[SectionType], colorHex: string): Paragraph[] {
+export function renderBuiltInSection(
+	type: SectionType,
+	section: Sections[SectionType],
+	colorHex: string,
+): Paragraph[] {
 	const renderer = sectionRenderers[type];
 	if (!renderer) return [];
 	return renderer(section, colorHex);
@@ -485,7 +634,10 @@ export function renderBuiltInSection(type: SectionType, section: Sections[Sectio
 /**
  * Renders a custom section by dispatching to the matching built-in renderer based on its type.
  */
-export function renderCustomSection(section: CustomSection, colorHex: string): Paragraph[] {
+export function renderCustomSection(
+	section: CustomSection,
+	colorHex: string,
+): Paragraph[] {
 	if (section.hidden) return [];
 
 	const visibleItems = section.items.filter((item) => !item.hidden);

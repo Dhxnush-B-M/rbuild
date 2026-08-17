@@ -71,10 +71,16 @@ export function LoginPage() {
 	return (
 		<div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-slate-200 via-gray-100 to-slate-300 p-4 dark:from-zinc-950 dark:via-neutral-900 dark:to-zinc-900">
 			{/* Ambient Fluid Glow Spheres */}
-			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-40">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-40"
+			>
 				<div className="size-[600px] animate-pulse rounded-full bg-gradient-to-tr from-cyan-400/20 via-blue-500/20 to-indigo-500/20 blur-3xl" />
 			</div>
-			<div aria-hidden="true" className="pointer-events-none fixed top-10 left-10 opacity-30">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed top-10 left-10 opacity-30"
+			>
 				<div className="size-[350px] rounded-full bg-gradient-to-br from-white/30 to-slate-400/20 blur-2xl" />
 			</div>
 
@@ -95,8 +101,12 @@ export function LoginPage() {
 							</div>
 						</div>
 
-						<h2 className="mt-4 font-extrabold text-2xl text-foreground tracking-tight">Sign in to rbuilder</h2>
-						<p className="mt-1 text-muted-foreground text-xs">Build, customize, and export professional resumes</p>
+						<h2 className="mt-4 font-extrabold text-2xl text-foreground tracking-tight">
+							Sign in to rbuilder
+						</h2>
+						<p className="mt-1 text-muted-foreground text-xs">
+							Build, customize, and export professional resumes
+						</p>
 					</div>
 
 					{/* Google Sign-In */}

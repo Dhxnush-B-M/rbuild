@@ -1,11 +1,17 @@
-import type { Extension } from "@codemirror/state";
-import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
-import type { SemanticCssColorToken } from "./color-tokens";
-import type { SemanticCssEditorMetadata } from "./protocol";
 import { defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { css } from "@codemirror/lang-css";
-import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { Annotation, Compartment, EditorState, Prec, Transaction } from "@codemirror/state";
+import {
+	defaultHighlightStyle,
+	syntaxHighlighting,
+} from "@codemirror/language";
+import type { Extension } from "@codemirror/state";
+import {
+	Annotation,
+	Compartment,
+	EditorState,
+	Prec,
+	Transaction,
+} from "@codemirror/state";
 import {
 	drawSelection,
 	EditorView,
@@ -17,24 +23,36 @@ import {
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { BookOpenIcon } from "@phosphor-icons/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useMediaQuery } from "usehooks-ts";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
 import { Sheet, SheetContent, SheetTitle } from "@rbuilder/ui/components/sheet";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
 import { ColorPicker } from "@/components/input/color-picker";
 import { useTheme } from "@/features/theme/provider";
 import { useBuilderSidebarStore } from "@/routes/builder/$resumeId/-store/sidebar";
-import { compositionAwareDocumentListener, createSemanticCssEditorExtensions } from "./editor-extensions";
+import type { SemanticCssColorToken } from "./color-tokens";
+import {
+	compositionAwareDocumentListener,
+	createSemanticCssEditorExtensions,
+} from "./editor-extensions";
 import { enterStylesheetFocusMode } from "./focus-mode";
 import { formatEditorDocument } from "./formatter";
 import { LegacyStylesheetBanner } from "./legacy-banner";
+import type { SemanticCssEditorMetadata } from "./protocol";
 import { StylesheetStatus } from "./status";
 import { useStylesheetStore } from "./store";
 import { StylesheetToolbar } from "./toolbar";
 
 const externalReplacement = Annotation.define<boolean>();
 const emptyMetadata: SemanticCssEditorMetadata = {
-	semanticTree: { key: "resume", kind: "resume", attributes: {}, roles: [], children: [] },
+	semanticTree: {
+		key: "resume",
+		kind: "resume",
+		attributes: {},
+		roles: [],
+		children: [],
+	},
 	templateParts: [],
 };
 
@@ -55,7 +73,8 @@ const editorTheme = (dark: boolean): Extension =>
 			},
 			".cm-scroller": {
 				overflow: "auto",
-				fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+				fontFamily:
+					"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
 				lineHeight: "1.5",
 			},
 			".cm-content": { minHeight: "100%", padding: "0.75rem 0" },
@@ -110,7 +129,15 @@ export function StylesheetCodeEditor({
 	const colorTriggerRef = useRef<HTMLButtonElement | null>(null);
 	const openColorPickerRef = useRef(false);
 	const compartmentsRef = useRef<EditorCompartments | null>(null);
-	const initialPropsRef = useRef({ value, diagnostics, colorTokens, metadata, theme, readOnly, label });
+	const initialPropsRef = useRef({
+		value,
+		diagnostics,
+		colorTokens,
+		metadata,
+		theme,
+		readOnly,
+		label,
+	});
 	const onChangeRef = useRef(onChange);
 	const onFocusChangeRef = useRef(onFocusChange);
 	const onReadyRef = useRef(onReady);
@@ -121,12 +148,19 @@ export function StylesheetCodeEditor({
 		left: number;
 		top: number;
 	} | null>(null);
-	const selectColor = useCallback((token: SemanticCssColorToken, rect: DOMRect) => {
-		const hostRect = hostRef.current?.getBoundingClientRect();
-		if (!hostRect) return;
-		openColorPickerRef.current = true;
-		setSelectedColor({ token, left: rect.left - hostRect.left, top: rect.top - hostRect.top });
-	}, []);
+	const selectColor = useCallback(
+		(token: SemanticCssColorToken, rect: DOMRect) => {
+			const hostRect = hostRef.current?.getBoundingClientRect();
+			if (!hostRect) return;
+			openColorPickerRef.current = true;
+			setSelectedColor({
+				token,
+				left: rect.left - hostRect.left,
+				top: rect.top - hostRect.top,
+			});
+		},
+		[],
+	);
 
 	onChangeRef.current = onChange;
 	onFocusChangeRef.current = onFocusChange;
@@ -156,7 +190,11 @@ export function StylesheetCodeEditor({
 				css(),
 				syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
 				EditorView.editorAttributes.of({ dir: "ltr" }),
-				EditorView.contentAttributes.of({ "aria-label": initial.label, dir: "ltr", spellcheck: "false" }),
+				EditorView.contentAttributes.of({
+					"aria-label": initial.label,
+					dir: "ltr",
+					spellcheck: "false",
+				}),
 				Prec.high(
 					keymap.of([
 						{
@@ -193,7 +231,10 @@ export function StylesheetCodeEditor({
 				}),
 				compositionAwareDocumentListener(
 					(source) => onChangeRef.current(source),
-					(update) => update.transactions.some((transaction) => transaction.annotation(externalReplacement)),
+					(update) =>
+						update.transactions.some((transaction) =>
+							transaction.annotation(externalReplacement),
+						),
 				),
 				compartments.theme.of(editorTheme(initial.theme === "dark")),
 				compartments.readOnly.of(readOnlyExtensions(initial.readOnly)),
@@ -222,14 +263,18 @@ export function StylesheetCodeEditor({
 		const view = viewRef.current;
 		const compartments = compartmentsRef.current;
 		if (!view || !compartments) return;
-		view.dispatch({ effects: compartments.theme.reconfigure(editorTheme(theme === "dark")) });
+		view.dispatch({
+			effects: compartments.theme.reconfigure(editorTheme(theme === "dark")),
+		});
 	}, [theme]);
 
 	useEffect(() => {
 		const view = viewRef.current;
 		const compartments = compartmentsRef.current;
 		if (!view || !compartments) return;
-		view.dispatch({ effects: compartments.readOnly.reconfigure(readOnlyExtensions(readOnly)) });
+		view.dispatch({
+			effects: compartments.readOnly.reconfigure(readOnlyExtensions(readOnly)),
+		});
 	}, [readOnly]);
 
 	useEffect(() => {
@@ -282,9 +327,16 @@ export function StylesheetCodeEditor({
 	};
 
 	return (
-		<div ref={hostRef} className="relative h-full overflow-hidden rounded-md border text-xs" dir="ltr">
+		<div
+			ref={hostRef}
+			className="relative h-full overflow-hidden rounded-md border text-xs"
+			dir="ltr"
+		>
 			{selectedColor && (
-				<div className="pointer-events-none absolute z-20" style={{ left: selectedColor.left, top: selectedColor.top }}>
+				<div
+					className="pointer-events-none absolute z-20"
+					style={{ left: selectedColor.left, top: selectedColor.top }}
+				>
 					<ColorPicker
 						value={selectedColor.token.value}
 						onChange={updateColor}
@@ -314,9 +366,13 @@ type StylesheetEditorShellProps = {
 	readOnly?: boolean;
 };
 
-function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps) {
+function StylesheetEditorShell({
+	readOnly = false,
+}: StylesheetEditorShellProps) {
 	const { theme } = useTheme();
-	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
+	const isMobile = useMediaQuery("(max-width: 767px)", {
+		initializeWithValue: false,
+	});
 	const [focusOpen, setFocusOpen] = useState(false);
 	const restoreDesktopRef = useRef<(() => void) | null>(null);
 	const mode = useStylesheetStore((state) => state.mode);
@@ -334,10 +390,15 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const activate = useStylesheetStore((state) => state.activate);
 	const undo = useStylesheetStore((state) => state.undo);
 	const redo = useStylesheetStore((state) => state.redo);
-	const refreshIntelligence = useStylesheetStore((state) => state.refreshIntelligence);
+	const refreshIntelligence = useStylesheetStore(
+		(state) => state.refreshIntelligence,
+	);
 	const editorViewRef = useRef<EditorView | null>(null);
-	const hasErrors = status === "error" || diagnostics.some(({ severity }) => severity === "error");
-	const isChecking = status === "compiling" || status === "preflighting" || status === "saving";
+	const hasErrors =
+		status === "error" ||
+		diagnostics.some(({ severity }) => severity === "error");
+	const isChecking =
+		status === "compiling" || status === "preflighting" || status === "saving";
 
 	useEffect(
 		() => () => {
@@ -363,7 +424,8 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			return;
 		}
 
-		const { rightSidebar, layout, setLayout } = useBuilderSidebarStore.getState();
+		const { rightSidebar, layout, setLayout } =
+			useBuilderSidebarStore.getState();
 		restoreDesktopRef.current = enterStylesheetFocusMode({
 			rightPanel: rightSidebar,
 			currentLayout: layout,
@@ -393,7 +455,10 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 	const editorChrome = (
 		<div className="space-y-3">
 			{mode === "legacy" && (
-				<LegacyStylesheetBanner disabled={restoreLocked || hasErrors || isChecking} onActivate={activate} />
+				<LegacyStylesheetBanner
+					disabled={restoreLocked || hasErrors || isChecking}
+					onActivate={activate}
+				/>
 			)}
 
 			<StylesheetToolbar
@@ -415,11 +480,23 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 			<p className="flex items-center gap-1.5 text-muted-foreground text-xs">
 				<BookOpenIcon aria-hidden="true" className="shrink-0" />
 				<span>
-					<Trans>Add custom CSS rules here to override or style your resume sections.</Trans>
+					<Trans>
+						Add custom CSS rules here to override or style your resume sections.
+					</Trans>
 				</span>
 			</p>
 
-			<div className={focusOpen ? (isMobile ? "h-[55svh]" : "h-[calc(100svh-14rem)]") : "h-72"}>{editor}</div>
+			<div
+				className={
+					focusOpen
+						? isMobile
+							? "h-[55svh]"
+							: "h-[calc(100svh-14rem)]"
+						: "h-72"
+				}
+			>
+				{editor}
+			</div>
 
 			<StylesheetStatus mode={mode} status={status} diagnostics={diagnostics} />
 		</div>
@@ -429,11 +506,16 @@ function StylesheetEditorShell({ readOnly = false }: StylesheetEditorShellProps)
 		<div>
 			{!(isMobile && focusOpen) && editorChrome}
 			<Sheet open={isMobile && focusOpen} onOpenChange={setFocusOpen}>
-				<SheetContent side="right" className="w-full max-w-full gap-3 overflow-hidden p-4 sm:max-w-full">
+				<SheetContent
+					side="right"
+					className="w-full max-w-full gap-3 overflow-hidden p-4 sm:max-w-full"
+				>
 					<SheetTitle>
 						<Trans>Semantic CSS stylesheet</Trans>
 					</SheetTitle>
-					<div className="min-h-0 flex-1 overflow-y-auto">{isMobile && focusOpen ? editorChrome : null}</div>
+					<div className="min-h-0 flex-1 overflow-y-auto">
+						{isMobile && focusOpen ? editorChrome : null}
+					</div>
 				</SheetContent>
 			</Sheet>
 		</div>

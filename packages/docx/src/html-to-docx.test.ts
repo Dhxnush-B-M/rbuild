@@ -30,12 +30,15 @@ describe("htmlToParagraphs", () => {
 	});
 
 	it("renders nested <strong>, <em>, <u>, <s> inline styling without throwing", () => {
-		const result = htmlToParagraphs("<p><strong>Bold</strong> <em>italic</em> <u>under</u> <s>strike</s></p>");
+		const result = htmlToParagraphs(
+			"<p><strong>Bold</strong> <em>italic</em> <u>under</u> <s>strike</s></p>",
+		);
 		expect(result.length).toBe(1);
 	});
 
 	it("renders links and lists without throwing", () => {
-		const html = '<p><a href="https://example.com">link</a></p><ul><li>One</li><li>Two</li></ul>';
+		const html =
+			'<p><a href="https://example.com">link</a></p><ul><li>One</li><li>Two</li></ul>';
 		const result = htmlToParagraphs(html);
 		expect(result.length).toBeGreaterThanOrEqual(2);
 	});
@@ -64,7 +67,9 @@ describe("htmlToParagraphs", () => {
 	});
 
 	it("reads custom background-color from <mark> style for shading fill", () => {
-		const result = htmlToParagraphs('<p><mark style="background-color: rgba(204, 255, 204, 1)">green</mark></p>');
+		const result = htmlToParagraphs(
+			'<p><mark style="background-color: rgba(204, 255, 204, 1)">green</mark></p>',
+		);
 		const json = JSON.stringify(result[0]);
 		expect(json).toContain("CCFFCC");
 	});

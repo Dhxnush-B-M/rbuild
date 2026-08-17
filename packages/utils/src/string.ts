@@ -1,5 +1,10 @@
 import _slugify from "@sindresorhus/slugify";
-import { adjectives, animals, colors, uniqueNamesGenerator } from "unique-names-generator";
+import {
+	adjectives,
+	animals,
+	colors,
+	uniqueNamesGenerator,
+} from "unique-names-generator";
 import { v7 as uuidv7 } from "uuid";
 
 /**

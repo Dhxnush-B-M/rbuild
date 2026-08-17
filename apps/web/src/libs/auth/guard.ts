@@ -1,4 +1,7 @@
-import { getCurrentSupabaseUser, getProfileByEmailFromSupabase } from "@/libs/supabase/db";
+import {
+	getCurrentSupabaseUser,
+	getProfileByEmailFromSupabase,
+} from "@/libs/supabase/db";
 
 export type AccessStatus = "allowed" | "unauthenticated" | "needs_onboarding";
 
@@ -17,8 +20,17 @@ const ALLOWED_REDIRECT_PATHS = new Set([
 
 export function isAllowedRedirect(path: string): boolean {
 	if (!path || typeof path !== "string") return false;
-	if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("//")) return false;
-	return ALLOWED_REDIRECT_PATHS.has(path) || path.startsWith("/dashboard") || path.startsWith("/builder");
+	if (
+		path.startsWith("http://") ||
+		path.startsWith("https://") ||
+		path.startsWith("//")
+	)
+		return false;
+	return (
+		ALLOWED_REDIRECT_PATHS.has(path) ||
+		path.startsWith("/dashboard") ||
+		path.startsWith("/builder")
+	);
 }
 
 /**
@@ -30,7 +42,11 @@ export function checkAuthAndOnboardingAccess(): AccessStatus {
 		// Clean any lingering URL hash for security
 		if (window.location.hash) {
 			try {
-				window.history.replaceState(null, "", window.location.pathname + window.location.search);
+				window.history.replaceState(
+					null,
+					"",
+					window.location.pathname + window.location.search,
+				);
 			} catch {}
 		}
 
@@ -69,7 +85,10 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 		// 1. Check current Supabase session
 		const currentProfile = await getCurrentSupabaseUser();
 		if (currentProfile?.email) {
-			localStorage.setItem("rbuilder_user_profile", JSON.stringify(currentProfile));
+			localStorage.setItem(
+				"rbuilder_user_profile",
+				JSON.stringify(currentProfile),
+			);
 			return "allowed";
 		}
 
@@ -80,7 +99,10 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 			if (googleUser?.email) {
 				const dbProfile = await getProfileByEmailFromSupabase(googleUser.email);
 				if (dbProfile?.email) {
-					localStorage.setItem("rbuilder_user_profile", JSON.stringify(dbProfile));
+					localStorage.setItem(
+						"rbuilder_user_profile",
+						JSON.stringify(dbProfile),
+					);
 					return "allowed";
 				}
 			}
@@ -91,4 +113,3 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 		return "unauthenticated";
 	}
 }
-

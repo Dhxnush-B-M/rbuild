@@ -640,5 +640,8 @@ export const createSampleResumeData = (name?: string): ResumeData => {
 	const trimmed = name?.trim();
 	if (!trimmed) return sampleResumeData;
 
-	return { ...sampleResumeData, basics: { ...sampleResumeData.basics, name: trimmed } };
+	return {
+		...sampleResumeData,
+		basics: { ...sampleResumeData.basics, name: trimmed },
+	};
 };

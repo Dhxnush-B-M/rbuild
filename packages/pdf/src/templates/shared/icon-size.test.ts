@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { parseStyleFontSize, resolveIconSize, resolveStyleFontSize } from "./icon-size";
+import {
+	parseStyleFontSize,
+	resolveIconSize,
+	resolveStyleFontSize,
+} from "./icon-size";
 
 describe("parseStyleFontSize", () => {
 	it("parses numeric and px font sizes", () => {
@@ -11,7 +15,12 @@ describe("parseStyleFontSize", () => {
 
 describe("resolveStyleFontSize", () => {
 	it("returns the last font size across composed style inputs", () => {
-		expect(resolveStyleFontSize({ fontSize: 10 }, [{ fontSize: 12 }, { fontSize: 16 }])).toBe(16);
+		expect(
+			resolveStyleFontSize({ fontSize: 10 }, [
+				{ fontSize: 12 },
+				{ fontSize: 16 },
+			]),
+		).toBe(16);
 	});
 });
 

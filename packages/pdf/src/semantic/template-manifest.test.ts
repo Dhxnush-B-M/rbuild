@@ -1,12 +1,12 @@
+import { TEMPLATE_PART_CHILD_KINDS_V1 } from "@rbuilder/resume/stylesheet";
 import type { SemanticNode } from "@rbuilder/resume/stylesheet/types";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { Template } from "@rbuilder/schema/templates";
-import type { TemplateSemanticManifest } from "./template-manifest";
-import { describe, expect, it } from "vitest";
-import { TEMPLATE_PART_CHILD_KINDS_V1 } from "@rbuilder/resume/stylesheet";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import type { Template } from "@rbuilder/schema/templates";
 import { templateSchema } from "@rbuilder/schema/templates";
+import { describe, expect, it } from "vitest";
 import { createBindingInventory } from "./binding-inventory";
+import type { TemplateSemanticManifest } from "./template-manifest";
 import {
 	getTemplateSemanticBindingRegistry,
 	getTemplateSemanticManifest,
@@ -19,7 +19,12 @@ const EXPECTED_PARTS = {
 	azurill: {
 		"timeline-line": {
 			key: "timeline-line",
-			owner: { kind: "section-items", key: "section-items", placement: "main", columns: 1 },
+			owner: {
+				kind: "section-items",
+				key: "section-items",
+				placement: "main",
+				columns: 1,
+			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
 			route: { parent: "owner", at: "start" },
 		},
@@ -46,7 +51,11 @@ const EXPECTED_PARTS = {
 		"interleaved-section-row": {
 			key: "interleaved-section-row",
 			owner: { kind: "section", key: "section", placement: "main" },
-			binding: { type: "alias", canonicalKind: "section", token: "interleaved-section-row" },
+			binding: {
+				type: "alias",
+				canonicalKind: "section",
+				token: "interleaved-section-row",
+			},
 		},
 	},
 	chikorita: {
@@ -88,7 +97,11 @@ const EXPECTED_PARTS = {
 		"sidebar-background": {
 			key: "sidebar-background",
 			owner: { kind: "region", key: "sidebar" },
-			binding: { type: "alias", canonicalKind: "region", token: "sidebar-background" },
+			binding: {
+				type: "alias",
+				canonicalKind: "region",
+				token: "sidebar-background",
+			},
 		},
 		"item-header-border": {
 			key: "item-header-border",
@@ -110,7 +123,11 @@ const EXPECTED_PARTS = {
 					"references",
 				],
 			},
-			binding: { type: "alias", canonicalKind: "item-header", token: "item-header-border" },
+			binding: {
+				type: "alias",
+				canonicalKind: "item-header",
+				token: "item-header-border",
+			},
 		},
 	},
 	ditto: {
@@ -128,7 +145,11 @@ const EXPECTED_PARTS = {
 			key: "picture-anchor",
 			owner: { kind: "header", key: "header" },
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "header-band", at: "start", take: [{ kind: "picture" }] },
+			route: {
+				parent: "header-band",
+				at: "start",
+				take: [{ kind: "picture" }],
+			},
 		},
 		"contact-offset": {
 			key: "contact-offset",
@@ -147,7 +168,11 @@ const EXPECTED_PARTS = {
 		"sidebar-background": {
 			key: "sidebar-background",
 			owner: { kind: "region", key: "sidebar" },
-			binding: { type: "alias", canonicalKind: "region", token: "sidebar-background" },
+			binding: {
+				type: "alias",
+				canonicalKind: "region",
+				token: "sidebar-background",
+			},
 		},
 	},
 	glalie: {
@@ -168,7 +193,12 @@ const EXPECTED_PARTS = {
 			route: {
 				parent: "owner",
 				at: "start",
-				take: [{ kind: "picture" }, { kind: "name" }, { kind: "headline" }, { kind: "section", name: "summary" }],
+				take: [
+					{ kind: "picture" },
+					{ kind: "name" },
+					{ kind: "headline" },
+					{ kind: "section", name: "summary" },
+				],
 			},
 		},
 		"header-body": {
@@ -197,8 +227,16 @@ const EXPECTED_PARTS = {
 				parent: "owner",
 				at: "start",
 				take: [
-					{ kind: "field", name: "position", sectionTypes: ["experience", "volunteer"] },
-					{ kind: "field", name: "location", sectionTypes: ["experience", "volunteer"] },
+					{
+						kind: "field",
+						name: "position",
+						sectionTypes: ["experience", "volunteer"],
+					},
+					{
+						kind: "field",
+						name: "location",
+						sectionTypes: ["experience", "volunteer"],
+					},
 					{ kind: "field", name: "area", sectionTypes: ["education"] },
 					{ kind: "field", name: "degree", sectionTypes: ["education"] },
 				],
@@ -231,7 +269,11 @@ const EXPECTED_PARTS = {
 				sectionTypes: ["experience", "education", "volunteer"],
 			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "owner", at: "start", take: [{ kind: "field", name: "period" }] },
+			route: {
+				parent: "owner",
+				at: "start",
+				take: [{ kind: "field", name: "period" }],
+			},
 		},
 		"education-grade-row": {
 			key: "education-grade-row",
@@ -254,7 +296,11 @@ const EXPECTED_PARTS = {
 			key: "header-divider",
 			owner: { kind: "header", key: "header" },
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "owner", at: "start", take: [{ kind: "name" }, { kind: "headline" }] },
+			route: {
+				parent: "owner",
+				at: "start",
+				take: [{ kind: "name" }, { kind: "headline" }],
+			},
 		},
 	},
 	rhyhorn: {
@@ -263,7 +309,11 @@ const EXPECTED_PARTS = {
 			owner: { kind: "contact-item", key: "contact-item" },
 			binding: {
 				type: "primitive",
-				primitive: { ownerRole: "structured-link", present: "Link", absent: "View" },
+				primitive: {
+					ownerRole: "structured-link",
+					present: "Link",
+					absent: "View",
+				},
 				source: "existing",
 			},
 			route: { parent: "owner", at: "start", take: "all" },
@@ -271,7 +321,11 @@ const EXPECTED_PARTS = {
 		"contact-item-last": {
 			key: "contact-item-last",
 			owner: { kind: "contact-item", key: "contact-item", position: "last" },
-			binding: { type: "alias", canonicalKind: "contact-item", token: "contact-item-last" },
+			binding: {
+				type: "alias",
+				canonicalKind: "contact-item",
+				token: "contact-item-last",
+			},
 		},
 	},
 	scizor: {
@@ -282,7 +336,9 @@ const EXPECTED_PARTS = {
 			route: { parent: "owner", at: { before: { kind: "headline" } } },
 		},
 	},
-} as const satisfies Readonly<Record<Template, Readonly<Record<string, object>>>>;
+} as const satisfies Readonly<
+	Record<Template, Readonly<Record<string, object>>>
+>;
 
 const EXPECTED_LAYOUT = {
 	azurill: {
@@ -297,7 +353,12 @@ const EXPECTED_LAYOUT = {
 	bronzor: {
 		regions: [
 			{ name: "header", placement: "main", origins: [] },
-			{ name: "main", placement: "main", origins: ["sidebar", "main"], flow: "interleaved" },
+			{
+				name: "main",
+				placement: "main",
+				origins: ["sidebar", "main"],
+				flow: "interleaved",
+			},
 		],
 		header: { region: "header", placement: "main" },
 		specialSummary: null,
@@ -319,7 +380,11 @@ const EXPECTED_LAYOUT = {
 			{ name: "main", placement: "main", origins: ["main"] },
 		],
 		header: { region: "header", placement: "sidebar" },
-		specialSummary: { region: "featured", placement: "main", source: "main-with-header" },
+		specialSummary: {
+			region: "featured",
+			placement: "main",
+			source: "main-with-header",
+		},
 	},
 	ditto: {
 		regions: [
@@ -338,7 +403,11 @@ const EXPECTED_LAYOUT = {
 			{ name: "main", placement: "main", origins: ["main"] },
 		],
 		header: { region: "header", placement: "sidebar" },
-		specialSummary: { region: "featured", placement: "main", source: "main-with-header" },
+		specialSummary: {
+			region: "featured",
+			placement: "main",
+			source: "main-with-header",
+		},
 	},
 	glalie: {
 		regions: [
@@ -420,17 +489,32 @@ const EXPECTED_LAYOUT = {
 		header: { region: "header", placement: "main" },
 		specialSummary: null,
 	},
-} as const satisfies Readonly<Record<Template, Omit<TemplateSemanticManifest, "template" | "parts">>>;
+} as const satisfies Readonly<
+	Record<Template, Omit<TemplateSemanticManifest, "template" | "parts">>
+>;
 
-const flattenTree = (node: SemanticNode): SemanticNode[] => [node, ...node.children.flatMap(flattenTree)];
+const flattenTree = (node: SemanticNode): SemanticNode[] => [
+	node,
+	...node.children.flatMap(flattenTree),
+];
 const flattenValues = (value: unknown): unknown[] =>
-	typeof value === "object" && value !== null ? [value, ...Object.values(value).flatMap(flattenValues)] : [value];
-const findNodes = (node: SemanticNode, predicate: (candidate: SemanticNode) => boolean): SemanticNode[] =>
-	flattenTree(node).filter(predicate);
+	typeof value === "object" && value !== null
+		? [value, ...Object.values(value).flatMap(flattenValues)]
+		: [value];
+const findNodes = (
+	node: SemanticNode,
+	predicate: (candidate: SemanticNode) => boolean,
+): SemanticNode[] => flattenTree(node).filter(predicate);
 const findPart = (node: SemanticNode, name: string): SemanticNode | undefined =>
-	findNodes(node, (candidate) => candidate.kind === "template-part" && candidate.attributes.name === name)[0];
+	findNodes(
+		node,
+		(candidate) =>
+			candidate.kind === "template-part" && candidate.attributes.name === name,
+	)[0];
 const childLabels = (node: SemanticNode): string[] =>
-	node.children.map((child) => (child.kind === "template-part" ? (child.attributes.name ?? "") : child.kind));
+	node.children.map((child) =>
+		child.kind === "template-part" ? (child.attributes.name ?? "") : child.kind,
+	);
 
 const buildFixture = (): ResumeData => {
 	const data = structuredClone(defaultResumeData);
@@ -475,58 +559,93 @@ const buildFixture = (): ResumeData => {
 	return data;
 };
 
-const buildFixtureTree = (template: Template, showHeader = true): SemanticNode => {
+const buildFixtureTree = (
+	template: Template,
+	showHeader = true,
+): SemanticNode => {
 	const data = buildFixture();
-	const page = { fullWidth: false, main: ["summary", "experience"], sidebar: ["skills"] };
+	const page = {
+		fullWidth: false,
+		main: ["summary", "experience"],
+		sidebar: ["skills"],
+	};
 
 	return buildSemanticTree({ data, template, page, pageNumber: 1, showHeader });
 };
 
 describe("template semantic manifests", () => {
-	it.each(templateSchema.options)("%s publishes a semantic manifest", (template) => {
-		expect(getTemplateSemanticManifest(template)).toBeDefined();
-	});
+	it.each(templateSchema.options)(
+		"%s publishes a semantic manifest",
+		(template) => {
+			expect(getTemplateSemanticManifest(template)).toBeDefined();
+		},
+	);
 
 	it("registers child kinds for every primitive template part", () => {
-		for (const manifest of Object.values(getTemplateSemanticRegistryFingerprintInput())) {
+		for (const manifest of Object.values(
+			getTemplateSemanticRegistryFingerprintInput(),
+		)) {
 			for (const part of manifest.parts) {
 				if (part.binding.type === "alias") continue;
-				expect(TEMPLATE_PART_CHILD_KINDS_V1, `${manifest.template}:${part.name}`).toHaveProperty(part.name);
+				expect(
+					TEMPLATE_PART_CHILD_KINDS_V1,
+					`${manifest.template}:${part.name}`,
+				).toHaveProperty(part.name);
 			}
 		}
 	});
 
-	it.each(templateSchema.options)("%s declares only its exact existing parts and owner bindings", (template) => {
-		const parts = Object.fromEntries(
-			getTemplateSemanticManifest(template).parts.map(({ name, ...part }) => [name, part]),
-		);
+	it.each(templateSchema.options)(
+		"%s declares only its exact existing parts and owner bindings",
+		(template) => {
+			const parts = Object.fromEntries(
+				getTemplateSemanticManifest(template).parts.map(({ name, ...part }) => [
+					name,
+					part,
+				]),
+			);
 
-		expect(parts).toEqual(EXPECTED_PARTS[template]);
-	});
+			expect(parts).toEqual(EXPECTED_PARTS[template]);
+		},
+	);
 
 	it("declares Rhyhorn's outer contact primitive override and no unrelated canonical overrides", () => {
 		expect(getTemplateSemanticManifest("rhyhorn").canonicalBindings).toEqual([
-			{ kind: "contact-item", binding: { type: "primitive", primitive: "View", source: "existing" } },
+			{
+				kind: "contact-item",
+				binding: { type: "primitive", primitive: "View", source: "existing" },
+			},
 		]);
 		expect(
 			templateSchema.options
 				.filter((template) => template !== "rhyhorn")
-				.every((template) => getTemplateSemanticManifest(template).canonicalBindings === undefined),
+				.every(
+					(template) =>
+						getTemplateSemanticManifest(template).canonicalBindings ===
+						undefined,
+				),
 		).toBe(true);
 	});
 
 	it.each(templateSchema.options)(
 		"%s declares its exact regions, header, and special-summary placement",
 		(template) => {
-			const { regions, header, specialSummary } = getTemplateSemanticManifest(template);
+			const { regions, header, specialSummary } =
+				getTemplateSemanticManifest(template);
 
-			expect({ regions, header, specialSummary }).toEqual(EXPECTED_LAYOUT[template]);
+			expect({ regions, header, specialSummary }).toEqual(
+				EXPECTED_LAYOUT[template],
+			);
 		},
 	);
 
 	it("rejects duplicate part names and keys", () => {
-		const duplicateName = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
-		const duplicateKey = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
+		const duplicateName = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
+		const duplicateKey = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
 		const first = duplicateName.parts[0];
 		if (!first) throw new Error("Missing Ditto part fixture");
 
@@ -539,8 +658,12 @@ describe("template semantic manifests", () => {
 			name: "another-name",
 		});
 
-		expect(() => validateTemplateSemanticManifest(duplicateName)).toThrow(/duplicate part name/);
-		expect(() => validateTemplateSemanticManifest(duplicateKey)).toThrow(/duplicate part key/);
+		expect(() => validateTemplateSemanticManifest(duplicateName)).toThrow(
+			/duplicate part name/,
+		);
+		expect(() => validateTemplateSemanticManifest(duplicateKey)).toThrow(
+			/duplicate part key/,
+		);
 	});
 
 	it("rejects unknown placements, owner lies, synthetic wrappers, and missing or invented chrome", () => {
@@ -550,18 +673,30 @@ describe("template semantic manifests", () => {
 		const unknownHeaderPlacement = structuredClone(
 			getTemplateSemanticManifest("chikorita"),
 		) as TemplateSemanticManifest;
-		const ownerLie = structuredClone(getTemplateSemanticManifest("bronzor")) as TemplateSemanticManifest;
-		const synthetic = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
-		const missing = structuredClone(getTemplateSemanticManifest("azurill")) as TemplateSemanticManifest;
-		const invented = structuredClone(getTemplateSemanticManifest("chikorita")) as TemplateSemanticManifest;
+		const ownerLie = structuredClone(
+			getTemplateSemanticManifest("bronzor"),
+		) as TemplateSemanticManifest;
+		const synthetic = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
+		const missing = structuredClone(
+			getTemplateSemanticManifest("azurill"),
+		) as TemplateSemanticManifest;
+		const invented = structuredClone(
+			getTemplateSemanticManifest("chikorita"),
+		) as TemplateSemanticManifest;
 
-		(unknownRegionPlacement.regions[0] as { placement: string }).placement = "footer";
-		(unknownHeaderPlacement.header as { placement: string }).placement = "footer";
+		(unknownRegionPlacement.regions[0] as { placement: string }).placement =
+			"footer";
+		(unknownHeaderPlacement.header as { placement: string }).placement =
+			"footer";
 		const alias = ownerLie.parts[0]?.binding;
-		if (alias?.type !== "alias") throw new Error("Missing Bronzor alias fixture");
+		if (alias?.type !== "alias")
+			throw new Error("Missing Bronzor alias fixture");
 		(alias as { canonicalKind: string }).canonicalKind = "item";
 		const primitive = synthetic.parts[0]?.binding;
-		if (primitive?.type !== "primitive") throw new Error("Missing Ditto primitive fixture");
+		if (primitive?.type !== "primitive")
+			throw new Error("Missing Ditto primitive fixture");
 		(primitive as unknown as { source: string }).source = "synthetic";
 		(missing.parts as TemplateSemanticManifest["parts"][number][]).pop();
 		(invented.parts as TemplateSemanticManifest["parts"][number][]).push({
@@ -572,35 +707,78 @@ describe("template semantic manifests", () => {
 			route: { parent: "owner", at: "start" },
 		});
 
-		expect(() => validateTemplateSemanticManifest(unknownRegionPlacement)).toThrow(/unknown region placement/);
-		expect(() => validateTemplateSemanticManifest(unknownHeaderPlacement)).toThrow(/unknown header placement/);
-		expect(() => validateTemplateSemanticManifest(ownerLie)).toThrow(/aliases a non-owner primitive/);
-		expect(() => validateTemplateSemanticManifest(synthetic)).toThrow(/synthetic wrapper/);
-		expect(() => validateTemplateSemanticManifest(missing)).toThrow(/frozen renderer contract/);
-		expect(() => validateTemplateSemanticManifest(invented)).toThrow(/frozen renderer contract/);
+		expect(() =>
+			validateTemplateSemanticManifest(unknownRegionPlacement),
+		).toThrow(/unknown region placement/);
+		expect(() =>
+			validateTemplateSemanticManifest(unknownHeaderPlacement),
+		).toThrow(/unknown header placement/);
+		expect(() => validateTemplateSemanticManifest(ownerLie)).toThrow(
+			/aliases a non-owner primitive/,
+		);
+		expect(() => validateTemplateSemanticManifest(synthetic)).toThrow(
+			/synthetic wrapper/,
+		);
+		expect(() => validateTemplateSemanticManifest(missing)).toThrow(
+			/frozen renderer contract/,
+		);
+		expect(() => validateTemplateSemanticManifest(invented)).toThrow(
+			/frozen renderer contract/,
+		);
 	});
 
 	it("rejects exact renderer-contract mutations across layout, routing, bindings, conditions, and chrome", () => {
-		const removedMain = structuredClone(getTemplateSemanticManifest("chikorita")) as TemplateSemanticManifest;
-		const wrongOrigin = structuredClone(getTemplateSemanticManifest("chikorita")) as TemplateSemanticManifest;
-		const wrongFlow = structuredClone(getTemplateSemanticManifest("bronzor")) as TemplateSemanticManifest;
-		const wrongPrimitive = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
-		const primitiveToAlias = structuredClone(getTemplateSemanticManifest("rhyhorn")) as TemplateSemanticManifest;
-		const aliasToPrimitive = structuredClone(getTemplateSemanticManifest("bronzor")) as TemplateSemanticManifest;
-		const wrongSummary = structuredClone(getTemplateSemanticManifest("leafish")) as TemplateSemanticManifest;
-		const unknownOwner = structuredClone(getTemplateSemanticManifest("bronzor")) as TemplateSemanticManifest;
-		const changedCondition = structuredClone(getTemplateSemanticManifest("azurill")) as TemplateSemanticManifest;
-		const changedSelectorCondition = structuredClone(getTemplateSemanticManifest("meowth")) as TemplateSemanticManifest;
-		const missingChrome = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
-		const extraChrome = structuredClone(getTemplateSemanticManifest("ditto")) as TemplateSemanticManifest;
+		const removedMain = structuredClone(
+			getTemplateSemanticManifest("chikorita"),
+		) as TemplateSemanticManifest;
+		const wrongOrigin = structuredClone(
+			getTemplateSemanticManifest("chikorita"),
+		) as TemplateSemanticManifest;
+		const wrongFlow = structuredClone(
+			getTemplateSemanticManifest("bronzor"),
+		) as TemplateSemanticManifest;
+		const wrongPrimitive = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
+		const primitiveToAlias = structuredClone(
+			getTemplateSemanticManifest("rhyhorn"),
+		) as TemplateSemanticManifest;
+		const aliasToPrimitive = structuredClone(
+			getTemplateSemanticManifest("bronzor"),
+		) as TemplateSemanticManifest;
+		const wrongSummary = structuredClone(
+			getTemplateSemanticManifest("leafish"),
+		) as TemplateSemanticManifest;
+		const unknownOwner = structuredClone(
+			getTemplateSemanticManifest("bronzor"),
+		) as TemplateSemanticManifest;
+		const changedCondition = structuredClone(
+			getTemplateSemanticManifest("azurill"),
+		) as TemplateSemanticManifest;
+		const changedSelectorCondition = structuredClone(
+			getTemplateSemanticManifest("meowth"),
+		) as TemplateSemanticManifest;
+		const missingChrome = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
+		const extraChrome = structuredClone(
+			getTemplateSemanticManifest("ditto"),
+		) as TemplateSemanticManifest;
 
-		(removedMain.regions as TemplateSemanticManifest["regions"][number][]).splice(1, 1);
+		(
+			removedMain.regions as TemplateSemanticManifest["regions"][number][]
+		).splice(1, 1);
 		(wrongOrigin.regions[1]?.origins as string[])[0] = "sidebar";
 		(wrongFlow.regions[1] as { flow: string }).flow = "sequential";
-		const headerBand = wrongPrimitive.parts.find((part) => part.name === "header-band");
-		if (headerBand?.binding.type !== "primitive") throw new Error("Missing Ditto header band");
+		const headerBand = wrongPrimitive.parts.find(
+			(part) => part.name === "header-band",
+		);
+		if (headerBand?.binding.type !== "primitive")
+			throw new Error("Missing Ditto header band");
 		(headerBand.binding as { primitive: string }).primitive = "Text";
-		const content = primitiveToAlias.parts.find((part) => part.name === "contact-item-content");
+		const content = primitiveToAlias.parts.find(
+			(part) => part.name === "contact-item-content",
+		);
 		if (!content) throw new Error("Missing Rhyhorn content");
 		(content as unknown as { binding: object; route?: object }).binding = {
 			type: "alias",
@@ -615,15 +793,30 @@ describe("template semantic manifests", () => {
 			primitive: "View",
 			source: "existing",
 		};
-		(row as unknown as { route?: object }).route = { parent: "owner", at: "start" };
-		if (!wrongSummary.specialSummary) throw new Error("Missing Leafish summary");
-		(wrongSummary.specialSummary as { source: string }).source = "main-with-header";
-		(unknownOwner.parts[0]?.owner as unknown as { key: string }).key = "unknown";
-		const line = changedCondition.parts.find((part) => part.name === "timeline-line");
-		if (!line || !("columns" in line.owner)) throw new Error("Missing Azurill timeline line");
+		(row as unknown as { route?: object }).route = {
+			parent: "owner",
+			at: "start",
+		};
+		if (!wrongSummary.specialSummary)
+			throw new Error("Missing Leafish summary");
+		(wrongSummary.specialSummary as { source: string }).source =
+			"main-with-header";
+		(unknownOwner.parts[0]?.owner as unknown as { key: string }).key =
+			"unknown";
+		const line = changedCondition.parts.find(
+			(part) => part.name === "timeline-line",
+		);
+		if (!line || !("columns" in line.owner))
+			throw new Error("Missing Azurill timeline line");
 		delete (line.owner as { columns?: number }).columns;
-		const leading = changedSelectorCondition.parts.find((part) => part.name === "inline-item-header-leading");
-		if (leading?.binding.type !== "primitive" || !leading.route || !Array.isArray(leading.route.take)) {
+		const leading = changedSelectorCondition.parts.find(
+			(part) => part.name === "inline-item-header-leading",
+		);
+		if (
+			leading?.binding.type !== "primitive" ||
+			!leading.route ||
+			!Array.isArray(leading.route.take)
+		) {
 			throw new Error("Missing Meowth leading selectors");
 		}
 		(leading.route.take[0]?.sectionTypes as string[])[0] = "education";
@@ -632,7 +825,9 @@ describe("template semantic manifests", () => {
 		if (!extra) throw new Error("Missing Ditto chrome");
 		(extra as { name: string; key: string }).name = "extra";
 		(extra as { name: string; key: string }).key = "extra";
-		(extraChrome.parts as TemplateSemanticManifest["parts"][number][]).push(extra);
+		(extraChrome.parts as TemplateSemanticManifest["parts"][number][]).push(
+			extra,
+		);
 
 		for (const mutation of [
 			removedMain,
@@ -653,10 +848,16 @@ describe("template semantic manifests", () => {
 	});
 
 	it("rejects empty and unknown selector section conditions before exact-contract comparison", () => {
-		const empty = structuredClone(getTemplateSemanticManifest("meowth")) as TemplateSemanticManifest;
-		const unknown = structuredClone(getTemplateSemanticManifest("meowth")) as TemplateSemanticManifest;
+		const empty = structuredClone(
+			getTemplateSemanticManifest("meowth"),
+		) as TemplateSemanticManifest;
+		const unknown = structuredClone(
+			getTemplateSemanticManifest("meowth"),
+		) as TemplateSemanticManifest;
 		const getFirstSelector = (manifest: TemplateSemanticManifest) => {
-			const leading = manifest.parts.find((part) => part.name === "inline-item-header-leading");
+			const leading = manifest.parts.find(
+				(part) => part.name === "inline-item-header-leading",
+			);
 			if (
 				leading?.binding.type !== "primitive" ||
 				!leading.route ||
@@ -669,41 +870,64 @@ describe("template semantic manifests", () => {
 		};
 
 		(getFirstSelector(empty) as { sectionTypes: string[] }).sectionTypes = [];
-		(getFirstSelector(unknown) as { sectionTypes: string[] }).sectionTypes = ["unknown"];
+		(getFirstSelector(unknown) as { sectionTypes: string[] }).sectionTypes = [
+			"unknown",
+		];
 
-		expect(() => validateTemplateSemanticManifest(empty)).toThrow(/selector section types must not be empty/);
-		expect(() => validateTemplateSemanticManifest(unknown)).toThrow(/selector has an unknown section type/);
+		expect(() => validateTemplateSemanticManifest(empty)).toThrow(
+			/selector section types must not be empty/,
+		);
+		expect(() => validateTemplateSemanticManifest(unknown)).toThrow(
+			/selector has an unknown section type/,
+		);
 	});
 
 	it("rejects cyclic and unsupported-depth primitive routing before exact-contract comparison", () => {
-		const cycle = structuredClone(getTemplateSemanticManifest("azurill")) as TemplateSemanticManifest;
-		const tooDeep = structuredClone(getTemplateSemanticManifest("azurill")) as TemplateSemanticManifest;
+		const cycle = structuredClone(
+			getTemplateSemanticManifest("azurill"),
+		) as TemplateSemanticManifest;
+		const tooDeep = structuredClone(
+			getTemplateSemanticManifest("azurill"),
+		) as TemplateSemanticManifest;
 		const marker = cycle.parts.find((part) => part.name === "timeline-marker");
-		if (marker?.binding.type !== "primitive") throw new Error("Missing Azurill marker");
+		if (marker?.binding.type !== "primitive")
+			throw new Error("Missing Azurill marker");
 		(marker.route as { parent: string }).parent = "timeline-dot";
-		const content = tooDeep.parts.find((part) => part.name === "timeline-content");
-		if (content?.binding.type !== "primitive") throw new Error("Missing Azurill content");
+		const content = tooDeep.parts.find(
+			(part) => part.name === "timeline-content",
+		);
+		if (content?.binding.type !== "primitive")
+			throw new Error("Missing Azurill content");
 		(content.route as { parent: string }).parent = "timeline-dot";
 
-		expect(() => validateTemplateSemanticManifest(cycle)).toThrow(/cyclic part routing/);
-		expect(() => validateTemplateSemanticManifest(tooDeep)).toThrow(/unsupported part routing depth/);
+		expect(() => validateTemplateSemanticManifest(cycle)).toThrow(
+			/cyclic part routing/,
+		);
+		expect(() => validateTemplateSemanticManifest(tooDeep)).toThrow(
+			/unsupported part routing depth/,
+		);
 	});
 
-	it.each(templateSchema.options)("%s builds its manifest-backed tree without key collisions", (template) => {
-		const tree = buildFixtureTree(template);
-		const nodes = flattenTree(tree);
-		const partNames = new Set(
-			findNodes(tree, (node) => node.kind === "template-part").map((node) => node.attributes.name),
-		);
-		const expectedPrimitiveParts = new Set(
-			getTemplateSemanticManifest(template).parts.flatMap((part) =>
-				part.binding.type === "primitive" ? [part.name] : [],
-			),
-		);
+	it.each(templateSchema.options)(
+		"%s builds its manifest-backed tree without key collisions",
+		(template) => {
+			const tree = buildFixtureTree(template);
+			const nodes = flattenTree(tree);
+			const partNames = new Set(
+				findNodes(tree, (node) => node.kind === "template-part").map(
+					(node) => node.attributes.name,
+				),
+			);
+			const expectedPrimitiveParts = new Set(
+				getTemplateSemanticManifest(template).parts.flatMap((part) =>
+					part.binding.type === "primitive" ? [part.name] : [],
+				),
+			);
 
-		expect(partNames).toEqual(expectedPrimitiveParts);
-		expect(new Set(nodes.map((node) => node.key)).size).toBe(nodes.length);
-	});
+			expect(partNames).toEqual(expectedPrimitiveParts);
+			expect(new Set(nodes.map((node) => node.key)).size).toBe(nodes.length);
+		},
+	);
 
 	it("routes every registered primitive part through exactly the child kinds used by all template trees", () => {
 		const data = buildFixture();
@@ -720,7 +944,11 @@ describe("template semantic manifests", () => {
 				position: "Engineer",
 				location: "London",
 				period: "1842",
-				website: { url: "https://inline.example.com", label: "Inline", inlineLink: true },
+				website: {
+					url: "https://inline.example.com",
+					label: "Inline",
+					inlineLink: true,
+				},
 				description: "<p>Built algorithms.</p>",
 				roles: [],
 			},
@@ -731,7 +959,11 @@ describe("template semantic manifests", () => {
 				position: "Programmer",
 				location: "London",
 				period: "1843",
-				website: { url: "https://outside.example.com", label: "Outside", inlineLink: false },
+				website: {
+					url: "https://outside.example.com",
+					label: "Outside",
+					inlineLink: false,
+				},
 				description: "",
 				roles: [
 					{
@@ -777,8 +1009,17 @@ describe("template semantic manifests", () => {
 		const childPairs = new Set<string>();
 
 		for (const template of templateSchema.options) {
-			const tree = buildSemanticTree({ data, template, page, pageNumber: 1, showHeader: true });
-			for (const part of findNodes(tree, (node) => node.kind === "template-part")) {
+			const tree = buildSemanticTree({
+				data,
+				template,
+				page,
+				pageNumber: 1,
+				showHeader: true,
+			});
+			for (const part of findNodes(
+				tree,
+				(node) => node.kind === "template-part",
+			)) {
 				const name = part.attributes.name;
 				if (!name) throw new Error("Template part is missing its name");
 				partNames.add(name);
@@ -853,27 +1094,48 @@ describe("template semantic manifests", () => {
 		const tree = buildFixtureTree("azurill");
 		const marker = findNodes(
 			tree,
-			(node) => node.kind === "template-part" && node.attributes.name === "timeline-marker",
+			(node) =>
+				node.kind === "template-part" &&
+				node.attributes.name === "timeline-marker",
 		)[0];
 
 		expect(marker).toBeDefined();
 		expect(
-			marker && findNodes(marker, (node) => node.kind === "template-part" && node.attributes.name === "timeline-dot"),
+			marker &&
+				findNodes(
+					marker,
+					(node) =>
+						node.kind === "template-part" &&
+						node.attributes.name === "timeline-dot",
+				),
 		).toHaveLength(1);
 	});
 
 	it("routes Azurill's canonical items through its exact timeline primitive hierarchy", () => {
 		const tree = buildFixtureTree("azurill");
-		const experience = findNodes(tree, (node) => node.kind === "section" && node.id === "experience")[0];
-		const sectionItems = experience && findNodes(experience, (node) => node.kind === "section-items")[0];
+		const experience = findNodes(
+			tree,
+			(node) => node.kind === "section" && node.id === "experience",
+		)[0];
+		const sectionItems =
+			experience &&
+			findNodes(experience, (node) => node.kind === "section-items")[0];
 		const item = sectionItems?.children.find((node) => node.kind === "item");
 		const marker = item && findPart(item, "timeline-marker");
 		const content = item && findPart(item, "timeline-content");
 
-		expect(sectionItems && childLabels(sectionItems)).toEqual(["timeline-line", "item"]);
-		expect(item && childLabels(item)).toEqual(["timeline-marker", "timeline-content"]);
+		expect(sectionItems && childLabels(sectionItems)).toEqual([
+			"timeline-line",
+			"item",
+		]);
+		expect(item && childLabels(item)).toEqual([
+			"timeline-marker",
+			"timeline-content",
+		]);
 		expect(marker && childLabels(marker)).toEqual(["timeline-dot"]);
-		expect(content?.children.some((node) => node.kind === "item-header")).toBe(true);
+		expect(content?.children.some((node) => node.kind === "item-header")).toBe(
+			true,
+		);
 	});
 
 	it("routes Leafish's header content through intro, body, and contact-band primitives", () => {
@@ -883,9 +1145,17 @@ describe("template semantic manifests", () => {
 		const body = intro && findPart(intro, "header-body");
 		const contactBand = header && findPart(header, "header-contact-band");
 
-		expect(header && childLabels(header)).toEqual(["header-intro", "header-contact-band"]);
+		expect(header && childLabels(header)).toEqual([
+			"header-intro",
+			"header-contact-band",
+		]);
 		expect(intro && childLabels(intro)).toEqual(["header-body"]);
-		expect(body && childLabels(body)).toEqual(["picture", "name", "headline", "section"]);
+		expect(body && childLabels(body)).toEqual([
+			"picture",
+			"name",
+			"headline",
+			"section",
+		]);
 		expect(contactBand && childLabels(contactBand)).toEqual(["contact-list"]);
 	});
 
@@ -895,8 +1165,16 @@ describe("template semantic manifests", () => {
 		const band = header && findPart(header, "header-band");
 		const anchor = band && findPart(band, "picture-anchor");
 
-		expect(header && childLabels(header)).toEqual(["header-band", "contact-offset", "contact-list"]);
-		expect(band && childLabels(band)).toEqual(["picture-anchor", "name", "headline"]);
+		expect(header && childLabels(header)).toEqual([
+			"header-band",
+			"contact-offset",
+			"contact-list",
+		]);
+		expect(band && childLabels(band)).toEqual([
+			"picture-anchor",
+			"name",
+			"headline",
+		]);
 		expect(anchor && childLabels(anchor)).toEqual(["picture"]);
 	});
 
@@ -904,32 +1182,44 @@ describe("template semantic manifests", () => {
 		["bronzor", "section", "interleaved-section-row"],
 		["ditgar", "region", "sidebar-background"],
 		["gengar", "region", "sidebar-background"],
-	] as const)("%s applies %s to its canonical %s owner without an alias node", (template, kind, token) => {
-		const tree = buildFixtureTree(template);
-		const owner = findNodes(
-			tree,
-			(node) => node.kind === kind && node.attributes.part?.split(" ").includes(token) === true,
-		)[0];
+	] as const)(
+		"%s applies %s to its canonical %s owner without an alias node",
+		(template, kind, token) => {
+			const tree = buildFixtureTree(template);
+			const owner = findNodes(
+				tree,
+				(node) =>
+					node.kind === kind &&
+					node.attributes.part?.split(" ").includes(token) === true,
+			)[0];
 
-		expect(owner).toBeDefined();
-		expect(findPart(tree, token)).toBeUndefined();
-	});
+			expect(owner).toBeDefined();
+			expect(findPart(tree, token)).toBeUndefined();
+		},
+	);
 
 	it("counts template aliases on their canonical owners in the binding inventory", () => {
 		const tree = buildFixtureTree("bronzor");
-		const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry("bronzor"));
+		const inventory = createBindingInventory(
+			tree,
+			getTemplateSemanticBindingRegistry("bronzor"),
+		);
 		const aliasedSections = findNodes(
 			tree,
-			(node) => node.kind === "section" && node.attributes.part === "interleaved-section-row",
+			(node) =>
+				node.kind === "section" &&
+				node.attributes.part === "interleaved-section-row",
 		);
 
 		expect(aliasedSections.length).toBeGreaterThan(0);
-		expect(aliasedSections.map((node) => inventory.aliasTokensByNodeKey[node.key])).toEqual(
-			aliasedSections.map(() => ["interleaved-section-row"]),
-		);
+		expect(
+			aliasedSections.map((node) => inventory.aliasTokensByNodeKey[node.key]),
+		).toEqual(aliasedSections.map(() => ["interleaved-section-row"]));
 		expect(
 			Object.values(inventory.bindings).some(
-				(binding) => binding.type === "alias" && binding.token === "interleaved-section-row",
+				(binding) =>
+					binding.type === "alias" &&
+					binding.token === "interleaved-section-row",
 			),
 		).toBe(false);
 	});
@@ -945,10 +1235,16 @@ describe("template semantic manifests", () => {
 			showHeader: true,
 		});
 		const contacts = findNodes(tree, (node) => node.kind === "contact-item");
-		const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry("rhyhorn"));
+		const inventory = createBindingInventory(
+			tree,
+			getTemplateSemanticBindingRegistry("rhyhorn"),
+		);
 
 		expect(contacts).toHaveLength(2);
-		expect(contacts.map((node) => childLabels(node))).toEqual([["contact-item-content"], ["contact-item-content"]]);
+		expect(contacts.map((node) => childLabels(node))).toEqual([
+			["contact-item-content"],
+			["contact-item-content"],
+		]);
 		expect(contacts.map((node) => inventory.bindings[node.key])).toEqual([
 			{ type: "primitive", primitive: "View", source: "existing" },
 			{ type: "primitive", primitive: "View", source: "existing" },
@@ -962,7 +1258,10 @@ describe("template semantic manifests", () => {
 			{ type: "primitive", primitive: "Link", source: "existing" },
 			{ type: "primitive", primitive: "View", source: "existing" },
 		]);
-		const semanticLink = findNodes(contacts[0] ?? tree, (node) => node.kind === "link")[0];
+		const semanticLink = findNodes(
+			contacts[0] ?? tree,
+			(node) => node.kind === "link",
+		)[0];
 		const linkedContent = findPart(contacts[0] ?? tree, "contact-item-content");
 		expect(semanticLink && inventory.bindings[semanticLink.key]).toEqual({
 			type: "alias",
@@ -972,12 +1271,15 @@ describe("template semantic manifests", () => {
 		});
 		expect(
 			[contacts[0]?.key, linkedContent?.key, semanticLink?.key].filter(
-				(key): key is string => key !== undefined && inventory.bindings[key]?.type === "primitive",
+				(key): key is string =>
+					key !== undefined && inventory.bindings[key]?.type === "primitive",
 			),
 		).toEqual([contacts[0]?.key, linkedContent?.key]);
 		expect(contacts[0]?.attributes.part).toBeUndefined();
 		expect(contacts[1]?.attributes.part).toBe("contact-item-last");
-		expect(inventory.aliasTokensByNodeKey[contacts[1]?.key ?? ""]).toEqual(["contact-item-last"]);
+		expect(inventory.aliasTokensByNodeKey[contacts[1]?.key ?? ""]).toEqual([
+			"contact-item-last",
+		]);
 		expect(findPart(tree, "contact-item-last")).toBeUndefined();
 	});
 
@@ -994,8 +1296,12 @@ describe("template semantic manifests", () => {
 		const empty = buildSemanticTree({ ...input, showHeader: true });
 		const hidden = buildSemanticTree({ ...input, showHeader: false });
 
-		expect(findNodes(empty, (node) => node.kind === "contact-item")).toHaveLength(0);
-		expect(findNodes(empty, (node) => node.attributes.part === "contact-item-last")).toHaveLength(0);
+		expect(
+			findNodes(empty, (node) => node.kind === "contact-item"),
+		).toHaveLength(0);
+		expect(
+			findNodes(empty, (node) => node.attributes.part === "contact-item-last"),
+		).toHaveLength(0);
 		expect(findNodes(hidden, (node) => node.kind === "header")).toHaveLength(0);
 	});
 
@@ -1003,10 +1309,16 @@ describe("template semantic manifests", () => {
 		"%s preserves layout origin separately from physical placement",
 		(template) => {
 			const tree = buildFixtureTree(template);
-			const sidebarOrigin = findNodes(tree, (node) => node.kind === "section" && node.attributes.origin === "sidebar");
+			const sidebarOrigin = findNodes(
+				tree,
+				(node) =>
+					node.kind === "section" && node.attributes.origin === "sidebar",
+			);
 
 			expect(sidebarOrigin.length).toBeGreaterThan(0);
-			expect(sidebarOrigin.every((node) => node.attributes.placement === "main")).toBe(true);
+			expect(
+				sidebarOrigin.every((node) => node.attributes.placement === "main"),
+			).toBe(true);
 		},
 	);
 
@@ -1017,24 +1329,43 @@ describe("template semantic manifests", () => {
 		["azurill", "main"],
 		["leafish", "main"],
 		["pikachu", "main"],
-	] as const)("%s places its header in the renderer-owned %s column", (template, placement) => {
-		const headerRegion = findNodes(
-			buildFixtureTree(template),
-			(node) => node.kind === "region" && node.attributes.region === "header",
-		)[0];
+	] as const)(
+		"%s places its header in the renderer-owned %s column",
+		(template, placement) => {
+			const headerRegion = findNodes(
+				buildFixtureTree(template),
+				(node) => node.kind === "region" && node.attributes.region === "header",
+			)[0];
 
-		expect(headerRegion?.attributes.placement).toBe(placement);
-	});
+			expect(headerRegion?.attributes.placement).toBe(placement);
+		},
+	);
 
-	it.each(["ditgar", "gengar"] as const)("%s moves the first-page summary into its featured region", (template) => {
-		const tree = buildFixtureTree(template);
-		const featured = findNodes(tree, (node) => node.kind === "region" && node.attributes.region === "featured")[0];
-		const summaries = findNodes(tree, (node) => node.kind === "section" && node.id === "summary");
+	it.each(["ditgar", "gengar"] as const)(
+		"%s moves the first-page summary into its featured region",
+		(template) => {
+			const tree = buildFixtureTree(template);
+			const featured = findNodes(
+				tree,
+				(node) =>
+					node.kind === "region" && node.attributes.region === "featured",
+			)[0];
+			const summaries = findNodes(
+				tree,
+				(node) => node.kind === "section" && node.id === "summary",
+			);
 
-		expect(featured && findNodes(featured, (node) => node.kind === "section" && node.id === "summary")).toHaveLength(1);
-		expect(summaries).toHaveLength(1);
-		expect(summaries[0]?.roles).toContain("featured-summary");
-	});
+			expect(
+				featured &&
+					findNodes(
+						featured,
+						(node) => node.kind === "section" && node.id === "summary",
+					),
+			).toHaveLength(1);
+			expect(summaries).toHaveLength(1);
+			expect(summaries[0]?.roles).toContain("featured-summary");
+		},
+	);
 
 	it("places Leafish summary in the header only while the renderer shows that header", () => {
 		const withHeader = buildFixtureTree("leafish", true);
@@ -1045,10 +1376,24 @@ describe("template semantic manifests", () => {
 		)[0];
 
 		expect(
-			headerRegion && findNodes(headerRegion, (node) => node.kind === "section" && node.id === "summary"),
+			headerRegion &&
+				findNodes(
+					headerRegion,
+					(node) => node.kind === "section" && node.id === "summary",
+				),
 		).toHaveLength(1);
-		expect(findNodes(withHeader, (node) => node.kind === "section" && node.id === "summary")).toHaveLength(1);
-		expect(findNodes(withoutHeader, (node) => node.kind === "section" && node.id === "summary")).toHaveLength(0);
+		expect(
+			findNodes(
+				withHeader,
+				(node) => node.kind === "section" && node.id === "summary",
+			),
+		).toHaveLength(1);
+		expect(
+			findNodes(
+				withoutHeader,
+				(node) => node.kind === "section" && node.id === "summary",
+			),
+		).toHaveLength(0);
 	});
 
 	it("omits Leafish's header summary when the shared Summary renderer is not visible", () => {
@@ -1062,23 +1407,49 @@ describe("template semantic manifests", () => {
 			showHeader: true,
 		});
 
-		expect(findNodes(tree, (node) => node.kind === "section" && node.id === "summary")).toHaveLength(0);
+		expect(
+			findNodes(
+				tree,
+				(node) => node.kind === "section" && node.id === "summary",
+			),
+		).toHaveLength(0);
 	});
 
-	it.each(["ditgar", "gengar"] as const)("%s leaves summary in main when featured chrome is absent", (template) => {
-		const tree = buildFixtureTree(template, false);
-		const summary = findNodes(tree, (node) => node.kind === "section" && node.id === "summary");
+	it.each(["ditgar", "gengar"] as const)(
+		"%s leaves summary in main when featured chrome is absent",
+		(template) => {
+			const tree = buildFixtureTree(template, false);
+			const summary = findNodes(
+				tree,
+				(node) => node.kind === "section" && node.id === "summary",
+			);
 
-		expect(findNodes(tree, (node) => node.kind === "region" && node.attributes.region === "featured")).toHaveLength(0);
-		expect(summary).toHaveLength(1);
-		expect(summary[0]?.attributes).toMatchObject({ origin: "main", placement: "main" });
-		expect(summary[0]?.roles).not.toContain("featured-summary");
-	});
+			expect(
+				findNodes(
+					tree,
+					(node) =>
+						node.kind === "region" && node.attributes.region === "featured",
+				),
+			).toHaveLength(0);
+			expect(summary).toHaveLength(1);
+			expect(summary[0]?.attributes).toMatchObject({
+				origin: "main",
+				placement: "main",
+			});
+			expect(summary[0]?.roles).not.toContain("featured-summary");
+		},
+	);
 
 	it("emits Ditgar's existing item-header border owner for language and reference items", () => {
 		const data = buildFixture();
 		data.sections.languages.items = [
-			{ id: "language/1", hidden: false, language: "English", fluency: "Native", level: 4 },
+			{
+				id: "language/1",
+				hidden: false,
+				language: "English",
+				fluency: "Native",
+				level: 4,
+			},
 		];
 		data.sections.references.items = [
 			{
@@ -1100,8 +1471,12 @@ describe("template semantic manifests", () => {
 		});
 
 		for (const itemId of ["language/1", "reference/1"]) {
-			const item = findNodes(tree, (node) => node.kind === "item" && node.id === itemId)[0];
-			const header = item && findNodes(item, (node) => node.kind === "item-header")[0];
+			const item = findNodes(
+				tree,
+				(node) => node.kind === "item" && node.id === itemId,
+			)[0];
+			const header =
+				item && findNodes(item, (node) => node.kind === "item-header")[0];
 
 			expect(header).toBeDefined();
 			expect(header?.attributes.part).toBe("item-header-border");
@@ -1114,7 +1489,13 @@ describe("template semantic manifests", () => {
 		data.sections.languages.hidden = false;
 		data.sections.references.hidden = false;
 		data.sections.languages.items = [
-			{ id: "language/empty", hidden: false, language: "English", fluency: "", level: 4 },
+			{
+				id: "language/empty",
+				hidden: false,
+				language: "English",
+				fluency: "",
+				level: 4,
+			},
 		];
 		data.sections.references.items = [
 			{
@@ -1136,8 +1517,13 @@ describe("template semantic manifests", () => {
 		});
 
 		for (const itemId of ["language/empty", "reference/empty"]) {
-			const item = findNodes(tree, (node) => node.kind === "item" && node.id === itemId)[0];
-			const headers = item ? item.children.filter((node) => node.kind === "item-header") : [];
+			const item = findNodes(
+				tree,
+				(node) => node.kind === "item" && node.id === itemId,
+			)[0];
+			const headers = item
+				? item.children.filter((node) => node.kind === "item-header")
+				: [];
 
 			expect(item).toBeDefined();
 			expect(headers).toHaveLength(1);
@@ -1191,13 +1577,24 @@ describe("template semantic manifests", () => {
 		const tree = buildSemanticTree({
 			data,
 			template: "meowth",
-			page: { fullWidth: true, main: ["experience", "education", "volunteer"], sidebar: [] },
+			page: {
+				fullWidth: true,
+				main: ["experience", "education", "volunteer"],
+				sidebar: [],
+			},
 			pageNumber: 1,
 			showHeader: false,
 		});
 
-		for (const itemId of ["experience/empty", "education/empty", "volunteer/empty"]) {
-			const item = findNodes(tree, (node) => node.kind === "item" && node.id === itemId)[0];
+		for (const itemId of [
+			"experience/empty",
+			"education/empty",
+			"volunteer/empty",
+		]) {
+			const item = findNodes(
+				tree,
+				(node) => node.kind === "item" && node.id === itemId,
+			)[0];
 			const header = item?.children.find((node) => node.kind === "item-header");
 
 			expect(item).toBeDefined();
@@ -1258,45 +1655,83 @@ describe("template semantic manifests", () => {
 		const tree = buildSemanticTree({
 			data,
 			template: "meowth",
-			page: { fullWidth: true, main: ["experience", "education", "volunteer"], sidebar: [] },
+			page: {
+				fullWidth: true,
+				main: ["experience", "education", "volunteer"],
+				sidebar: [],
+			},
 			pageNumber: 1,
 			showHeader: false,
 		});
-		const itemFor = (itemId: string) => findNodes(tree, (node) => node.kind === "item" && node.id === itemId)[0];
-		const itemHeader = (itemId: string) => itemFor(itemId)?.children.find((node) => node.kind === "item-header");
+		const itemFor = (itemId: string) =>
+			findNodes(tree, (node) => node.kind === "item" && node.id === itemId)[0];
+		const itemHeader = (itemId: string) =>
+			itemFor(itemId)?.children.find((node) => node.kind === "item-header");
 		const partFields = (header: SemanticNode | undefined, name: string) =>
 			(header &&
 				findPart(header, name)?.children.flatMap((node) =>
-					node.kind === "combined-text" ? node.children.map((child) => child.attributes.name) : [node.attributes.name],
+					node.kind === "combined-text"
+						? node.children.map((child) => child.attributes.name)
+						: [node.attributes.name],
 				)) ??
 			[];
 		const experience = itemHeader("experience/routing");
 		const education = itemHeader("education/routing");
 		const volunteer = itemHeader("volunteer/routing");
 
-		expect(partFields(experience, "inline-item-header-leading")).toEqual(["position", "location"]);
-		expect(partFields(volunteer, "inline-item-header-leading")).toEqual(["location"]);
-		expect(partFields(education, "inline-item-header-leading")).toEqual(["area", "degree"]);
+		expect(partFields(experience, "inline-item-header-leading")).toEqual([
+			"position",
+			"location",
+		]);
+		expect(partFields(volunteer, "inline-item-header-leading")).toEqual([
+			"location",
+		]);
+		expect(partFields(education, "inline-item-header-leading")).toEqual([
+			"area",
+			"degree",
+		]);
 		expect(education && childLabels(education)).toEqual([
 			"inline-item-header-leading",
 			"inline-item-header-middle",
 			"inline-item-header-trailing",
 		]);
 		const educationItem = itemFor("education/routing");
-		const gradeRow = educationItem && findPart(educationItem, "education-grade-row");
-		expect(educationItem && childLabels(educationItem).slice(0, 2)).toEqual(["item-header", "education-grade-row"]);
+		const gradeRow =
+			educationItem && findPart(educationItem, "education-grade-row");
+		expect(educationItem && childLabels(educationItem).slice(0, 2)).toEqual([
+			"item-header",
+			"education-grade-row",
+		]);
 		expect(gradeRow?.children).toHaveLength(1);
 		expect(gradeRow?.children[0]?.kind).toBe("combined-text");
-		expect(gradeRow?.children[0]?.children.map((node) => node.attributes.name)).toEqual(["grade", "location"]);
+		expect(
+			gradeRow?.children[0]?.children.map((node) => node.attributes.name),
+		).toEqual(["grade", "location"]);
 	});
 
 	it.each(["bronzor", "scizor"] as const)(
 		"%s keeps duplicate flattened origins and repeated authored pages collision-safe",
 		(template) => {
 			const data = buildFixture();
-			const page = { fullWidth: false, main: ["experience"], sidebar: ["experience"] };
-			const first = buildSemanticTree({ data, template, page, pageNumber: 1, showHeader: false });
-			const second = buildSemanticTree({ data, template, page, pageNumber: 2, showHeader: false });
+			const page = {
+				fullWidth: false,
+				main: ["experience"],
+				sidebar: ["experience"],
+			};
+			const first = buildSemanticTree({
+				data,
+				template,
+				page,
+				pageNumber: 1,
+				showHeader: false,
+			});
+			const second = buildSemanticTree({
+				data,
+				template,
+				page,
+				pageNumber: 2,
+				showHeader: false,
+			});
 			const fullWidth = buildSemanticTree({
 				data,
 				template,
@@ -1304,14 +1739,24 @@ describe("template semantic manifests", () => {
 				pageNumber: 1,
 				showHeader: false,
 			});
-			const firstSections = findNodes(first, (node) => node.kind === "section" && node.id === "experience");
+			const firstSections = findNodes(
+				first,
+				(node) => node.kind === "section" && node.id === "experience",
+			);
 
 			expect(firstSections).toHaveLength(2);
 			expect(new Set(firstSections.map((node) => node.key)).size).toBe(2);
-			expect(findNodes(second, (node) => node.kind === "section").every((node) => node.key.startsWith("page-2/"))).toBe(
-				true,
-			);
-			expect(findNodes(fullWidth, (node) => node.kind === "section" && node.id === "experience")).toHaveLength(1);
+			expect(
+				findNodes(second, (node) => node.kind === "section").every((node) =>
+					node.key.startsWith("page-2/"),
+				),
+			).toBe(true);
+			expect(
+				findNodes(
+					fullWidth,
+					(node) => node.kind === "section" && node.id === "experience",
+				),
+			).toHaveLength(1);
 		},
 	);
 
@@ -1324,24 +1769,34 @@ describe("template semantic manifests", () => {
 		expect(JSON.stringify(second)).toBe(serialized);
 		expect(Object.isFrozen(first)).toBe(true);
 		expect(Object.isFrozen(first.azurill.parts)).toBe(true);
-		expect(flattenValues(first).every((value) => typeof value !== "function")).toBe(true);
+		expect(
+			flattenValues(first).every((value) => typeof value !== "function"),
+		).toBe(true);
 		expect(() => {
 			(first.azurill.parts as unknown as object[]).pop();
 		}).toThrow();
-		expect(JSON.stringify(getTemplateSemanticRegistryFingerprintInput())).toBe(serialized);
+		expect(JSON.stringify(getTemplateSemanticRegistryFingerprintInput())).toBe(
+			serialized,
+		);
 	});
 
 	it.each(templateSchema.options)(
 		"%s binds every manifest node to existing chrome without synthetic wrappers",
 		(template) => {
 			const tree = buildFixtureTree(template);
-			const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry(template));
+			const inventory = createBindingInventory(
+				tree,
+				getTemplateSemanticBindingRegistry(template),
+			);
 			const nodeCount = flattenTree(tree).length;
 
 			expect(inventory.unboundNodeKeys).toEqual([]);
 			expect(inventory.syntheticWrapperCount).toBe(0);
 			expect(Object.keys(inventory.bindings)).toHaveLength(nodeCount);
-			for (const partNode of findNodes(tree, (node) => node.kind === "template-part")) {
+			for (const partNode of findNodes(
+				tree,
+				(node) => node.kind === "template-part",
+			)) {
 				const binding = inventory.bindings[partNode.key];
 				const declaration = getTemplateSemanticManifest(template).parts.find(
 					(part) => part.name === partNode.attributes.name,
@@ -1349,11 +1804,15 @@ describe("template semantic manifests", () => {
 
 				expect(declaration).toBeDefined();
 				expect(declaration?.binding.type).toBe("primitive");
-				if (declaration?.binding.type === "primitive" && typeof declaration.binding.primitive === "string") {
+				if (
+					declaration?.binding.type === "primitive" &&
+					typeof declaration.binding.primitive === "string"
+				) {
 					expect(binding).toEqual(declaration.binding);
 				} else if (declaration?.binding.type === "primitive") {
 					const primitive = declaration.binding.primitive;
-					if (typeof primitive === "string") throw new Error("Expected conditional primitive");
+					if (typeof primitive === "string")
+						throw new Error("Expected conditional primitive");
 					expect(binding).toMatchObject({
 						type: "primitive",
 						source: "existing",

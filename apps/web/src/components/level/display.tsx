@@ -1,7 +1,7 @@
-import type { levelDesignSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { t } from "@lingui/core/macro";
+import type { levelDesignSchema } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
+import type z from "zod";
 
 type Props = z.infer<typeof levelDesignSchema> &
 	React.ComponentProps<"div"> & {
@@ -10,18 +10,35 @@ type Props = z.infer<typeof levelDesignSchema> &
 		iconSizePx?: number | undefined;
 	};
 
-const LEVEL_ITEM_KEYS = ["level-1", "level-2", "level-3", "level-4", "level-5"] as const;
+const LEVEL_ITEM_KEYS = [
+	"level-1",
+	"level-2",
+	"level-3",
+	"level-4",
+	"level-5",
+] as const;
 
 const defaultDecorationClassName = "size-2.5";
 
-export function LevelDisplay({ icon, type, level, className, decorationSizePx, iconSizePx, ...props }: Props) {
+export function LevelDisplay({
+	icon,
+	type,
+	level,
+	className,
+	decorationSizePx,
+	iconSizePx,
+	...props
+}: Props) {
 	if (level === 0) return null;
 	if (type === "hidden" || icon === "") return null;
 
 	const decorationStyle =
 		decorationSizePx === undefined
 			? undefined
-			: ({ width: decorationSizePx, height: decorationSizePx } satisfies React.CSSProperties);
+			: ({
+					width: decorationSizePx,
+					height: decorationSizePx,
+				} satisfies React.CSSProperties);
 	const resolvedIconSizePx = iconSizePx ?? decorationSizePx;
 	const iconStyle =
 		resolvedIconSizePx === undefined
@@ -36,10 +53,15 @@ export function LevelDisplay({ icon, type, level, className, decorationSizePx, i
 		<div
 			role="img"
 			aria-label={t({
-				comment: "Accessible label for skill/proficiency level indicator, where level is current value out of 5",
+				comment:
+					"Accessible label for skill/proficiency level indicator, where level is current value out of 5",
 				message: `Level ${level} of 5`,
 			})}
-			className={cn("flex items-center gap-x-2", type === "progress-bar" && "gap-x-0", className)}
+			className={cn(
+				"flex items-center gap-x-2",
+				type === "progress-bar" && "gap-x-0",
+				className,
+			)}
 			{...props}
 		>
 			{LEVEL_ITEM_KEYS.map((itemKey, index) => {

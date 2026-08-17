@@ -1,9 +1,12 @@
 import type { StateStorage } from "zustand/middleware";
-import type { SidebarSection } from "@/libs/resume/section";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { create } from "zustand/react";
-import { leftSidebarSections, rightSidebarSections } from "@/libs/resume/section";
+import type { SidebarSection } from "@/libs/resume/section";
+import {
+	leftSidebarSections,
+	rightSidebarSections,
+} from "@/libs/resume/section";
 
 type SectionCollapseState = {
 	[id in SidebarSection]?: { collapsed: boolean };

@@ -7,10 +7,10 @@ import {
 	TranslateIcon,
 	UserIcon,
 } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useEffect, useState } from "react";
-import { Button } from "@rbuilder/ui/components/button";
 import { CometCard } from "@/components/animation/comet-card";
 import { Spotlight } from "@/components/animation/spotlight";
 
@@ -71,8 +71,8 @@ export function Hero() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.45, delay: 0.5 }}
 				>
-					rbuilder gives you complete control over your resume with real-time live previews, high-precision exports, and
-					support for all languages.
+					rbuilder gives you complete control over your resume with real-time
+					live previews, high-precision exports, and support for all languages.
 				</m.p>
 
 				{/* CTA Button */}
@@ -108,7 +108,10 @@ export function Hero() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8, delay: 0.8, ease: "easeOut" }}
 			>
-				<CometCard glareOpacity={0.1} className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0">
+				<CometCard
+					glareOpacity={0.1}
+					className="relative mx-auto 3xl:max-w-7xl max-w-5xl px-4 md:px-12 lg:px-0"
+				>
 					<div className="relative overflow-hidden rounded-2xl border border-white/15 bg-card/60 p-2 shadow-2xl backdrop-blur-xl">
 						{/* Mock Builder Workspace */}
 						<div className="grid min-h-[440px] grid-cols-12 gap-2 p-3 sm:min-h-[500px]">
@@ -177,7 +180,9 @@ export function Hero() {
 														transition={{ duration: 0.3 }}
 														className="flex items-center gap-2"
 													>
-														<span className="font-bold text-foreground text-lg sm:text-xl">{currentWelcome.text}</span>
+														<span className="font-bold text-foreground text-lg sm:text-xl">
+															{currentWelcome.text}
+														</span>
 														<span className="rounded-full bg-primary/15 px-2 py-0.5 font-medium text-[10px] text-primary">
 															{currentWelcome.lang}
 														</span>
@@ -204,45 +209,73 @@ export function Hero() {
 											<h4 className="font-bold text-primary text-xs uppercase tracking-wider">
 												Welcome In All Languages
 											</h4>
-											<span className="font-mono text-[10px] text-muted-foreground">Universal UTF-8</span>
+											<span className="font-mono text-[10px] text-muted-foreground">
+												Universal UTF-8
+											</span>
 										</div>
 
 										<div className="grid grid-cols-2 gap-2">
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">ಕನ್ನಡ (Kannada)</p>
-												<p className="font-medium text-primary text-xs">ಸುಸ್ವಾಗತ</p>
+												<p className="font-bold text-foreground text-xs">
+													ಕನ್ನಡ (Kannada)
+												</p>
+												<p className="font-medium text-primary text-xs">
+													ಸುಸ್ವಾಗತ
+												</p>
 											</div>
 
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">English</p>
-												<p className="font-medium text-primary text-xs">Welcome</p>
+												<p className="font-bold text-foreground text-xs">
+													English
+												</p>
+												<p className="font-medium text-primary text-xs">
+													Welcome
+												</p>
 											</div>
 
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">தமிழ் (Tamil)</p>
-												<p className="font-medium text-primary text-xs">வணக்கம்</p>
+												<p className="font-bold text-foreground text-xs">
+													தமிழ் (Tamil)
+												</p>
+												<p className="font-medium text-primary text-xs">
+													வணக்கம்
+												</p>
 											</div>
 
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">తెలుగు (Telugu)</p>
-												<p className="font-medium text-primary text-xs">స్వాగతం</p>
+												<p className="font-bold text-foreground text-xs">
+													తెలుగు (Telugu)
+												</p>
+												<p className="font-medium text-primary text-xs">
+													స్వాగతం
+												</p>
 											</div>
 
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">हिन्दी (Hindi)</p>
-												<p className="font-medium text-primary text-xs">नमस्ते • स्वागत</p>
+												<p className="font-bold text-foreground text-xs">
+													हिन्दी (Hindi)
+												</p>
+												<p className="font-medium text-primary text-xs">
+													नमस्ते • स्वागत
+												</p>
 											</div>
 
 											<div className="rounded-lg border border-white/10 bg-background/50 p-2 transition-colors hover:border-primary/40">
-												<p className="font-bold text-foreground text-xs">മലയാളം (Malayalam)</p>
-												<p className="font-medium text-primary text-xs">സ്വാഗതം</p>
+												<p className="font-bold text-foreground text-xs">
+													മലയാളം (Malayalam)
+												</p>
+												<p className="font-medium text-primary text-xs">
+													സ്വാഗതം
+												</p>
 											</div>
 										</div>
 									</div>
 
 									{/* Skills / Global Badges */}
 									<div className="mt-4 space-y-1.5">
-										<h4 className="font-bold text-primary text-xs uppercase tracking-wider">Global & Regional Fonts</h4>
+										<h4 className="font-bold text-primary text-xs uppercase tracking-wider">
+											Global & Regional Fonts
+										</h4>
 										<div className="flex flex-wrap gap-1.5">
 											<span className="rounded-md border border-white/10 bg-primary/10 px-2 py-0.5 text-[10px] text-foreground">
 												ಕನ್ನಡ (KN)

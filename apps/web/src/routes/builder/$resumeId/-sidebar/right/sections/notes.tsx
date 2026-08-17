@@ -1,6 +1,9 @@
 import { Trans } from "@lingui/react/macro";
 import { RichInput } from "@/components/input/rich-input";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";
 
 export function NotesSectionBuilder() {
@@ -26,8 +29,9 @@ function NotesSectionForm() {
 		<div className="space-y-4">
 			<p>
 				<Trans>
-					This section is reserved for your personal notes specific to this resume. The content here remains private and
-					is not shared with anyone else.
+					This section is reserved for your personal notes specific to this
+					resume. The content here remains private and is not shared with anyone
+					else.
 				</Trans>
 			</p>
 
@@ -35,8 +39,8 @@ function NotesSectionForm() {
 
 			<p className="text-muted-foreground">
 				<Trans>
-					For example, information regarding which companies you sent this resume to or the links to the job
-					descriptions can be noted down here.
+					For example, information regarding which companies you sent this
+					resume to or the links to the job descriptions can be noted down here.
 				</Trans>
 			</p>
 		</div>

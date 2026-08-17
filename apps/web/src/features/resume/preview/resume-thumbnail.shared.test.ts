@@ -8,7 +8,9 @@ import {
 describe("getResumeThumbnailCacheKey", () => {
 	it("composes id and updated-at epoch milliseconds with a colon", () => {
 		const date = new Date("2024-01-15T00:00:00.000Z");
-		expect(getResumeThumbnailCacheKey("abc", date)).toBe(`abc:${date.getTime()}`);
+		expect(getResumeThumbnailCacheKey("abc", date)).toBe(
+			`abc:${date.getTime()}`,
+		);
 	});
 
 	it("differs when updatedAt changes", () => {
@@ -30,26 +32,49 @@ describe("getResumeThumbnailRenderSize", () => {
 	});
 
 	it("scales relative to the provided target width", () => {
-		const size = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400);
+		const size = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+		);
 		expect(size.width).toBe(400);
 		expect(size.scale).toBeCloseTo(0.5, 5);
 		expect(size.height).toBe(600);
 	});
 
 	it("clamps pixelRatio to a minimum of 1", () => {
-		const a = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400, 0.5);
-		const b = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400, 1);
+		const a = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+			0.5,
+		);
+		const b = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+			1,
+		);
 		expect(a).toEqual(b);
 	});
 
 	it("clamps pixelRatio to a maximum of 2", () => {
-		const a = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400, 3);
-		const b = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400, 2);
+		const a = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+			3,
+		);
+		const b = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+			2,
+		);
 		expect(a).toEqual(b);
 	});
 
 	it("multiplies width/height by pixelRatio when within bounds", () => {
-		const size = getResumeThumbnailRenderSize({ width: 800, height: 1200 }, 400, 2);
+		const size = getResumeThumbnailRenderSize(
+			{ width: 800, height: 1200 },
+			400,
+			2,
+		);
 		// pageScale = 0.5, outputScale = 2 → width = 800, height = 1200
 		expect(size.width).toBe(800);
 		expect(size.height).toBe(1200);
@@ -57,7 +82,11 @@ describe("getResumeThumbnailRenderSize", () => {
 	});
 
 	it("rounds the output dimensions to integers", () => {
-		const size = getResumeThumbnailRenderSize({ width: 793, height: 1123 }, 421, 1.5);
+		const size = getResumeThumbnailRenderSize(
+			{ width: 793, height: 1123 },
+			421,
+			1.5,
+		);
 		expect(Number.isInteger(size.width)).toBe(true);
 		expect(Number.isInteger(size.height)).toBe(true);
 	});

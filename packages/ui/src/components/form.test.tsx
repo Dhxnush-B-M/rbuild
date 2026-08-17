@@ -1,6 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "./form";
+import {
+	FormControl,
+	FormDescription,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "./form";
 
 describe("FormItem", () => {
 	it("renders with data-slot='form-item'", () => {
@@ -21,7 +27,9 @@ describe("FormItem", () => {
 		render(
 			<FormItem hasError>
 				<FormLabel>Name</FormLabel>
-				<FormControl render={(props) => <input {...props} data-testid="input" />} />
+				<FormControl
+					render={(props) => <input {...props} data-testid="input" />}
+				/>
 			</FormItem>,
 		);
 
@@ -36,7 +44,9 @@ describe("FormItem", () => {
 		render(
 			<FormItem>
 				<FormLabel>Name</FormLabel>
-				<FormControl render={(props) => <input {...props} data-testid="input" />} />
+				<FormControl
+					render={(props) => <input {...props} data-testid="input" />}
+				/>
 			</FormItem>,
 		);
 
@@ -65,7 +75,9 @@ describe("FormControl", () => {
 	it("sets aria-describedby pointing only to description when no error", () => {
 		render(
 			<FormItem>
-				<FormControl render={(props) => <input {...props} data-testid="input" />} />
+				<FormControl
+					render={(props) => <input {...props} data-testid="input" />}
+				/>
 				<FormDescription>Help text</FormDescription>
 			</FormItem>,
 		);
@@ -79,7 +91,9 @@ describe("FormControl", () => {
 	it("includes message in aria-describedby when hasError=true", () => {
 		render(
 			<FormItem hasError>
-				<FormControl render={(props) => <input {...props} data-testid="input" />} />
+				<FormControl
+					render={(props) => <input {...props} data-testid="input" />}
+				/>
 			</FormItem>,
 		);
 
@@ -97,7 +111,10 @@ describe("FormDescription", () => {
 				<FormDescription>Help</FormDescription>
 			</FormItem>,
 		);
-		expect(screen.getByText("Help")).toHaveAttribute("data-slot", "form-description");
+		expect(screen.getByText("Help")).toHaveAttribute(
+			"data-slot",
+			"form-description",
+		);
 	});
 
 	it("id ends with '-form-item-description'", () => {
@@ -106,7 +123,9 @@ describe("FormDescription", () => {
 				<FormDescription>Help</FormDescription>
 			</FormItem>,
 		);
-		expect(screen.getByText("Help").getAttribute("id")).toMatch(/-form-item-description$/);
+		expect(screen.getByText("Help").getAttribute("id")).toMatch(
+			/-form-item-description$/,
+		);
 	});
 });
 
@@ -117,7 +136,9 @@ describe("FormMessage", () => {
 				<FormMessage />
 			</FormItem>,
 		);
-		expect(container.querySelector("[data-slot=form-message]")).not.toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=form-message]"),
+		).not.toBeInTheDocument();
 	});
 
 	it("returns null when errors is empty", () => {
@@ -126,7 +147,9 @@ describe("FormMessage", () => {
 				<FormMessage errors={[]} />
 			</FormItem>,
 		);
-		expect(container.querySelector("[data-slot=form-message]")).not.toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=form-message]"),
+		).not.toBeInTheDocument();
 	});
 
 	it("renders string error message", () => {
@@ -162,7 +185,9 @@ describe("FormMessage", () => {
 				<FormMessage errors={[null, undefined, { wrong: "field" }]} />
 			</FormItem>,
 		);
-		expect(container.querySelector("[data-slot=form-message]")).not.toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=form-message]"),
+		).not.toBeInTheDocument();
 	});
 
 	it("uses destructive class when hasError=true", () => {

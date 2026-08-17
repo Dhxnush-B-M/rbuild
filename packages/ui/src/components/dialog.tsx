@@ -1,8 +1,8 @@
-import type * as React from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "@phosphor-icons/react";
 import { Button } from "@rbuilder/ui/components/button";
 import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
 	return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -20,7 +20,10 @@ function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
 	return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
+function DialogOverlay({
+	className,
+	...props
+}: DialogPrimitive.Backdrop.Props) {
 	return (
 		<DialogPrimitive.Backdrop
 			data-slot="dialog-overlay"
@@ -57,7 +60,11 @@ function DialogContent({
 					<DialogPrimitive.Close
 						data-slot="dialog-close"
 						render={
-							<Button variant="ghost" className="absolute inset-e-4 top-4 size-8 rounded-full p-0" size="icon-sm" />
+							<Button
+								variant="ghost"
+								className="absolute inset-e-4 top-4 size-8 rounded-full p-0"
+								size="icon-sm"
+							/>
 						}
 					>
 						<XIcon className="size-4" />
@@ -70,7 +77,13 @@ function DialogContent({
 }
 
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="dialog-header" className={cn("flex flex-col gap-2", className)} {...props} />;
+	return (
+		<div
+			data-slot="dialog-header"
+			className={cn("flex flex-col gap-2", className)}
+			{...props}
+		/>
+	);
 }
 
 function DialogFooter({
@@ -91,7 +104,11 @@ function DialogFooter({
 			{...props}
 		>
 			{children}
-			{showCloseButton && <DialogPrimitive.Close render={<Button variant="outline" />}>Close</DialogPrimitive.Close>}
+			{showCloseButton && (
+				<DialogPrimitive.Close render={<Button variant="outline" />}>
+					Close
+				</DialogPrimitive.Close>
+			)}
 		</div>
 	);
 }
@@ -100,13 +117,19 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
 	return (
 		<DialogPrimitive.Title
 			data-slot="dialog-title"
-			className={cn("font-bold font-heading text-lg leading-none tracking-tight sm:text-xl", className)}
+			className={cn(
+				"font-bold font-heading text-lg leading-none tracking-tight sm:text-xl",
+				className,
+			)}
 			{...props}
 		/>
 	);
 }
 
-function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
+function DialogDescription({
+	className,
+	...props
+}: DialogPrimitive.Description.Props) {
 	return (
 		<DialogPrimitive.Description
 			data-slot="dialog-description"

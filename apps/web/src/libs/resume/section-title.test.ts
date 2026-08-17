@@ -2,13 +2,17 @@ import type { MessageDescriptor } from "@lingui/core";
 import { describe, expect, it, vi } from "vitest";
 import { createSectionTitleResolver } from "./section-title";
 
-const makeTranslator = (translate: (d: MessageDescriptor) => string = (d) => d.message ?? "") => ({
+const makeTranslator = (
+	translate: (d: MessageDescriptor) => string = (d) => d.message ?? "",
+) => ({
 	_: vi.fn(translate),
 });
 
 describe("createSectionTitleResolver", () => {
 	it("returns the translated message for a built-in section", () => {
-		const translator = makeTranslator((d) => (d.message === "Experience" ? "Erfahrung" : (d.message ?? "")));
+		const translator = makeTranslator((d) =>
+			d.message === "Experience" ? "Erfahrung" : (d.message ?? ""),
+		);
 		const resolve = createSectionTitleResolver(translator);
 
 		const result = resolve({
@@ -23,7 +27,9 @@ describe("createSectionTitleResolver", () => {
 	});
 
 	it("returns the translated message for a custom section by its type", () => {
-		const translator = makeTranslator((d) => (d.message === "Cover Letter" ? "Anschreiben" : (d.message ?? "")));
+		const translator = makeTranslator((d) =>
+			d.message === "Cover Letter" ? "Anschreiben" : (d.message ?? ""),
+		);
 		const resolve = createSectionTitleResolver(translator);
 
 		const result = resolve({
@@ -114,7 +120,11 @@ describe("createSectionTitleResolver", () => {
 		] as const;
 
 		for (const sectionId of ids) {
-			const result = resolve({ sectionId, locale: "en-US", sectionKind: "builtin" });
+			const result = resolve({
+				sectionId,
+				locale: "en-US",
+				sectionKind: "builtin",
+			});
 			expect(typeof result).toBe("string");
 			expect(result.length).toBeGreaterThan(0);
 		}

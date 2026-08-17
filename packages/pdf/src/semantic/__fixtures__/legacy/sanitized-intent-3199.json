@@ -12,5 +12,10 @@
 			}
 		}
 	},
-	{ "id": "", "enabled": true, "target": { "scope": "global" }, "slots": { "text": { "color": "#ffffff" } } }
+	{
+		"id": "",
+		"enabled": true,
+		"target": { "scope": "global" },
+		"slots": { "text": { "color": "#ffffff" } }
+	}
 ]

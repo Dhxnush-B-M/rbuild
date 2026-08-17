@@ -15,7 +15,10 @@ export const findWorkspaceRoot = (cwd = process.cwd()) => {
 	}
 };
 
-export const getLocalDataDirectory = (overridePath?: string, cwd = process.cwd()) => {
+export const getLocalDataDirectory = (
+	overridePath?: string,
+	cwd = process.cwd(),
+) => {
 	if (overridePath) return overridePath;
 
 	const workspaceRoot = findWorkspaceRoot(cwd);

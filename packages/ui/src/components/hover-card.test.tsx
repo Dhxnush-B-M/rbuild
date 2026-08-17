@@ -10,7 +10,10 @@ describe("HoverCard", () => {
 				<HoverCardContent>preview</HoverCardContent>
 			</HoverCard>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "hover-card-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"hover-card-trigger",
+		);
 	});
 
 	it("does not render content by default", () => {
@@ -40,7 +43,10 @@ describe("HoverCard", () => {
 				<HoverCardContent>visible</HoverCardContent>
 			</HoverCard>,
 		);
-		expect(screen.getByText("visible")).toHaveAttribute("data-slot", "hover-card-content");
+		expect(screen.getByText("visible")).toHaveAttribute(
+			"data-slot",
+			"hover-card-content",
+		);
 	});
 
 	it("merges custom className on HoverCardContent", () => {

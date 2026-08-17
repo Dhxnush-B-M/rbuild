@@ -27,7 +27,10 @@ import {
 	SidebarTrigger,
 } from "./sidebar";
 
-const renderInProvider = (children: React.ReactNode, props: Partial<Parameters<typeof SidebarProvider>[0]> = {}) =>
+const renderInProvider = (
+	children: React.ReactNode,
+	props: Partial<Parameters<typeof SidebarProvider>[0]> = {},
+) =>
 	render(
 		<SidebarProvider {...props}>
 			<Sidebar>{children}</Sidebar>
@@ -41,7 +44,9 @@ describe("SidebarProvider", () => {
 				<div data-testid="child">child</div>
 			</SidebarProvider>,
 		);
-		expect(container.querySelector("[data-slot=sidebar-wrapper]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=sidebar-wrapper]"),
+		).toBeInTheDocument();
 		expect(screen.getByTestId("child")).toBeInTheDocument();
 	});
 
@@ -51,7 +56,9 @@ describe("SidebarProvider", () => {
 				<div>x</div>
 			</SidebarProvider>,
 		);
-		expect(container.querySelector("[data-slot=sidebar-wrapper]")).toHaveClass("my-wrapper");
+		expect(container.querySelector("[data-slot=sidebar-wrapper]")).toHaveClass(
+			"my-wrapper",
+		);
 	});
 
 	it("calls onOpenChange when toggled in controlled mode", async () => {
@@ -63,7 +70,9 @@ describe("SidebarProvider", () => {
 			</SidebarProvider>,
 		);
 
-		await userEvent.click(screen.getByRole("button", { name: /toggle sidebar/i }));
+		await userEvent.click(
+			screen.getByRole("button", { name: /toggle sidebar/i }),
+		);
 		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 
@@ -111,15 +120,18 @@ describe("Sidebar", () => {
 		expect(sidebar).toHaveAttribute("data-state", "collapsed");
 	});
 
-	it.each(["sidebar", "floating", "inset"] as const)("supports variant=%s", (variant) => {
-		const { container } = render(
-			<SidebarProvider>
-				<Sidebar variant={variant}>x</Sidebar>
-			</SidebarProvider>,
-		);
-		const sidebar = container.querySelector("[data-slot=sidebar]");
-		expect(sidebar).toHaveAttribute("data-variant", variant);
-	});
+	it.each(["sidebar", "floating", "inset"] as const)(
+		"supports variant=%s",
+		(variant) => {
+			const { container } = render(
+				<SidebarProvider>
+					<Sidebar variant={variant}>x</Sidebar>
+				</SidebarProvider>,
+			);
+			const sidebar = container.querySelector("[data-slot=sidebar]");
+			expect(sidebar).toHaveAttribute("data-variant", variant);
+		},
+	);
 
 	it.each(["left", "right"] as const)("supports side=%s", (side) => {
 		const { container } = render(
@@ -162,7 +174,9 @@ describe("SidebarTrigger", () => {
 			</SidebarProvider>,
 		);
 
-		await userEvent.click(screen.getByRole("button", { name: /toggle sidebar/i }));
+		await userEvent.click(
+			screen.getByRole("button", { name: /toggle sidebar/i }),
+		);
 		expect(onClick).toHaveBeenCalled();
 		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
@@ -204,51 +218,78 @@ describe("SidebarInset", () => {
 describe("SidebarInput", () => {
 	it("renders with data-slot='sidebar-input'", () => {
 		render(<SidebarInput data-testid="i" />);
-		expect(screen.getByTestId("i")).toHaveAttribute("data-slot", "sidebar-input");
+		expect(screen.getByTestId("i")).toHaveAttribute(
+			"data-slot",
+			"sidebar-input",
+		);
 	});
 });
 
 describe("SidebarHeader / SidebarFooter / SidebarSeparator", () => {
 	it("SidebarHeader uses data-slot='sidebar-header'", () => {
 		render(<SidebarHeader data-testid="h">x</SidebarHeader>);
-		expect(screen.getByTestId("h")).toHaveAttribute("data-slot", "sidebar-header");
+		expect(screen.getByTestId("h")).toHaveAttribute(
+			"data-slot",
+			"sidebar-header",
+		);
 	});
 
 	it("SidebarFooter uses data-slot='sidebar-footer'", () => {
 		render(<SidebarFooter data-testid="f">x</SidebarFooter>);
-		expect(screen.getByTestId("f")).toHaveAttribute("data-slot", "sidebar-footer");
+		expect(screen.getByTestId("f")).toHaveAttribute(
+			"data-slot",
+			"sidebar-footer",
+		);
 	});
 
 	it("SidebarSeparator uses data-slot='sidebar-separator'", () => {
 		render(<SidebarSeparator data-testid="s" />);
-		expect(screen.getByTestId("s")).toHaveAttribute("data-slot", "sidebar-separator");
+		expect(screen.getByTestId("s")).toHaveAttribute(
+			"data-slot",
+			"sidebar-separator",
+		);
 	});
 });
 
 describe("SidebarContent / SidebarGroup", () => {
 	it("SidebarContent uses data-slot='sidebar-content'", () => {
 		render(<SidebarContent data-testid="c">x</SidebarContent>);
-		expect(screen.getByTestId("c")).toHaveAttribute("data-slot", "sidebar-content");
+		expect(screen.getByTestId("c")).toHaveAttribute(
+			"data-slot",
+			"sidebar-content",
+		);
 	});
 
 	it("SidebarGroup uses data-slot='sidebar-group'", () => {
 		render(<SidebarGroup data-testid="g">x</SidebarGroup>);
-		expect(screen.getByTestId("g")).toHaveAttribute("data-slot", "sidebar-group");
+		expect(screen.getByTestId("g")).toHaveAttribute(
+			"data-slot",
+			"sidebar-group",
+		);
 	});
 
 	it("SidebarGroupContent uses data-slot='sidebar-group-content'", () => {
 		render(<SidebarGroupContent data-testid="g">x</SidebarGroupContent>);
-		expect(screen.getByTestId("g")).toHaveAttribute("data-slot", "sidebar-group-content");
+		expect(screen.getByTestId("g")).toHaveAttribute(
+			"data-slot",
+			"sidebar-group-content",
+		);
 	});
 
 	it("SidebarGroupLabel uses data-slot='sidebar-group-label'", () => {
 		render(<SidebarGroupLabel data-testid="l">Group</SidebarGroupLabel>);
-		expect(screen.getByTestId("l")).toHaveAttribute("data-slot", "sidebar-group-label");
+		expect(screen.getByTestId("l")).toHaveAttribute(
+			"data-slot",
+			"sidebar-group-label",
+		);
 	});
 
 	it("SidebarGroupAction uses data-slot='sidebar-group-action'", () => {
 		render(<SidebarGroupAction data-testid="a">+</SidebarGroupAction>);
-		expect(screen.getByTestId("a")).toHaveAttribute("data-slot", "sidebar-group-action");
+		expect(screen.getByTestId("a")).toHaveAttribute(
+			"data-slot",
+			"sidebar-group-action",
+		);
 	});
 });
 
@@ -273,7 +314,10 @@ describe("SidebarMenu and items", () => {
 				<SidebarMenuButton data-testid="b">Click</SidebarMenuButton>
 			</SidebarProvider>,
 		);
-		expect(screen.getByTestId("b")).toHaveAttribute("data-slot", "sidebar-menu-button");
+		expect(screen.getByTestId("b")).toHaveAttribute(
+			"data-slot",
+			"sidebar-menu-button",
+		);
 	});
 
 	it("SidebarMenuButton supports isActive", () => {
@@ -290,12 +334,18 @@ describe("SidebarMenu and items", () => {
 
 	it("SidebarMenuAction uses data-slot='sidebar-menu-action'", () => {
 		render(<SidebarMenuAction data-testid="a">x</SidebarMenuAction>);
-		expect(screen.getByTestId("a")).toHaveAttribute("data-slot", "sidebar-menu-action");
+		expect(screen.getByTestId("a")).toHaveAttribute(
+			"data-slot",
+			"sidebar-menu-action",
+		);
 	});
 
 	it("SidebarMenuBadge uses data-slot='sidebar-menu-badge'", () => {
 		render(<SidebarMenuBadge data-testid="b">5</SidebarMenuBadge>);
-		expect(screen.getByTestId("b")).toHaveAttribute("data-slot", "sidebar-menu-badge");
+		expect(screen.getByTestId("b")).toHaveAttribute(
+			"data-slot",
+			"sidebar-menu-badge",
+		);
 	});
 
 	it("SidebarMenuSkeleton renders without throwing", () => {
@@ -306,7 +356,9 @@ describe("SidebarMenu and items", () => {
 	it("SidebarMenuSkeleton supports showIcon", () => {
 		const { container } = render(<SidebarMenuSkeleton showIcon />);
 		// Should render the icon Skeleton
-		expect(container.querySelectorAll("[data-slot=skeleton]").length).toBeGreaterThan(1);
+		expect(
+			container.querySelectorAll("[data-slot=skeleton]").length,
+		).toBeGreaterThan(1);
 	});
 });
 
@@ -327,7 +379,10 @@ describe("SidebarMenuSub family", () => {
 
 	it("SidebarMenuSubButton uses data-slot='sidebar-menu-sub-button'", () => {
 		render(<SidebarMenuSubButton data-testid="b">x</SidebarMenuSubButton>);
-		expect(screen.getByTestId("b")).toHaveAttribute("data-slot", "sidebar-menu-sub-button");
+		expect(screen.getByTestId("b")).toHaveAttribute(
+			"data-slot",
+			"sidebar-menu-sub-button",
+		);
 	});
 });
 

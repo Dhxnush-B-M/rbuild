@@ -1,11 +1,6 @@
-import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EyeIcon, EyeSlashIcon, PasswordIcon } from "@phosphor-icons/react";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useToggle } from "usehooks-ts";
-import z from "zod";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
@@ -14,12 +9,22 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useToggle } from "usehooks-ts";
+import z from "zod";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
+import type { DialogProps } from "../store";
 import { useDialogStore } from "../store";
 
 const formSchema = z
@@ -69,7 +74,9 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 				return;
 			}
 
-			toast.success(t`Your password has been updated successfully.`, { id: toastId });
+			toast.success(t`Your password has been updated successfully.`, {
+				id: toastId,
+			});
 			void queryClient.invalidateQueries({ queryKey: ["auth", "accounts"] });
 			closeDialog();
 		},
@@ -85,7 +92,10 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 					<Trans>Update your password</Trans>
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Enter your current password and a new password to update your account.</Trans>
+					<Trans>
+						Enter your current password and a new password to update your
+						account.
+					</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
@@ -99,7 +109,11 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 			>
 				<form.Field name="currentPassword">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Current Password</Trans>
 							</FormLabel>
@@ -114,20 +128,29 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
 
-								<Button size="icon" variant="ghost" type="button" onClick={toggleShowCurrentPassword}>
+								<Button
+									size="icon"
+									variant="ghost"
+									type="button"
+									onClick={toggleShowCurrentPassword}
+								>
 									<span className="sr-only">
 										{showCurrentPassword
 											? t({
-													comment: "Accessible label for toggle button that hides the visible current password",
+													comment:
+														"Accessible label for toggle button that hides the visible current password",
 													message: "Hide password",
 												})
 											: t({
-													comment: "Accessible label for toggle button that reveals the masked current password",
+													comment:
+														"Accessible label for toggle button that reveals the masked current password",
 													message: "Show password",
 												})}
 									</span>
@@ -141,7 +164,11 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 
 				<form.Field name="newPassword">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>New Password</Trans>
 							</FormLabel>
@@ -156,20 +183,29 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
 
-								<Button size="icon" variant="ghost" type="button" onClick={toggleShowNewPassword}>
+								<Button
+									size="icon"
+									variant="ghost"
+									type="button"
+									onClick={toggleShowNewPassword}
+								>
 									<span className="sr-only">
 										{showNewPassword
 											? t({
-													comment: "Accessible label for toggle button that hides the visible new password",
+													comment:
+														"Accessible label for toggle button that hides the visible new password",
 													message: "Hide password",
 												})
 											: t({
-													comment: "Accessible label for toggle button that reveals the masked new password",
+													comment:
+														"Accessible label for toggle button that reveals the masked new password",
 													message: "Show password",
 												})}
 									</span>
@@ -183,7 +219,9 @@ export function ChangePasswordDialog(_: DialogProps<"auth.change-password">) {
 
 				<DialogFooter>
 					<Button type="submit">
-						<Trans comment="Primary action button to submit changed password">Update Password</Trans>
+						<Trans comment="Primary action button to submit changed password">
+							Update Password
+						</Trans>
 					</Button>
 				</DialogFooter>
 			</form>

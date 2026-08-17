@@ -21,7 +21,9 @@ import {
 
 const items = ["Apple", "Banana", "Cherry"];
 
-const renderCombobox = (overrides: Partial<Parameters<typeof ComboboxRoot>[0]> = {}) =>
+const renderCombobox = (
+	overrides: Partial<Parameters<typeof ComboboxRoot>[0]> = {},
+) =>
 	render(
 		<ComboboxRoot items={items} {...overrides}>
 			<ComboboxInput placeholder="Search" />
@@ -41,7 +43,9 @@ describe("ComboboxRoot/Input", () => {
 	it("renders ComboboxInput with data-slot='combobox-input' (input is from primitive)", () => {
 		const { container } = renderCombobox();
 		// The InputGroupInput wraps with data-slot 'input-group-control' which is from input-group
-		expect(container.querySelector("[data-slot=input-group-control]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=input-group-control]"),
+		).toBeInTheDocument();
 	});
 
 	it("does not render content when closed", () => {
@@ -71,14 +75,18 @@ describe("ComboboxValue", () => {
 describe("ComboboxItem", () => {
 	it("renders with data-slot='combobox-item'", () => {
 		renderCombobox({ open: true });
-		expect(document.querySelectorAll("[data-slot=combobox-item]").length).toBeGreaterThan(0);
+		expect(
+			document.querySelectorAll("[data-slot=combobox-item]").length,
+		).toBeGreaterThan(0);
 	});
 });
 
 describe("ComboboxList / ComboboxGroup / ComboboxLabel", () => {
 	it("ComboboxList renders with data-slot='combobox-list'", () => {
 		renderCombobox({ open: true });
-		expect(document.querySelector("[data-slot=combobox-list]")).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=combobox-list]"),
+		).toBeInTheDocument();
 	});
 
 	it("ComboboxGroup and ComboboxLabel render with their slots", () => {
@@ -95,8 +103,12 @@ describe("ComboboxList / ComboboxGroup / ComboboxLabel", () => {
 				</ComboboxContent>
 			</ComboboxRoot>,
 		);
-		expect(document.querySelector("[data-slot=combobox-group]")).toBeInTheDocument();
-		expect(document.querySelector("[data-slot=combobox-label]")).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=combobox-group]"),
+		).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=combobox-label]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -114,7 +126,9 @@ describe("ComboboxSeparator and ComboboxEmpty", () => {
 				</ComboboxContent>
 			</ComboboxRoot>,
 		);
-		expect(document.querySelector("[data-slot=combobox-separator]")).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=combobox-separator]"),
+		).toBeInTheDocument();
 	});
 
 	it("ComboboxEmpty renders with data-slot='combobox-empty'", () => {
@@ -126,7 +140,9 @@ describe("ComboboxSeparator and ComboboxEmpty", () => {
 				</ComboboxContent>
 			</ComboboxRoot>,
 		);
-		expect(document.querySelector("[data-slot=combobox-empty]")).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=combobox-empty]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -160,7 +176,9 @@ describe("ComboboxClear", () => {
 				<ComboboxInput showClear />
 			</ComboboxRoot>,
 		);
-		expect(container.querySelector("[data-slot=combobox-clear]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=combobox-clear]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -168,7 +186,9 @@ describe("ComboboxTrigger", () => {
 	it("renders an input-group-button addon when showTrigger=true (default)", () => {
 		const { container } = renderCombobox();
 		// ComboboxTrigger is rendered inside InputGroupButton which sets its own data-slot.
-		expect(container.querySelector("[data-slot=input-group-button]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=input-group-button]"),
+		).toBeInTheDocument();
 	});
 
 	it("hides input-group-button addon when showTrigger=false and showClear=false", () => {
@@ -177,7 +197,9 @@ describe("ComboboxTrigger", () => {
 				<ComboboxInput showTrigger={false} />
 			</ComboboxRoot>,
 		);
-		expect(container.querySelector("[data-slot=input-group-button]")).not.toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=input-group-button]"),
+		).not.toBeInTheDocument();
 	});
 
 	it("ComboboxTrigger renders standalone with data-slot='combobox-trigger'", () => {
@@ -186,7 +208,9 @@ describe("ComboboxTrigger", () => {
 				<ComboboxTrigger>Open</ComboboxTrigger>
 			</ComboboxRoot>,
 		);
-		expect(container.querySelector("[data-slot=combobox-trigger]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=combobox-trigger]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -199,7 +223,9 @@ describe("ComboboxChips and friends", () => {
 				</ComboboxChips>
 			</ComboboxRoot>,
 		);
-		expect(container.querySelector("[data-slot=combobox-chips]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=combobox-chips]"),
+		).toBeInTheDocument();
 	});
 
 	it("renders ComboboxChipsInput with data-slot='combobox-chip-input'", () => {
@@ -210,7 +236,9 @@ describe("ComboboxChips and friends", () => {
 				</ComboboxChips>
 			</ComboboxRoot>,
 		);
-		expect(container.querySelector("[data-slot=combobox-chip-input]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=combobox-chip-input]"),
+		).toBeInTheDocument();
 	});
 });
 

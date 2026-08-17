@@ -1,9 +1,15 @@
-import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import type {
+	SemanticStylesheet,
+	StylesheetSource,
+} from "@rbuilder/schema/resume/stylesheet";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStylesheetStoreRuntime } from "./store";
 
-const source = (text: string): StylesheetSource => ({ languageVersion: 1, text });
+const source = (text: string): StylesheetSource => ({
+	languageVersion: 1,
+	text,
+});
 const stylesheet = (text: string): SemanticStylesheet => ({
 	mode: "semantic",
 	source: source(text),
@@ -30,18 +36,25 @@ describe("stylesheet store runtime", () => {
 	it("clears compiler-confirmed color tokens synchronously when same-length source text changes", () => {
 		const runtime = createStylesheetStoreRuntime({
 			resumeId: "resume-1",
-			initial: { ...initial, stylesheet: stylesheet("section { color: red; }") },
+			initial: {
+				...initial,
+				stylesheet: stylesheet("section { color: red; }"),
+			},
 			resumeData: defaultResumeData,
 			debounceMs: 1_000_000,
 			compile: vi.fn(),
 			preflight: vi.fn(),
 			mutate: vi.fn(),
 		});
-		runtime.store.setState({ colorTokens: [{ from: 17, to: 20, value: "red" }] });
+		runtime.store.setState({
+			colorTokens: [{ from: 17, to: 20, value: "red" }],
+		});
 
 		runtime.store.getState().setSourceText("section { color: var; }");
 
-		expect(runtime.store.getState().source.text).toBe("section { color: var; }");
+		expect(runtime.store.getState().source.text).toBe(
+			"section { color: var; }",
+		);
 		expect(runtime.store.getState().colorTokens).toEqual([]);
 	});
 
@@ -66,7 +79,10 @@ describe("stylesheet store runtime", () => {
 		}) => void;
 		const runtime = createStylesheetStoreRuntime({
 			resumeId: "resume-1",
-			initial: { ...initial, stylesheet: stylesheet("section { color: red; }") },
+			initial: {
+				...initial,
+				stylesheet: stylesheet("section { color: red; }"),
+			},
 			resumeData: defaultResumeData,
 			compile: () => new Promise((resolve) => (resolveCompile = resolve)),
 			preflight: vi.fn(),
@@ -131,7 +147,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 4, diagnostics: [], pdf: new ArrayBuffer(4) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 4,
+					diagnostics: [],
+					pdf: new ArrayBuffer(4),
+				},
 			}),
 			mutate,
 		});
@@ -170,7 +192,11 @@ describe("stylesheet store runtime", () => {
 			.mockRejectedValueOnce({
 				code: "STYLESHEET_REVISION_CONFLICT",
 				data: {
-					state: { stylesheet: stylesheet("remote"), revision: 8, renderDataVersion: 11 },
+					state: {
+						stylesheet: stylesheet("remote"),
+						revision: 8,
+						renderDataVersion: 11,
+					},
 				},
 			})
 			.mockResolvedValueOnce({
@@ -196,7 +222,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -210,7 +242,10 @@ describe("stylesheet store runtime", () => {
 			renderDataVersion: 11,
 			source: source("local unsaved source"),
 		});
-		expect(mutate.mock.calls[1]?.[0]).toMatchObject({ expectedRevision: 8, expectedRenderDataVersion: 11 });
+		expect(mutate.mock.calls[1]?.[0]).toMatchObject({
+			expectedRevision: 8,
+			expectedRenderDataVersion: 11,
+		});
 	});
 
 	it("keeps the newer pending edit when an older request conflicts", async () => {
@@ -245,7 +280,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -256,7 +297,13 @@ describe("stylesheet store runtime", () => {
 		await vi.runAllTimersAsync();
 		rejectFirst({
 			code: "STYLESHEET_REVISION_CONFLICT",
-			data: { state: { stylesheet: stylesheet("remote"), revision: 8, renderDataVersion: 11 } },
+			data: {
+				state: {
+					stylesheet: stylesheet("remote"),
+					revision: 8,
+					renderDataVersion: 11,
+				},
+			},
 		});
 		await vi.runAllTimersAsync();
 
@@ -283,7 +330,9 @@ describe("stylesheet store runtime", () => {
 		}) => void;
 		const mutate = vi
 			.fn()
-			.mockReturnValueOnce(new Promise<MutationResult>((resolve) => (resolveMutation = resolve)))
+			.mockReturnValueOnce(
+				new Promise<MutationResult>((resolve) => (resolveMutation = resolve)),
+			)
 			.mockResolvedValueOnce({
 				stylesheet: stylesheet("newer"),
 				revision: 11,
@@ -297,13 +346,25 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}))
 			.mockImplementationOnce(async ({ editGeneration }) => ({
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}))
 			.mockImplementationOnce(
 				() =>
@@ -350,14 +411,23 @@ describe("stylesheet store runtime", () => {
 		});
 		await Promise.resolve();
 		await Promise.resolve();
-		expect(runtime.store.getState()).toMatchObject({ revision: 10, renderDataVersion: 20 });
+		expect(runtime.store.getState()).toMatchObject({
+			revision: 10,
+			renderDataVersion: 20,
+		});
 		expect(mutate).toHaveBeenCalledTimes(1);
 
 		resolveRepreflight({
 			type: "preflight_result",
 			requestId: 3,
 			editGeneration: 2,
-			result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+			result: {
+				ok: true,
+				pageCount: 1,
+				byteCount: 1,
+				diagnostics: [],
+				pdf: new ArrayBuffer(1),
+			},
 		});
 		await vi.runAllTimersAsync();
 		expect(mutate.mock.calls[1]?.[0]).toMatchObject({
@@ -383,7 +453,11 @@ describe("stylesheet store runtime", () => {
 		}) => void;
 		const mutate = vi
 			.fn()
-			.mockReturnValueOnce(new Promise<MutationResult>((_resolve, reject) => (rejectMutation = reject)))
+			.mockReturnValueOnce(
+				new Promise<MutationResult>(
+					(_resolve, reject) => (rejectMutation = reject),
+				),
+			)
 			.mockResolvedValueOnce({
 				stylesheet: stylesheet("newer"),
 				revision: 11,
@@ -397,13 +471,25 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}))
 			.mockImplementationOnce(async ({ editGeneration }) => ({
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}))
 			.mockImplementationOnce(
 				() =>
@@ -440,7 +526,13 @@ describe("stylesheet store runtime", () => {
 
 		rejectMutation({
 			code: "STYLESHEET_REVISION_CONFLICT",
-			data: { state: { stylesheet: stylesheet("remote"), revision: 10, renderDataVersion: 20 } },
+			data: {
+				state: {
+					stylesheet: stylesheet("remote"),
+					revision: 10,
+					renderDataVersion: 20,
+				},
+			},
 		});
 		await Promise.resolve();
 		await Promise.resolve();
@@ -451,7 +543,13 @@ describe("stylesheet store runtime", () => {
 			type: "preflight_result",
 			requestId: 3,
 			editGeneration: 2,
-			result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+			result: {
+				ok: true,
+				pageCount: 1,
+				byteCount: 1,
+				diagnostics: [],
+				pdf: new ArrayBuffer(1),
+			},
 		});
 		await vi.runAllTimersAsync();
 		expect(mutate.mock.calls[1]?.[0]).toMatchObject({
@@ -509,7 +607,10 @@ describe("stylesheet store runtime", () => {
 						code: "PARSE_ERROR",
 						severity: "error",
 						message: "Invalid",
-						range: { start: { line: 1, column: 1, offset: 0 }, end: { line: 1, column: 1, offset: 0 } },
+						range: {
+							start: { line: 1, column: 1, offset: 0 },
+							end: { line: 1, column: 1, offset: 0 },
+						},
 					},
 				],
 			})
@@ -529,14 +630,23 @@ describe("stylesheet store runtime", () => {
 				type: "compile_result",
 				requestId: editGeneration,
 				editGeneration,
-				program: candidate.text === "invalid {" ? null : { languageVersion: 1, rules: [] },
+				program:
+					candidate.text === "invalid {"
+						? null
+						: { languageVersion: 1, rules: [] },
 				diagnostics: [],
 			}),
 			preflight: async ({ editGeneration }) => ({
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -547,7 +657,10 @@ describe("stylesheet store runtime", () => {
 			source: source("invalid {"),
 			applied: source("generation zero"),
 		});
-		expect(mutate.mock.calls[0]?.[0]).toMatchObject({ transition: "edit_source", source: source("invalid {") });
+		expect(mutate.mock.calls[0]?.[0]).toMatchObject({
+			transition: "edit_source",
+			source: source("invalid {"),
+		});
 
 		runtime.store.getState().undo();
 		await vi.runAllTimersAsync();
@@ -575,7 +688,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -592,7 +711,10 @@ describe("stylesheet store runtime", () => {
 		expect(runtime.store.getState().source).toEqual(source("historical"));
 		expect(runtime.store.getState().applied).toEqual(source("current applied"));
 		expect(mutate).toHaveBeenCalledWith(
-			expect.objectContaining({ transition: "restore_history", restore: stylesheet("historical") }),
+			expect.objectContaining({
+				transition: "restore_history",
+				restore: stylesheet("historical"),
+			}),
 			expect.any(AbortSignal),
 		);
 	});
@@ -621,7 +743,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -637,7 +765,11 @@ describe("stylesheet store runtime", () => {
 
 		expect(runtime.store.getState().source).toEqual(source("local"));
 		expect(mutate).toHaveBeenLastCalledWith(
-			expect.objectContaining({ expectedRevision: 9, expectedRenderDataVersion: 12, source: source("local") }),
+			expect.objectContaining({
+				expectedRevision: 9,
+				expectedRenderDataVersion: 12,
+				source: source("local"),
+			}),
 			expect.any(AbortSignal),
 		);
 	});
@@ -666,7 +798,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate,
 		});
@@ -681,7 +819,11 @@ describe("stylesheet store runtime", () => {
 
 		expect(runtime.store.getState().source).toEqual(source("local"));
 		expect(mutate).toHaveBeenLastCalledWith(
-			expect.objectContaining({ expectedRevision: 9, expectedRenderDataVersion: 12, source: source("local") }),
+			expect.objectContaining({
+				expectedRevision: 9,
+				expectedRenderDataVersion: 12,
+				source: source("local"),
+			}),
 			expect.any(AbortSignal),
 		);
 	});
@@ -711,11 +853,20 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: 2,
 				editGeneration: 2,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			});
 		const runtime = createStylesheetStoreRuntime({
 			resumeId: "resume-1",
-			initial: { ...initial, stylesheet: { ...initial.stylesheet, mode: "legacy" } },
+			initial: {
+				...initial,
+				stylesheet: { ...initial.stylesheet, mode: "legacy" },
+			},
 			resumeData: defaultResumeData,
 			debounceMs: 0,
 			compile: async ({ editGeneration }) => ({
@@ -736,7 +887,10 @@ describe("stylesheet store runtime", () => {
 		runtime.store.getState().activate();
 		await vi.runAllTimersAsync();
 		expect(mutate).toHaveBeenCalledWith(
-			expect.objectContaining({ transition: "activate", source: source("generation zero") }),
+			expect.objectContaining({
+				transition: "activate",
+				source: source("generation zero"),
+			}),
 			expect.any(AbortSignal),
 		);
 	});
@@ -747,7 +901,10 @@ describe("stylesheet store runtime", () => {
 			initial,
 			resumeData: defaultResumeData,
 			debounceMs: 0,
-			compile: () => Promise.reject(new Error("Discarded stale stylesheet compiler result.")),
+			compile: () =>
+				Promise.reject(
+					new Error("Discarded stale stylesheet compiler result."),
+				),
 			preflight: vi.fn(),
 			mutate: vi.fn(),
 		});
@@ -760,7 +917,9 @@ describe("stylesheet store runtime", () => {
 	});
 
 	it("surfaces browser preflight failures as diagnostics when the worker returns an empty list", async () => {
-		let resolveMutate!: (value: MutationResult & { diagnostics: never[] }) => void;
+		let resolveMutate!: (
+			value: MutationResult & { diagnostics: never[] },
+		) => void;
 		const mutate = vi.fn(
 			() =>
 				new Promise<MutationResult & { diagnostics: never[] }>((resolve) => {
@@ -793,7 +952,9 @@ describe("stylesheet store runtime", () => {
 			mutate,
 		});
 
-		runtime.store.getState().setSourceText("@version 1;\nsection { color: teal; }");
+		runtime.store
+			.getState()
+			.setSourceText("@version 1;\nsection { color: teal; }");
 		await vi.runAllTimersAsync();
 
 		expect(runtime.store.getState().diagnostics).toEqual([
@@ -807,7 +968,11 @@ describe("stylesheet store runtime", () => {
 				},
 			}),
 		]);
-		expect(runtime.store.getState().diagnostics.some(({ severity }) => severity === "error")).toBe(true);
+		expect(
+			runtime.store
+				.getState()
+				.diagnostics.some(({ severity }) => severity === "error"),
+		).toBe(true);
 		expect(mutate).toHaveBeenCalled();
 		resolveMutate({
 			stylesheet: stylesheet("@version 1;\n"),
@@ -835,7 +1000,9 @@ describe("stylesheet store runtime", () => {
 			}),
 			emit(data: unknown) {
 				for (const listener of listeners.get("message") ?? []) {
-					(listener as (event: MessageEvent) => void)(new MessageEvent("message", { data }));
+					(listener as (event: MessageEvent) => void)(
+						new MessageEvent("message", { data }),
+					);
 				}
 			},
 		};
@@ -850,7 +1017,13 @@ describe("stylesheet store runtime", () => {
 				type: "preflight_result",
 				requestId: editGeneration,
 				editGeneration,
-				result: { ok: true, pageCount: 1, byteCount: 1, diagnostics: [], pdf: new ArrayBuffer(1) },
+				result: {
+					ok: true,
+					pageCount: 1,
+					byteCount: 1,
+					diagnostics: [],
+					pdf: new ArrayBuffer(1),
+				},
 			}),
 			mutate: async ({ editGeneration }) => ({
 				stylesheet: stylesheet("edited source"),
@@ -927,9 +1100,12 @@ describe("stylesheet store runtime", () => {
 			mutate: vi.fn(),
 		});
 
-		for (let index = 0; index < 10; index++) runtime.store.getState().setSourceText(`rapid ${index}`);
+		for (let index = 0; index < 10; index++)
+			runtime.store.getState().setSourceText(`rapid ${index}`);
 		expect(runtime.store.getState().undoStack).toHaveLength(1);
-		expect(runtime.store.getState().undoStack[0]).toEqual(stylesheet("generation zero"));
+		expect(runtime.store.getState().undoStack[0]).toEqual(
+			stylesheet("generation zero"),
+		);
 
 		for (let index = 0; index < 60; index++) {
 			vi.advanceTimersByTime(501);

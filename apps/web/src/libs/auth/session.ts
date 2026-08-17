@@ -66,7 +66,8 @@ export const getSession = async (): Promise<AuthSession | null> => {
 							name: parsed.name || parsed.email.split("@")[0] || "Google User",
 							email: parsed.email,
 							image:
-								parsed.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(parsed.email)}`,
+								parsed.picture ||
+								`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(parsed.email)}`,
 							emailVerified: true,
 							createdAt: new Date(),
 							updatedAt: new Date(),
@@ -122,7 +123,11 @@ export const getSession = async (): Promise<AuthSession | null> => {
 					id: session.access_token,
 					userId: user.id,
 					token: session.access_token,
-					expiresAt: new Date(session.expires_at ? session.expires_at * 1000 : Date.now() + 86400000),
+					expiresAt: new Date(
+						session.expires_at
+							? session.expires_at * 1000
+							: Date.now() + 86400000,
+					),
 					createdAt: new Date(),
 					updatedAt: new Date(),
 				},

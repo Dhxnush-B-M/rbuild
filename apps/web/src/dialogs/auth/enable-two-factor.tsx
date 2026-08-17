@@ -1,15 +1,11 @@
-import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { ArrowDownIcon, CopyIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { match } from "ts-pattern";
-import { useToggle } from "usehooks-ts";
-import z from "zod";
+import {
+	ArrowDownIcon,
+	CopyIcon,
+	EyeIcon,
+	EyeSlashIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
@@ -18,12 +14,26 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
+import { useStore } from "@tanstack/react-form";
+import { useRouter } from "@tanstack/react-router";
+import { QRCodeSVG } from "qrcode.react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { match } from "ts-pattern";
+import { useToggle } from "usehooks-ts";
+import z from "zod";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
+import type { DialogProps } from "../store";
 import { useDialogStore } from "../store";
 
 const enableFormSchema = z.object({
@@ -44,7 +54,9 @@ type TwoFactorQRCodeProps = {
 	totpUri: string;
 };
 
-export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) {
+export function EnableTwoFactorDialog(
+	_: DialogProps<"auth.two-factor.enable">,
+) {
 	const router = useRouter();
 
 	const [totpUri, setTotpUri] = useState<string | null>(null);
@@ -70,8 +82,10 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 					getReadableErrorMessage(
 						error,
 						t({
-							comment: "Fallback toast when enabling two-factor authentication fails",
-							message: "Failed to enable two-factor authentication. Please try again.",
+							comment:
+								"Fallback toast when enabling two-factor authentication fails",
+							message:
+								"Failed to enable two-factor authentication. Please try again.",
 						}),
 					),
 					{ id: toastId },
@@ -85,7 +99,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 				setStep("verify");
 				toast.dismiss(toastId);
 			} else {
-				toast.error(t`Failed to setup two-factor authentication.`, { id: toastId });
+				toast.error(t`Failed to setup two-factor authentication.`, {
+					id: toastId,
+				});
 			}
 		},
 	});
@@ -96,14 +112,17 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 		onSubmit: async ({ value }) => {
 			const toastId = toast.loading(t`Verifying code…`);
 
-			const { error } = await authClient.twoFactor.verifyTotp({ code: value.code });
+			const { error } = await authClient.twoFactor.verifyTotp({
+				code: value.code,
+			});
 
 			if (error) {
 				toast.error(
 					getReadableErrorMessage(
 						error,
 						t({
-							comment: "Fallback toast when verifying two-factor setup code fails",
+							comment:
+								"Fallback toast when verifying two-factor setup code fails",
 							message: "Failed to verify your code. Please try again.",
 						}),
 					),
@@ -196,7 +215,12 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 					>
 						<enableForm.Field name="password">
 							{(field) => (
-								<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+								<FormItem
+									hasError={
+										field.state.meta.isTouched &&
+										field.state.meta.errors.length > 0
+									}
+								>
 									<FormLabel>
 										<Trans>Password</Trans>
 									</FormLabel>
@@ -211,12 +235,19 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 													name={field.name}
 													value={field.state.value}
 													onBlur={field.handleBlur}
-													onChange={(event) => field.handleChange(event.target.value)}
+													onChange={(event) =>
+														field.handleChange(event.target.value)
+													}
 												/>
 											}
 										/>
 
-										<Button size="icon" variant="ghost" type="button" onClick={toggleShowPassword}>
+										<Button
+											size="icon"
+											variant="ghost"
+											type="button"
+											onClick={toggleShowPassword}
+										>
 											<span className="sr-only">
 												{showPassword
 													? t({
@@ -252,8 +283,17 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							{totpUri && secret && (
 								<>
 									<div className="flex items-center gap-x-2">
-										<Input readOnly value={secret} className="font-mono text-sm" />
-										<Button size="icon" variant="ghost" type="button" onClick={handleCopySecret}>
+										<Input
+											readOnly
+											value={secret}
+											className="font-mono text-sm"
+										/>
+										<Button
+											size="icon"
+											variant="ghost"
+											type="button"
+											onClick={handleCopySecret}
+										>
 											<CopyIcon />
 										</Button>
 									</div>
@@ -263,7 +303,10 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							)}
 
 							<p>
-								<Trans>Then, enter the 6 digit code that the app provides to continue.</Trans>
+								<Trans>
+									Then, enter the 6 digit code that the app provides to
+									continue.
+								</Trans>
 							</p>
 
 							<form
@@ -276,7 +319,12 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							>
 								<verifyForm.Field name="code">
 									{(field) => (
-										<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+										<FormItem
+											hasError={
+												field.state.meta.isTouched &&
+												field.state.meta.errors.length > 0
+											}
+										>
 											<FormControl
 												render={
 													<Input
@@ -286,7 +334,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 														name={field.name}
 														value={field.state.value}
 														onBlur={field.handleBlur}
-														onChange={(event) => field.handleChange(event.target.value)}
+														onChange={(event) =>
+															field.handleChange(event.target.value)
+														}
 													/>
 												}
 											/>
@@ -296,11 +346,19 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 								</verifyForm.Field>
 
 								<DialogFooter className="gap-x-2">
-									<Button type="button" variant="outline" onClick={requestClose}>
-										<Trans comment="Secondary action button to close two-factor setup dialog">Cancel</Trans>
+									<Button
+										type="button"
+										variant="outline"
+										onClick={requestClose}
+									>
+										<Trans comment="Secondary action button to close two-factor setup dialog">
+											Cancel
+										</Trans>
 									</Button>
 									<Button type="submit">
-										<Trans comment="Primary action button to proceed to next step in two-factor setup">Continue</Trans>
+										<Trans comment="Primary action button to proceed to next step in two-factor setup">
+											Continue
+										</Trans>
 									</Button>
 								</DialogFooter>
 							</form>
@@ -313,20 +371,37 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 							<div className="space-y-4">
 								<div className="grid grid-cols-2 gap-2">
 									{backupCodes.map((code) => (
-										<div key={code} className="rounded-md border border-border p-2 text-center font-mono text-sm">
+										<div
+											key={code}
+											className="rounded-md border border-border p-2 text-center font-mono text-sm"
+										>
 											{code}
 										</div>
 									))}
 								</div>
 
 								<div className="flex items-center gap-x-2">
-									<Button type="button" variant="outline" onClick={handleDownloadBackupCodes} className="flex-1">
+									<Button
+										type="button"
+										variant="outline"
+										onClick={handleDownloadBackupCodes}
+										className="flex-1"
+									>
 										<ArrowDownIcon className="me-2 size-4" />
-										<Trans comment="Action button to download two-factor backup codes as a text file">Download</Trans>
+										<Trans comment="Action button to download two-factor backup codes as a text file">
+											Download
+										</Trans>
 									</Button>
-									<Button type="button" variant="ghost" onClick={handleCopyBackupCodes} className="flex-1">
+									<Button
+										type="button"
+										variant="ghost"
+										onClick={handleCopyBackupCodes}
+										className="flex-1"
+									>
 										<CopyIcon className="me-2 size-4" />
-										<Trans comment="Action button to copy two-factor backup codes to clipboard">Copy</Trans>
+										<Trans comment="Action button to copy two-factor backup codes to clipboard">
+											Copy
+										</Trans>
 									</Button>
 								</div>
 							</div>
@@ -334,7 +409,9 @@ export function EnableTwoFactorDialog(_: DialogProps<"auth.two-factor.enable">) 
 
 						<DialogFooter>
 							<Button type="button" onClick={onConfirmBackup}>
-								<Trans comment="Final action button after saving backup codes">Continue</Trans>
+								<Trans comment="Final action button after saving backup codes">
+									Continue
+								</Trans>
 							</Button>
 						</DialogFooter>
 					</div>
@@ -365,17 +442,22 @@ function TwoFactorDialogDescription({ step }: TwoFactorStepProps) {
 	return match(step)
 		.with("enable", () => (
 			<Trans>
-				Enter your password to confirm setting up two-factor authentication. When enabled, you'll need to enter a code
-				from your authenticator app every time you log in.
+				Enter your password to confirm setting up two-factor authentication.
+				When enabled, you'll need to enter a code from your authenticator app
+				every time you log in.
 			</Trans>
 		))
 		.with("verify", () => (
 			<Trans>
-				Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it
-				into your app.
+				Scan the QR code below with your preferred authenticator app. You can
+				also copy the secret below and paste it into your app.
 			</Trans>
 		))
-		.with("backup", () => <Trans>Copy and store these backup codes in case you lose your device.</Trans>)
+		.with("backup", () => (
+			<Trans>
+				Copy and store these backup codes in case you lose your device.
+			</Trans>
+		))
 		.exhaustive();
 }
 
@@ -387,7 +469,8 @@ function TwoFactorQRCode({ totpUri }: TwoFactorQRCodeProps) {
 			marginSize={2}
 			className="rounded-md"
 			title={t({
-				comment: "Accessible title for QR code image shown during two-factor setup",
+				comment:
+					"Accessible title for QR code image shown during two-factor setup",
 				message: "Two-Factor Authentication QR Code",
 			})}
 		/>

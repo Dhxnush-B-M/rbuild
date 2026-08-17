@@ -1,10 +1,19 @@
-import type { Style } from "@react-pdf/types";
-import type { ResumeData, StyleIntent, StyleRule, StyleSlot } from "@rbuilder/schema/resume/data";
-import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
-import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "@rbuilder/resume/stylesheet";
+import {
+	escapeCssComment,
+	escapeCssString,
+	serializeGeneratedStylesheet,
+} from "@rbuilder/resume/stylesheet";
+import type {
+	ResumeData,
+	StyleIntent,
+	StyleRule,
+	StyleSlot,
+} from "@rbuilder/schema/resume/data";
 import { styleRulesSchema } from "@rbuilder/schema/resume/data";
 import { getSectionStyleRuleContext } from "@rbuilder/schema/resume/style-rules";
+import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
 import { resolveStyleRuleSlot } from "../templates/shared/style-rules";
 
 export type LegacyStyleConversion = {
@@ -79,12 +88,18 @@ const selectorForSlot = (base: string, slot: StyleSlot): string => {
 };
 
 const ruleBaseSelector = (rule: StyleRule): string => {
-	if (rule.target.scope === "sectionType") return `section[type=${escapeCssString(rule.target.sectionType)}]`;
-	if (rule.target.scope === "sectionId") return `section[id=${escapeCssString(rule.target.sectionId)}]`;
+	if (rule.target.scope === "sectionType")
+		return `section[type=${escapeCssString(rule.target.sectionType)}]`;
+	if (rule.target.scope === "sectionId")
+		return `section[id=${escapeCssString(rule.target.sectionId)}]`;
 	return "section";
 };
 
-const resolvedRuleStyle = (data: ResumeData, rule: StyleRule, slot: StyleSlot): Style => {
+const resolvedRuleStyle = (
+	data: ResumeData,
+	rule: StyleRule,
+	slot: StyleSlot,
+): Style => {
 	const isolated = {
 		...data,
 		metadata: { ...data.metadata, styleRules: [rule] },
@@ -103,7 +118,10 @@ const declarationsFromStyle = (style: Style): Record<string, string | number> =>
 		Object.entries(style).flatMap(([property, value]) => {
 			if (value === undefined) return [];
 			const converted =
-				typeof value === "number" && lengthProperties.has(property as keyof StyleIntent) ? `${value}pt` : value;
+				typeof value === "number" &&
+				lengthProperties.has(property as keyof StyleIntent)
+					? `${value}pt`
+					: value;
 			return [[property, converted]];
 		}),
 	);
@@ -115,27 +133,42 @@ const serializeBlock = (
 ): string =>
 	serializeGeneratedStylesheet({
 		languageVersion: 1,
-		blocks: [{ selector, declarations, ...(comment === undefined ? {} : { comment }) }],
+		blocks: [
+			{ selector, declarations, ...(comment === undefined ? {} : { comment }) },
+		],
 	})
 		.replace(/^@version 1;\n\n/, "")
 		.trimEnd();
 
 const appliesToAwards = (data: ResumeData, rule: StyleRule): boolean => {
 	if (rule.target.scope === "global") return true;
-	if (rule.target.scope === "sectionType") return rule.target.sectionType === "awards";
-	return getSectionStyleRuleContext(data, rule.target.sectionId).sectionType === "awards";
+	if (rule.target.scope === "sectionType")
+		return rule.target.sectionType === "awards";
+	return (
+		getSectionStyleRuleContext(data, rule.target.sectionId).sectionType ===
+		"awards"
+	);
 };
 
-const textWeightSelector = (data: ResumeData, rule: StyleRule, base: string): string => {
+const textWeightSelector = (
+	data: ResumeData,
+	rule: StyleRule,
+	base: string,
+): string => {
 	const selectors = [
 		`${base} field:not([name="content"]):not([name="description"]):not([name="recipient"]):not([name="keywords"]):not([role~="primary-text"])`,
 		`${base} item[role~="nested-role"] > item-header > field[name="position"]`,
 	];
-	if (appliesToAwards(data, rule)) selectors.push(`${base} field[name="title"]`);
+	if (appliesToAwards(data, rule))
+		selectors.push(`${base} field[name="title"]`);
 	return selectors.join(",\n");
 };
 
-const scizorBoldColorSelector = (data: ResumeData, rule: StyleRule, base: string): string | undefined => {
+const scizorBoldColorSelector = (
+	data: ResumeData,
+	rule: StyleRule,
+	base: string,
+): string | undefined => {
 	const sectionType =
 		rule.target.scope === "sectionType"
 			? rule.target.sectionType
@@ -148,8 +181,19 @@ const scizorBoldColorSelector = (data: ResumeData, rule: StyleRule, base: string
 		rule.target.scope === "global"
 			? 'resume[template="scizor"] section:not([type="awards"])'
 			: `resume[template="scizor"] ${base}`;
-	return ["company", "school", "name", "language", "network", "organization", "title"]
-		.map((name) => `${scopedBase}${slotSelectors.text}[role~="primary-text"][name=${escapeCssString(name)}]`)
+	return [
+		"company",
+		"school",
+		"name",
+		"language",
+		"network",
+		"organization",
+		"title",
+	]
+		.map(
+			(name) =>
+				`${scopedBase}${slotSelectors.text}[role~="primary-text"][name=${escapeCssString(name)}]`,
+		)
 		.join(",\n");
 };
 
@@ -159,29 +203,54 @@ const levelDecorationDeclarations = (
 ): Record<string, string | number> => {
 	if (fontSize === undefined) return {};
 	const type = data.metadata.design.level.type;
-	if (type === "progress-bar" || type === "rectangle" || type === "rectangle-full") return { height: fontSize };
+	if (
+		type === "progress-bar" ||
+		type === "rectangle" ||
+		type === "rectangle-full"
+	)
+		return { height: fontSize };
 	return { width: fontSize, height: fontSize };
 };
 
-const activeSlotChunks = (data: ResumeData, rule: StyleRule, slot: StyleSlot): string[] => {
+const activeSlotChunks = (
+	data: ResumeData,
+	rule: StyleRule,
+	slot: StyleSlot,
+): string[] => {
 	const base = ruleBaseSelector(rule);
 	const selector = selectorForSlot(base, slot);
-	const declarations = declarationsFromStyle(resolvedRuleStyle(data, rule, slot));
-	const combinedTextDeclarations = slot === "text" ? { ...declarations } : undefined;
+	const declarations = declarationsFromStyle(
+		resolvedRuleStyle(data, rule, slot),
+	);
+	const combinedTextDeclarations =
+		slot === "text" ? { ...declarations } : undefined;
 	const chunks: string[] = [];
 	const comments: string[] = [];
 
-	if ((slot === "link" || slot === "richLink") && "textDecoration" in declarations) {
+	if (
+		(slot === "link" || slot === "richLink") &&
+		"textDecoration" in declarations
+	) {
 		delete declarations.textDecoration;
-		comments.push("No effect in legacy rendering: text-decoration is owned by the builder link preference.");
+		comments.push(
+			"No effect in legacy rendering: text-decoration is owned by the builder link preference.",
+		);
 	}
 
 	if (slot === "text" && "fontWeight" in declarations) {
 		const { fontWeight } = declarations;
 		delete declarations.fontWeight;
 		if (Object.keys(declarations).length > 0)
-			chunks.push(serializeBlock(selector, declarations, rule.label || rule.id));
-		chunks.push(serializeBlock(textWeightSelector(data, rule, base), { fontWeight }, rule.label || rule.id));
+			chunks.push(
+				serializeBlock(selector, declarations, rule.label || rule.id),
+			);
+		chunks.push(
+			serializeBlock(
+				textWeightSelector(data, rule, base),
+				{ fontWeight },
+				rule.label || rule.id,
+			),
+		);
 		comments.push(
 			"Legacy Bold hosts keep the template bold weight; award titles remain the explicit unbold exception.",
 		);
@@ -191,12 +260,21 @@ const activeSlotChunks = (data: ResumeData, rule: StyleRule, slot: StyleSlot): s
 			declarations.height = declarations.fontSize;
 		}
 		if (Object.keys(declarations).length > 0)
-			chunks.push(serializeBlock(selector, declarations, rule.label || rule.id));
+			chunks.push(
+				serializeBlock(selector, declarations, rule.label || rule.id),
+			);
 	}
 
-	if (combinedTextDeclarations && Object.keys(combinedTextDeclarations).length > 0) {
+	if (
+		combinedTextDeclarations &&
+		Object.keys(combinedTextDeclarations).length > 0
+	) {
 		chunks.push(
-			serializeBlock(`${base} combined-text`, combinedTextDeclarations, `${rule.label || rule.id}: combined text host`),
+			serializeBlock(
+				`${base} combined-text`,
+				combinedTextDeclarations,
+				`${rule.label || rule.id}: combined text host`,
+			),
 		);
 	}
 
@@ -216,22 +294,35 @@ const activeSlotChunks = (data: ResumeData, rule: StyleRule, slot: StyleSlot): s
 	if (slot === "level" && declarations.fontSize !== undefined) {
 		const geometry = levelDecorationDeclarations(data, declarations.fontSize);
 		if (Object.keys(geometry).length > 0) {
-			chunks.push(serializeBlock(`${base} level > icon`, geometry, `${rule.label || rule.id}: level decorations`));
+			chunks.push(
+				serializeBlock(
+					`${base} level > icon`,
+					geometry,
+					`${rule.label || rule.id}: level decorations`,
+				),
+			);
 		}
 	}
 
-	return [...chunks, ...comments.map((comment) => `/* ${escapeCssComment(comment)} */`)];
+	return [
+		...chunks,
+		...comments.map((comment) => `/* ${escapeCssComment(comment)} */`),
+	];
 };
 
 const disabledRuleChunk = (data: ResumeData, rule: StyleRule): string => {
 	const blocks = styleSlots.flatMap((slot) => {
 		if (!rule.slots[slot]) return [];
-		const declarations = declarationsFromStyle(resolvedRuleStyle(data, { ...rule, enabled: true }, slot));
+		const declarations = declarationsFromStyle(
+			resolvedRuleStyle(data, { ...rule, enabled: true }, slot),
+		);
 		if (Object.keys(declarations).length === 0) return [];
 		const base = ruleBaseSelector(rule);
 		return [
 			serializeBlock(selectorForSlot(base, slot), declarations),
-			...(slot === "text" ? [serializeBlock(`${base} combined-text`, declarations)] : []),
+			...(slot === "text"
+				? [serializeBlock(`${base} combined-text`, declarations)]
+				: []),
 		];
 	});
 	const label = escapeCssComment(rule.label || rule.id);
@@ -239,7 +330,9 @@ const disabledRuleChunk = (data: ResumeData, rule: StyleRule): string => {
 	return `/* Disabled legacy rule: ${label}${body ? `\n${body}` : ""}\n*/`;
 };
 
-export function convertLegacyStyleRules(data: ResumeData): LegacyStyleConversion {
+export function convertLegacyStyleRules(
+	data: ResumeData,
+): LegacyStyleConversion {
 	const sanitizedRules = styleRulesSchema.parse(data.metadata.styleRules ?? []);
 	const sanitizedData = {
 		...data,
@@ -250,12 +343,15 @@ export function convertLegacyStyleRules(data: ResumeData): LegacyStyleConversion
 		.map((rule, index) => ({ rule, index }))
 		.sort(
 			(left, right) =>
-				scopePrecedence[left.rule.target.scope] - scopePrecedence[right.rule.target.scope] || left.index - right.index,
+				scopePrecedence[left.rule.target.scope] -
+					scopePrecedence[right.rule.target.scope] || left.index - right.index,
 		)
 		.map(({ rule }) => rule);
 	const chunks = orderedRules.flatMap((rule) => {
 		if (!rule.enabled) return [disabledRuleChunk(sanitizedData, rule)];
-		return styleSlots.flatMap((slot) => (rule.slots[slot] ? activeSlotChunks(sanitizedData, rule, slot) : []));
+		return styleSlots.flatMap((slot) =>
+			rule.slots[slot] ? activeSlotChunks(sanitizedData, rule, slot) : [],
+		);
 	});
 	const text = `@version 1;\n${chunks.length > 0 ? `\n${chunks.join("\n\n")}\n` : ""}`;
 

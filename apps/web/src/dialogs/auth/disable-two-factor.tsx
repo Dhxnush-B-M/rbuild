@@ -1,11 +1,6 @@
-import type { DialogProps } from "../store";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EyeIcon, EyeSlashIcon, LockOpenIcon } from "@phosphor-icons/react";
-import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { useToggle } from "usehooks-ts";
-import z from "zod";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
@@ -14,19 +9,31 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
+import { useRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useToggle } from "usehooks-ts";
+import z from "zod";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
+import type { DialogProps } from "../store";
 import { useDialogStore } from "../store";
 
 const formSchema = z.object({
 	password: z.string().min(6).max(64),
 });
 
-export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">) {
+export function DisableTwoFactorDialog(
+	_: DialogProps<"auth.two-factor.disable">,
+) {
 	const router = useRouter();
 	const [showPassword, toggleShowPassword] = useToggle(false);
 	const closeDialog = useDialogStore((state) => state.closeDialog);
@@ -37,15 +44,19 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 		onSubmit: async ({ value }) => {
 			const toastId = toast.loading(t`Disabling two-factor authentication...`);
 
-			const { error } = await authClient.twoFactor.disable({ password: value.password });
+			const { error } = await authClient.twoFactor.disable({
+				password: value.password,
+			});
 
 			if (error) {
 				toast.error(
 					getReadableErrorMessage(
 						error,
 						t({
-							comment: "Fallback toast when disabling two-factor authentication fails",
-							message: "Failed to disable two-factor authentication. Please try again.",
+							comment:
+								"Fallback toast when disabling two-factor authentication fails",
+							message:
+								"Failed to disable two-factor authentication. Please try again.",
 						}),
 					),
 					{ id: toastId },
@@ -53,7 +64,10 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 				return;
 			}
 
-			toast.success(t`Two-factor authentication has been disabled successfully.`, { id: toastId });
+			toast.success(
+				t`Two-factor authentication has been disabled successfully.`,
+				{ id: toastId },
+			);
 			void router.invalidate();
 			closeDialog();
 			form.reset();
@@ -71,8 +85,8 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Enter your password to disable two-factor authentication. Your account will be less secure without 2FA
-						enabled.
+						Enter your password to disable two-factor authentication. Your
+						account will be less secure without 2FA enabled.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -87,7 +101,11 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 			>
 				<form.Field name="password">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Password</Trans>
 							</FormLabel>
@@ -102,12 +120,19 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
 
-								<Button size="icon" variant="ghost" type="button" onClick={toggleShowPassword}>
+								<Button
+									size="icon"
+									variant="ghost"
+									type="button"
+									onClick={toggleShowPassword}
+								>
 									<span className="sr-only">
 										{showPassword
 											? t({
@@ -131,7 +156,9 @@ export function DisableTwoFactorDialog(_: DialogProps<"auth.two-factor.disable">
 
 				<DialogFooter>
 					<Button type="submit" variant="destructive">
-						<Trans comment="Destructive action button to turn off two-factor authentication">Disable 2FA</Trans>
+						<Trans comment="Destructive action button to turn off two-factor authentication">
+							Disable 2FA
+						</Trans>
 					</Button>
 				</DialogFooter>
 			</form>

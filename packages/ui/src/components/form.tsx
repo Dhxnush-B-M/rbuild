@@ -1,14 +1,17 @@
 import { useRender } from "@base-ui/react";
-import * as React from "react";
 import { Label } from "@rbuilder/ui/components/label";
 import { cn } from "@rbuilder/utils/style";
+import * as React from "react";
 
 type FormItemContextValue = {
 	id: string;
 	hasError: boolean;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>({ id: "", hasError: false });
+const FormItemContext = React.createContext<FormItemContextValue>({
+	id: "",
+	hasError: false,
+});
 
 function useFormItem() {
 	return React.use(FormItemContext);
@@ -18,16 +21,26 @@ type FormItemProps = React.ComponentProps<"div"> & { hasError?: boolean };
 
 function FormItem({ className, hasError = false, ...props }: FormItemProps) {
 	const id = React.useId();
-	const contextValue = React.useMemo<FormItemContextValue>(() => ({ id, hasError }), [hasError, id]);
+	const contextValue = React.useMemo<FormItemContextValue>(
+		() => ({ id, hasError }),
+		[hasError, id],
+	);
 
 	return (
 		<FormItemContext.Provider value={contextValue}>
-			<div data-slot="form-item" className={cn("grid gap-1.5", className)} {...props} />
+			<div
+				data-slot="form-item"
+				className={cn("grid gap-1.5", className)}
+				{...props}
+			/>
 		</FormItemContext.Provider>
 	);
 }
 
-function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
+function FormLabel({
+	className,
+	...props
+}: React.ComponentProps<typeof Label>) {
 	const { id, hasError } = useFormItem();
 
 	return (
@@ -77,13 +90,19 @@ type FormMessageProps = Omit<React.ComponentProps<"p">, "children"> & {
 	errors?: ReadonlyArray<unknown>;
 };
 
-function extractErrorMessage(errors: ReadonlyArray<unknown> | undefined): string | undefined {
+function extractErrorMessage(
+	errors: ReadonlyArray<unknown> | undefined,
+): string | undefined {
 	if (!errors || errors.length === 0) return undefined;
 
 	for (const err of errors) {
 		if (!err) continue;
 		if (typeof err === "string") return err;
-		if (typeof err === "object" && "message" in err && typeof (err as { message: unknown }).message === "string") {
+		if (
+			typeof err === "object" &&
+			"message" in err &&
+			typeof (err as { message: unknown }).message === "string"
+		) {
 			return (err as { message: string }).message;
 		}
 	}

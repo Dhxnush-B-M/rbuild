@@ -1,9 +1,13 @@
 import type { MessageDescriptor, Messages } from "@lingui/core";
-import type { Locale } from "@rbuilder/utils/locale";
 import { i18n } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
+import type { Locale } from "@rbuilder/utils/locale";
+import {
+	defaultLocale,
+	isLocale as isLocaleUtil,
+	isRTL,
+} from "@rbuilder/utils/locale";
 import Cookies from "js-cookie";
-import { defaultLocale, isLocale as isLocaleUtil, isRTL } from "@rbuilder/utils/locale";
 // @ts-expect-error generated locale catalog
 import { messages as compiledMessages } from "../../locales/en-US.mjs";
 
@@ -24,11 +28,15 @@ const extractMessages = (mod: unknown): Messages => {
 	return mod as Messages;
 };
 
-const enUSMessages: Messages = (compiledMessages as Messages) || extractMessages(compiledMessages);
+const enUSMessages: Messages =
+	(compiledMessages as Messages) || extractMessages(compiledMessages);
 
 const storageKey = "locale";
 
-const relativeTimeDivisions: Array<{ amount: number; unit: Intl.RelativeTimeFormatUnit }> = [
+const relativeTimeDivisions: Array<{
+	amount: number;
+	unit: Intl.RelativeTimeFormatUnit;
+}> = [
 	{ amount: 31_536_000_000, unit: "year" },
 	{ amount: 2_592_000_000, unit: "month" },
 	{ amount: 604_800_000, unit: "week" },
@@ -49,12 +57,19 @@ export const resolveLocale = (locale: string): Locale => {
 	return isLocale(locale) ? locale : defaultLocale;
 };
 
-export function formatRelativeTime(value: Date | string, formatter: Intl.RelativeTimeFormat, invalidFallback?: string) {
+export function formatRelativeTime(
+	value: Date | string,
+	formatter: Intl.RelativeTimeFormat,
+	invalidFallback?: string,
+) {
 	const date = value instanceof Date ? value : new Date(value);
 	const diffMs = date.getTime() - Date.now();
-	if (Number.isNaN(diffMs)) return invalidFallback ?? formatter.format(0, "second");
+	if (Number.isNaN(diffMs))
+		return invalidFallback ?? formatter.format(0, "second");
 
-	const division = relativeTimeDivisions.find((candidate) => Math.abs(diffMs) >= candidate.amount);
+	const division = relativeTimeDivisions.find(
+		(candidate) => Math.abs(diffMs) >= candidate.amount,
+	);
 
 	return division
 		? formatter.format(Math.round(diffMs / division.amount), division.unit)

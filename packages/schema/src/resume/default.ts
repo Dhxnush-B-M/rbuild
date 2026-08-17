@@ -64,8 +64,23 @@ export const defaultResumeData: ResumeData = {
 			pages: [
 				{
 					fullWidth: false,
-					main: ["profiles", "summary", "education", "experience", "projects", "volunteer", "references"],
-					sidebar: ["skills", "certifications", "awards", "languages", "interests", "publications"],
+					main: [
+						"profiles",
+						"summary",
+						"education",
+						"experience",
+						"projects",
+						"volunteer",
+						"references",
+					],
+					sidebar: [
+						"skills",
+						"certifications",
+						"awards",
+						"languages",
+						"interests",
+						"publications",
+					],
 				},
 			],
 		},

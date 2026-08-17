@@ -1,6 +1,6 @@
+import { isDarkColor, parseColorString } from "@rbuilder/utils/color";
 import type { IShadingAttributesProperties, ISpacingProperties } from "docx";
 import { ExternalHyperlink, HeadingLevel, Paragraph, TextRun } from "docx";
-import { isDarkColor, parseColorString } from "@rbuilder/utils/color";
 import { toSafeDocxLink } from "./link-utils";
 
 export interface HtmlStyleConfig {
@@ -26,7 +26,10 @@ type InlineChild = TextRun | ExternalHyperlink;
 /** Module-level link color, set per htmlToParagraphs invocation. */
 let currentLinkColor = "0563C1";
 
-const HEADING_MAP: Record<string, (typeof HeadingLevel)[keyof typeof HeadingLevel]> = {
+const HEADING_MAP: Record<
+	string,
+	(typeof HeadingLevel)[keyof typeof HeadingLevel]
+> = {
 	H1: HeadingLevel.HEADING_1,
 	H2: HeadingLevel.HEADING_2,
 	H3: HeadingLevel.HEADING_3,
@@ -39,10 +42,16 @@ function toDocxColorValue(value: string) {
 	const rgba = parseColorString(value);
 	if (!rgba) return null;
 
-	return [rgba.r, rgba.g, rgba.b].map((channel) => channel.toString(16).padStart(2, "0").toUpperCase()).join("");
+	return [rgba.r, rgba.g, rgba.b]
+		.map((channel) => channel.toString(16).padStart(2, "0").toUpperCase())
+		.join("");
 }
 
-function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): InlineStyle {
+function mergeStyle(
+	parent: InlineStyle,
+	tag: string,
+	element?: HTMLElement,
+): InlineStyle {
 	const next = { ...parent };
 
 	switch (tag) {
@@ -65,7 +74,8 @@ function mergeStyle(parent: InlineStyle, tag: string, element?: HTMLElement): In
 			next.font = "Courier New";
 			break;
 		case "MARK": {
-			const bgColor = (element as HTMLElement | undefined)?.style.backgroundColor;
+			const bgColor = (element as HTMLElement | undefined)?.style
+				.backgroundColor;
 			const fill = bgColor ? toDocxColorValue(bgColor) : null;
 			next.shading = { fill: fill ?? "FFFF00" };
 			if (bgColor && isDarkColor(bgColor)) next.color = "FFFFFF";
@@ -106,9 +116,18 @@ function collectInlineChildren(node: Node, style: InlineStyle): InlineChild[] {
 
 		if (tag === "A") {
 			const href = toSafeDocxLink(el.getAttribute("href") ?? "");
-			const linkChildren = collectInlineChildren(el, { ...style, color: currentLinkColor, underline: {} });
+			const linkChildren = collectInlineChildren(el, {
+				...style,
+				color: currentLinkColor,
+				underline: {},
+			});
 			if (linkChildren.length > 0 && href) {
-				children.push(new ExternalHyperlink({ link: href, children: linkChildren as TextRun[] }));
+				children.push(
+					new ExternalHyperlink({
+						link: href,
+						children: linkChildren as TextRun[],
+					}),
+				);
 			} else {
 				children.push(...linkChildren);
 			}
@@ -122,14 +141,21 @@ function collectInlineChildren(node: Node, style: InlineStyle): InlineChild[] {
 	return children;
 }
 
-function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Paragraph[], listLevel?: number): void {
+function processBlockElement(
+	el: HTMLElement,
+	style: InlineStyle,
+	paragraphs: Paragraph[],
+	listLevel?: number,
+): void {
 	const tag = el.tagName;
 	const mergedStyle = mergeStyle(style, tag, el);
 
 	if (HEADING_MAP[tag]) {
 		const inlineChildren = collectInlineChildren(el, mergedStyle);
 		if (inlineChildren.length > 0) {
-			paragraphs.push(new Paragraph({ heading: HEADING_MAP[tag], children: inlineChildren }));
+			paragraphs.push(
+				new Paragraph({ heading: HEADING_MAP[tag], children: inlineChildren }),
+			);
 		}
 		return;
 	}
@@ -158,16 +184,28 @@ function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Pa
 					if (liChild.nodeType === Node.TEXT_NODE) {
 						const text = (liChild.textContent ?? "").trim();
 						if (text) {
-							paragraphs.push(new Paragraph({ children: [new TextRun({ text, ...mergedStyle })], bullet: { level } }));
+							paragraphs.push(
+								new Paragraph({
+									children: [new TextRun({ text, ...mergedStyle })],
+									bullet: { level },
+								}),
+							);
 						}
 					} else if (liChild.nodeType === Node.ELEMENT_NODE) {
-						processBlockElement(liChild as HTMLElement, mergedStyle, paragraphs, level);
+						processBlockElement(
+							liChild as HTMLElement,
+							mergedStyle,
+							paragraphs,
+							level,
+						);
 					}
 				}
 			} else {
 				const inlineChildren = collectInlineChildren(li, mergedStyle);
 				if (inlineChildren.length > 0) {
-					paragraphs.push(new Paragraph({ children: inlineChildren, bullet: { level } }));
+					paragraphs.push(
+						new Paragraph({ children: inlineChildren, bullet: { level } }),
+					);
 				}
 			}
 		}
@@ -176,7 +214,10 @@ function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Pa
 
 	if (tag === "BLOCKQUOTE") {
 		const indent: ISpacingProperties = {};
-		const inlineChildren = collectInlineChildren(el, { ...mergedStyle, italics: true });
+		const inlineChildren = collectInlineChildren(el, {
+			...mergedStyle,
+			italics: true,
+		});
 		if (inlineChildren.length > 0) {
 			paragraphs.push(
 				new Paragraph({
@@ -194,7 +235,9 @@ function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Pa
 		if (text) {
 			paragraphs.push(
 				new Paragraph({
-					children: [new TextRun({ text, font: "Courier New", ...mergedStyle })],
+					children: [
+						new TextRun({ text, font: "Courier New", ...mergedStyle }),
+					],
 				}),
 			);
 		}
@@ -234,7 +277,10 @@ function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Pa
  * @param html - The HTML string to convert
  * @param styleConfig - Optional base typography (font, size, color) to apply to all text runs
  */
-export function htmlToParagraphs(html: string, styleConfig?: HtmlStyleConfig): Paragraph[] {
+export function htmlToParagraphs(
+	html: string,
+	styleConfig?: HtmlStyleConfig,
+): Paragraph[] {
 	if (!html?.trim()) return [];
 
 	currentLinkColor = styleConfig?.linkColor ?? "0563C1";
@@ -252,7 +298,9 @@ export function htmlToParagraphs(html: string, styleConfig?: HtmlStyleConfig): P
 		if (child.nodeType === Node.TEXT_NODE) {
 			const text = (child.textContent ?? "").trim();
 			if (text) {
-				paragraphs.push(new Paragraph({ children: [new TextRun({ text, ...baseStyle })] }));
+				paragraphs.push(
+					new Paragraph({ children: [new TextRun({ text, ...baseStyle })] }),
+				);
 			}
 			continue;
 		}

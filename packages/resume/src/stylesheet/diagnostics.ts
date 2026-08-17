@@ -19,7 +19,8 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 	},
 	INVALID_VERSION: {
 		severity: "error",
-		meaning: "The version directive is not one positive integer without a block.",
+		meaning:
+			"The version directive is not one positive integer without a block.",
 		action: "Use @version 1;.",
 	},
 	VERSION_MISMATCH: {
@@ -40,11 +41,13 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 	CSS_RAW_SYNTAX: {
 		severity: "error",
 		meaning: "The parser encountered unsupported raw CSS syntax.",
-		action: "Rewrite the declaration or selector using documented Semantic CSS syntax.",
+		action:
+			"Rewrite the declaration or selector using documented Semantic CSS syntax.",
 	},
 	FORBIDDEN_AT_RULE: {
 		severity: "error",
-		meaning: "The at-rule can load resources or execute unsupported CSS behavior.",
+		meaning:
+			"The at-rule can load resources or execute unsupported CSS behavior.",
 		action: "Remove the at-rule.",
 	},
 	UNSUPPORTED_AT_RULE: {
@@ -60,13 +63,15 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 	},
 	MEDIA_PAGE_SIZE: {
 		severity: "error",
-		meaning: "A media rule attempts to change the page size it is evaluated against.",
+		meaning:
+			"A media rule attempts to change the page size it is evaluated against.",
 		action: "Move the page size declaration outside @media.",
 	},
 	INVALID_SELECTOR: {
 		severity: "error",
 		meaning: "The selector uses unsupported syntax or exceeds selector limits.",
-		action: "Rewrite it using documented Semantic CSS selectors and combinators.",
+		action:
+			"Rewrite it using documented Semantic CSS selectors and combinators.",
 	},
 	UNSUPPORTED_PROPERTY: {
 		severity: "error",
@@ -80,7 +85,8 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 	},
 	FORBIDDEN_CSS_VALUE: {
 		severity: "error",
-		meaning: "The value attempts to use an external resource or forbidden CSS capability.",
+		meaning:
+			"The value attempts to use an external resource or forbidden CSS capability.",
 		action: "Use a PDF-safe local value.",
 	},
 	INVALID_VALUE: {
@@ -115,12 +121,14 @@ export const SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1 = {
 	},
 	RESOURCE_LIMIT: {
 		severity: "error",
-		meaning: "Compilation, matching, values, variables, or semantic nodes exceeded a bounded Semantic CSS limit.",
+		meaning:
+			"Compilation, matching, values, variables, or semantic nodes exceeded a bounded Semantic CSS limit.",
 		action: "Reduce stylesheet or resume complexity.",
 	},
 } as const satisfies Readonly<Record<string, DiagnosticReference>>;
 
-export type SemanticCssCompilerDiagnosticCode = keyof typeof SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1;
+export type SemanticCssCompilerDiagnosticCode =
+	keyof typeof SEMANTIC_CSS_DIAGNOSTIC_CATALOG_V1;
 
 export const EMPTY_SOURCE_RANGE: SourceRange = {
 	start: { line: 1, column: 1, offset: 0 },

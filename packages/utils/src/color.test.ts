@@ -49,23 +49,48 @@ describe("isDarkColor", () => {
 describe("parseColorString", () => {
 	describe("rgb format", () => {
 		it("parses rgb without alpha as alpha=1", () => {
-			expect(parseColorString("rgb(255, 128, 64)")).toEqual({ r: 255, g: 128, b: 64, a: 1 });
+			expect(parseColorString("rgb(255, 128, 64)")).toEqual({
+				r: 255,
+				g: 128,
+				b: 64,
+				a: 1,
+			});
 		});
 
 		it("parses rgba with alpha", () => {
-			expect(parseColorString("rgba(10, 20, 30, 0.5)")).toEqual({ r: 10, g: 20, b: 30, a: 0.5 });
+			expect(parseColorString("rgba(10, 20, 30, 0.5)")).toEqual({
+				r: 10,
+				g: 20,
+				b: 30,
+				a: 0.5,
+			});
 		});
 
 		it("parses rgba with alpha=0", () => {
-			expect(parseColorString("rgba(0, 0, 0, 0)")).toEqual({ r: 0, g: 0, b: 0, a: 0 });
+			expect(parseColorString("rgba(0, 0, 0, 0)")).toEqual({
+				r: 0,
+				g: 0,
+				b: 0,
+				a: 0,
+			});
 		});
 
 		it("handles extra whitespace in rgb", () => {
-			expect(parseColorString("rgb(  255 ,  0 ,  0  )")).toEqual({ r: 255, g: 0, b: 0, a: 1 });
+			expect(parseColorString("rgb(  255 ,  0 ,  0  )")).toEqual({
+				r: 255,
+				g: 0,
+				b: 0,
+				a: 1,
+			});
 		});
 
 		it("trims surrounding whitespace", () => {
-			expect(parseColorString("   rgb(1, 2, 3)   ")).toEqual({ r: 1, g: 2, b: 3, a: 1 });
+			expect(parseColorString("   rgb(1, 2, 3)   ")).toEqual({
+				r: 1,
+				g: 2,
+				b: 3,
+				a: 1,
+			});
 		});
 
 		it("returns null for malformed rgb", () => {
@@ -76,15 +101,30 @@ describe("parseColorString", () => {
 
 	describe("hex format", () => {
 		it("parses 6-digit hex", () => {
-			expect(parseColorString("#ff8040")).toEqual({ r: 255, g: 128, b: 64, a: 1 });
+			expect(parseColorString("#ff8040")).toEqual({
+				r: 255,
+				g: 128,
+				b: 64,
+				a: 1,
+			});
 		});
 
 		it("parses 6-digit hex uppercase", () => {
-			expect(parseColorString("#FF8040")).toEqual({ r: 255, g: 128, b: 64, a: 1 });
+			expect(parseColorString("#FF8040")).toEqual({
+				r: 255,
+				g: 128,
+				b: 64,
+				a: 1,
+			});
 		});
 
 		it("parses 3-digit hex by doubling each digit", () => {
-			expect(parseColorString("#f80")).toEqual({ r: 0xff, g: 0x88, b: 0x00, a: 1 });
+			expect(parseColorString("#f80")).toEqual({
+				r: 0xff,
+				g: 0x88,
+				b: 0x00,
+				a: 1,
+			});
 		});
 
 		it("parses #000 as black", () => {
@@ -92,7 +132,12 @@ describe("parseColorString", () => {
 		});
 
 		it("parses #fff as white", () => {
-			expect(parseColorString("#fff")).toEqual({ r: 255, g: 255, b: 255, a: 1 });
+			expect(parseColorString("#fff")).toEqual({
+				r: 255,
+				g: 255,
+				b: 255,
+				a: 1,
+			});
 		});
 
 		it("returns null for hex without #", () => {

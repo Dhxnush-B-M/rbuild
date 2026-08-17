@@ -8,7 +8,11 @@ describe("stylesheet focus mode", () => {
 		const setLayout = vi.fn();
 		const rightPanel = { current: { resize } };
 
-		const restore = enterStylesheetFocusMode({ rightPanel, currentLayout, setLayout });
+		const restore = enterStylesheetFocusMode({
+			rightPanel,
+			currentLayout,
+			setLayout,
+		});
 
 		expect(resize).toHaveBeenCalledWith("45%");
 		restore();

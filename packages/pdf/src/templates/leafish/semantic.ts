@@ -18,7 +18,12 @@ export const leafishSemanticManifest = {
 			route: {
 				parent: "owner",
 				at: "start",
-				take: [{ kind: "picture" }, { kind: "name" }, { kind: "headline" }, { kind: "section", name: "summary" }],
+				take: [
+					{ kind: "picture" },
+					{ kind: "name" },
+					{ kind: "headline" },
+					{ kind: "section", name: "summary" },
+				],
 			},
 		},
 		{

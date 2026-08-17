@@ -13,7 +13,9 @@ export const getWebsiteDisplayText = (website: WebsiteDisplay): string => {
 	return label || website.url;
 };
 
-export const getCustomFieldLinkUrl = (field: CustomFieldLink): string | undefined => {
+export const getCustomFieldLinkUrl = (
+	field: CustomFieldLink,
+): string | undefined => {
 	const link = field.link?.trim();
 
 	return link || undefined;

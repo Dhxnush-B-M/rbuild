@@ -1,27 +1,44 @@
-import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet";
-import { describe, expect, it } from "vitest";
+import type {
+	SemanticNode,
+	SemanticNodeKind,
+} from "@rbuilder/resume/stylesheet";
 import { SEMANTIC_REGISTRY_V1 } from "@rbuilder/resume/stylesheet";
 import { templateSchema } from "@rbuilder/schema/templates";
-import { buildAllTemplatesFixture, comprehensiveStylesheet } from "./all-templates-fixture";
-import { STANDARD_FIELD_REGISTRY, STANDARD_ROLE_REGISTRY } from "./binding-inventory";
+import { describe, expect, it } from "vitest";
+import {
+	buildAllTemplatesFixture,
+	comprehensiveStylesheet,
+} from "./all-templates-fixture";
+import {
+	STANDARD_FIELD_REGISTRY,
+	STANDARD_ROLE_REGISTRY,
+} from "./binding-inventory";
 import { resolveResumeRuntime } from "./resolve";
 import { getTemplateSemanticManifest } from "./template-manifest";
 
-const flatten = (node: SemanticNode): SemanticNode[] => [node, ...node.children.flatMap(flatten)];
+const flatten = (node: SemanticNode): SemanticNode[] => [
+	node,
+	...node.children.flatMap(flatten),
+];
 
 describe("Semantic CSS all-template presentation", () => {
-	it.each(templateSchema.options)("snapshots the resolved %s presentation map", (template) => {
-		const data = buildAllTemplatesFixture(template);
-		const runtime = resolveResumeRuntime({
-			data,
-			template,
-			applied: comprehensiveStylesheet,
-			mode: "semantic",
-		});
+	it.each(templateSchema.options)(
+		"snapshots the resolved %s presentation map",
+		(template) => {
+			const data = buildAllTemplatesFixture(template);
+			const runtime = resolveResumeRuntime({
+				data,
+				template,
+				applied: comprehensiveStylesheet,
+				mode: "semantic",
+			});
 
-		expect(runtime.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
-		expect(runtime.presentation).toMatchSnapshot();
-	});
+			expect(
+				runtime.diagnostics.filter(({ severity }) => severity === "error"),
+			).toEqual([]);
+			expect(runtime.presentation).toMatchSnapshot();
+		},
+	);
 
 	it("exercises every semantic kind, conditional field, role, and template part", () => {
 		const kinds = new Set<SemanticNodeKind>();
@@ -39,17 +56,29 @@ describe("Semantic CSS all-template presentation", () => {
 			});
 			const templateParts = new Set<string>();
 
-			const visit = (node: SemanticNode, sectionType?: string, experienceRole = false) => {
-				const nextSectionType = node.kind === "section" ? node.attributes.type : sectionType;
-				const nextExperienceRole = experienceRole || node.roles.includes("experience-role");
+			const visit = (
+				node: SemanticNode,
+				sectionType?: string,
+				experienceRole = false,
+			) => {
+				const nextSectionType =
+					node.kind === "section" ? node.attributes.type : sectionType;
+				const nextExperienceRole =
+					experienceRole || node.roles.includes("experience-role");
 				kinds.add(node.kind);
 				for (const role of node.roles) roles.add(role);
 				if (node.kind === "field" && nextSectionType && node.attributes.name) {
-					fields.add(`${nextExperienceRole ? "experience-role" : nextSectionType}:${node.attributes.name}`);
+					fields.add(
+						`${nextExperienceRole ? "experience-role" : nextSectionType}:${node.attributes.name}`,
+					);
 				}
-				if (node.kind === "template-part" && node.attributes.name) templateParts.add(node.attributes.name);
-				for (const alias of node.attributes.part?.split(" ").filter(Boolean) ?? []) templateParts.add(alias);
-				for (const child of node.children) visit(child, nextSectionType, nextExperienceRole);
+				if (node.kind === "template-part" && node.attributes.name)
+					templateParts.add(node.attributes.name);
+				for (const alias of node.attributes.part?.split(" ").filter(Boolean) ??
+					[])
+					templateParts.add(alias);
+				for (const child of node.children)
+					visit(child, nextSectionType, nextExperienceRole);
 			};
 
 			visit(sourceTree);
@@ -57,10 +86,13 @@ describe("Semantic CSS all-template presentation", () => {
 		}
 
 		expect([...kinds].sort()).toEqual(Object.keys(SEMANTIC_REGISTRY_V1).sort());
-		expect([...STANDARD_ROLE_REGISTRY].filter((role) => !roles.has(role))).toEqual([]);
+		expect(
+			[...STANDARD_ROLE_REGISTRY].filter((role) => !roles.has(role)),
+		).toEqual([]);
 
-		const expectedFields = Object.entries(STANDARD_FIELD_REGISTRY).flatMap(([section, definitions]) =>
-			Object.keys(definitions).map((field) => `${section}:${field}`),
+		const expectedFields = Object.entries(STANDARD_FIELD_REGISTRY).flatMap(
+			([section, definitions]) =>
+				Object.keys(definitions).map((field) => `${section}:${field}`),
 		);
 		expect(expectedFields.filter((field) => !fields.has(field))).toEqual([]);
 
@@ -68,7 +100,10 @@ describe("Semantic CSS all-template presentation", () => {
 			const expectedParts = getTemplateSemanticManifest(template)
 				.parts.map(({ name }) => name)
 				.sort();
-			expect([...(parts.get(template) ?? [])].sort(), `${template} template parts`).toEqual(expectedParts);
+			expect(
+				[...(parts.get(template) ?? [])].sort(),
+				`${template} template parts`,
+			).toEqual(expectedParts);
 		}
 	});
 });

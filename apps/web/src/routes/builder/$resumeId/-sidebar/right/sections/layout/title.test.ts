@@ -1,7 +1,7 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { beforeAll, describe, expect, it } from "vitest";
 import { resolveLayoutSectionTitle } from "./title";
 
 const createResumeData = (): ResumeData => structuredClone(defaultResumeData);
@@ -24,7 +24,9 @@ describe("resolveLayoutSectionTitle", () => {
 			},
 		] as never;
 
-		expect(resolveLayoutSectionTitle(data, "custom-awards")).toBe("Industry Recognition");
+		expect(resolveLayoutSectionTitle(data, "custom-awards")).toBe(
+			"Industry Recognition",
+		);
 	});
 
 	it("falls back to the custom section type title when the custom title is empty", () => {

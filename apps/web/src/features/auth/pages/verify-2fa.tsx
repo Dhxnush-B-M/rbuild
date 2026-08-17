@@ -1,12 +1,16 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ArrowLeftIcon, CheckIcon } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
+import {
+	FormControl,
+	FormItem,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@rbuilder/ui/components/button";
-import { FormControl, FormItem, FormMessage } from "@rbuilder/ui/components/form";
-import { Input } from "@rbuilder/ui/components/input";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -22,7 +26,9 @@ type TwoFactorVerificationPageProps = {
 	backupCode?: boolean;
 };
 
-function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerificationPageProps) {
+function TwoFactorVerificationPage({
+	backupCode = false,
+}: TwoFactorVerificationPageProps) {
 	const router = useRouter();
 	const navigate = useNavigate();
 
@@ -30,8 +36,12 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 		defaultValues: { code: "" },
 		validators: { onSubmit: backupCode ? backupCodeSchema : totpSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.loading(backupCode ? t`Verifying backup code...` : t`Verifying code...`);
-			const code = backupCode ? `${value.code.slice(0, 5)}-${value.code.slice(5)}` : value.code;
+			const toastId = toast.loading(
+				backupCode ? t`Verifying backup code...` : t`Verifying code...`,
+			);
+			const code = backupCode
+				? `${value.code.slice(0, 5)}-${value.code.slice(5)}`
+				: value.code;
 			const { error } = backupCode
 				? await authClient.twoFactor.verifyBackupCode({ code })
 				: await authClient.twoFactor.verifyTotp({ code });
@@ -41,11 +51,14 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					error.message ||
 						(backupCode
 							? t({
-									comment: "Fallback toast when verifying a backup two-factor authentication code fails",
-									message: "Failed to verify your backup code. Please try again.",
+									comment:
+										"Fallback toast when verifying a backup two-factor authentication code fails",
+									message:
+										"Failed to verify your backup code. Please try again.",
 								})
 							: t({
-									comment: "Fallback toast when verifying a two-factor authentication code fails",
+									comment:
+										"Fallback toast when verifying a two-factor authentication code fails",
 									message: "Failed to verify your code. Please try again.",
 								})),
 					{ id: toastId },
@@ -63,13 +76,21 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 		<>
 			<div className="space-y-1 text-center">
 				<h1 className="font-semibold text-2xl tracking-tight">
-					{backupCode ? <Trans>Verify with a Backup Code</Trans> : <Trans>Two-Factor Authentication</Trans>}
+					{backupCode ? (
+						<Trans>Verify with a Backup Code</Trans>
+					) : (
+						<Trans>Two-Factor Authentication</Trans>
+					)}
 				</h1>
 				<div className="text-muted-foreground">
 					{backupCode ? (
-						<Trans>Enter one of your saved backup codes to access your account</Trans>
+						<Trans>
+							Enter one of your saved backup codes to access your account
+						</Trans>
 					) : (
-						<Trans>Enter the verification code from your authenticator app</Trans>
+						<Trans>
+							Enter the verification code from your authenticator app
+						</Trans>
 					)}
 				</div>
 			</div>
@@ -86,7 +107,9 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					{(field) => (
 						<FormItem
 							className="justify-self-center"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormControl
 								render={
@@ -115,9 +138,13 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 							<Link to={backupCode ? "/auth/verify-2fa" : "/auth/login"}>
 								<ArrowLeftIcon />
 								{backupCode ? (
-									<Trans comment="Secondary navigation button on backup-code verification screen">Go Back</Trans>
+									<Trans comment="Secondary navigation button on backup-code verification screen">
+										Go Back
+									</Trans>
 								) : (
-									<Trans comment="Secondary navigation button on 2FA verification screen">Back to Login</Trans>
+									<Trans comment="Secondary navigation button on 2FA verification screen">
+										Back to Login
+									</Trans>
 								)}
 							</Link>
 						}
@@ -126,9 +153,13 @@ function TwoFactorVerificationPage({ backupCode = false }: TwoFactorVerification
 					<Button type="submit" className="flex-1">
 						<CheckIcon />
 						{backupCode ? (
-							<Trans comment="Primary action button to submit backup code">Verify</Trans>
+							<Trans comment="Primary action button to submit backup code">
+								Verify
+							</Trans>
 						) : (
-							<Trans comment="Primary action button to submit 2FA code">Verify</Trans>
+							<Trans comment="Primary action button to submit 2FA code">
+								Verify
+							</Trans>
 						)}
 					</Button>
 				</div>

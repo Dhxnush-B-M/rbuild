@@ -25,7 +25,10 @@ describe("DropdownMenu", () => {
 				<DropdownMenuContent>x</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "dropdown-menu-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-trigger",
+		);
 	});
 
 	it("does not render content by default", () => {
@@ -61,7 +64,10 @@ describe("DropdownMenuItem", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("Item")).toHaveAttribute("data-slot", "dropdown-menu-item");
+		expect(screen.getByText("Item")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-item",
+		);
 	});
 
 	it("defaults variant='default'", () => {
@@ -85,7 +91,10 @@ describe("DropdownMenuItem", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("Delete")).toHaveAttribute("data-variant", "destructive");
+		expect(screen.getByText("Delete")).toHaveAttribute(
+			"data-variant",
+			"destructive",
+		);
 	});
 
 	it("supports inset prop", () => {
@@ -114,7 +123,10 @@ describe("DropdownMenuLabel", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("Group label")).toHaveAttribute("data-slot", "dropdown-menu-label");
+		expect(screen.getByText("Group label")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-label",
+		);
 	});
 });
 
@@ -131,14 +143,19 @@ describe("DropdownMenuSeparator", () => {
 			</DropdownMenu>,
 		);
 		// Portal content renders at document.body
-		expect(document.querySelector("[data-slot=dropdown-menu-separator]")).toBeInTheDocument();
+		expect(
+			document.querySelector("[data-slot=dropdown-menu-separator]"),
+		).toBeInTheDocument();
 	});
 });
 
 describe("DropdownMenuShortcut", () => {
 	it("uses data-slot='dropdown-menu-shortcut'", () => {
 		render(<DropdownMenuShortcut>⌘K</DropdownMenuShortcut>);
-		expect(screen.getByText("⌘K")).toHaveAttribute("data-slot", "dropdown-menu-shortcut");
+		expect(screen.getByText("⌘K")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-shortcut",
+		);
 	});
 
 	it("merges custom className", () => {
@@ -157,7 +174,10 @@ describe("DropdownMenuCheckboxItem", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("Toggle")).toHaveAttribute("data-slot", "dropdown-menu-checkbox-item");
+		expect(screen.getByText("Toggle")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-checkbox-item",
+		);
 	});
 });
 
@@ -173,7 +193,10 @@ describe("DropdownMenuRadioItem", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("A")).toHaveAttribute("data-slot", "dropdown-menu-radio-item");
+		expect(screen.getByText("A")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-radio-item",
+		);
 	});
 });
 
@@ -192,6 +215,9 @@ describe("DropdownMenuSub", () => {
 				</DropdownMenuContent>
 			</DropdownMenu>,
 		);
-		expect(screen.getByText("More")).toHaveAttribute("data-slot", "dropdown-menu-sub-trigger");
+		expect(screen.getByText("More")).toHaveAttribute(
+			"data-slot",
+			"dropdown-menu-sub-trigger",
+		);
 	});
 });

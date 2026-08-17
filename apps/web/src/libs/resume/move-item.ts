@@ -5,8 +5,8 @@ import type {
 	SectionItem,
 	SectionType,
 } from "@rbuilder/schema/resume/data";
-import type { WritableDraft } from "immer";
 import { generateId } from "@rbuilder/utils/string";
+import type { WritableDraft } from "immer";
 import { getSectionTitle as getDefaultSectionTitle } from "./section";
 
 // ============================================================================
@@ -32,7 +32,10 @@ type MoveTargetPage = {
 // ============================================================================
 
 // ponytail: derive standard section membership from data instead of a hand-maintained list
-function isStandardSectionId(sectionId: string, sections: Record<string, unknown>): sectionId is SectionType {
+function isStandardSectionId(
+	sectionId: string,
+	sections: Record<string, unknown>,
+): sectionId is SectionType {
 	return sectionId in sections;
 }
 
@@ -56,7 +59,9 @@ export function getSourceSectionTitle(
 	customSectionId?: string,
 ): string {
 	if (customSectionId) {
-		const customSection = resumeData.customSections.find((s) => s.id === customSectionId);
+		const customSection = resumeData.customSections.find(
+			(s) => s.id === customSectionId,
+		);
 		return customSection?.title ?? getDefaultSectionTitle(type);
 	}
 
@@ -78,7 +83,9 @@ export function getCompatibleMoveTargets(
 	sourceSectionId: string | undefined,
 ): MoveTargetPage[] {
 	const { pages } = resumeData.metadata.layout;
-	const customSectionById = new Map(resumeData.customSections.map((section) => [section.id, section]));
+	const customSectionById = new Map(
+		resumeData.customSections.map((section) => [section.id, section]),
+	);
 	const result: MoveTargetPage[] = [];
 
 	for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
@@ -88,12 +95,18 @@ export function getCompatibleMoveTargets(
 
 		for (const sectionId of allSectionIds) {
 			// Skip the source section itself
-			if (sectionId === sourceSectionId || (sourceSectionId === undefined && sectionId === sourceType)) {
+			if (
+				sectionId === sourceSectionId ||
+				(sourceSectionId === undefined && sectionId === sourceType)
+			) {
 				continue;
 			}
 
 			// Check if it's a standard section with matching type
-			if (isStandardSectionId(sectionId, resumeData.sections) && sectionId === sourceType) {
+			if (
+				isStandardSectionId(sectionId, resumeData.sections) &&
+				sectionId === sourceType
+			) {
 				compatibleSections.push({
 					sectionId,
 					sectionTitle: getDefaultSectionTitle(sectionId),
@@ -171,7 +184,10 @@ export function addItemToSection(
 	type: CustomSectionType,
 ): void {
 	// Check if target is a standard section
-	if (isStandardSectionId(targetSectionId, draft.sections) && targetSectionId === type) {
+	if (
+		isStandardSectionId(targetSectionId, draft.sections) &&
+		targetSectionId === type
+	) {
 		const section = draft.sections[type as SectionType];
 		if ("items" in section) {
 			section.items.push(item as never);
@@ -180,7 +196,9 @@ export function addItemToSection(
 	}
 
 	// Otherwise, it's a custom section
-	const customSection = draft.customSections.find((s) => s.id === targetSectionId);
+	const customSection = draft.customSections.find(
+		(s) => s.id === targetSectionId,
+	);
 	if (customSection) {
 		customSection.items.push(item as never);
 	}
@@ -196,7 +214,12 @@ export function addItemToSection(
  * @param targetPageIndex - The page index to add the section to
  * @returns The ID of the newly created custom section
  */
-function makeCustomSection(id: string, type: CustomSectionType, title: string, item: SectionItem): CustomSection {
+function makeCustomSection(
+	id: string,
+	type: CustomSectionType,
+	title: string,
+	item: SectionItem,
+): CustomSection {
 	return {
 		id,
 		type,
@@ -218,7 +241,14 @@ export function createCustomSectionWithItem(
 	targetPageIndex: number,
 ): string {
 	const newSectionId = generateId();
-	draft.customSections.push(makeCustomSection(newSectionId, type, sectionTitle, item) as WritableDraft<CustomSection>);
+	draft.customSections.push(
+		makeCustomSection(
+			newSectionId,
+			type,
+			sectionTitle,
+			item,
+		) as WritableDraft<CustomSection>,
+	);
 
 	const page = draft.metadata.layout.pages[targetPageIndex];
 	if (page) page.main.push(newSectionId);
@@ -233,6 +263,17 @@ export function createPageWithSection(
 	sectionTitle: string,
 ): void {
 	const newSectionId = generateId();
-	draft.customSections.push(makeCustomSection(newSectionId, type, sectionTitle, item) as WritableDraft<CustomSection>);
-	draft.metadata.layout.pages.push({ fullWidth: false, main: [newSectionId], sidebar: [] });
+	draft.customSections.push(
+		makeCustomSection(
+			newSectionId,
+			type,
+			sectionTitle,
+			item,
+		) as WritableDraft<CustomSection>,
+	);
+	draft.metadata.layout.pages.push({
+		fullWidth: false,
+		main: [newSectionId],
+		sidebar: [],
+	});
 }

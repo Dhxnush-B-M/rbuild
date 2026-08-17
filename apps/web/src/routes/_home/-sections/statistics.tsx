@@ -1,5 +1,9 @@
 import type { Icon } from "@phosphor-icons/react";
-import { ArrowUpRightIcon, FileTextIcon, UsersIcon } from "@phosphor-icons/react";
+import {
+	ArrowUpRightIcon,
+	FileTextIcon,
+	UsersIcon,
+} from "@phosphor-icons/react";
 import { m } from "motion/react";
 import { useEffect, useState } from "react";
 
@@ -54,8 +58,12 @@ function StatisticCard({ statistic, index }: StatisticCardProps) {
 							className="text-primary/60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
 						/>
 					</div>
-					<h3 className="font-bold text-foreground text-xl tracking-tight sm:text-2xl">{statistic.label}</h3>
-					<p className="text-muted-foreground text-sm leading-relaxed">{statistic.subLabel}</p>
+					<h3 className="font-bold text-foreground text-xl tracking-tight sm:text-2xl">
+						{statistic.label}
+					</h3>
+					<p className="text-muted-foreground text-sm leading-relaxed">
+						{statistic.subLabel}
+					</p>
 				</div>
 			</div>
 		</m.div>
@@ -88,7 +96,8 @@ export function Statistics() {
 		{
 			id: "resumes",
 			label: "Resumes Created",
-			subLabel: "Tailored ATS-optimized resumes generated and exported worldwide.",
+			subLabel:
+				"Tailored ATS-optimized resumes generated and exported worldwide.",
 			value: resumeCount,
 			icon: FileTextIcon,
 			gradient: "from-primary via-indigo-400 to-purple-500",
@@ -97,14 +106,22 @@ export function Statistics() {
 	];
 
 	return (
-		<section id="statistics" aria-labelledby="stats-heading" className="py-12 md:py-16">
+		<section
+			id="statistics"
+			aria-labelledby="stats-heading"
+			className="py-12 md:py-16"
+		>
 			<h2 id="stats-heading" className="sr-only">
 				Application Statistics
 			</h2>
 
 			<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8">
 				{statisticsList.map((statistic, index) => (
-					<StatisticCard key={statistic.id} statistic={statistic} index={index} />
+					<StatisticCard
+						key={statistic.id}
+						statistic={statistic}
+						index={index}
+					/>
 				))}
 			</div>
 		</section>

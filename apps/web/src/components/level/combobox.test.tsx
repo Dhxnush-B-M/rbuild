@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
 import { render } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { i18n } from "@lingui/core";
 
 // Capture the options the Combobox receives so we can introspect them.
 const captured = vi.hoisted(() => ({
@@ -29,7 +29,15 @@ describe("LevelTypeCombobox", () => {
 		expect(captured.options?.length).toBe(7);
 		const values = captured.options?.map((o) => o.value);
 		expect(values).toEqual(
-			expect.arrayContaining(["hidden", "circle", "square", "rectangle", "rectangle-full", "progress-bar", "icon"]),
+			expect.arrayContaining([
+				"hidden",
+				"circle",
+				"square",
+				"rectangle",
+				"rectangle-full",
+				"progress-bar",
+				"icon",
+			]),
 		);
 	});
 

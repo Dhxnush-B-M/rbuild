@@ -36,7 +36,10 @@ export class StylesheetCompilationCache {
 		this.#entries.set(key, entry);
 		this.#size += entry.size;
 
-		while (this.#entries.size > MAX_ENTRIES || this.#size > MAX_SERIALIZED_BYTES) {
+		while (
+			this.#entries.size > MAX_ENTRIES ||
+			this.#size > MAX_SERIALIZED_BYTES
+		) {
 			const oldestKey = this.#entries.keys().next().value;
 			if (typeof oldestKey !== "string") break;
 			const oldest = this.#entries.get(oldestKey);
@@ -50,6 +53,15 @@ export const stylesheetCompilationCache = new StylesheetCompilationCache();
 
 const SEMANTIC_CSS_COMPILER_BUILD_ID = "semantic-css-v1-values-2";
 
-export function stylesheetCacheKey(languageVersion: number, source: string, registry: string): string {
-	return JSON.stringify([languageVersion, source, SEMANTIC_CSS_COMPILER_BUILD_ID, registry]);
+export function stylesheetCacheKey(
+	languageVersion: number,
+	source: string,
+	registry: string,
+): string {
+	return JSON.stringify([
+		languageVersion,
+		source,
+		SEMANTIC_CSS_COMPILER_BUILD_ID,
+		registry,
+	]);
 }

@@ -16,7 +16,11 @@ export const rhyhornSemanticManifest = {
 			owner: { kind: "contact-item", key: "contact-item" },
 			binding: {
 				type: "primitive",
-				primitive: { ownerRole: "structured-link", present: "Link", absent: "View" },
+				primitive: {
+					ownerRole: "structured-link",
+					present: "Link",
+					absent: "View",
+				},
 				source: "existing",
 			},
 			route: { parent: "owner", at: "start", take: "all" },
@@ -25,8 +29,17 @@ export const rhyhornSemanticManifest = {
 			name: "contact-item-last",
 			key: "contact-item-last",
 			owner: { kind: "contact-item", key: "contact-item", position: "last" },
-			binding: { type: "alias", canonicalKind: "contact-item", token: "contact-item-last" },
+			binding: {
+				type: "alias",
+				canonicalKind: "contact-item",
+				token: "contact-item-last",
+			},
 		},
 	],
-	canonicalBindings: [{ kind: "contact-item", binding: { type: "primitive", primitive: "View", source: "existing" } }],
+	canonicalBindings: [
+		{
+			kind: "contact-item",
+			binding: { type: "primitive", primitive: "View", source: "existing" },
+		},
+	],
 } as const satisfies TemplateSemanticManifest;

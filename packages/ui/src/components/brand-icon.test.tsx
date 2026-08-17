@@ -12,15 +12,23 @@ describe("BrandIcon", () => {
 	it("uses 'logo' as default variant", () => {
 		render(<BrandIcon />);
 		const imgs = screen.getAllByAltText("rbuilder");
-		expect(imgs.some((img) => img.getAttribute("src") === "/logo/dark.svg")).toBe(true);
-		expect(imgs.some((img) => img.getAttribute("src") === "/logo/light.svg")).toBe(true);
+		expect(
+			imgs.some((img) => img.getAttribute("src") === "/logo/dark.svg"),
+		).toBe(true);
+		expect(
+			imgs.some((img) => img.getAttribute("src") === "/logo/light.svg"),
+		).toBe(true);
 	});
 
 	it("uses 'icon' variant when specified", () => {
 		render(<BrandIcon variant="icon" />);
 		const imgs = screen.getAllByAltText("rbuilder");
-		expect(imgs.some((img) => img.getAttribute("src") === "/icon/dark.svg")).toBe(true);
-		expect(imgs.some((img) => img.getAttribute("src") === "/icon/light.svg")).toBe(true);
+		expect(
+			imgs.some((img) => img.getAttribute("src") === "/icon/dark.svg"),
+		).toBe(true);
+		expect(
+			imgs.some((img) => img.getAttribute("src") === "/icon/light.svg"),
+		).toBe(true);
 	});
 
 	it("merges custom className on both imgs", () => {
@@ -34,7 +42,9 @@ describe("BrandIcon", () => {
 	it("hides dark variant by default (light mode); dark mode reveals it via dark:block", () => {
 		render(<BrandIcon />);
 		const imgs = screen.getAllByAltText("rbuilder");
-		const darkImg = imgs.find((img) => img.getAttribute("src") === "/logo/dark.svg");
+		const darkImg = imgs.find(
+			(img) => img.getAttribute("src") === "/logo/dark.svg",
+		);
 		expect(darkImg).toHaveClass("hidden");
 		expect(darkImg).toHaveClass("dark:block");
 	});

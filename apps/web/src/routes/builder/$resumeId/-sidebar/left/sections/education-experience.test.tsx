@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import type { Resume } from "@/features/resume/builder/draft";
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Resume } from "@/features/resume/builder/draft";
 
 const educationItems = vi.hoisted(() => [
 	{
@@ -80,8 +80,18 @@ vi.mock("@/features/resume/builder/draft", () => ({
 		selector({
 			data: {
 				sections: {
-					education: { title: "Education", columns: 1, hidden: false, items: educationItems },
-					experience: { title: "Experience", columns: 1, hidden: false, items: experienceItems },
+					education: {
+						title: "Education",
+						columns: 1,
+						hidden: false,
+						items: educationItems,
+					},
+					experience: {
+						title: "Experience",
+						columns: 1,
+						hidden: false,
+						items: experienceItems,
+					},
 				},
 			},
 		} as unknown as Resume),
@@ -91,7 +101,9 @@ vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
 }));
 vi.mock("../shared/section-item", () => ({
-	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => <button type="button">{children}</button>,
+	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => (
+		<button type="button">{children}</button>
+	),
 	SectionItem: ({ title, subtitle }: SectionItemProps) => (
 		<div>
 			<span data-testid="item-title">{title}</span>
@@ -107,7 +119,9 @@ beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const wrap = (ui: React.ReactNode) => <I18nProvider i18n={i18n}>{ui}</I18nProvider>;
+const wrap = (ui: React.ReactNode) => (
+	<I18nProvider i18n={i18n}>{ui}</I18nProvider>
+);
 
 describe("EducationSectionBuilder", () => {
 	it("maps school → title and degree → subtitle", () => {
@@ -118,31 +132,41 @@ describe("EducationSectionBuilder", () => {
 
 	it("renders the Add a new education affordance", () => {
 		render(wrap(<EducationSectionBuilder />));
-		expect(screen.getByRole("button", { name: "Add a new education" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Add a new education" }),
+		).toBeInTheDocument();
 	});
 });
 
 describe("ExperienceSectionBuilder", () => {
 	it("uses position as subtitle when present", () => {
 		render(wrap(<ExperienceSectionBuilder />));
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles[0]).toBe("Senior Engineer");
 	});
 
 	it("falls back to 'N roles' when position is empty and multiple roles exist", () => {
 		render(wrap(<ExperienceSectionBuilder />));
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles[1]).toBe("2 roles");
 	});
 
 	it("uses '1 role' (singular) for a single role entry", () => {
 		render(wrap(<ExperienceSectionBuilder />));
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles[2]).toBe("1 role");
 	});
 
 	it("renders the Add a new experience affordance", () => {
 		render(wrap(<ExperienceSectionBuilder />));
-		expect(screen.getByRole("button", { name: "Add a new experience" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Add a new experience" }),
+		).toBeInTheDocument();
 	});
 });

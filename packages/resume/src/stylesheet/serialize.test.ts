@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { escapeCssComment, escapeCssString, serializeGeneratedStylesheet } from "./serialize";
+import {
+	escapeCssComment,
+	escapeCssString,
+	serializeGeneratedStylesheet,
+} from "./serialize";
 
 describe("generated Semantic CSS serialization", () => {
 	it("serializes generated Semantic CSS deterministically and safely", () => {
@@ -28,7 +32,12 @@ describe("generated Semantic CSS serialization", () => {
 		expect(() =>
 			serializeGeneratedStylesheet({
 				languageVersion: 1,
-				blocks: [{ selector: "field", declarations: { color: "red; page { color: blue" } }],
+				blocks: [
+					{
+						selector: "field",
+						declarations: { color: "red; page { color: blue" },
+					},
+				],
 			}),
 		).toThrow("unsafe CSS declaration value");
 	});

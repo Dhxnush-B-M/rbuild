@@ -33,7 +33,14 @@ export const getRouter = async () => {
 		defaultErrorComponent: ErrorScreen,
 		defaultPendingComponent: LoadingScreen,
 		defaultNotFoundComponent: NotFoundScreen,
-		context: { orpc, queryClient, theme, locale, session: null, flags: defaultFlags },
+		context: {
+			orpc,
+			queryClient,
+			theme,
+			locale,
+			session: null,
+			flags: defaultFlags,
+		},
 	});
 
 	return router;

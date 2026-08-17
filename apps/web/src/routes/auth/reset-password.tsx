@@ -1,4 +1,8 @@
-import { createFileRoute, redirect, SearchParamError } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	redirect,
+	SearchParamError,
+} from "@tanstack/react-router";
 import z from "zod";
 import { ResetPasswordPage } from "@/features/auth/pages/reset-password";
 
@@ -8,7 +12,8 @@ export const Route = createFileRoute("/auth/reset-password")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	beforeLoad: ({ context }) => {
-		if (context.flags.disableEmailAuth) throw redirect({ to: "/auth/login", replace: true });
+		if (context.flags.disableEmailAuth)
+			throw redirect({ to: "/auth/login", replace: true });
 	},
 	onError: (error) => {
 		if (error instanceof SearchParamError) {

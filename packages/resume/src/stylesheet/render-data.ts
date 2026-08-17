@@ -44,6 +44,8 @@ export function projectRenderData(data: ResumeData): RenderDataProjection {
 	return project(data);
 }
 
-export function projectPublicRenderData(data: ResumeData): RenderDataProjection {
+export function projectPublicRenderData(
+	data: ResumeData,
+): RenderDataProjection {
 	return project(data);
 }

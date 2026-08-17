@@ -9,7 +9,10 @@ describe("ScrollArea", () => {
 				<div>content</div>
 			</ScrollArea>,
 		);
-		expect(screen.getByTestId("sa")).toHaveAttribute("data-slot", "scroll-area");
+		expect(screen.getByTestId("sa")).toHaveAttribute(
+			"data-slot",
+			"scroll-area",
+		);
 	});
 
 	it("renders viewport with children", () => {
@@ -18,7 +21,9 @@ describe("ScrollArea", () => {
 				<div>content</div>
 			</ScrollArea>,
 		);
-		expect(container.querySelector("[data-slot=scroll-area-viewport]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=scroll-area-viewport]"),
+		).toBeInTheDocument();
 		expect(screen.getByText("content")).toBeInTheDocument();
 	});
 

@@ -1,8 +1,8 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { ResumeDocument } from "../document";
 
 type HostNode = {
@@ -28,7 +28,11 @@ const buildFixture = (
 
 	if (mode !== "missing") {
 		const stylesheet = { languageVersion: 1, text };
-		data.metadata.stylesheet = { mode, source: stylesheet, applied: stylesheet };
+		data.metadata.stylesheet = {
+			mode,
+			source: stylesheet,
+			applied: stylesheet,
+		};
 	}
 
 	return data;
@@ -46,11 +50,18 @@ const findEmailLink = (node: HostNode): HostNode | undefined => {
 };
 
 const finalLinkDecoration = async (data: ResumeData) => {
-	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
+	const element = createElement(ResumeDocument, {
+		data,
+		template: "onyx",
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	const link = findEmailLink(instance.container.document as HostNode);
-	const styles = Array.isArray(link?.style) ? link.style : link?.style ? [link.style] : [];
+	const styles = Array.isArray(link?.style)
+		? link.style
+		: link?.style
+			? [link.style]
+			: [];
 	return Object.assign({}, ...styles).textDecoration;
 };
 
@@ -62,12 +73,21 @@ describe("PDF link decoration fidelity", () => {
 		["legacy", true, "none"],
 		["semantic", false, "underline"],
 		["semantic", true, "none"],
-	] as const)("%s stylesheet with hideLinkUnderline=%s resolves to %s", async (mode, hidden, expected) => {
-		expect(await finalLinkDecoration(buildFixture(mode, hidden))).toBe(expected);
-	});
+	] as const)(
+		"%s stylesheet with hideLinkUnderline=%s resolves to %s",
+		async (mode, hidden, expected) => {
+			expect(await finalLinkDecoration(buildFixture(mode, hidden))).toBe(
+				expected,
+			);
+		},
+	);
 
 	it("lets semantic none override an underlined builder baseline (#3134)", async () => {
-		const data = buildFixture("semantic", false, "@version 1; link { text-decoration: none; }");
+		const data = buildFixture(
+			"semantic",
+			false,
+			"@version 1; link { text-decoration: none; }",
+		);
 
 		expect(await finalLinkDecoration(data)).toBe("none");
 	});

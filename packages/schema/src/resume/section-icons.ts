@@ -17,5 +17,6 @@ export const defaultSectionIconNames = {
 	"cover-letter": "envelope-simple",
 } as const satisfies Record<CustomSectionType, string>;
 
-export const getDefaultSectionIconName = (sectionType: CustomSectionType): string =>
-	defaultSectionIconNames[sectionType];
+export const getDefaultSectionIconName = (
+	sectionType: CustomSectionType,
+): string => defaultSectionIconNames[sectionType];

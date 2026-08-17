@@ -1,5 +1,5 @@
-import type { PreflightWorkerRequest } from "./protocol";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { PreflightWorkerRequest } from "./protocol";
 
 const mocks = vi.hoisted(() => ({
 	renderPreflightPdf: vi.fn(),
@@ -23,7 +23,9 @@ describe("stylesheet preflight worker", () => {
 	});
 
 	it("serializes schema errors into a correlated preflight error packet", async () => {
-		let handler: ((event: MessageEvent<PreflightWorkerRequest>) => Promise<void>) | undefined;
+		let handler:
+			| ((event: MessageEvent<PreflightWorkerRequest>) => Promise<void>)
+			| undefined;
 		const postMessage = vi.fn();
 		vi.stubGlobal("self", {
 			postMessage,
@@ -33,7 +35,10 @@ describe("stylesheet preflight worker", () => {
 		});
 		const issues = [{ path: ["customSections", 0, "items", 0, "company"] }];
 		mocks.renderPreflightPdf.mockRejectedValueOnce(
-			Object.assign(new Error("Invalid resume data"), { name: "ZodError", issues }),
+			Object.assign(new Error("Invalid resume data"), {
+				name: "ZodError",
+				issues,
+			}),
 		);
 		vi.resetModules();
 		await import("./preflight.worker");
@@ -57,7 +62,9 @@ describe("stylesheet preflight worker", () => {
 	});
 
 	it("includes a sanitized cause when PDF preflight throws an unexpected error", async () => {
-		let handler: ((event: MessageEvent<PreflightWorkerRequest>) => Promise<void>) | undefined;
+		let handler:
+			| ((event: MessageEvent<PreflightWorkerRequest>) => Promise<void>)
+			| undefined;
 		const postMessage = vi.fn();
 		vi.stubGlobal("self", {
 			postMessage,
@@ -65,7 +72,9 @@ describe("stylesheet preflight worker", () => {
 				handler = listener as typeof handler;
 			}),
 		});
-		mocks.renderPreflightPdf.mockRejectedValueOnce(new Error("Canvas is already closed"));
+		mocks.renderPreflightPdf.mockRejectedValueOnce(
+			new Error("Canvas is already closed"),
+		);
 		vi.resetModules();
 		await import("./preflight.worker");
 

@@ -5,7 +5,10 @@ interface CommonControlledStateProps<T> {
 	defaultValue?: T;
 }
 
-type UseControlledStateProps<T, Rest extends unknown[] = []> = CommonControlledStateProps<T> & {
+type UseControlledStateProps<
+	T,
+	Rest extends unknown[] = [],
+> = CommonControlledStateProps<T> & {
 	onChange?: (value: T, ...args: Rest) => void;
 };
 
@@ -15,7 +18,9 @@ export function useControlledState<T, Rest extends unknown[] = []>(
 	const { value, defaultValue, onChange } = props;
 	const isControlled = value !== undefined;
 
-	const [internalState, setInternalState] = useState<T>(value !== undefined ? value : (defaultValue as T));
+	const [internalState, setInternalState] = useState<T>(
+		value !== undefined ? value : (defaultValue as T),
+	);
 	const state = isControlled ? (value as T) : internalState;
 
 	const setState = useCallback(

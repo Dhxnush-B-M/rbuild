@@ -1,8 +1,30 @@
-import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet/types";
-import type { CustomSectionType, LayoutPage, ResumeData, SectionType } from "@rbuilder/schema/resume/data";
+import type {
+	SemanticNode,
+	SemanticNodeKind,
+} from "@rbuilder/resume/stylesheet/types";
+import type {
+	CustomSectionType,
+	LayoutPage,
+	ResumeData,
+	SectionType,
+} from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
+import { isRTL } from "@rbuilder/utils/locale";
 import type { HTMLElement, Node } from "node-html-parser";
+import { NodeType } from "node-html-parser";
+import { getResumeSectionIcon } from "../section-icon";
+import { shouldUseSectionTimeline } from "../templates/shared/columns";
+import { getCustomFieldLinkUrl } from "../templates/shared/contact";
+import { filterItems, filterSections } from "../templates/shared/filtering";
+import { hasTemplatePicture } from "../templates/shared/picture";
+import {
+	parseNormalizedRichTextHtml,
+	richTextMarkClassName,
+} from "../templates/shared/rich-text-html";
 import type { StandardFieldRole } from "./binding-inventory";
+import { STANDARD_FIELD_REGISTRY } from "./binding-inventory";
+import { semanticNodeKeys } from "./node-keys";
+import { getRichTextSemanticKind } from "./rich-text-keys";
 import type {
 	TemplateSemanticChildSelector,
 	TemplateSemanticManifest,
@@ -11,17 +33,6 @@ import type {
 	TemplateSemanticPrimitivePart,
 	TemplateSemanticRegion,
 } from "./template-manifest";
-import { NodeType } from "node-html-parser";
-import { isRTL } from "@rbuilder/utils/locale";
-import { getResumeSectionIcon } from "../section-icon";
-import { shouldUseSectionTimeline } from "../templates/shared/columns";
-import { getCustomFieldLinkUrl } from "../templates/shared/contact";
-import { filterItems, filterSections } from "../templates/shared/filtering";
-import { hasTemplatePicture } from "../templates/shared/picture";
-import { parseNormalizedRichTextHtml, richTextMarkClassName } from "../templates/shared/rich-text-html";
-import { STANDARD_FIELD_REGISTRY } from "./binding-inventory";
-import { semanticNodeKeys } from "./node-keys";
-import { getRichTextSemanticKind } from "./rich-text-keys";
 import { getTemplateSemanticManifest } from "./template-manifest";
 
 export type BuildSemanticTreeInput = {
@@ -68,10 +79,16 @@ const ITEM_HEADER_FIELDS = {
 	references: [],
 	summary: [],
 	"cover-letter": [],
-} as const satisfies Readonly<Record<CustomSectionType | "experience-role", readonly string[]>>;
+} as const satisfies Readonly<
+	Record<CustomSectionType | "experience-role", readonly string[]>
+>;
 
 const RICH_TEXT_FIELDS = new Set(["content", "description", "recipient"]);
-const ITEM_ICON_SECTIONS = new Set<CustomSectionType>(["profiles", "skills", "interests"]);
+const ITEM_ICON_SECTIONS = new Set<CustomSectionType>([
+	"profiles",
+	"skills",
+	"interests",
+]);
 type RichTextDirection = "ltr" | "rtl";
 
 const semanticNode = ({
@@ -97,7 +114,8 @@ const semanticNode = ({
 	children,
 });
 
-const isElement = (node: Node): node is HTMLElement => node.nodeType === NodeType.ELEMENT_NODE;
+const isElement = (node: Node): node is HTMLElement =>
+	node.nodeType === NodeType.ELEMENT_NODE;
 
 const buildRichTextChildren = (
 	parentKey: string,
@@ -114,8 +132,14 @@ const buildRichTextChildren = (
 		const kind = getRichTextSemanticKind(child, richTextMarkClassName);
 
 		if (!kind) {
-			const ancestryKey = semanticNodeKeys.richTextNode(parentKey, `html-${child.rawTagName.toLowerCase()}`, index);
-			children.push(...buildRichTextChildren(ancestryKey, child.childNodes, direction));
+			const ancestryKey = semanticNodeKeys.richTextNode(
+				parentKey,
+				`html-${child.rawTagName.toLowerCase()}`,
+				index,
+			);
+			children.push(
+				...buildRichTextChildren(ancestryKey, child.childNodes, direction),
+			);
 			continue;
 		}
 
@@ -123,13 +147,25 @@ const buildRichTextChildren = (
 
 		if (kind === "list-item") {
 			const markerKey = semanticNodeKeys.richTextNode(key, "list-marker", 0);
-			const contentKey = semanticNodeKeys.richTextNode(key, "list-item-content", 0);
-			const marker = semanticNode({ key: markerKey, kind: "list-marker", roles: ["decoration"] });
+			const contentKey = semanticNodeKeys.richTextNode(
+				key,
+				"list-item-content",
+				0,
+			);
+			const marker = semanticNode({
+				key: markerKey,
+				kind: "list-marker",
+				roles: ["decoration"],
+			});
 			const content = semanticNode({
 				key: contentKey,
 				kind: "list-item-content",
 				attributes: { direction },
-				children: buildRichTextChildren(contentKey, child.childNodes, direction),
+				children: buildRichTextChildren(
+					contentKey,
+					child.childNodes,
+					direction,
+				),
 			});
 			children.push(
 				semanticNode({
@@ -168,15 +204,20 @@ const getFieldRoles = (
 	name: string,
 	structuredLink = false,
 ): StandardFieldRole[] => {
-	const field = STANDARD_FIELD_REGISTRY[type] as StandardFieldDefinition | undefined;
+	const field = STANDARD_FIELD_REGISTRY[type] as
+		| StandardFieldDefinition
+		| undefined;
 	const roles = [...(field?.[name] ?? [])];
 
-	if (structuredLink && !roles.includes("structured-link")) roles.push("structured-link");
+	if (structuredLink && !roles.includes("structured-link"))
+		roles.push("structured-link");
 
 	return roles;
 };
 
-type StandardFieldDefinition = Readonly<Record<string, readonly StandardFieldRole[]>>;
+type StandardFieldDefinition = Readonly<
+	Record<string, readonly StandardFieldRole[]>
+>;
 
 const buildField = ({
 	parentKey,
@@ -205,7 +246,9 @@ const buildField = ({
 				)
 			: [];
 	const children =
-		RICH_TEXT_FIELDS.has(name) && typeof value === "string" && richTextChildren.length > 0
+		RICH_TEXT_FIELDS.has(name) &&
+		typeof value === "string" &&
+		richTextChildren.length > 0
 			? [
 					semanticNode({
 						key: semanticNodeKeys.richText(key, name),
@@ -224,10 +267,18 @@ const buildField = ({
 	});
 };
 
-const buildLevel = (itemKey: string, level: unknown, data: ResumeData): SemanticNode | undefined => {
+const buildLevel = (
+	itemKey: string,
+	level: unknown,
+	data: ResumeData,
+): SemanticNode | undefined => {
 	if (typeof level !== "number" || level <= 0) return undefined;
 	if (data.metadata.design.level.type === "hidden") return undefined;
-	if (data.metadata.design.level.type === "icon" && data.metadata.design.level.icon === "") return undefined;
+	if (
+		data.metadata.design.level.type === "icon" &&
+		data.metadata.design.level.icon === ""
+	)
+		return undefined;
 
 	const key = semanticNodeKeys.level(itemKey);
 	const children = Array.from({ length: 5 }, (_, index) => {
@@ -244,12 +295,19 @@ const buildLevel = (itemKey: string, level: unknown, data: ResumeData): Semantic
 	return semanticNode({ key, kind: "level", roles: ["decoration"], children });
 };
 
-const itemWebsite = (item: ItemRecord): { url: string; inlineLink: boolean } | undefined => {
+const itemWebsite = (
+	item: ItemRecord,
+): { url: string; inlineLink: boolean } | undefined => {
 	const website = item.website;
 	if (typeof website !== "object" || website === null) return undefined;
-	const { url, inlineLink } = website as { url?: unknown; inlineLink?: unknown };
+	const { url, inlineLink } = website as {
+		url?: unknown;
+		inlineLink?: unknown;
+	};
 
-	return typeof url === "string" && url ? { url, inlineLink: inlineLink === true } : undefined;
+	return typeof url === "string" && url
+		? { url, inlineLink: inlineLink === true }
+		: undefined;
 };
 
 const buildItem = ({
@@ -289,12 +347,18 @@ const buildItem = ({
 	}
 
 	for (const name of Object.keys(STANDARD_FIELD_REGISTRY[type])) {
-		if (type === "experience" && name === "description" && Array.isArray(item.roles) && item.roles.length > 0) {
+		if (
+			type === "experience" &&
+			name === "description" &&
+			Array.isArray(item.roles) &&
+			item.roles.length > 0
+		) {
 			continue;
 		}
 
 		const parent =
-			headerFieldNames.includes(name as never) || (requireItemHeaderPrimitive && headerFieldNames.length === 0)
+			headerFieldNames.includes(name as never) ||
+			(requireItemHeaderPrimitive && headerFieldNames.length === 0)
 				? headerKey
 				: key;
 		const field = buildField({
@@ -303,7 +367,10 @@ const buildItem = ({
 			name,
 			value: item[name],
 			direction,
-			structuredLink: type !== "profiles" && website?.inlineLink === true && name === headerFieldNames[0],
+			structuredLink:
+				type !== "profiles" &&
+				website?.inlineLink === true &&
+				name === headerFieldNames[0],
 		});
 
 		if (!field) continue;
@@ -314,7 +381,10 @@ const buildItem = ({
 		const parent = website.inlineLink ? headerKey : key;
 		(parent === headerKey ? headerChildren : bodyChildren).push(
 			semanticNode({
-				key: semanticNodeKeys.link(parent, website.inlineLink ? "inline-website" : "website"),
+				key: semanticNodeKeys.link(
+					parent,
+					website.inlineLink ? "inline-website" : "website",
+				),
 				kind: "link",
 				roles: ["structured-link"],
 			}),
@@ -333,7 +403,12 @@ const buildItem = ({
 
 	if (type === "experience" && Array.isArray(item.roles)) {
 		for (const role of item.roles) {
-			if (typeof role !== "object" || role === null || typeof role.id !== "string") continue;
+			if (
+				typeof role !== "object" ||
+				role === null ||
+				typeof role.id !== "string"
+			)
+				continue;
 			const roleItem = role as ItemRecord;
 			const roleNode = buildItem({
 				item: roleItem,
@@ -358,14 +433,23 @@ const buildItem = ({
 		id: item.id,
 		children: [
 			...(headerChildren.length > 0 || requireItemHeaderPrimitive
-				? [semanticNode({ key: headerKey, kind: "item-header", children: headerChildren })]
+				? [
+						semanticNode({
+							key: headerKey,
+							kind: "item-header",
+							children: headerChildren,
+						}),
+					]
 				: []),
 			...bodyChildren,
 		],
 	});
 };
 
-const resolveSection = (data: ResumeData, sectionId: string): SectionDescriptor | undefined => {
+const resolveSection = (
+	data: ResumeData,
+	sectionId: string,
+): SectionDescriptor | undefined => {
 	if (sectionId === "summary") {
 		return {
 			id: "summary",
@@ -393,7 +477,9 @@ const resolveSection = (data: ResumeData, sectionId: string): SectionDescriptor 
 		};
 	}
 
-	const section = data.customSections.find((candidate) => candidate.id === sectionId);
+	const section = data.customSections.find(
+		(candidate) => candidate.id === sectionId,
+	);
 	if (!section) return undefined;
 
 	return {
@@ -425,7 +511,10 @@ const buildSection = ({
 	const descriptor = resolveSection(data, sectionId);
 	if (!descriptor) return undefined;
 
-	const key = semanticNodeKeys.section(regionKey, keyIncludesOrigin ? `${origin}:${descriptor.id}` : descriptor.id);
+	const key = semanticNodeKeys.section(
+		regionKey,
+		keyIncludesOrigin ? `${origin}:${descriptor.id}` : descriptor.id,
+	);
 	const headingKey = semanticNodeKeys.sectionHeading(key);
 	const sectionIcon = getResumeSectionIcon(data, descriptor.id);
 	const heading =
@@ -450,16 +539,18 @@ const buildSection = ({
 	const requireItemHeaderPrimitive = manifest.parts.some(
 		(part) =>
 			part.owner.kind === "item-header" &&
-			(part.owner.sectionTypes === undefined || part.owner.sectionTypes.includes(descriptor.type)),
+			(part.owner.sectionTypes === undefined ||
+				part.owner.sectionTypes.includes(descriptor.type)),
 	);
-	const items = filterItems(descriptor.section.items, descriptor.type).map((item) =>
-		buildItem({
-			item,
-			type: descriptor.type,
-			parentKey: itemsKey,
-			data,
-			requireItemHeaderPrimitive,
-		}),
+	const items = filterItems(descriptor.section.items, descriptor.type).map(
+		(item) =>
+			buildItem({
+				item,
+				type: descriptor.type,
+				parentKey: itemsKey,
+				data,
+				requireItemHeaderPrimitive,
+			}),
 	);
 
 	return semanticNode({
@@ -468,7 +559,10 @@ const buildSection = ({
 		id: descriptor.id,
 		attributes: { type: descriptor.type, placement, origin },
 		roles: featured ? ["featured-summary"] : [],
-		children: [...(heading ? [heading] : []), semanticNode({ key: itemsKey, kind: "section-items", children: items })],
+		children: [
+			...(heading ? [heading] : []),
+			semanticNode({ key: itemsKey, kind: "section-items", children: items }),
+		],
 	});
 };
 
@@ -548,13 +642,21 @@ const buildContactItem = ({
 					]
 				: []),
 			...(icon
-				? [semanticNode({ key: semanticNodeKeys.icon(key, "contact"), kind: "icon", roles: ["decoration"] })]
+				? [
+						semanticNode({
+							key: semanticNodeKeys.icon(key, "contact"),
+							kind: "icon",
+							roles: ["decoration"],
+						}),
+					]
 				: []),
 			semanticNode({
 				key: fieldKey,
 				kind: "field",
 				attributes: { name },
-				roles: structuredLink ? ["primary-text", "structured-link"] : ["primary-text"],
+				roles: structuredLink
+					? ["primary-text", "structured-link"]
+					: ["primary-text"],
 			}),
 		],
 	});
@@ -626,7 +728,11 @@ const buildHeader = (
 				kind: "headline",
 				roles: ["secondary-text"],
 			}),
-			semanticNode({ key: contactListKey, kind: "contact-list", children: contacts }),
+			semanticNode({
+				key: contactListKey,
+				kind: "contact-list",
+				children: contacts,
+			}),
 			...(summary ? [summary] : []),
 		],
 	});
@@ -641,14 +747,20 @@ const buildHeader = (
 
 const getRegionSections = (
 	region: TemplateSemanticRegion,
-	sectionsByOrigin: Readonly<Record<TemplateSemanticPlacement, readonly string[]>>,
+	sectionsByOrigin: Readonly<
+		Record<TemplateSemanticPlacement, readonly string[]>
+	>,
 ): RegionSection[] => {
 	if (region.flow !== "interleaved") {
-		return region.origins.flatMap((origin) => sectionsByOrigin[origin].map((id) => ({ id, origin })));
+		return region.origins.flatMap((origin) =>
+			sectionsByOrigin[origin].map((id) => ({ id, origin })),
+		);
 	}
 
 	const sections: RegionSection[] = [];
-	const count = Math.max(...region.origins.map((origin) => sectionsByOrigin[origin].length));
+	const count = Math.max(
+		...region.origins.map((origin) => sectionsByOrigin[origin].length),
+	);
 	for (let index = 0; index < count; index += 1) {
 		for (const origin of region.origins) {
 			const id = sectionsByOrigin[origin][index];
@@ -659,7 +771,9 @@ const getRegionSections = (
 	return sections;
 };
 
-const findSectionAncestor = (ancestors: readonly SemanticNode[]): SemanticNode | undefined =>
+const findSectionAncestor = (
+	ancestors: readonly SemanticNode[],
+): SemanticNode | undefined =>
 	ancestors.findLast((node) => node.kind === "section");
 
 const partMatchesOwner = ({
@@ -678,13 +792,24 @@ const partMatchesOwner = ({
 	data: ResumeData;
 }): boolean => {
 	if (node.kind !== part.owner.kind) return false;
-	if (part.owner.kind === "region" && node.attributes.region !== part.owner.key) return false;
+	if (part.owner.kind === "region" && node.attributes.region !== part.owner.key)
+		return false;
 
-	const section = node.kind === "section" ? node : findSectionAncestor(ancestors);
-	if ("placement" in part.owner && part.owner.placement && section?.attributes.placement !== part.owner.placement) {
+	const section =
+		node.kind === "section" ? node : findSectionAncestor(ancestors);
+	if (
+		"placement" in part.owner &&
+		part.owner.placement &&
+		section?.attributes.placement !== part.owner.placement
+	) {
 		return false;
 	}
-	if ("origin" in part.owner && part.owner.origin && section?.attributes.origin !== part.owner.origin) return false;
+	if (
+		"origin" in part.owner &&
+		part.owner.origin &&
+		section?.attributes.origin !== part.owner.origin
+	)
+		return false;
 	if ("columns" in part.owner && part.owner.columns) {
 		if (!section?.id) return false;
 		const descriptor = resolveSection(data, section.id);
@@ -699,12 +824,28 @@ const partMatchesOwner = ({
 		}
 	}
 	if ("sectionTypes" in part.owner && part.owner.sectionTypes) {
-		if (!section || !part.owner.sectionTypes.includes(section.attributes.type as CustomSectionType)) return false;
+		if (
+			!section ||
+			!part.owner.sectionTypes.includes(
+				section.attributes.type as CustomSectionType,
+			)
+		)
+			return false;
 	}
-	if (part.owner.kind === "item" && parent?.kind !== "section-items") return false;
-	if (part.owner.kind === "item-header" && parent?.kind !== "item") return false;
-	if (part.owner.kind === "item-header" && ancestors.at(-2)?.kind !== "section-items") return false;
-	if ("position" in part.owner && part.owner.position === "last" && index !== (parent?.children.length ?? 0) - 1) {
+	if (part.owner.kind === "item" && parent?.kind !== "section-items")
+		return false;
+	if (part.owner.kind === "item-header" && parent?.kind !== "item")
+		return false;
+	if (
+		part.owner.kind === "item-header" &&
+		ancestors.at(-2)?.kind !== "section-items"
+	)
+		return false;
+	if (
+		"position" in part.owner &&
+		part.owner.position === "last" &&
+		index !== (parent?.children.length ?? 0) - 1
+	) {
 		return false;
 	}
 
@@ -717,10 +858,14 @@ const selectorMatches = (
 	sectionType: CustomSectionType | undefined,
 ): boolean =>
 	node.kind === selector.kind &&
-	(selector.name === undefined || node.attributes.name === selector.name || node.id === selector.name) &&
-	(selector.sectionTypes === undefined || (sectionType !== undefined && selector.sectionTypes.includes(sectionType)));
-const isPrimitivePart = (part: TemplateSemanticPart): part is TemplateSemanticPrimitivePart =>
-	part.binding.type === "primitive";
+	(selector.name === undefined ||
+		node.attributes.name === selector.name ||
+		node.id === selector.name) &&
+	(selector.sectionTypes === undefined ||
+		(sectionType !== undefined && selector.sectionTypes.includes(sectionType)));
+const isPrimitivePart = (
+	part: TemplateSemanticPart,
+): part is TemplateSemanticPrimitivePart => part.binding.type === "primitive";
 
 const routeTemplateParts = ({
 	children,
@@ -736,7 +881,8 @@ const routeTemplateParts = ({
 	sectionType: CustomSectionType | undefined;
 }): readonly SemanticNode[] => {
 	const directParts = parts.filter(
-		(part): part is TemplateSemanticPrimitivePart => isPrimitivePart(part) && part.route.parent === parentPart,
+		(part): part is TemplateSemanticPrimitivePart =>
+			isPrimitivePart(part) && part.route.parent === parentPart,
 	);
 	let remaining = [...children];
 	const routed = directParts.map((part) => {
@@ -745,7 +891,11 @@ const routeTemplateParts = ({
 			take === "all"
 				? [...remaining]
 				: take
-					? remaining.filter((child) => take.some((selector) => selectorMatches(child, selector, sectionType)))
+					? remaining.filter((child) =>
+							take.some((selector) =>
+								selectorMatches(child, selector, sectionType),
+							),
+						)
 					: [];
 		const selectedKeys = new Set(selected.map((child) => child.key));
 		remaining = remaining.filter((child) => !selectedKeys.has(child.key));
@@ -768,8 +918,12 @@ const routeTemplateParts = ({
 			}),
 		};
 	});
-	const start = routed.filter(({ part }) => part.route.at === "start").map(({ node }) => node);
-	const end = routed.filter(({ part }) => part.route.at === "end").map(({ node }) => node);
+	const start = routed
+		.filter(({ part }) => part.route.at === "start")
+		.map(({ node }) => node);
+	const end = routed
+		.filter(({ part }) => part.route.at === "end")
+		.map(({ node }) => node);
 	const around = remaining.flatMap((child) => [
 		...routed
 			.filter(
@@ -802,33 +956,57 @@ const applyTemplateManifest = (
 	index = 0,
 ): SemanticNode => {
 	let children = tree.children.map((child, childIndex) =>
-		applyTemplateManifest(child, manifest, data, tree, [...ancestors, tree], childIndex),
+		applyTemplateManifest(
+			child,
+			manifest,
+			data,
+			tree,
+			[...ancestors, tree],
+			childIndex,
+		),
 	);
 	const ownerParts = manifest.parts.filter((part) =>
 		partMatchesOwner({ part, node: tree, parent, ancestors, index, data }),
 	);
-	const aliases = ownerParts.flatMap((part) => (part.binding.type === "alias" ? [part.binding.token] : []));
+	const aliases = ownerParts.flatMap((part) =>
+		part.binding.type === "alias" ? [part.binding.token] : [],
+	);
 	const existingParts = tree.attributes.part?.split(" ").filter(Boolean) ?? [];
 	const attributes =
-		aliases.length > 0 ? { ...tree.attributes, part: [...existingParts, ...aliases].join(" ") } : tree.attributes;
-	const section = tree.kind === "section" ? tree : findSectionAncestor(ancestors);
+		aliases.length > 0
+			? { ...tree.attributes, part: [...existingParts, ...aliases].join(" ") }
+			: tree.attributes;
+	const section =
+		tree.kind === "section" ? tree : findSectionAncestor(ancestors);
 	const sectionType = section?.attributes.type as CustomSectionType | undefined;
 	for (const part of ownerParts) {
 		if (!isPrimitivePart(part)) continue;
 		const { route } = part;
 		const selectors = route.take;
-		if (route.takeFrom !== "item-header" || selectors === undefined || selectors === "all") continue;
-		const headerIndex = children.findIndex(({ kind }) => kind === "item-header");
+		if (
+			route.takeFrom !== "item-header" ||
+			selectors === undefined ||
+			selectors === "all"
+		)
+			continue;
+		const headerIndex = children.findIndex(
+			({ kind }) => kind === "item-header",
+		);
 		const header = children[headerIndex];
 		if (!header) continue;
 		const selected = header.children.filter((child) =>
-			selectors.some((selector) => selectorMatches(child, selector, sectionType)),
+			selectors.some((selector) =>
+				selectorMatches(child, selector, sectionType),
+			),
 		);
 		if (selected.length === 0) continue;
 		const selectedKeys = new Set(selected.map(({ key }) => key));
 		children = [
 			...children.slice(0, headerIndex),
-			{ ...header, children: header.children.filter(({ key }) => !selectedKeys.has(key)) },
+			{
+				...header,
+				children: header.children.filter(({ key }) => !selectedKeys.has(key)),
+			},
 			...selected,
 			...children.slice(headerIndex + 1),
 		];
@@ -855,7 +1033,9 @@ const wrapCombinedFields = (
 	owner?: "parent",
 ): readonly SemanticNode[] => {
 	const selected = children.filter(
-		(child) => child.kind === "field" && fieldNames.includes(child.attributes.name ?? ""),
+		(child) =>
+			child.kind === "field" &&
+			fieldNames.includes(child.attributes.name ?? ""),
 	);
 	if (selected.length === 0) return children;
 
@@ -879,30 +1059,91 @@ const addCombinedTextHosts = (
 	template: Template,
 	sectionType?: CustomSectionType,
 ): SemanticNode => {
-	const currentSectionType = node.kind === "section" ? (node.attributes.type as CustomSectionType) : sectionType;
-	let children = node.children.map((child) => addCombinedTextHosts(child, template, currentSectionType));
+	const currentSectionType =
+		node.kind === "section"
+			? (node.attributes.type as CustomSectionType)
+			: sectionType;
+	let children = node.children.map((child) =>
+		addCombinedTextHosts(child, template, currentSectionType),
+	);
 
-	if (node.kind === "template-part" && node.attributes.name === "inline-item-header-leading") {
+	if (
+		node.kind === "template-part" &&
+		node.attributes.name === "inline-item-header-leading"
+	) {
 		if (currentSectionType === "experience") {
-			children = [...wrapCombinedFields(node.key, children, ["position", "location"], "experience-position-location")];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["position", "location"],
+					"experience-position-location",
+				),
+			];
 		}
 		if (currentSectionType === "education") {
-			children = [...wrapCombinedFields(node.key, children, ["area", "degree"], "education-area-degree")];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["area", "degree"],
+					"education-area-degree",
+				),
+			];
 		}
 	}
 
-	if (node.kind === "template-part" && node.attributes.name === "education-grade-row") {
-		children = [...wrapCombinedFields(node.key, children, ["grade", "location"], "education-grade-location", "parent")];
+	if (
+		node.kind === "template-part" &&
+		node.attributes.name === "education-grade-row"
+	) {
+		children = [
+			...wrapCombinedFields(
+				node.key,
+				children,
+				["grade", "location"],
+				"education-grade-location",
+				"parent",
+			),
+		];
 	}
 
 	if (node.kind === "item-header" && template !== "meowth") {
 		if (currentSectionType === "experience") {
-			children = [...wrapCombinedFields(node.key, children, ["location"], "experience-location")];
-			children = [...wrapCombinedFields(node.key, children, ["period"], "experience-period")];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["location"],
+					"experience-location",
+				),
+			];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["period"],
+					"experience-period",
+				),
+			];
 		}
 		if (currentSectionType === "education") {
-			children = [...wrapCombinedFields(node.key, children, ["degree", "grade"], "education-degree-grade")];
-			children = [...wrapCombinedFields(node.key, children, ["location", "period"], "education-location-period")];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["degree", "grade"],
+					"education-degree-grade",
+				),
+			];
+			children = [
+				...wrapCombinedFields(
+					node.key,
+					children,
+					["location", "period"],
+					"education-location-period",
+				),
+			];
 		}
 	}
 
@@ -919,15 +1160,26 @@ export function buildSemanticTree({
 	const pageKey = semanticNodeKeys.page(pageNumber);
 	const manifest = getTemplateSemanticManifest(template);
 	const mainSections = filterSections(page.main, data);
-	const sidebarSections = page.fullWidth ? [] : filterSections(page.sidebar, data);
+	const sidebarSections = page.fullWidth
+		? []
+		: filterSections(page.sidebar, data);
 	const featuredSummary =
-		manifest.specialSummary?.source === "main-with-header" && showHeader && mainSections.includes("summary");
+		manifest.specialSummary?.source === "main-with-header" &&
+		showHeader &&
+		mainSections.includes("summary");
 	const headerSummary =
-		manifest.specialSummary?.source === "always" && showHeader && filterSections(["summary"], data).includes("summary");
-	const removeSummary = featuredSummary || manifest.specialSummary?.source === "always";
+		manifest.specialSummary?.source === "always" &&
+		showHeader &&
+		filterSections(["summary"], data).includes("summary");
+	const removeSummary =
+		featuredSummary || manifest.specialSummary?.source === "always";
 	const sectionsByOrigin = {
-		main: removeSummary ? mainSections.filter((section) => section !== "summary") : mainSections,
-		sidebar: removeSummary ? sidebarSections.filter((section) => section !== "summary") : sidebarSections,
+		main: removeSummary
+			? mainSections.filter((section) => section !== "summary")
+			: mainSections,
+		sidebar: removeSummary
+			? sidebarSections.filter((section) => section !== "summary")
+			: sidebarSections,
 	} satisfies Readonly<Record<TemplateSemanticPlacement, readonly string[]>>;
 	const regions = manifest.regions.flatMap((region) => {
 		if (region.name === "header") {
@@ -961,8 +1213,12 @@ export function buildSemanticTree({
 			];
 		}
 
-		const keepEmptySidebar = region.name === "sidebar" && manifest.header.placement === "sidebar" && showHeader;
-		if (region.name === "sidebar" && page.fullWidth && !keepEmptySidebar) return [];
+		const keepEmptySidebar =
+			region.name === "sidebar" &&
+			manifest.header.placement === "sidebar" &&
+			showHeader;
+		if (region.name === "sidebar" && page.fullWidth && !keepEmptySidebar)
+			return [];
 		return [
 			buildRegion({
 				data,
@@ -988,13 +1244,20 @@ export function buildSemanticTree({
 		],
 	});
 
-	return addCombinedTextHosts(applyTemplateManifest(tree, manifest, data), template);
+	return addCombinedTextHosts(
+		applyTemplateManifest(tree, manifest, data),
+		template,
+	);
 }
 
-export type { TemplateSemanticManifest } from "./template-manifest";
 export { shouldShowResumeHeader } from "../templates/shared/cover-letter";
-export { createBindingInventory, STANDARD_FIELD_REGISTRY, STANDARD_ROLE_REGISTRY } from "./binding-inventory";
+export {
+	createBindingInventory,
+	STANDARD_FIELD_REGISTRY,
+	STANDARD_ROLE_REGISTRY,
+} from "./binding-inventory";
 export { semanticNodeKeys } from "./node-keys";
+export type { TemplateSemanticManifest } from "./template-manifest";
 export {
 	getTemplateSemanticBindingRegistry,
 	getTemplateSemanticManifest,

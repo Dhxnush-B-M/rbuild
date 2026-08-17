@@ -1,8 +1,8 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import type { JsonPatchError, Operation } from "fast-json-patch";
 import jsonpatch from "fast-json-patch";
 import z from "zod";
-import { parseResumeData } from "@rbuilder/schema/resume/data";
 
 /**
  * A Zod schema that models JSON Patch (RFC 6902) operations as a discriminated union on `op`.
@@ -32,7 +32,12 @@ export class ResumePatchError extends Error {
 	/** The operation object that caused the failure. */
 	operation: Operation;
 
-	constructor(code: string, message: string, index: number, operation: Operation) {
+	constructor(
+		code: string,
+		message: string,
+		index: number,
+		operation: Operation,
+	) {
 		super(message);
 		this.name = "ResumePatchError";
 		this.code = code;
@@ -48,18 +53,28 @@ export class ResumePatchError extends Error {
 const patchErrorMessages: Record<string, string> = {
 	SEQUENCE_NOT_AN_ARRAY: "Patch sequence must be an array.",
 	OPERATION_NOT_AN_OBJECT: "Operation is not an object.",
-	OPERATION_OP_INVALID: "Operation `op` property is not one of the operations defined in RFC 6902.",
-	OPERATION_PATH_INVALID: "Operation `path` property is not a valid JSON Pointer string.",
-	OPERATION_FROM_REQUIRED: "Operation `from` property is required for `move` and `copy` operations.",
-	OPERATION_VALUE_REQUIRED: "Operation `value` property is required for `add`, `replace`, and `test` operations.",
+	OPERATION_OP_INVALID:
+		"Operation `op` property is not one of the operations defined in RFC 6902.",
+	OPERATION_PATH_INVALID:
+		"Operation `path` property is not a valid JSON Pointer string.",
+	OPERATION_FROM_REQUIRED:
+		"Operation `from` property is required for `move` and `copy` operations.",
+	OPERATION_VALUE_REQUIRED:
+		"Operation `value` property is required for `add`, `replace`, and `test` operations.",
 	OPERATION_VALUE_CANNOT_CONTAIN_UNDEFINED:
 		"Operation `value` contains an `undefined` value, which is not valid in JSON.",
-	OPERATION_PATH_CANNOT_ADD: "Cannot perform an `add` operation at the desired path.",
-	OPERATION_PATH_UNRESOLVABLE: "Cannot perform the operation at a path that does not exist.",
-	OPERATION_FROM_UNRESOLVABLE: "Cannot perform the operation from a path that does not exist.",
-	OPERATION_PATH_ILLEGAL_ARRAY_INDEX: "Array index in path must be an unsigned base-10 integer.",
-	OPERATION_VALUE_OUT_OF_BOUNDS: "The specified array index is greater than the number of elements in the array.",
-	TEST_OPERATION_FAILED: "Test operation failed -- the value at the given path did not match the expected value.",
+	OPERATION_PATH_CANNOT_ADD:
+		"Cannot perform an `add` operation at the desired path.",
+	OPERATION_PATH_UNRESOLVABLE:
+		"Cannot perform the operation at a path that does not exist.",
+	OPERATION_FROM_UNRESOLVABLE:
+		"Cannot perform the operation from a path that does not exist.",
+	OPERATION_PATH_ILLEGAL_ARRAY_INDEX:
+		"Array index in path must be an unsigned base-10 integer.",
+	OPERATION_VALUE_OUT_OF_BOUNDS:
+		"The specified array index is greater than the number of elements in the array.",
+	TEST_OPERATION_FAILED:
+		"Test operation failed -- the value at the given path did not match the expected value.",
 };
 
 /**
@@ -101,7 +116,10 @@ function toResumePatchError(error: JsonPatchError): ResumePatchError {
  * @throws {ResumePatchError} If a `test` operation does not match.
  * @throws {Error} If the patched document does not conform to the `ResumeData` schema.
  */
-export function applyResumePatches(data: ResumeData, operations: Operation[]): ResumeData {
+export function applyResumePatches(
+	data: ResumeData,
+	operations: Operation[],
+): ResumeData {
 	// Validate operations structurally before applying.
 	const validationError = jsonpatch.validate(operations, data);
 	if (validationError) throw toResumePatchError(validationError);
@@ -120,8 +138,11 @@ export function applyResumePatches(data: ResumeData, operations: Operation[]): R
 	try {
 		return parseResumeData(patched);
 	} catch (error) {
-		throw new Error(`Patch produced invalid resume data: ${error instanceof Error ? error.message : String(error)}`, {
-			cause: error,
-		});
+		throw new Error(
+			`Patch produced invalid resume data: ${error instanceof Error ? error.message : String(error)}`,
+			{
+				cause: error,
+			},
+		);
 	}
 }

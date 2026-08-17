@@ -4,16 +4,22 @@ export type SystemVariableDefinition = {
 	description: string;
 };
 
-export type SystemVariableRegistry = Readonly<Record<string, SystemVariableDefinition>>;
+export type SystemVariableRegistry = Readonly<
+	Record<string, SystemVariableDefinition>
+>;
 
 export const SYSTEM_VARIABLE_REGISTRY_V1 = {
 	"--resume-primary-color": { description: "Builder primary color." },
 	"--resume-text-color": { description: "Builder text color." },
 	"--resume-background-color": { description: "Builder background color." },
 	"--resume-body-font-size": { description: "Builder body font size." },
-	"--resume-body-line-height": { description: "Builder body line-height multiplier." },
+	"--resume-body-line-height": {
+		description: "Builder body line-height multiplier.",
+	},
 	"--resume-heading-font-size": { description: "Builder heading font size." },
-	"--resume-heading-line-height": { description: "Builder heading line-height multiplier." },
+	"--resume-heading-line-height": {
+		description: "Builder heading line-height multiplier.",
+	},
 	"--resume-page-gap-x": { description: "Builder horizontal page gap." },
 	"--resume-page-gap-y": { description: "Builder vertical page gap." },
 	"--resume-page-margin-x": { description: "Builder horizontal page margin." },
@@ -23,12 +29,24 @@ export const SYSTEM_VARIABLE_REGISTRY_V1 = {
 	"--resume-sidebar-width": { description: "Builder sidebar width." },
 	"--resume-picture-size": { description: "Builder picture size." },
 	"--resume-picture-rotation": { description: "Builder picture rotation." },
-	"--resume-picture-aspect-ratio": { description: "Builder picture aspect ratio." },
-	"--resume-picture-border-radius": { description: "Builder picture border radius." },
-	"--resume-picture-border-width": { description: "Builder picture border width." },
-	"--resume-picture-border-color": { description: "Builder picture border color." },
-	"--resume-picture-shadow-width": { description: "Builder picture shadow width." },
-	"--resume-picture-shadow-color": { description: "Builder picture shadow color." },
+	"--resume-picture-aspect-ratio": {
+		description: "Builder picture aspect ratio.",
+	},
+	"--resume-picture-border-radius": {
+		description: "Builder picture border radius.",
+	},
+	"--resume-picture-border-width": {
+		description: "Builder picture border width.",
+	},
+	"--resume-picture-border-color": {
+		description: "Builder picture border color.",
+	},
+	"--resume-picture-shadow-width": {
+		description: "Builder picture shadow width.",
+	},
+	"--resume-picture-shadow-color": {
+		description: "Builder picture shadow color.",
+	},
 } as const satisfies SystemVariableRegistry;
 
 export function createSystemVariables(

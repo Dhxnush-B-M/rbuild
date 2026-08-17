@@ -4,7 +4,12 @@ export const bronzorSemanticManifest = {
 	template: "bronzor",
 	regions: [
 		{ name: "header", placement: "main", origins: [] },
-		{ name: "main", placement: "main", origins: ["sidebar", "main"], flow: "interleaved" },
+		{
+			name: "main",
+			placement: "main",
+			origins: ["sidebar", "main"],
+			flow: "interleaved",
+		},
 	],
 	header: { region: "header", placement: "main" },
 	specialSummary: null,

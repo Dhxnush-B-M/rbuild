@@ -1,12 +1,22 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import {
+	afterAll,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 
 let renderPreflightPdf: typeof import("./preflight-core").renderPreflightPdf;
 
 const rendererMock = vi.hoisted(() => ({
 	pdf: vi.fn(() => ({
-		toBlob: vi.fn(async () => new Blob(["%PDF-1.7"], { type: "application/pdf" })),
+		toBlob: vi.fn(
+			async () => new Blob(["%PDF-1.7"], { type: "application/pdf" }),
+		),
 	})),
 }));
 
@@ -48,7 +58,13 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 			hidden: false,
 			keepTogether: false,
 			startOnNewPage: false,
-			items: [{ id: "summary-shaped-item", hidden: false, content: "<p>Missing company</p>" }],
+			items: [
+				{
+					id: "summary-shaped-item",
+					hidden: false,
+					content: "<p>Missing company</p>",
+				},
+			],
 		} as never,
 	];
 	return data;
@@ -87,7 +103,9 @@ describe("renderPreflightPdf", () => {
 	beforeEach(() => {
 		rendererMock.pdf.mockReset();
 		rendererMock.pdf.mockImplementation(() => ({
-			toBlob: vi.fn(async () => new Blob(["%PDF-1.7"], { type: "application/pdf" })),
+			toBlob: vi.fn(
+				async () => new Blob(["%PDF-1.7"], { type: "application/pdf" }),
+			),
 		}));
 	});
 
@@ -102,7 +120,9 @@ describe("renderPreflightPdf", () => {
 		);
 
 		expect(result).toMatchObject({ ok: true, diagnostics: [] });
-		expect(result.ok && new TextDecoder().decode(result.bytes)).toBe("%PDF-1.7");
+		expect(result.ok && new TextDecoder().decode(result.bytes)).toBe(
+			"%PDF-1.7",
+		);
 		expect(rendererMock.pdf).toHaveBeenCalledWith(
 			expect.objectContaining({
 				props: expect.objectContaining({
@@ -129,7 +149,10 @@ describe("renderPreflightPdf", () => {
 			{
 				data: defaultResumeData,
 				template: defaultResumeData.metadata.template,
-				stylesheet: { languageVersion: 1, text: "@version 1; page { color: ; }" },
+				stylesheet: {
+					languageVersion: 1,
+					text: "@version 1; page { color: ; }",
+				},
 			},
 			pageLimits,
 		);
@@ -154,14 +177,20 @@ describe("renderPreflightPdf", () => {
 
 		await expect(result).rejects.toMatchObject({
 			name: "ZodError",
-			issues: expect.arrayContaining([expect.objectContaining({ path: ["customSections", 0, "items", 0, "company"] })]),
+			issues: expect.arrayContaining([
+				expect.objectContaining({
+					path: ["customSections", 0, "items", 0, "company"],
+				}),
+			]),
 		});
 		expect(rendererMock.pdf).not.toHaveBeenCalled();
 	});
 
 	it("returns a stable public failure when React PDF throws", async () => {
 		rendererMock.pdf.mockReturnValueOnce({
-			toBlob: vi.fn(() => Promise.reject(new Error("sensitive renderer details"))),
+			toBlob: vi.fn(() =>
+				Promise.reject(new Error("sensitive renderer details")),
+			),
 		});
 
 		const result = await renderPreflightPdf(
@@ -185,20 +214,26 @@ describe("renderPreflightPdf", () => {
 		["width", "2001pt 1000pt"],
 		["height", "1000pt 20001pt"],
 		["area", "1500pt 15000pt"],
-	])("rejects authored page %s limits before starting the renderer", async (_limit, size) => {
-		const result = await renderPreflightPdf(
-			{
-				data: defaultResumeData,
-				template: defaultResumeData.metadata.template,
-				stylesheet: { languageVersion: 1, text: `@version 1; page { size: ${size}; }` },
-			},
-			pageLimits,
-		);
+	])(
+		"rejects authored page %s limits before starting the renderer",
+		async (_limit, size) => {
+			const result = await renderPreflightPdf(
+				{
+					data: defaultResumeData,
+					template: defaultResumeData.metadata.template,
+					stylesheet: {
+						languageVersion: 1,
+						text: `@version 1; page { size: ${size}; }`,
+					},
+				},
+				pageLimits,
+			);
 
-		expect(result).toMatchObject({
-			ok: false,
-			code: "STYLESHEET_PREFLIGHT_PAGE_SIZE_LIMIT",
-		});
-		expect(rendererMock.pdf).not.toHaveBeenCalled();
-	});
+			expect(result).toMatchObject({
+				ok: false,
+				code: "STYLESHEET_PREFLIGHT_PAGE_SIZE_LIMIT",
+			});
+			expect(rendererMock.pdf).not.toHaveBeenCalled();
+		},
+	);
 });

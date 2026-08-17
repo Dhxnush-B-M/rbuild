@@ -1,11 +1,11 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { QueryClient, QueryKey } from "@tanstack/react-query";
-import type { WritableDraft } from "immer";
 import { t } from "@lingui/core/macro";
 import { consumeEventIterator } from "@orpc/client";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { QueryClient, QueryKey } from "@tanstack/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { debounce, isEqual } from "es-toolkit";
+import type { WritableDraft } from "immer";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { immer } from "zustand/middleware/immer";
@@ -27,7 +27,15 @@ export type Resume = {
 };
 
 // Mirrors the server-side ResumeUpdatedEvent discriminator (packages/api resume/events.ts).
-type ResumeUpdateMutation = "sync" | "create" | "update" | "patch" | "lock" | "password" | "delete" | "stylesheet";
+type ResumeUpdateMutation =
+	| "sync"
+	| "create"
+	| "update"
+	| "patch"
+	| "lock"
+	| "password"
+	| "delete"
+	| "stylesheet";
 type ResumeUpdateEvent = { mutation: ResumeUpdateMutation };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
@@ -97,7 +105,8 @@ function resetHistoryRuntime() {
 let lockedToastId: string | number | undefined;
 
 function getResumeQueryKey(id: string): QueryKey {
-	return orpc.resume.getById.queryOptions({ input: { id } }).queryKey as QueryKey;
+	return orpc.resume.getById.queryOptions({ input: { id } })
+		.queryKey as QueryKey;
 }
 
 function cloneResumeData(data: ResumeData): ResumeData {
@@ -123,7 +132,8 @@ export function isEditableElementFocused(): boolean {
 
 function externalUpdateMessage(mutation: ResumeUpdateMutation): string {
 	if (mutation === "patch") return t`This resume was updated elsewhere.`;
-	if (mutation === "lock" || mutation === "password") return t`This resume's sharing settings changed elsewhere.`;
+	if (mutation === "lock" || mutation === "password")
+		return t`This resume's sharing settings changed elsewhere.`;
 	return t`Synced changes made in another tab.`;
 }
 
@@ -139,7 +149,11 @@ function applyDeferredRemoteResume(id: string) {
 	const resume = runtime.deferredRemoteResume;
 	runtime.deferredRemoteResume = undefined;
 	if (runtime.deferredFocusHandler && typeof document !== "undefined") {
-		document.removeEventListener("focusout", runtime.deferredFocusHandler, true);
+		document.removeEventListener(
+			"focusout",
+			runtime.deferredFocusHandler,
+			true,
+		);
 		runtime.deferredFocusHandler = undefined;
 	}
 
@@ -199,7 +213,10 @@ async function flushResumeSave(id: string) {
 			.catch(() => null)) as unknown as Resume | null;
 
 		if (updated) {
-			runtime.queryClient?.setQueryData(getResumeQueryKey(submitted.id), updated);
+			runtime.queryClient?.setQueryData(
+				getResumeQueryKey(submitted.id),
+				updated,
+			);
 			useResumeStore.getState().mergeResumeMetadata(updated);
 		}
 
@@ -282,7 +299,11 @@ function cleanupRuntime(id: string) {
 	}
 
 	if (runtime.deferredFocusHandler && typeof document !== "undefined") {
-		document.removeEventListener("focusout", runtime.deferredFocusHandler, true);
+		document.removeEventListener(
+			"focusout",
+			runtime.deferredFocusHandler,
+			true,
+		);
 	}
 
 	runtimes.delete(id);
@@ -404,17 +425,23 @@ export const useResumeStore = create<ResumeStore>()(
 			if (!currentResume) return;
 
 			if (currentResume.isLocked) {
-				lockedToastId = toast.error(t`This resume is locked and cannot be updated.`, {
-					id: lockedToastId,
-				});
+				lockedToastId = toast.error(
+					t`This resume is locked and cannot be updated.`,
+					{
+						id: lockedToastId,
+					},
+				);
 				return;
 			}
 
 			// Coalesce bursts: only the first edit of a burst opens a new undo step by snapshotting the
 			// pre-edit state. Edits within HISTORY_COALESCE_MS of the previous one fold into that step.
 			const now = Date.now();
-			const coalesce = historyCanCoalesce && now - historyLastEditAt < HISTORY_COALESCE_MS;
-			const snapshotBefore = coalesce ? undefined : cloneResumeData(currentResume.data);
+			const coalesce =
+				historyCanCoalesce && now - historyLastEditAt < HISTORY_COALESCE_MS;
+			const snapshotBefore = coalesce
+				? undefined
+				: cloneResumeData(currentResume.data);
 			historyLastEditAt = now;
 			historyCanCoalesce = true;
 
@@ -423,7 +450,8 @@ export const useResumeStore = create<ResumeStore>()(
 
 				if (snapshotBefore) {
 					state.undoStack.push(snapshotBefore);
-					if (state.undoStack.length > MAX_HISTORY_ENTRIES) state.undoStack.shift();
+					if (state.undoStack.length > MAX_HISTORY_ENTRIES)
+						state.undoStack.shift();
 					// A fresh edit invalidates the redo branch.
 					state.redoStack = [];
 				}
@@ -453,13 +481,20 @@ type StoreGet = () => ResumeStore;
 
 // Shared undo/redo: move the current data to the opposite stack and install the popped snapshot,
 // then route the change through the normal autosave path so the preview and sync react as usual.
-function applyHistoryStep(get: StoreGet, set: ImmerSet, direction: "undo" | "redo") {
+function applyHistoryStep(
+	get: StoreGet,
+	set: ImmerSet,
+	direction: "undo" | "redo",
+) {
 	const state = get();
 	const currentResume = state.resume;
 	if (!currentResume) return;
 
 	if (currentResume.isLocked) {
-		lockedToastId = toast.error(t`This resume is locked and cannot be updated.`, { id: lockedToastId });
+		lockedToastId = toast.error(
+			t`This resume is locked and cannot be updated.`,
+			{ id: lockedToastId },
+		);
 		return;
 	}
 
@@ -509,19 +544,25 @@ export function usePatchResume() {
 	return useResumeStore((state) => state.patchResume);
 }
 
-function useBuilderResumeSelector<T>(selector: (resume: Resume) => T): T | undefined {
+function useBuilderResumeSelector<T>(
+	selector: (resume: Resume) => T,
+): T | undefined {
 	const params = useParams({ strict: false }) as { resumeId?: string };
 	const resumeId = params.resumeId;
 
 	return useResumeStore((state) => {
-		if (!resumeId || !state.resume || state.resume.id !== resumeId) return undefined;
+		if (!resumeId || !state.resume || state.resume.id !== resumeId)
+			return undefined;
 		return selector(state.resume);
 	});
 }
 
-export function useCurrentBuilderResumeSelector<T>(selector: (resume: Resume) => T): T {
+export function useCurrentBuilderResumeSelector<T>(
+	selector: (resume: Resume) => T,
+): T {
 	const selected = useBuilderResumeSelector(selector);
-	if (selected === undefined) throw new Error("Resume data is required before rendering this component.");
+	if (selected === undefined)
+		throw new Error("Resume data is required before rendering this component.");
 	return selected;
 }
 
@@ -531,7 +572,8 @@ export function useResume(): Resume | undefined {
 
 export function useCurrentResume(): Resume {
 	const resume = useResume();
-	if (!resume) throw new Error("Resume data is required before rendering this component.");
+	if (!resume)
+		throw new Error("Resume data is required before rendering this component.");
 	return resume;
 }
 
@@ -559,7 +601,11 @@ export function useUpdateResumeData() {
 	);
 }
 
-export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: ResumeUpdateSubscriptionOptions) {
+export function useResumeUpdateSubscription({
+	resumeId,
+	onUpdate,
+	onError,
+}: ResumeUpdateSubscriptionOptions) {
 	const [_retryNonce, setRetryNonce] = useState(0);
 
 	useEffect(() => {
@@ -567,21 +613,30 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 
 		let didCancel = false;
 		let retryTimer: number | undefined;
-		const cancel = consumeEventIterator(streamClient.resume.updates.subscribe({ id: resumeId }), {
-			onEvent: async (event) => {
-				try {
-					await onUpdate((event ?? { mutation: "sync" }) as ResumeUpdateEvent);
-				} catch (error) {
-					if (error instanceof DOMException && error.name === "AbortError") return;
+		const cancel = consumeEventIterator(
+			streamClient.resume.updates.subscribe({ id: resumeId }),
+			{
+				onEvent: async (event) => {
+					try {
+						await onUpdate(
+							(event ?? { mutation: "sync" }) as ResumeUpdateEvent,
+						);
+					} catch (error) {
+						if (error instanceof DOMException && error.name === "AbortError")
+							return;
+						onError?.(error);
+					}
+				},
+				onError: (error) => {
+					if (didCancel) return;
 					onError?.(error);
-				}
+					retryTimer = window.setTimeout(
+						() => setRetryNonce((value) => value + 1),
+						2500,
+					);
+				},
 			},
-			onError: (error) => {
-				if (didCancel) return;
-				onError?.(error);
-				retryTimer = window.setTimeout(() => setRetryNonce((value) => value + 1), 2500);
-			},
-		});
+		);
 
 		return () => {
 			didCancel = true;
@@ -593,7 +648,9 @@ export function useResumeUpdateSubscription({ resumeId, onUpdate, onError }: Res
 
 export function useBuilderResumeUpdateSubscription() {
 	const queryClient = useQueryClient();
-	const replaceResumeFromServer = useResumeStore((state) => state.replaceResumeFromServer);
+	const replaceResumeFromServer = useResumeStore(
+		(state) => state.replaceResumeFromServer,
+	);
 	const params = useParams({ strict: false }) as { resumeId?: string };
 	const resumeId = params.resumeId;
 
@@ -606,7 +663,9 @@ export function useBuilderResumeUpdateSubscription() {
 				await refreshStylesheetStore(resumeId);
 				return;
 			}
-			const resume = (await orpc.resume.getById.call({ id: resumeId })) as unknown as Resume;
+			const resume = (await orpc.resume.getById.call({
+				id: resumeId,
+			})) as unknown as Resume;
 
 			queryClient.setQueryData(getResumeQueryKey(resumeId), resume);
 			await refreshStylesheetStore(resumeId, resume.data);
@@ -618,7 +677,9 @@ export function useBuilderResumeUpdateSubscription() {
 
 			const current = useResumeStore.getState().resume;
 			const isExternalChange =
-				event.mutation !== "sync" && current?.id === resume.id && !isEqual(current.data, resume.data);
+				event.mutation !== "sync" &&
+				current?.id === resume.id &&
+				!isEqual(current.data, resume.data);
 
 			if (!isExternalChange) {
 				replaceResumeFromServer(resume);

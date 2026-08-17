@@ -1,7 +1,7 @@
 import type { Style } from "@react-pdf/types";
-import type { StyleInput } from "./styles";
 import { richTextMarkClassName } from "./rich-text-html";
 import { safeTextStyle } from "./safe-text-style";
+import type { StyleInput } from "./styles";
 import { mergeLinkStyles, mergeStyles } from "./styles";
 
 type RichTextProseSpacing = {
@@ -48,7 +48,21 @@ export const createRichTextStylesheet = ({
 	ul: mergeStyles(richListRuleStyle),
 	ol: mergeStyles(richListRuleStyle),
 	li: mergeStyles(proseSpacing.listItem),
-	[`.${richTextMarkClassName}`]: mergeStyles(richMarkStyle, richMarkRuleStyle, safeTextStyle),
-	p: mergeStyles(richParagraphStyle, richParagraphRuleStyle, safeTextStyle, proseSpacing.paragraph),
-	a: mergeLinkStyles({ hideUnderline: hideLinkUnderline === true }, linkStyle, richLinkRuleStyle, safeTextStyle),
+	[`.${richTextMarkClassName}`]: mergeStyles(
+		richMarkStyle,
+		richMarkRuleStyle,
+		safeTextStyle,
+	),
+	p: mergeStyles(
+		richParagraphStyle,
+		richParagraphRuleStyle,
+		safeTextStyle,
+		proseSpacing.paragraph,
+	),
+	a: mergeLinkStyles(
+		{ hideUnderline: hideLinkUnderline === true },
+		linkStyle,
+		richLinkRuleStyle,
+		safeTextStyle,
+	),
 });

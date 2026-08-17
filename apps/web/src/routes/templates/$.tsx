@@ -1,8 +1,8 @@
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { createFileRoute } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 import { useIsClient } from "usehooks-ts";
-import { sampleResumeData } from "@rbuilder/schema/resume/sample";
-import { templateSchema } from "@rbuilder/schema/templates";
 import { useLocalizedResumeDocument } from "@/features/resume/export/pdf-document";
 import { createNoindexFollowMeta } from "@/libs/seo";
 
@@ -31,7 +31,10 @@ function TemplatePdfRoute() {
 
 	return (
 		<Suspense fallback={null}>
-			<PDFViewer showToolbar={false} style={{ height: "100svh", width: "100svw", border: "none" }}>
+			<PDFViewer
+				showToolbar={false}
+				style={{ height: "100svh", width: "100svw", border: "none" }}
+			>
 				{resumeDocument}
 			</PDFViewer>
 		</Suspense>

@@ -1,6 +1,4 @@
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
-import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
-import type { CSSProperties, HTMLAttributes, Ref } from "react";
 import {
 	closestCorners,
 	DndContext,
@@ -10,7 +8,12 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+	arrayMove,
+	SortableContext,
+	useSortable,
+	verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -23,8 +26,7 @@ import {
 	PlusIcon,
 	TrashIcon,
 } from "@phosphor-icons/react";
-import { useCallback, useId, useState } from "react";
-import { match } from "ts-pattern";
+import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
@@ -39,8 +41,14 @@ import {
 } from "@rbuilder/ui/components/dropdown-menu";
 import { Switch } from "@rbuilder/ui/components/switch";
 import { cn } from "@rbuilder/utils/style";
+import type { CSSProperties, HTMLAttributes, Ref } from "react";
+import { useCallback, useId, useState } from "react";
+import { match } from "ts-pattern";
 import { templates } from "@/dialogs/resume/template/data";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { resolveLayoutSectionTitle } from "./title";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
@@ -78,7 +86,10 @@ const parseDroppableId = (id: string): PageLocation | null => {
 		if (parts.length >= 3) {
 			const pageIndex = Number.parseInt(parts[1] ?? "0", 10);
 			const columnId = parts[2] as ColumnId;
-			if (!Number.isNaN(pageIndex) && (columnId === "main" || columnId === "sidebar")) {
+			if (
+				!Number.isNaN(pageIndex) &&
+				(columnId === "main" || columnId === "sidebar")
+			) {
 				return { pageIndex, columnId };
 			}
 		}
@@ -101,7 +112,9 @@ export function LayoutPages() {
 	const layout = resume.data.metadata.layout;
 	const updateResumeData = useUpdateResumeData();
 
-	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+	);
 
 	/**
 	 * Returns the page index and column that contains the given section id.
@@ -126,7 +139,10 @@ export function LayoutPages() {
 		[layout.pages],
 	);
 
-	const handleDragStart = useCallback((event: DragStartEvent) => setActiveId(String(event.active.id)), []);
+	const handleDragStart = useCallback(
+		(event: DragStartEvent) => setActiveId(String(event.active.id)),
+		[],
+	);
 
 	const handleDragEnd = useCallback(
 		({ active, over }: DragEndEvent) => {
@@ -139,12 +155,16 @@ export function LayoutPages() {
 			if (activeIdStr === overIdStr) return;
 
 			const activeLocation = findContainer(activeIdStr);
-			const overLocation = parseDroppableId(overIdStr) ?? findContainer(overIdStr);
+			const overLocation =
+				parseDroppableId(overIdStr) ?? findContainer(overIdStr);
 
 			if (!activeLocation || !overLocation) return;
 
 			// Same location, reorder within column
-			if (activeLocation.pageIndex === overLocation.pageIndex && activeLocation.columnId === overLocation.columnId) {
+			if (
+				activeLocation.pageIndex === overLocation.pageIndex &&
+				activeLocation.columnId === overLocation.columnId
+			) {
 				const page = layout.pages[activeLocation.pageIndex];
 				const items = page[activeLocation.columnId];
 				const oldIdx = items.indexOf(activeIdStr);
@@ -153,12 +173,13 @@ export function LayoutPages() {
 				if (newIdx === -1) newIdx = items.length - 1;
 
 				updateResumeData((draft) => {
-					const colOrder = draft.metadata.layout.pages[activeLocation.pageIndex][activeLocation.columnId];
-					draft.metadata.layout.pages[activeLocation.pageIndex][activeLocation.columnId] = arrayMove(
-						colOrder,
-						oldIdx,
-						newIdx,
-					);
+					const colOrder =
+						draft.metadata.layout.pages[activeLocation.pageIndex][
+							activeLocation.columnId
+						];
+					draft.metadata.layout.pages[activeLocation.pageIndex][
+						activeLocation.columnId
+					] = arrayMove(colOrder, oldIdx, newIdx);
 				});
 				return;
 			}
@@ -175,7 +196,8 @@ export function LayoutPages() {
 			if (toIdx === -1) toIdx = toItems.length;
 
 			updateResumeData((draft) => {
-				const fromPageDraft = draft.metadata.layout.pages[activeLocation.pageIndex];
+				const fromPageDraft =
+					draft.metadata.layout.pages[activeLocation.pageIndex];
 				const toPageDraft = draft.metadata.layout.pages[overLocation.pageIndex];
 				const from = fromPageDraft[activeLocation.columnId];
 				const to = toPageDraft[overLocation.columnId];
@@ -270,7 +292,11 @@ export function LayoutPages() {
 				</Button>
 			</div>
 
-			<DragOverlay>{activeId ? <LayoutItemContent id={activeId} isDragging isOverlay /> : null}</DragOverlay>
+			<DragOverlay>
+				{activeId ? (
+					<LayoutItemContent id={activeId} isDragging isOverlay />
+				) : null}
+			</DragOverlay>
 		</DndContext>
 	);
 }
@@ -301,18 +327,27 @@ function PageContainer({
 				<div className="grid @max-[22rem]:grid-cols-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
 						<span className="font-medium text-xs">
-							<Trans comment="Layout editor page label with 1-based page number">Page {pageIndex + 1}</Trans>
+							<Trans comment="Layout editor page label with 1-based page number">
+								Page {pageIndex + 1}
+							</Trans>
 						</span>
 
-						<label htmlFor={fullWidthSwitchId} className="flex min-w-0 cursor-pointer items-center gap-2">
+						<label
+							htmlFor={fullWidthSwitchId}
+							className="flex min-w-0 cursor-pointer items-center gap-2"
+						>
 							<Switch
 								id={fullWidthSwitchId}
 								checked={page.fullWidth}
-								onCheckedChange={(checked) => onToggleFullWidth(pageIndex, checked)}
+								onCheckedChange={(checked) =>
+									onToggleFullWidth(pageIndex, checked)
+								}
 							/>
 
 							<span className="font-medium text-muted-foreground text-xs">
-								<Trans comment="Layout editor toggle label that makes a page single-column">Full Width</Trans>
+								<Trans comment="Layout editor toggle label that makes a page single-column">
+									Full Width
+								</Trans>
 							</span>
 						</label>
 					</div>
@@ -379,24 +414,41 @@ function LayoutColumn({
 	const { setNodeRef, isOver } = useDroppable({ id: droppableId, disabled });
 
 	return (
-		<SortableContext id={droppableId} items={items} strategy={verticalListSortingStrategy}>
+		<SortableContext
+			id={droppableId}
+			items={items}
+			strategy={verticalListSortingStrategy}
+		>
 			<div className={cn("space-y-1.5", disabled && "opacity-50", className)}>
-				{!hideLabel && <div className="@md:row-start-1 ps-4 font-medium text-xs">{getColumnLabel(columnId)}</div>}
+				{!hideLabel && (
+					<div className="@md:row-start-1 ps-4 font-medium text-xs">
+						{getColumnLabel(columnId)}
+					</div>
+				)}
 
 				<div
 					ref={setNodeRef}
 					className={cn(
 						"space-y-2.5 rounded-md border border-dashed p-3 pb-8 transition-colors",
-						isOver && !disabled ? "border-primary/60 bg-primary/5" : "bg-background/40",
+						isOver && !disabled
+							? "border-primary/60 bg-primary/5"
+							: "bg-background/40",
 					)}
 				>
 					{items.map((id) => (
-						<SortableLayoutItem key={id} id={id} pageIndex={pageIndex} columnId={columnId} />
+						<SortableLayoutItem
+							key={id}
+							id={id}
+							pageIndex={pageIndex}
+							columnId={columnId}
+						/>
 					))}
 
 					{items.length === 0 && (
 						<div className="rounded-md border border-dashed p-4 font-medium text-muted-foreground text-xs">
-							<Trans>Drag and drop sections here to move them between columns</Trans>
+							<Trans>
+								Drag and drop sections here to move them between columns
+							</Trans>
 						</div>
 					)}
 				</div>
@@ -411,10 +463,24 @@ type SortableLayoutItemProps = {
 	columnId: ColumnId;
 };
 
-function SortableLayoutItem({ id, pageIndex, columnId }: SortableLayoutItemProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+function SortableLayoutItem({
+	id,
+	pageIndex,
+	columnId,
+}: SortableLayoutItemProps) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({ id });
 
-	const style: CSSProperties = { transform: CSS.Transform.toString(transform), transition };
+	const style: CSSProperties = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
 
 	return (
 		<LayoutItemContent
@@ -447,7 +513,8 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 	const pages = resume.data.metadata.layout.pages;
 	// When the template collapses the sidebar, no page has a usable sidebar column.
-	const sidebarCollapsed = templates[resume.data.metadata.template].sidebarPosition === "none";
+	const sidebarCollapsed =
+		templates[resume.data.metadata.template].sidebarPosition === "none";
 
 	const moveTo = (targetPageIndex: number, targetColumnId: ColumnId) => {
 		updateResumeData((draft) => {
@@ -465,7 +532,11 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 			const index = from.indexOf(id);
 			if (index === -1) return;
 			from.splice(index, 1);
-			draft.metadata.layout.pages.push({ fullWidth: false, main: [id], sidebar: [] });
+			draft.metadata.layout.pages.push({
+				fullWidth: false,
+				main: [id],
+				sidebar: [],
+			});
 		});
 	};
 
@@ -490,7 +561,9 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 							<DropdownMenuSubContent>
 								<DropdownMenuItem
-									disabled={targetPageIndex === pageIndex && columnId === "main"}
+									disabled={
+										targetPageIndex === pageIndex && columnId === "main"
+									}
 									onClick={() => moveTo(targetPageIndex, "main")}
 								>
 									{getColumnLabel("main")}
@@ -498,7 +571,9 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 								{!sidebarHidden && (
 									<DropdownMenuItem
-										disabled={targetPageIndex === pageIndex && columnId === "sidebar"}
+										disabled={
+											targetPageIndex === pageIndex && columnId === "sidebar"
+										}
 										onClick={() => moveTo(targetPageIndex, "sidebar")}
 									>
 										{getColumnLabel("sidebar")}
@@ -522,10 +597,16 @@ function MoveToSubmenu({ id, pageIndex, columnId }: MoveToSubmenuProps) {
 
 type SectionBreakField = "keepTogether" | "startOnNewPage";
 
-const readSectionBreak = (data: ResumeData, id: string, field: SectionBreakField): boolean => {
+const readSectionBreak = (
+	data: ResumeData,
+	id: string,
+	field: SectionBreakField,
+): boolean => {
 	if (id === "summary") return data.summary[field];
 	if (id in data.sections) return data.sections[id as SectionType][field];
-	return data.customSections.find((section) => section.id === id)?.[field] ?? false;
+	return (
+		data.customSections.find((section) => section.id === id)?.[field] ?? false
+	);
 };
 
 type SectionBreakItemsProps = {
@@ -567,7 +648,9 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("keepTogether")}
 			>
-				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">Keep together</Trans>
+				<Trans comment="Layout editor toggle that prevents a section from splitting across pages">
+					Keep together
+				</Trans>
 			</DropdownMenuCheckboxItem>
 
 			<p className="px-2 pb-1 text-muted-foreground text-xs">
@@ -581,7 +664,9 @@ function SectionBreakItems({ id }: SectionBreakItemsProps) {
 				onSelect={(event) => event.preventDefault()}
 				onCheckedChange={() => toggle("startOnNewPage")}
 			>
-				<Trans comment="Layout editor toggle that forces a section to begin on a new page">Start on new page</Trans>
+				<Trans comment="Layout editor toggle that forces a section to begin on a new page">
+					Start on new page
+				</Trans>
 			</DropdownMenuCheckboxItem>
 		</>
 	);

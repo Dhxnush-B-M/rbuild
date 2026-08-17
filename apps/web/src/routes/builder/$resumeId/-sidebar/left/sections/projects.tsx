@@ -1,19 +1,26 @@
-import type { projectItemSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { AnimatePresence, Reorder } from "motion/react";
+import type { projectItemSchema } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { AnimatePresence, Reorder } from "motion/react";
+import type z from "zod";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";
 import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 const buildSubtitle = (item: z.infer<typeof projectItemSchema>) => {
-	const parts = [item.period, item.website.label].filter((part) => part && part.trim().length > 0);
+	const parts = [item.period, item.website.label].filter(
+		(part) => part && part.trim().length > 0,
+	);
 	return parts.length > 0 ? parts.join(" • ") : undefined;
 };
 
 export function ProjectsSectionBuilder() {
-	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.projects);
+	const section = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.sections.projects,
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof projectItemSchema>[]) => {
@@ -23,11 +30,23 @@ export function ProjectsSectionBuilder() {
 	};
 
 	return (
-		<SectionBase type="projects" className={cn("rounded-md border", section.items.length === 0 && "border-dashed")}>
+		<SectionBase
+			type="projects"
+			className={cn(
+				"rounded-md border",
+				section.items.length === 0 && "border-dashed",
+			)}
+		>
 			<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
 				<AnimatePresence>
 					{section.items.map((item) => (
-						<SectionItem key={item.id} type="projects" item={item} title={item.name} subtitle={buildSubtitle(item)} />
+						<SectionItem
+							key={item.id}
+							type="projects"
+							item={item}
+							title={item.name}
+							subtitle={buildSubtitle(item)}
+						/>
 					))}
 				</AnimatePresence>
 			</Reorder.Group>

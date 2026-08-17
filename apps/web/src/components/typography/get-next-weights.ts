@@ -1,10 +1,24 @@
 import { getFont } from "@rbuilder/fonts";
 
-type Weight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+type Weight =
+	| "100"
+	| "200"
+	| "300"
+	| "400"
+	| "500"
+	| "600"
+	| "700"
+	| "800"
+	| "900";
 
 export function getNextWeights(fontFamily: string): Weight[] | null {
 	const fontData = getFont(fontFamily);
-	if (!fontData || !Array.isArray(fontData.weights) || fontData.weights.length === 0) return null;
+	if (
+		!fontData ||
+		!Array.isArray(fontData.weights) ||
+		fontData.weights.length === 0
+	)
+		return null;
 
 	const uniqueWeights = [...new Set(fontData.weights)] as Weight[];
 
@@ -20,7 +34,8 @@ export function getNextWeights(fontFamily: string): Weight[] | null {
 	while (weights.length < 2 && uniqueWeights.length > 0) {
 		// candidateIndex: 0 (first), 1 (last)
 		const lastIndex = uniqueWeights.length - 1;
-		const candidate = weights.length === 0 ? uniqueWeights[0] : uniqueWeights[lastIndex];
+		const candidate =
+			weights.length === 0 ? uniqueWeights[0] : uniqueWeights[lastIndex];
 		if (!selectedWeights.has(candidate)) {
 			weights.push(candidate);
 			selectedWeights.add(candidate);

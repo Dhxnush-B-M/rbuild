@@ -1,11 +1,22 @@
-import type { SemanticNode, SemanticNodeKind } from "@rbuilder/resume/stylesheet/types";
+import type {
+	SemanticNode,
+	SemanticNodeKind,
+} from "@rbuilder/resume/stylesheet/types";
 
-export type StandardFieldRole = "primary-text" | "secondary-text" | "structured-link";
-export type StandardFieldDefinition = Readonly<Record<string, readonly StandardFieldRole[]>>;
+export type StandardFieldRole =
+	| "primary-text"
+	| "secondary-text"
+	| "structured-link";
+export type StandardFieldDefinition = Readonly<
+	Record<string, readonly StandardFieldRole[]>
+>;
 
 export const STANDARD_FIELD_REGISTRY = {
 	summary: { content: [] },
-	profiles: { network: ["primary-text"], username: ["secondary-text", "structured-link"] },
+	profiles: {
+		network: ["primary-text"],
+		username: ["secondary-text", "structured-link"],
+	},
 	experience: {
 		company: ["primary-text"],
 		position: ["secondary-text"],
@@ -13,7 +24,11 @@ export const STANDARD_FIELD_REGISTRY = {
 		period: ["secondary-text"],
 		description: [],
 	},
-	"experience-role": { position: ["primary-text"], period: ["secondary-text"], description: [] },
+	"experience-role": {
+		position: ["primary-text"],
+		period: ["secondary-text"],
+		description: [],
+	},
 	education: {
 		school: ["primary-text"],
 		area: ["secondary-text"],
@@ -23,13 +38,36 @@ export const STANDARD_FIELD_REGISTRY = {
 		period: ["secondary-text"],
 		description: [],
 	},
-	projects: { name: ["primary-text"], period: ["secondary-text"], description: [] },
-	skills: { name: ["primary-text"], proficiency: ["secondary-text"], keywords: ["secondary-text"] },
+	projects: {
+		name: ["primary-text"],
+		period: ["secondary-text"],
+		description: [],
+	},
+	skills: {
+		name: ["primary-text"],
+		proficiency: ["secondary-text"],
+		keywords: ["secondary-text"],
+	},
 	languages: { language: ["primary-text"], fluency: ["secondary-text"] },
 	interests: { name: ["primary-text"], keywords: ["secondary-text"] },
-	awards: { title: ["primary-text"], date: ["secondary-text"], awarder: ["secondary-text"], description: [] },
-	certifications: { title: ["primary-text"], date: ["secondary-text"], issuer: ["secondary-text"], description: [] },
-	publications: { title: ["primary-text"], date: ["secondary-text"], publisher: ["secondary-text"], description: [] },
+	awards: {
+		title: ["primary-text"],
+		date: ["secondary-text"],
+		awarder: ["secondary-text"],
+		description: [],
+	},
+	certifications: {
+		title: ["primary-text"],
+		date: ["secondary-text"],
+		issuer: ["secondary-text"],
+		description: [],
+	},
+	publications: {
+		title: ["primary-text"],
+		date: ["secondary-text"],
+		publisher: ["secondary-text"],
+		description: [],
+	},
 	volunteer: {
 		organization: ["primary-text"],
 		location: ["secondary-text"],
@@ -79,7 +117,11 @@ export type SemanticBindingRegistry = Readonly<
 	Partial<
 		Record<
 			SemanticNodeKind,
-			SemanticBinding | ((node: SemanticNode, context: SemanticBindingContext) => SemanticBinding | undefined)
+			| SemanticBinding
+			| ((
+					node: SemanticNode,
+					context: SemanticBindingContext,
+			  ) => SemanticBinding | undefined)
 		>
 	>
 >;
@@ -91,7 +133,9 @@ export type BindingInventory = {
 	syntheticWrapperCount: number;
 };
 
-const existing = (primitive: PrimitiveBinding["primitive"]): PrimitiveBinding => ({
+const existing = (
+	primitive: PrimitiveBinding["primitive"],
+): PrimitiveBinding => ({
 	type: "primitive",
 	primitive,
 	source: "existing",
@@ -106,9 +150,13 @@ export const SHARED_BINDING_REGISTRY = {
 	name: existing("Text"),
 	headline: existing("Text"),
 	"contact-list": existing("View"),
-	"contact-item": (node) => existing(node.roles.includes("structured-link") ? "Link" : "View"),
+	"contact-item": (node) =>
+		existing(node.roles.includes("structured-link") ? "Link" : "View"),
 	section: existing("View"),
-	"section-heading": (node) => existing(node.children.some((child) => child.kind === "icon") ? "View" : "Text"),
+	"section-heading": (node) =>
+		existing(
+			node.children.some((child) => child.kind === "icon") ? "View" : "Text",
+		),
 	"section-items": existing("View"),
 	item: existing("View"),
 	"item-header": existing("View"),
@@ -121,7 +169,12 @@ export const SHARED_BINDING_REGISTRY = {
 					token: "combined-text",
 				}
 			: existing("Text"),
-	field: (node) => existing(node.children.some((child) => child.kind === "rich-text") ? "View" : "Text"),
+	field: (node) =>
+		existing(
+			node.children.some((child) => child.kind === "rich-text")
+				? "View"
+				: "Text",
+		),
 	link: (_node, { parent }) =>
 		parent?.kind === "contact-item"
 			? {
@@ -131,7 +184,10 @@ export const SHARED_BINDING_REGISTRY = {
 					token: "structured-link",
 				}
 			: existing("Link"),
-	icon: (node) => existing(node.attributes.type && node.attributes.type !== "icon" ? "View" : "Svg"),
+	icon: (node) =>
+		existing(
+			node.attributes.type && node.attributes.type !== "icon" ? "View" : "Svg",
+		),
 	level: existing("View"),
 	"rich-text": (_node, { parent }) =>
 		parent?.kind === "field"
@@ -147,7 +203,8 @@ export const SHARED_BINDING_REGISTRY = {
 	paragraph: existing("Text"),
 	list: existing("View"),
 	"list-item": existing("View"),
-	"list-item-content": (node) => existing(node.attributes.direction === "rtl" ? "Text" : "View"),
+	"list-item-content": (node) =>
+		existing(node.attributes.direction === "rtl" ? "Text" : "View"),
 	"list-marker": existing("Text"),
 	strong: existing("Text"),
 	emphasis: existing("Text"),
@@ -175,7 +232,10 @@ export function createBindingInventory(
 		const aliasTokens = node.attributes.part?.split(" ").filter(Boolean);
 		if (aliasTokens?.length) aliasTokensByNodeKey[node.key] = aliasTokens;
 		const declaration = registry[node.kind];
-		const binding = typeof declaration === "function" ? declaration(node, { parent }) : declaration;
+		const binding =
+			typeof declaration === "function"
+				? declaration(node, { parent })
+				: declaration;
 
 		if (!binding) {
 			unboundNodeKeys.push(node.key);
@@ -208,5 +268,10 @@ export function createBindingInventory(
 		}
 	}
 
-	return { bindings, aliasTokensByNodeKey, unboundNodeKeys, syntheticWrapperCount };
+	return {
+		bindings,
+		aliasTokensByNodeKey,
+		unboundNodeKeys,
+		syntheticWrapperCount,
+	};
 }

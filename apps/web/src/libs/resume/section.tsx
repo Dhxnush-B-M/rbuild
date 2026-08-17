@@ -1,6 +1,5 @@
-import type { IconProps } from "@phosphor-icons/react";
-import type { SectionType } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
+import type { IconProps } from "@phosphor-icons/react";
 import {
 	BookOpenIcon,
 	BrainIcon,
@@ -29,12 +28,18 @@ import {
 	TrophyIcon,
 	UsersThreeIcon,
 } from "@phosphor-icons/react";
-import { match } from "ts-pattern";
+import type { SectionType } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
+import { match } from "ts-pattern";
 
 export { defaultSectionIconNames } from "@rbuilder/schema/resume/section-icons";
 
-export type LeftSidebarSection = "picture" | "basics" | "summary" | SectionType | "custom";
+export type LeftSidebarSection =
+	| "picture"
+	| "basics"
+	| "summary"
+	| SectionType
+	| "custom";
 
 // CustomSectionType values that are not in SectionType (used in custom sections only)
 type CustomOnlyType = "cover-letter";
@@ -80,7 +85,9 @@ export const rightSidebarSections: RightSidebarSection[] = [
 	"export",
 ] as const;
 
-export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string => {
+export const getSectionTitle = (
+	type: SidebarSection | CustomOnlyType,
+): string => {
 	return (
 		match(type)
 			// Left Sidebar Sections
@@ -119,7 +126,10 @@ export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string =
 	);
 };
 
-export const getSectionIcon = (type: SidebarSection | CustomOnlyType, props?: IconProps): React.ReactNode => {
+export const getSectionIcon = (
+	type: SidebarSection | CustomOnlyType,
+	props?: IconProps,
+): React.ReactNode => {
 	const iconProps = { ...props, className: cn("shrink-0", props?.className) };
 
 	return (

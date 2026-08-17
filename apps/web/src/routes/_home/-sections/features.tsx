@@ -7,9 +7,9 @@ import {
 	PaletteIcon,
 	ShieldCheckIcon,
 } from "@phosphor-icons/react";
-import { m } from "motion/react";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { cn } from "@rbuilder/utils/style";
+import { m } from "motion/react";
 
 type Feature = {
 	id: string;
@@ -23,37 +23,43 @@ const features: Feature[] = [
 		id: "live-preview",
 		icon: LightningIcon,
 		title: "Real-Time Live Preview",
-		description: "Instant side-by-side editing with high-precision PDF rendering as you type.",
+		description:
+			"Instant side-by-side editing with high-precision PDF rendering as you type.",
 	},
 	{
 		id: "data-privacy",
 		icon: ShieldCheckIcon,
 		title: "100% Privacy & Security",
-		description: "Your career data remains private and secure. Zero tracking, zero third-party data selling.",
+		description:
+			"Your career data remains private and secure. Zero tracking, zero third-party data selling.",
 	},
 	{
 		id: "ats-optimized",
 		icon: CheckCircleIcon,
 		title: "ATS Parser Optimized",
-		description: "Engineered layouts and clean typography designed to achieve maximum match scores on ATS scanners.",
+		description:
+			"Engineered layouts and clean typography designed to achieve maximum match scores on ATS scanners.",
 	},
 	{
 		id: "export-options",
 		icon: FilePdfIcon,
 		title: "Instant PDF & Shareable Links",
-		description: "Download pixel-perfect PDFs anytime or generate password-protected public web links.",
+		description:
+			"Download pixel-perfect PDFs anytime or generate password-protected public web links.",
 	},
 	{
 		id: "customization",
 		icon: PaletteIcon,
 		title: "Unlimited Customization",
-		description: "Customize colors, typography, section order, and spacing to match your personal brand.",
+		description:
+			"Customize colors, typography, section order, and spacing to match your personal brand.",
 	},
 	{
 		id: "smart-import",
 		icon: FileArrowUpIcon,
 		title: "Smart Import & Multi-Resume",
-		description: "Import existing data and manage unlimited tailored resume versions.",
+		description:
+			"Import existing data and manage unlimited tailored resume versions.",
 	},
 ];
 
@@ -80,8 +86,12 @@ function FeatureCard({ icon: Icon, title, description }: Feature) {
 			</div>
 
 			<div className="relative flex flex-col gap-y-1.5">
-				<h3 className="font-bold text-lg tracking-tight transition-colors group-hover:text-primary">{title}</h3>
-				<p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+				<h3 className="font-bold text-lg tracking-tight transition-colors group-hover:text-primary">
+					{title}
+				</h3>
+				<p className="text-muted-foreground text-sm leading-relaxed">
+					{description}
+				</p>
 			</div>
 		</m.div>
 	);
@@ -89,7 +99,10 @@ function FeatureCard({ icon: Icon, title, description }: Feature) {
 
 export function Features() {
 	return (
-		<section id="features" className="container mx-auto border-border/40 border-b px-4 py-16 md:py-24">
+		<section
+			id="features"
+			className="container mx-auto border-border/40 border-b px-4 py-16 md:py-24"
+		>
 			<m.div
 				className="mb-12 flex flex-col items-center space-y-4 text-center will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 20 }}
@@ -106,7 +119,8 @@ export function Features() {
 				</h2>
 
 				<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-					Everything you need to create, customize, and share job-winning resumes effortlessly.
+					Everything you need to create, customize, and share job-winning
+					resumes effortlessly.
 				</p>
 			</m.div>
 

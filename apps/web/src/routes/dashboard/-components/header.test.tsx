@@ -1,12 +1,14 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
 import { ListIcon } from "@phosphor-icons/react";
 import { SidebarProvider } from "@rbuilder/ui/components/sidebar";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { DashboardHeader } from "./header";
 
-const renderHeader = (props: Partial<React.ComponentProps<typeof DashboardHeader>> = {}) =>
+const renderHeader = (
+	props: Partial<React.ComponentProps<typeof DashboardHeader>> = {},
+) =>
 	render(
 		<SidebarProvider>
 			<DashboardHeader title="Resumes" icon={ListIcon} {...props} />

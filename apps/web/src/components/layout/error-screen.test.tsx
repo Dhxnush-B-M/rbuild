@@ -1,15 +1,19 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
+import { I18nProvider } from "@lingui/react";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { i18n } from "@lingui/core";
-import { I18nProvider } from "@lingui/react";
 
 // `Link` from tanstack/react-router requires a Router context. Stub it out with
 // a plain anchor so we can render the screen in isolation.
 vi.mock("@tanstack/react-router", () => ({
-	Link: ({ children, to, ...rest }: React.PropsWithChildren<{ to: string }>) => (
+	Link: ({
+		children,
+		to,
+		...rest
+	}: React.PropsWithChildren<{ to: string }>) => (
 		<a href={typeof to === "string" ? to : "#"} {...rest}>
 			{children}
 		</a>

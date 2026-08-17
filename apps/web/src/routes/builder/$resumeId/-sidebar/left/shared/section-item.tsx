@@ -1,10 +1,3 @@
-import type {
-	CustomSectionItem,
-	CustomSectionType,
-	SectionItem as SectionItemType,
-	SectionType,
-} from "@rbuilder/schema/resume/data";
-import type { ButtonProps } from "@rbuilder/ui/components/button";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
@@ -21,8 +14,13 @@ import {
 	PlusIcon,
 	TrashSimpleIcon,
 } from "@phosphor-icons/react";
-import { Reorder, useDragControls } from "motion/react";
-import { useMemo } from "react";
+import type {
+	CustomSectionItem,
+	CustomSectionType,
+	SectionItem as SectionItemType,
+	SectionType,
+} from "@rbuilder/schema/resume/data";
+import type { ButtonProps } from "@rbuilder/ui/components/button";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
@@ -36,8 +34,13 @@ import {
 	DropdownMenuTrigger,
 } from "@rbuilder/ui/components/dropdown-menu";
 import { cn } from "@rbuilder/utils/style";
+import { Reorder, useDragControls } from "motion/react";
+import { useMemo } from "react";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
 	addItemToSection,
@@ -65,7 +68,11 @@ type MoveItemSubmenuProps = {
  * - Create new section on existing page
  * - Create new page with new section
  */
-function MoveItemSubmenu({ type, item, customSectionId }: MoveItemSubmenuProps) {
+function MoveItemSubmenu({
+	type,
+	item,
+	customSectionId,
+}: MoveItemSubmenuProps) {
 	const resume = useCurrentResume();
 	const updateResumeData = useUpdateResumeData();
 
@@ -84,7 +91,12 @@ function MoveItemSubmenu({ type, item, customSectionId }: MoveItemSubmenuProps) 
 	/** Handler: Move item to an existing section */
 	const handleMoveToSection = (targetSectionId: string) => {
 		updateResumeData((draft) => {
-			const removedItem = removeItemFromSource(draft, item.id, type, customSectionId);
+			const removedItem = removeItemFromSource(
+				draft,
+				item.id,
+				type,
+				customSectionId,
+			);
 			if (!removedItem) return;
 			addItemToSection(draft, removedItem, targetSectionId, type);
 		});
@@ -93,16 +105,32 @@ function MoveItemSubmenu({ type, item, customSectionId }: MoveItemSubmenuProps) 
 	/** Handler: Create a new custom section on an existing page and move the item there */
 	const handleNewSectionOnPage = (pageIndex: number) => {
 		updateResumeData((draft) => {
-			const removedItem = removeItemFromSource(draft, item.id, type, customSectionId);
+			const removedItem = removeItemFromSource(
+				draft,
+				item.id,
+				type,
+				customSectionId,
+			);
 			if (!removedItem) return;
-			createCustomSectionWithItem(draft, removedItem, type, currentSectionTitle, pageIndex);
+			createCustomSectionWithItem(
+				draft,
+				removedItem,
+				type,
+				currentSectionTitle,
+				pageIndex,
+			);
 		});
 	};
 
 	/** Handler: Create a new page with a new custom section and move the item there */
 	const handleNewPage = () => {
 		updateResumeData((draft) => {
-			const removedItem = removeItemFromSource(draft, item.id, type, customSectionId);
+			const removedItem = removeItemFromSource(
+				draft,
+				item.id,
+				type,
+				customSectionId,
+			);
 			if (!removedItem) return;
 			createPageWithSection(draft, removedItem, type, currentSectionTitle);
 		});
@@ -127,7 +155,10 @@ function MoveItemSubmenu({ type, item, customSectionId }: MoveItemSubmenuProps) 
 						<DropdownMenuSubContent>
 							{/* Existing compatible sections on this page */}
 							{sections.map(({ sectionId, sectionTitle }) => (
-								<DropdownMenuItem key={sectionId} onClick={() => handleMoveToSection(sectionId)}>
+								<DropdownMenuItem
+									key={sectionId}
+									onClick={() => handleMoveToSection(sectionId)}
+								>
 									{sectionTitle}
 								</DropdownMenuItem>
 							))}
@@ -136,7 +167,9 @@ function MoveItemSubmenu({ type, item, customSectionId }: MoveItemSubmenuProps) 
 							{sections.length > 0 && <DropdownMenuSeparator />}
 
 							{/* Option to create a new section on this page */}
-							<DropdownMenuItem onClick={() => handleNewSectionOnPage(pageIndex)}>
+							<DropdownMenuItem
+								onClick={() => handleNewSectionOnPage(pageIndex)}
+							>
 								<FolderPlusIcon />
 								<Trans>New Section</Trans>
 							</DropdownMenuItem>
@@ -183,7 +216,9 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 	const onToggleVisibility = () => {
 		updateResumeData((draft) => {
 			if (customSectionId) {
-				const section = draft.customSections.find((s) => s.id === customSectionId);
+				const section = draft.customSections.find(
+					(s) => s.id === customSectionId,
+				);
 				if (!section) return;
 				const index = section.items.findIndex((_item) => _item.id === item.id);
 				if (index === -1) return;
@@ -201,31 +236,44 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 
 	const onUpdate = () => {
 		// Type assertion needed because TypeScript can't narrow the union type through template literals
-		openDialog(`resume.sections.${type}.update`, { item, customSectionId } as never);
+		openDialog(`resume.sections.${type}.update`, {
+			item,
+			customSectionId,
+		} as never);
 	};
 
 	const onDuplicate = () => {
 		// Type assertion needed because TypeScript can't narrow the union type through template literals
-		openDialog(`resume.sections.${type}.create`, { item, customSectionId } as never);
+		openDialog(`resume.sections.${type}.create`, {
+			item,
+			customSectionId,
+		} as never);
 	};
 
 	const onDelete = async () => {
-		const confirmed = await confirm(t`Are you sure you want to delete this item?`, {
-			confirmText: t({
-				comment: "Destructive confirmation button label when deleting a section item in resume builder",
-				message: "Delete",
-			}),
-			cancelText: t({
-				comment: "Confirmation dialog button label to abort deleting a section item in resume builder",
-				message: "Cancel",
-			}),
-		});
+		const confirmed = await confirm(
+			t`Are you sure you want to delete this item?`,
+			{
+				confirmText: t({
+					comment:
+						"Destructive confirmation button label when deleting a section item in resume builder",
+					message: "Delete",
+				}),
+				cancelText: t({
+					comment:
+						"Confirmation dialog button label to abort deleting a section item in resume builder",
+					message: "Cancel",
+				}),
+			},
+		);
 
 		if (!confirmed) return;
 
 		updateResumeData((draft) => {
 			if (customSectionId) {
-				const section = draft.customSections.find((s) => s.id === customSectionId);
+				const section = draft.customSections.find(
+					(s) => s.id === customSectionId,
+				);
 				if (!section) return;
 				const index = section.items.findIndex((_item) => _item.id === item.id);
 				if (index === -1) return;
@@ -272,7 +320,11 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 				)}
 			>
 				<div className="line-clamp-1 font-medium">{title}</div>
-				{subtitle && <div className="line-clamp-1 text-muted-foreground text-xs">{subtitle}</div>}
+				{subtitle && (
+					<div className="line-clamp-1 text-muted-foreground text-xs">
+						{subtitle}
+					</div>
+				)}
 			</button>
 
 			<DropdownMenu>
@@ -304,7 +356,11 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 							<Trans>Duplicate</Trans>
 						</DropdownMenuItem>
 
-						<MoveItemSubmenu type={type} item={item} customSectionId={customSectionId} />
+						<MoveItemSubmenu
+							type={type}
+							item={item}
+							customSectionId={customSectionId}
+						/>
 					</DropdownMenuGroup>
 
 					<DropdownMenuSeparator />
@@ -326,14 +382,23 @@ type AddButtonProps = Omit<ButtonProps, "type"> & {
 	customSectionId?: string;
 };
 
-export function SectionAddItemButton({ type, customSectionId, className, children, ...props }: AddButtonProps) {
+export function SectionAddItemButton({
+	type,
+	customSectionId,
+	className,
+	children,
+	...props
+}: AddButtonProps) {
 	const { openDialog } = useDialogStore();
 
 	const handleAdd = () => {
 		if (type === "custom") {
 			openDialog("resume.sections.custom.create", undefined);
 		} else {
-			openDialog(`resume.sections.${type}.create`, customSectionId ? { customSectionId } : undefined);
+			openDialog(
+				`resume.sections.${type}.create`,
+				customSectionId ? { customSectionId } : undefined,
+			);
 		}
 	};
 

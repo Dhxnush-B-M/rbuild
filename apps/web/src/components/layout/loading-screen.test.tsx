@@ -11,7 +11,10 @@ describe("LoadingScreen", () => {
 
 		const icons = screen.getAllByAltText("rbuilder");
 		expect(icons).toHaveLength(2);
-		expect(icons.map((icon) => icon.getAttribute("src"))).toEqual(["/icon/dark.svg", "/icon/light.svg"]);
+		expect(icons.map((icon) => icon.getAttribute("src"))).toEqual([
+			"/icon/dark.svg",
+			"/icon/light.svg",
+		]);
 		expect(screen.getByLabelText("Loading")).toBeInTheDocument();
 	});
 

@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { produce } from "immer";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { produce } from "immer";
+import { describe, expect, it } from "vitest";
 import { createSectionItem, updateSectionItem } from "./section-actions";
 
 describe("createSectionItem", () => {
@@ -9,7 +9,9 @@ describe("createSectionItem", () => {
 			createSectionItem(draft, "skills", { id: "1", name: "Go" });
 		});
 		expect(result.sections.skills.items).toHaveLength(1);
-		expect((result.sections.skills.items[0] as { name?: string })?.name).toBe("Go");
+		expect((result.sections.skills.items[0] as { name?: string })?.name).toBe(
+			"Go",
+		);
 	});
 
 	it("appends to a custom section by id", () => {
@@ -28,10 +30,17 @@ describe("createSectionItem", () => {
 		});
 
 		const result = produce(initial, (draft) => {
-			createSectionItem(draft, "skills", { id: "1", text: "Custom item" }, "custom-1");
+			createSectionItem(
+				draft,
+				"skills",
+				{ id: "1", text: "Custom item" },
+				"custom-1",
+			);
 		});
 
-		const customSection = result.customSections.find((s) => s.id === "custom-1");
+		const customSection = result.customSections.find(
+			(s) => s.id === "custom-1",
+		);
 		expect(customSection?.items).toHaveLength(1);
 		// Built-in section is untouched
 		expect(result.sections.skills.items).toHaveLength(0);
@@ -39,7 +48,12 @@ describe("createSectionItem", () => {
 
 	it("does nothing when customSectionId does not match", () => {
 		const result = produce(defaultResumeData, (draft) => {
-			createSectionItem(draft, "skills", { id: "1", name: "x" }, "non-existent");
+			createSectionItem(
+				draft,
+				"skills",
+				{ id: "1", name: "x" },
+				"non-existent",
+			);
 		});
 		// Skills not touched, no custom section to modify
 		expect(result.sections.skills.items).toHaveLength(0);
@@ -56,7 +70,11 @@ describe("updateSectionItem", () => {
 			updateSectionItem(draft, "skills", { id: "abc", name: "Go", level: 5 });
 		});
 
-		const item = result.sections.skills.items[0] as { id?: string; name?: string; level?: number };
+		const item = result.sections.skills.items[0] as {
+			id?: string;
+			name?: string;
+			level?: number;
+		};
 		expect(item?.level).toBe(5);
 	});
 
@@ -91,7 +109,9 @@ describe("updateSectionItem", () => {
 			updateSectionItem(draft, "skills", { id: "x", value: "new" }, "custom-1");
 		});
 
-		const customSection = result.customSections.find((s) => s.id === "custom-1");
+		const customSection = result.customSections.find(
+			(s) => s.id === "custom-1",
+		);
 		if (!customSection) throw new Error("Custom section not found");
 		expect((customSection.items[0] as { value?: string }).value).toBe("new");
 	});
@@ -99,7 +119,12 @@ describe("updateSectionItem", () => {
 	it("does nothing when custom section is not found", () => {
 		const before = JSON.stringify(defaultResumeData);
 		const result = produce(defaultResumeData, (draft) => {
-			updateSectionItem(draft, "skills", { id: "x", value: "new" }, "non-existent");
+			updateSectionItem(
+				draft,
+				"skills",
+				{ id: "x", value: "new" },
+				"non-existent",
+			);
 		});
 		expect(JSON.stringify(result)).toBe(before);
 	});

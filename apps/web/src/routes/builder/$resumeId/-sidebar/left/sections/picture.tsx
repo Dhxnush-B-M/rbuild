@@ -1,5 +1,3 @@
-import type { Area } from "react-easy-crop";
-import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
@@ -8,9 +6,6 @@ import {
 	TrashSimpleIcon,
 	UploadSimpleIcon,
 } from "@phosphor-icons/react";
-import { useRef, useState } from "react";
-import Cropper from "react-easy-crop";
-import { toast } from "sonner";
 import { pictureSchema } from "@rbuilder/schema/resume/data";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { Button } from "@rbuilder/ui/components/button";
@@ -23,7 +18,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import {
 	InputGroup,
@@ -32,9 +32,17 @@ import {
 	InputGroupText,
 } from "@rbuilder/ui/components/input-group";
 import { Slider } from "@rbuilder/ui/components/slider";
+import { useRef, useState } from "react";
+import type { Area } from "react-easy-crop";
+import Cropper from "react-easy-crop";
+import { toast } from "sonner";
+import type z from "zod";
 import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { uploadPictureToSupabase } from "@/libs/supabase/db";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -93,16 +101,26 @@ function PicturePreviewControls({
 				)}
 
 				<div className="absolute inset-0 z-0 flex size-full items-center justify-center">
-					{picture.url ? <TrashSimpleIcon className="size-6" /> : <UploadSimpleIcon className="size-6" />}
+					{picture.url ? (
+						<TrashSimpleIcon className="size-6" />
+					) : (
+						<UploadSimpleIcon className="size-6" />
+					)}
 				</div>
 			</button>
 
 			<div className="flex flex-1 flex-col justify-center gap-y-1">
 				<p className="font-semibold text-sm">
-					{picture.url ? <Trans>Profile Picture</Trans> : <Trans>Upload Picture</Trans>}
+					{picture.url ? (
+						<Trans>Profile Picture</Trans>
+					) : (
+						<Trans>Upload Picture</Trans>
+					)}
 				</p>
 				<p className="text-muted-foreground text-xs">
-					<Trans>Click the image box to upload, crop, or replace your photo.</Trans>
+					<Trans>
+						Click the image box to upload, crop, or replace your photo.
+					</Trans>
 				</p>
 			</div>
 		</div>
@@ -114,12 +132,19 @@ type PictureGeometryFieldsProps = {
 	onAutoSave: () => void;
 };
 
-function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps) {
+function PictureGeometryFields({
+	form,
+	onAutoSave,
+}: PictureGeometryFieldsProps) {
 	return (
 		<>
 			<form.Field name="size">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Size</Trans>
 						</FormLabel>
@@ -151,7 +176,11 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 
 			<form.Field name="rotation">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Rotation</Trans>
 						</FormLabel>
@@ -168,7 +197,8 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 										onBlur={field.handleBlur}
 										onChange={(e) => {
 											const value = e.target.value;
-											if (value === "") field.handleChange("" as unknown as number);
+											if (value === "")
+												field.handleChange("" as unknown as number);
 											else field.handleChange(Number(value));
 											onAutoSave();
 										}}
@@ -185,7 +215,11 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 
 			<form.Field name="aspectRatio">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Aspect Ratio</Trans>
 						</FormLabel>
@@ -202,7 +236,8 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 										onBlur={field.handleBlur}
 										onChange={(e) => {
 											const value = e.target.value;
-											if (value === "") field.handleChange("" as unknown as number);
+											if (value === "")
+												field.handleChange("" as unknown as number);
 											else field.handleChange(Number(value));
 											onAutoSave();
 										}}
@@ -215,7 +250,8 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 									size="icon"
 									variant="outline"
 									title={t({
-										comment: "Preset button for setting picture aspect ratio to square",
+										comment:
+											"Preset button for setting picture aspect ratio to square",
 										message: "Square",
 									})}
 									onClick={() => {
@@ -229,7 +265,8 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 									size="icon"
 									variant="outline"
 									title={t({
-										comment: "Preset button for setting picture aspect ratio to landscape orientation",
+										comment:
+											"Preset button for setting picture aspect ratio to landscape orientation",
 										message: "Landscape",
 									})}
 									onClick={() => {
@@ -243,7 +280,8 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 									size="icon"
 									variant="outline"
 									title={t({
-										comment: "Preset button for setting picture aspect ratio to portrait orientation",
+										comment:
+											"Preset button for setting picture aspect ratio to portrait orientation",
 										message: "Portrait",
 									})}
 									onClick={() => {
@@ -261,7 +299,11 @@ function PictureGeometryFields({ form, onAutoSave }: PictureGeometryFieldsProps)
 
 			<form.Field name="borderRadius">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Border Radius</Trans>
 						</FormLabel>
@@ -347,7 +389,10 @@ function normalizePictureUrl(url: string, origin: string): string {
 	}
 }
 
-async function getCroppedImageBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> {
+async function getCroppedImageBlob(
+	imageSrc: string,
+	pixelCrop: Area,
+): Promise<Blob> {
 	const image = await new Promise<HTMLImageElement>((resolve, reject) => {
 		const element = new Image();
 		element.addEventListener("load", () => {
@@ -385,7 +430,10 @@ async function getCroppedImageBlob(imageSrc: string, pixelCrop: Area): Promise<B
 	});
 }
 
-function usePictureSettingsForm(picture: PictureValues, persist: (data: PictureValues) => void) {
+function usePictureSettingsForm(
+	picture: PictureValues,
+	persist: (data: PictureValues) => void,
+) {
 	const form = useAppForm({
 		defaultValues: picture,
 		validators: { onChange: pictureSchema },
@@ -414,7 +462,9 @@ function PictureSectionForm() {
 	const [zoom, setZoom] = useState(1);
 	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
-	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
+	const picture = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.picture,
+	);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
 	const updateResumeData = useUpdateResumeData();
 
@@ -461,7 +511,9 @@ function PictureSectionForm() {
 			}
 			if (fileInputRef.current) fileInputRef.current.value = "";
 		} catch {
-			toast.error(t`Failed to upload picture. Please try again.`, { id: toastId });
+			toast.error(t`Failed to upload picture. Please try again.`, {
+				id: toastId,
+			});
 		}
 	};
 
@@ -488,8 +540,13 @@ function PictureSectionForm() {
 		let fileToUpload: File = cropState.file;
 		try {
 			if (croppedAreaPixels) {
-				const blob = await getCroppedImageBlob(cropState.imageSrc, croppedAreaPixels);
-				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
+				const blob = await getCroppedImageBlob(
+					cropState.imageSrc,
+					croppedAreaPixels,
+				);
+				fileToUpload = new File([blob], cropState.file.name, {
+					type: blob.type,
+				});
 			}
 		} catch {
 			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
@@ -516,7 +573,9 @@ function PictureSectionForm() {
 							<Trans>Crop picture</Trans>
 						</DialogTitle>
 						<DialogDescription>
-							<Trans>Drag to reposition and use the slider to zoom before uploading.</Trans>
+							<Trans>
+								Drag to reposition and use the slider to zoom before uploading.
+							</Trans>
 						</DialogDescription>
 					</DialogHeader>
 
@@ -541,7 +600,9 @@ function PictureSectionForm() {
 							<FormLabel className="mb-0">
 								<Trans>Zoom</Trans>
 							</FormLabel>
-							<span className="text-muted-foreground text-xs tabular-nums">{zoom.toFixed(1)}×</span>
+							<span className="text-muted-foreground text-xs tabular-nums">
+								{zoom.toFixed(1)}×
+							</span>
 						</div>
 						<div className="flex items-center gap-x-3">
 							<MagnifyingGlassMinusIcon className="size-4 shrink-0 text-muted-foreground" />
@@ -602,7 +663,10 @@ function PictureSectionForm() {
 							{(field) => (
 								<FormItem
 									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+									hasError={
+										field.state.meta.isTouched &&
+										field.state.meta.errors.length > 0
+									}
 								>
 									<FormControl
 										render={
@@ -623,7 +687,10 @@ function PictureSectionForm() {
 							{(field) => (
 								<FormItem
 									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+									hasError={
+										field.state.meta.isTouched &&
+										field.state.meta.errors.length > 0
+									}
 								>
 									<FormLabel>
 										<Trans>Border Width</Trans>
@@ -640,7 +707,8 @@ function PictureSectionForm() {
 													onBlur={field.handleBlur}
 													onChange={(e) => {
 														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
+														if (value === "")
+															field.handleChange("" as unknown as number);
 														else field.handleChange(Number(value));
 														handleAutoSave();
 													}}
@@ -661,7 +729,10 @@ function PictureSectionForm() {
 							{(field) => (
 								<FormItem
 									className="mb-1.5 shrink-0"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+									hasError={
+										field.state.meta.isTouched &&
+										field.state.meta.errors.length > 0
+									}
 								>
 									<FormControl
 										render={
@@ -682,7 +753,10 @@ function PictureSectionForm() {
 							{(field) => (
 								<FormItem
 									className="flex-1"
-									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+									hasError={
+										field.state.meta.isTouched &&
+										field.state.meta.errors.length > 0
+									}
 								>
 									<FormLabel>
 										<Trans>Shadow Width</Trans>
@@ -699,7 +773,8 @@ function PictureSectionForm() {
 													onBlur={field.handleBlur}
 													onChange={(e) => {
 														const value = e.target.value;
-														if (value === "") field.handleChange("" as unknown as number);
+														if (value === "")
+															field.handleChange("" as unknown as number);
 														else field.handleChange(Number(value));
 														handleAutoSave();
 													}}

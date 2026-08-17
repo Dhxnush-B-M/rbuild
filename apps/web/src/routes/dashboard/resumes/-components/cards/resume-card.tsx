@@ -1,11 +1,11 @@
-import type { SupabaseResumeRecord } from "@/libs/supabase/db";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { DotsThreeVerticalIcon, LockSimpleIcon } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
 import { useMemo } from "react";
-import { Button } from "@rbuilder/ui/components/button";
+import type { SupabaseResumeRecord } from "@/libs/supabase/db";
 import { ResumeContextMenu } from "../menus/context-menu";
 import { ResumeDropdownMenu } from "../menus/dropdown-menu";
 import { BaseCard } from "./base-card";
@@ -26,20 +26,31 @@ export function ResumeCard({ resume }: ResumeCardProps) {
 	const updatedAt = useMemo(() => {
 		const rawDate = resume.updatedAt || resume.updated_at;
 		const date = rawDate ? new Date(rawDate) : new Date();
-		return Intl.DateTimeFormat(i18n.locale, { dateStyle: "long", timeStyle: "short" }).format(date);
+		return Intl.DateTimeFormat(i18n.locale, {
+			dateStyle: "long",
+			timeStyle: "short",
+		}).format(date);
 	}, [i18n.locale, resume.updatedAt, resume.updated_at]);
 
 	return (
 		<ResumeContextMenu resume={resume}>
 			<div className="group relative">
-				<Link to="/builder/$resumeId" params={{ resumeId: resume.id }} className="block cursor-default">
+				<Link
+					to="/builder/$resumeId"
+					params={{ resumeId: resume.id }}
+					className="block cursor-default"
+				>
 					<m.div
 						className="will-change-transform"
 						whileHover={{ y: -2, scale: 1.005 }}
 						whileTap={{ scale: 0.998 }}
 						transition={{ type: "spring", stiffness: 320, damping: 28 }}
 					>
-						<BaseCard title={resume.name} description={t`Last updated on ${updatedAt}`} tags={resume.tags}>
+						<BaseCard
+							title={resume.name}
+							description={t`Last updated on ${updatedAt}`}
+							tags={resume.tags}
+						>
 							<ResumeThumbnail resume={resume} isLocked={isLocked} />
 
 							<ResumeLockOverlay isLocked={isLocked} />

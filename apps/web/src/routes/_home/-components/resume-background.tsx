@@ -1,10 +1,38 @@
 import { m } from "motion/react";
 
 const leftResumeCards = [
-	{ src: "/templates/jpg/onyx.jpg", alt: "Onyx Resume Template", rotate: -12, top: "8%", left: "-60px", delay: 0 },
-	{ src: "/templates/jpg/azurill.jpg", alt: "Azurill Resume Template", rotate: 8, top: "28%", left: "-80px", delay: 2 },
-	{ src: "/templates/jpg/glalie.jpg", alt: "Glalie Resume Template", rotate: -10, top: "52%", left: "-50px", delay: 4 },
-	{ src: "/templates/jpg/kakuna.jpg", alt: "Kakuna Resume Template", rotate: 6, top: "74%", left: "-70px", delay: 1 },
+	{
+		src: "/templates/jpg/onyx.jpg",
+		alt: "Onyx Resume Template",
+		rotate: -12,
+		top: "8%",
+		left: "-60px",
+		delay: 0,
+	},
+	{
+		src: "/templates/jpg/azurill.jpg",
+		alt: "Azurill Resume Template",
+		rotate: 8,
+		top: "28%",
+		left: "-80px",
+		delay: 2,
+	},
+	{
+		src: "/templates/jpg/glalie.jpg",
+		alt: "Glalie Resume Template",
+		rotate: -10,
+		top: "52%",
+		left: "-50px",
+		delay: 4,
+	},
+	{
+		src: "/templates/jpg/kakuna.jpg",
+		alt: "Kakuna Resume Template",
+		rotate: 6,
+		top: "74%",
+		left: "-70px",
+		delay: 1,
+	},
 ];
 
 const rightResumeCards = [
@@ -44,7 +72,10 @@ const rightResumeCards = [
 
 export function ResumeBackground() {
 	return (
-		<div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none overflow-hidden">
+		<div
+			aria-hidden="true"
+			className="pointer-events-none absolute inset-0 select-none overflow-hidden"
+		>
 			{/* Top-to-bottom Aurora Light Beams & Glows */}
 			<div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(56,189,248,0.18),rgba(255,255,255,0))]" />
 			<div className="absolute top-[30%] left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-tr from-primary/10 via-indigo-500/10 to-transparent blur-[140px]" />

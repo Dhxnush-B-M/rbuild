@@ -1,5 +1,6 @@
 import type { ResumeData, SectionType } from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
+import { parseColorString } from "@rbuilder/utils/color";
 import {
 	BorderStyle,
 	convertMillimetersToTwip,
@@ -14,10 +15,14 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
-import { parseColorString } from "@rbuilder/utils/color";
 import { shouldShowResumeHeader } from "./cover-letter";
 import { toSafeDocxLink } from "./link-utils";
-import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
+import {
+	renderBuiltInSection,
+	renderCustomSection,
+	renderSummary,
+	setRenderConfig,
+} from "./section-renderers";
 
 // --- Color helpers ---
 
@@ -68,21 +73,81 @@ interface TemplateConfig {
 }
 
 const TEMPLATE_CONFIGS: Record<Template, TemplateConfig> = {
-	azurill: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	bronzor: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	chikorita: { sidebarSide: "right", sidebarBackground: "solid", headerPosition: "main-only" },
-	ditgar: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	ditto: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	gengar: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	glalie: { sidebarSide: "left", sidebarBackground: "tint", headerPosition: "sidebar-only" },
-	kakuna: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	lapras: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	leafish: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	meowth: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
-	onyx: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	pikachu: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "main-only" },
-	rhyhorn: { sidebarSide: "right", sidebarBackground: "none", headerPosition: "full-width" },
-	scizor: { sidebarSide: "left", sidebarBackground: "none", headerPosition: "full-width" },
+	azurill: {
+		sidebarSide: "left",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	bronzor: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	chikorita: {
+		sidebarSide: "right",
+		sidebarBackground: "solid",
+		headerPosition: "main-only",
+	},
+	ditgar: {
+		sidebarSide: "left",
+		sidebarBackground: "tint",
+		headerPosition: "sidebar-only",
+	},
+	ditto: {
+		sidebarSide: "left",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	gengar: {
+		sidebarSide: "left",
+		sidebarBackground: "tint",
+		headerPosition: "sidebar-only",
+	},
+	glalie: {
+		sidebarSide: "left",
+		sidebarBackground: "tint",
+		headerPosition: "sidebar-only",
+	},
+	kakuna: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	lapras: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	leafish: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	meowth: {
+		sidebarSide: "left",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	onyx: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	pikachu: {
+		sidebarSide: "left",
+		sidebarBackground: "none",
+		headerPosition: "main-only",
+	},
+	rhyhorn: {
+		sidebarSide: "right",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
+	scizor: {
+		sidebarSide: "left",
+		sidebarBackground: "none",
+		headerPosition: "full-width",
+	},
 };
 
 /**
@@ -94,7 +159,9 @@ function blendWithWhite(hex: string, opacity: number): string {
 	const g = Number.parseInt(hex.slice(2, 4), 16);
 	const b = Number.parseInt(hex.slice(4, 6), 16);
 	const blend = (c: number) => Math.round(c * opacity + 255 * (1 - opacity));
-	return [blend(r), blend(g), blend(b)].map((c) => c.toString(16).padStart(2, "0")).join("");
+	return [blend(r), blend(g), blend(b)]
+		.map((c) => c.toString(16).padStart(2, "0"))
+		.join("");
 }
 
 // --- Section rendering dispatch ---
@@ -121,7 +188,11 @@ function renderSection(
 	if (sectionId in data.sections) {
 		const section = data.sections[sectionId as SectionType];
 		if (section) {
-			return renderBuiltInSection(sectionId as SectionType, titled(section), colorHex);
+			return renderBuiltInSection(
+				sectionId as SectionType,
+				titled(section),
+				colorHex,
+			);
 		}
 		return [];
 	}
@@ -136,7 +207,11 @@ function renderSection(
 
 // --- Header ---
 
-function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): Paragraph[] {
+function buildHeader(
+	data: ResumeData,
+	colorHex: string,
+	textColorHex: string,
+): Paragraph[] {
 	const paragraphs: Paragraph[] = [];
 	const { basics } = data;
 	const headingFont = data.metadata.typography.heading.fontFamily || "Calibri";
@@ -183,7 +258,14 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 	const contactParts: (TextRun | ExternalHyperlink)[] = [];
 	const addSeparator = () => {
 		if (contactParts.length > 0) {
-			contactParts.push(new TextRun({ text: "  |  ", color: "999999", size: bodySize, font: bodyFont }));
+			contactParts.push(
+				new TextRun({
+					text: "  |  ",
+					color: "999999",
+					size: bodySize,
+					font: bodyFont,
+				}),
+			);
 		}
 	};
 
@@ -195,7 +277,13 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 				new ExternalHyperlink({
 					link: mailtoLink,
 					children: [
-						new TextRun({ text: basics.email, color: colorHex, underline: {}, size: bodySize, font: bodyFont }),
+						new TextRun({
+							text: basics.email,
+							color: colorHex,
+							underline: {},
+							size: bodySize,
+							font: bodyFont,
+						}),
 					],
 				}),
 			);
@@ -204,12 +292,26 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 
 	if (basics.phone) {
 		addSeparator();
-		contactParts.push(new TextRun({ text: basics.phone, size: bodySize, font: bodyFont, color: textColorHex }));
+		contactParts.push(
+			new TextRun({
+				text: basics.phone,
+				size: bodySize,
+				font: bodyFont,
+				color: textColorHex,
+			}),
+		);
 	}
 
 	if (basics.location) {
 		addSeparator();
-		contactParts.push(new TextRun({ text: basics.location, size: bodySize, font: bodyFont, color: textColorHex }));
+		contactParts.push(
+			new TextRun({
+				text: basics.location,
+				size: bodySize,
+				font: bodyFont,
+				color: textColorHex,
+			}),
+		);
 	}
 
 	if (basics.website.url) {
@@ -254,10 +356,24 @@ function buildHeader(data: ResumeData, colorHex: string, textColorHex: string): 
 					}),
 				);
 			} else {
-				contactParts.push(new TextRun({ text: field.text, size: bodySize, font: bodyFont, color: textColorHex }));
+				contactParts.push(
+					new TextRun({
+						text: field.text,
+						size: bodySize,
+						font: bodyFont,
+						color: textColorHex,
+					}),
+				);
 			}
 		} else {
-			contactParts.push(new TextRun({ text: field.text, size: bodySize, font: bodyFont, color: textColorHex }));
+			contactParts.push(
+				new TextRun({
+					text: field.text,
+					size: bodySize,
+					font: bodyFont,
+					color: textColorHex,
+				}),
+			);
 		}
 	}
 
@@ -286,8 +402,10 @@ function buildTwoColumnTable(
 	const mainWidthPct = 100 - sidebarWidthPct;
 
 	// DOCX table cells require at least one child
-	const mainChildren = mainParagraphs.length > 0 ? mainParagraphs : [new Paragraph({})];
-	const sidebarChildren = sidebarParagraphs.length > 0 ? sidebarParagraphs : [new Paragraph({})];
+	const mainChildren =
+		mainParagraphs.length > 0 ? mainParagraphs : [new Paragraph({})];
+	const sidebarChildren =
+		sidebarParagraphs.length > 0 ? sidebarParagraphs : [new Paragraph({})];
 
 	const sidebarShading = sidebarShadingHex
 		? { fill: sidebarShadingHex, type: ShadingType.CLEAR, color: "auto" }
@@ -316,7 +434,8 @@ function buildTwoColumnTable(
 		children: mainChildren,
 	});
 
-	const cells = sidebarSide === "left" ? [sidebarCell, mainCell] : [mainCell, sidebarCell];
+	const cells =
+		sidebarSide === "left" ? [sidebarCell, mainCell] : [mainCell, sidebarCell];
 
 	return new Table({
 		rows: [new TableRow({ children: cells })],
@@ -342,14 +461,22 @@ function buildTwoColumnTable(
  * - Page margins and fixed DOCX page format from `metadata.page`; free-form exports as A4
  * - Primary, text, and background colors from `metadata.design.colors`
  */
-export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResolver): Document {
+export function buildDocument(
+	data: ResumeData,
+	resolveTitle?: SectionTitleResolver,
+): Document {
 	const colorHex = getColorHex(data.metadata.design.colors.primary, "DC2626");
 	const textColorHex = getColorHex(data.metadata.design.colors.text, "000000");
-	const bgColorHex = getColorHex(data.metadata.design.colors.background, "FFFFFF");
+	const bgColorHex = getColorHex(
+		data.metadata.design.colors.background,
+		"FFFFFF",
+	);
 
 	const bodyFont = data.metadata.typography.body.fontFamily || "Calibri";
 	const bodySize = ptToHalfPt(data.metadata.typography.body.fontSize);
-	const lineSpacing = Math.round(data.metadata.typography.body.lineHeight * 240);
+	const lineSpacing = Math.round(
+		data.metadata.typography.body.lineHeight * 240,
+	);
 
 	const { page } = data.metadata;
 	const pageSize = page.format === "letter" ? LETTER_PAGE_SIZE : A4_PAGE_SIZE;
@@ -372,8 +499,10 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 	}
 
 	// Determine sidebar text colors — inverted when sidebar has a solid background
-	const sidebarTextColorHex = templateConfig.sidebarBackground === "solid" ? bgColorHex : textColorHex;
-	const sidebarHeadingColorHex = templateConfig.sidebarBackground === "solid" ? bgColorHex : colorHex;
+	const sidebarTextColorHex =
+		templateConfig.sidebarBackground === "solid" ? bgColorHex : textColorHex;
+	const sidebarHeadingColorHex =
+		templateConfig.sidebarBackground === "solid" ? bgColorHex : colorHex;
 
 	// Configure heading typography for section renderers
 	const headingFont = data.metadata.typography.heading.fontFamily || "Calibri";
@@ -405,7 +534,9 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 		if (isFullWidth) {
 			setRenderConfig(mainConfig);
 			for (const sectionId of [...layoutPage.main, ...layoutPage.sidebar]) {
-				documentChildren.push(...renderSection(sectionId, data, colorHex, resolveTitle));
+				documentChildren.push(
+					...renderSection(sectionId, data, colorHex, resolveTitle),
+				);
 			}
 		} else {
 			// Render main sections with normal colors
@@ -416,18 +547,33 @@ export function buildDocument(data: ResumeData, resolveTitle?: SectionTitleResol
 				mainParagraphs.push(...buildHeader(data, colorHex, textColorHex));
 			}
 			for (const sectionId of layoutPage.main) {
-				mainParagraphs.push(...renderSection(sectionId, data, colorHex, resolveTitle));
+				mainParagraphs.push(
+					...renderSection(sectionId, data, colorHex, resolveTitle),
+				);
 			}
 
 			// Render sidebar sections with potentially inverted colors
-			setRenderConfig({ ...mainConfig, textColorHex: sidebarTextColorHex, primaryColorHex: sidebarHeadingColorHex });
+			setRenderConfig({
+				...mainConfig,
+				textColorHex: sidebarTextColorHex,
+				primaryColorHex: sidebarHeadingColorHex,
+			});
 
 			const sidebarParagraphs: Paragraph[] = [];
 			if (templateConfig.headerPosition === "sidebar-only" && showHeader) {
-				sidebarParagraphs.push(...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex));
+				sidebarParagraphs.push(
+					...buildHeader(data, sidebarHeadingColorHex, sidebarTextColorHex),
+				);
 			}
 			for (const sectionId of layoutPage.sidebar) {
-				sidebarParagraphs.push(...renderSection(sectionId, data, sidebarHeadingColorHex, resolveTitle));
+				sidebarParagraphs.push(
+					...renderSection(
+						sectionId,
+						data,
+						sidebarHeadingColorHex,
+						resolveTitle,
+					),
+				);
 			}
 
 			if (mainParagraphs.length > 0 || sidebarParagraphs.length > 0) {

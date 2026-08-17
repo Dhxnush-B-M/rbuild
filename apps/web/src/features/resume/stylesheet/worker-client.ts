@@ -26,7 +26,9 @@ type Pending<T> = {
 	reject(error: Error): void;
 };
 
-export function createCompileWorkerClient(createWorker: () => StylesheetWorker) {
+export function createCompileWorkerClient(
+	createWorker: () => StylesheetWorker,
+) {
 	const worker = createWorker();
 	const pending = new Map<number, Pending<CompileWorkerResponse>>();
 	let latestRequestId = 0;
@@ -42,7 +44,9 @@ export function createCompileWorkerClient(createWorker: () => StylesheetWorker) 
 		request.resolve(response);
 	};
 	const onError: WorkerErrorListener = (event) => {
-		const error = new Error(event.message || "Stylesheet compiler worker failed to load.");
+		const error = new Error(
+			event.message || "Stylesheet compiler worker failed to load.",
+		);
 		for (const request of pending.values()) request.reject(error);
 		pending.clear();
 	};
@@ -52,7 +56,11 @@ export function createCompileWorkerClient(createWorker: () => StylesheetWorker) 
 	return {
 		compile(input: CompileWorkerInput): Promise<CompileWorkerResponse> {
 			const requestId = ++latestRequestId;
-			const request: CompileWorkerRequest = { ...input, type: "compile", requestId };
+			const request: CompileWorkerRequest = {
+				...input,
+				type: "compile",
+				requestId,
+			};
 			return new Promise((resolve, reject) => {
 				pending.set(requestId, { resolve, reject });
 				worker.postMessage(request);
@@ -62,13 +70,16 @@ export function createCompileWorkerClient(createWorker: () => StylesheetWorker) 
 			worker.removeEventListener("message", onMessage);
 			worker.removeEventListener("error", onError);
 			worker.terminate();
-			for (const request of pending.values()) request.reject(new Error("Stylesheet compiler worker was terminated."));
+			for (const request of pending.values())
+				request.reject(new Error("Stylesheet compiler worker was terminated."));
 			pending.clear();
 		},
 	};
 }
 
-const timeoutResult = (request: PreflightWorkerRequest): PreflightWorkerResponse => ({
+const timeoutResult = (
+	request: PreflightWorkerRequest,
+): PreflightWorkerResponse => ({
 	type: "preflight_result",
 	requestId: request.requestId,
 	editGeneration: request.editGeneration,
@@ -95,7 +106,10 @@ export function createPreflightWorkerClient(
 				timer: ReturnType<typeof setTimeout>;
 		  })
 		| undefined;
-	const pending = new Map<number, Pending<PreflightWorkerResponse> & { timer?: ReturnType<typeof setTimeout> }>();
+	const pending = new Map<
+		number,
+		Pending<PreflightWorkerResponse> & { timer?: ReturnType<typeof setTimeout> }
+	>();
 
 	const onMessage: WorkerListener = ({ data }) => {
 		if ((data as PreflightWorkerReady)?.type === "preflight_ready") {
@@ -137,7 +151,9 @@ export function createPreflightWorkerClient(
 	};
 
 	const onError: WorkerErrorListener = (event) => {
-		const error = new Error(event.message || "Stylesheet preflight worker failed.");
+		const error = new Error(
+			event.message || "Stylesheet preflight worker failed.",
+		);
 		terminate();
 		failPending(error);
 	};
@@ -151,13 +167,18 @@ export function createPreflightWorkerClient(
 		ready = false;
 		if (readiness) {
 			clearTimeout(readiness.timer);
-			readiness.reject(new Error("Stylesheet preflight worker did not become ready."));
+			readiness.reject(
+				new Error("Stylesheet preflight worker did not become ready."),
+			);
 			readiness = undefined;
 		}
 	};
 
 	const getReadyWorker = () => {
-		if (destroyed) return Promise.reject(new Error("Stylesheet preflight worker was terminated."));
+		if (destroyed)
+			return Promise.reject(
+				new Error("Stylesheet preflight worker was terminated."),
+			);
 		if (worker && ready) return Promise.resolve(worker);
 		if (readiness) return readiness.promise;
 		worker = createWorker();
@@ -165,10 +186,12 @@ export function createPreflightWorkerClient(
 		worker.addEventListener("error", onError);
 		let resolve!: (value: StylesheetWorker) => void;
 		let reject!: (error: Error) => void;
-		const promise = new Promise<StylesheetWorker>((resolvePromise, rejectPromise) => {
-			resolve = resolvePromise;
-			reject = rejectPromise;
-		});
+		const promise = new Promise<StylesheetWorker>(
+			(resolvePromise, rejectPromise) => {
+				resolve = resolvePromise;
+				reject = rejectPromise;
+			},
+		);
 		const timer = setTimeout(() => terminate(), readinessTimeoutMs);
 		readiness = { promise, resolve, reject, timer };
 		return promise;
@@ -191,11 +214,17 @@ export function createPreflightWorkerClient(
 				terminate();
 				for (const stale of pending.values()) {
 					if (stale.timer) clearTimeout(stale.timer);
-					stale.reject(new Error("Discarded stale stylesheet preflight result."));
+					stale.reject(
+						new Error("Discarded stale stylesheet preflight result."),
+					);
 				}
 				pending.clear();
 			}
-			const request: PreflightWorkerRequest = { ...input, type: "preflight", requestId: ++requestId };
+			const request: PreflightWorkerRequest = {
+				...input,
+				type: "preflight",
+				requestId: ++requestId,
+			};
 			return new Promise((resolve, reject) => {
 				pending.set(request.requestId, { resolve, reject });
 				void waitUntilReady()
@@ -213,7 +242,11 @@ export function createPreflightWorkerClient(
 						const current = pending.get(request.requestId);
 						if (!current) return;
 						pending.delete(request.requestId);
-						reject(error instanceof Error ? error : new Error("Stylesheet preflight worker failed to start."));
+						reject(
+							error instanceof Error
+								? error
+								: new Error("Stylesheet preflight worker failed to start."),
+						);
 					});
 			});
 		},
@@ -222,7 +255,9 @@ export function createPreflightWorkerClient(
 			terminate();
 			for (const request of pending.values()) {
 				if (request.timer) clearTimeout(request.timer);
-				request.reject(new Error("Stylesheet preflight worker was terminated."));
+				request.reject(
+					new Error("Stylesheet preflight worker was terminated."),
+				);
 			}
 			pending.clear();
 		},

@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { getPreflightTransferables } from "./protocol";
-import { createCompileWorkerClient, createPreflightWorkerClient } from "./worker-client";
+import {
+	createCompileWorkerClient,
+	createPreflightWorkerClient,
+} from "./worker-client";
 
 type Listener = (event: MessageEvent) => void;
 
@@ -37,11 +40,29 @@ describe("stylesheet worker clients", () => {
 		const first = client.compile({ editGeneration: 1 } as never);
 		const second = client.compile({ editGeneration: 2 } as never);
 
-		fake.emit({ type: "compile_result", requestId: 1, editGeneration: 1, program: null, diagnostics: [] });
-		fake.emit({ type: "compile_result", requestId: 2, editGeneration: 2, program: null, diagnostics: [] });
+		fake.emit({
+			type: "compile_result",
+			requestId: 1,
+			editGeneration: 1,
+			program: null,
+			diagnostics: [],
+		});
+		fake.emit({
+			type: "compile_result",
+			requestId: 2,
+			editGeneration: 2,
+			program: null,
+			diagnostics: [],
+		});
 
-		await expect(first).resolves.toMatchObject({ requestId: 1, editGeneration: 1 });
-		await expect(second).resolves.toMatchObject({ requestId: 2, editGeneration: 2 });
+		await expect(first).resolves.toMatchObject({
+			requestId: 1,
+			editGeneration: 1,
+		});
+		await expect(second).resolves.toMatchObject({
+			requestId: 2,
+			editGeneration: 2,
+		});
 	});
 
 	it("rejects pending compiles when the worker reports an error", async () => {
@@ -58,7 +79,10 @@ describe("stylesheet worker clients", () => {
 		vi.useFakeTimers();
 		const first = worker();
 		const replacement = worker();
-		const createWorker = vi.fn().mockReturnValueOnce(first).mockReturnValueOnce(replacement);
+		const createWorker = vi
+			.fn()
+			.mockReturnValueOnce(first)
+			.mockReturnValueOnce(replacement);
 		const client = createPreflightWorkerClient(createWorker, 10);
 
 		const timedOut = client.preflight({ editGeneration: 1 } as never);
@@ -77,7 +101,13 @@ describe("stylesheet worker clients", () => {
 			type: "preflight_result",
 			requestId: 2,
 			editGeneration: 2,
-			result: { ok: true, pageCount: 1, byteCount: 4, diagnostics: [], pdf: new ArrayBuffer(4) },
+			result: {
+				ok: true,
+				pageCount: 1,
+				byteCount: 4,
+				diagnostics: [],
+				pdf: new ArrayBuffer(4),
+			},
 		});
 		await expect(next).resolves.toMatchObject({ requestId: 2 });
 		vi.useRealTimers();
@@ -92,8 +122,14 @@ describe("stylesheet worker clients", () => {
 
 		expect(createWorker).toHaveBeenCalledOnce();
 		expect(fake.addEventListener).toHaveBeenCalledTimes(2);
-		expect(fake.addEventListener).toHaveBeenCalledWith("message", expect.any(Function));
-		expect(fake.addEventListener).toHaveBeenCalledWith("error", expect.any(Function));
+		expect(fake.addEventListener).toHaveBeenCalledWith(
+			"message",
+			expect.any(Function),
+		);
+		expect(fake.addEventListener).toHaveBeenCalledWith(
+			"error",
+			expect.any(Function),
+		);
 		expect(fake.postMessage).not.toHaveBeenCalled();
 	});
 
@@ -111,7 +147,9 @@ describe("stylesheet worker clients", () => {
 		await vi.advanceTimersByTimeAsync(0);
 		expect(fake.postMessage).toHaveBeenCalledOnce();
 		await vi.advanceTimersByTimeAsync(5);
-		await expect(result).resolves.toMatchObject({ result: { code: "STYLESHEET_PREFLIGHT_TIMEOUT" } });
+		await expect(result).resolves.toMatchObject({
+			result: { code: "STYLESHEET_PREFLIGHT_TIMEOUT" },
+		});
 		vi.useRealTimers();
 	});
 
@@ -214,9 +252,17 @@ describe("stylesheet worker clients", () => {
 			type: "preflight_result",
 			requestId: 2,
 			editGeneration: 2,
-			result: { ok: true, pageCount: 1, byteCount: 4, diagnostics: [], pdf: new ArrayBuffer(4) },
+			result: {
+				ok: true,
+				pageCount: 1,
+				byteCount: 4,
+				diagnostics: [],
+				pdf: new ArrayBuffer(4),
+			},
 		});
-		expect(await staleOutcome).toEqual(expect.objectContaining({ message: expect.stringContaining("stale") }));
+		expect(await staleOutcome).toEqual(
+			expect.objectContaining({ message: expect.stringContaining("stale") }),
+		);
 		await expect(current).resolves.toMatchObject({ requestId: 2 });
 	});
 

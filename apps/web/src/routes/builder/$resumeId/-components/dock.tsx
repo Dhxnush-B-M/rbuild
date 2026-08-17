@@ -1,11 +1,10 @@
-import type { Icon } from "@phosphor-icons/react";
-import type { BuilderPreviewPageLayout } from "./page-layout";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { MagnifyingGlassMinusIcon, MagnifyingGlassPlusIcon } from "@phosphor-icons/react";
-import { useHotkey } from "@tanstack/react-hotkeys";
-import { m } from "motion/react";
-import { useControls, useTransformComponent } from "react-zoom-pan-pinch";
+import type { Icon } from "@phosphor-icons/react";
+import {
+	MagnifyingGlassMinusIcon,
+	MagnifyingGlassPlusIcon,
+} from "@phosphor-icons/react";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
@@ -13,9 +12,20 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@rbuilder/ui/components/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@rbuilder/ui/components/tooltip";
 import { cn } from "@rbuilder/utils/style";
-import { isEditableElementFocused, useResumeStore } from "@/features/resume/builder/draft";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import { m } from "motion/react";
+import { useControls, useTransformComponent } from "react-zoom-pan-pinch";
+import {
+	isEditableElementFocused,
+	useResumeStore,
+} from "@/features/resume/builder/draft";
+import type { BuilderPreviewPageLayout } from "./page-layout";
 
 type BuilderDockProps = {
 	pageLayout?: BuilderPreviewPageLayout;
@@ -52,9 +62,17 @@ export function BuilderDock(_props: BuilderDockProps) {
 				transition={{ duration: 0.2, ease: "easeOut" }}
 				className="flex items-center rounded-full border border-white/15 bg-background/65 px-3 py-1 shadow-2xl backdrop-blur-2xl will-change-[transform,opacity]"
 			>
-				<DockIcon icon={MagnifyingGlassMinusIcon} title={t`Zoom out`} onClick={() => zoomOut(0.15)} />
+				<DockIcon
+					icon={MagnifyingGlassMinusIcon}
+					title={t`Zoom out`}
+					onClick={() => zoomOut(0.15)}
+				/>
 				<ZoomMenu />
-				<DockIcon icon={MagnifyingGlassPlusIcon} title={t`Zoom in`} onClick={() => zoomIn(0.15)} />
+				<DockIcon
+					icon={MagnifyingGlassPlusIcon}
+					title={t`Zoom in`}
+					onClick={() => zoomIn(0.15)}
+				/>
 			</m.div>
 		</div>
 	);
@@ -100,7 +118,14 @@ type DockIconProps = {
 	active?: boolean;
 };
 
-function DockIcon({ icon: Icon, title, disabled, onClick, iconClassName, active }: DockIconProps) {
+function DockIcon({
+	icon: Icon,
+	title,
+	disabled,
+	onClick,
+	iconClassName,
+	active,
+}: DockIconProps) {
 	return (
 		<Tooltip>
 			<TooltipTrigger
@@ -115,7 +140,10 @@ function DockIcon({ icon: Icon, title, disabled, onClick, iconClassName, active 
 							size="icon"
 							variant="ghost"
 							disabled={disabled}
-							className={cn(active && "bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary")}
+							className={cn(
+								active &&
+									"bg-primary/10 text-primary hover:bg-primary/15 hover:text-primary",
+							)}
 							onClick={onClick}
 							aria-label={title}
 						>

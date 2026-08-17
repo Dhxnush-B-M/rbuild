@@ -1,11 +1,21 @@
-import type * as React from "react";
 import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 
 function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="message-group" className={cn("flex min-w-0 flex-col gap-2", className)} {...props} />;
+	return (
+		<div
+			data-slot="message-group"
+			className={cn("flex min-w-0 flex-col gap-2", className)}
+			{...props}
+		/>
+	);
 }
 
-function Message({ className, align = "start", ...props }: React.ComponentProps<"div"> & { align?: "start" | "end" }) {
+function Message({
+	className,
+	align = "start",
+	...props
+}: React.ComponentProps<"div"> & { align?: "start" | "end" }) {
 	return (
 		<div
 			data-slot="message"
@@ -71,4 +81,11 @@ function MessageFooter({ className, ...props }: React.ComponentProps<"div">) {
 	);
 }
 
-export { Message, MessageAvatar, MessageContent, MessageFooter, MessageGroup, MessageHeader };
+export {
+	Message,
+	MessageAvatar,
+	MessageContent,
+	MessageFooter,
+	MessageGroup,
+	MessageHeader,
+};

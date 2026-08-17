@@ -1,16 +1,19 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { publicationItemSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel } from "@rbuilder/ui/components/form";
 import { Switch } from "@rbuilder/ui/components/switch";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -28,7 +31,9 @@ const defaultValues: FormValues = {
 	description: "",
 };
 
-export function CreatePublicationDialog({ data }: DialogProps<"resume.sections.publications.create">) {
+export function CreatePublicationDialog({
+	data,
+}: DialogProps<"resume.sections.publications.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -60,7 +65,9 @@ export function CreatePublicationDialog({ data }: DialogProps<"resume.sections.p
 	);
 }
 
-export function UpdatePublicationDialog({ data }: DialogProps<"resume.sections.publications.update">) {
+export function UpdatePublicationDialog({
+	data,
+}: DialogProps<"resume.sections.publications.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -99,16 +106,25 @@ const PublicationForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="title">{(field) => <field.TextField label={<Trans>Title</Trans>} />}</form.AppField>
+				<form.AppField name="title">
+					{(field) => <field.TextField label={<Trans>Title</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="publisher">
 					{(field) => <field.TextField label={<Trans>Publisher</Trans>} />}
 				</form.AppField>
 
-				<form.AppField name="date">{(field) => <field.TextField label={<Trans>Date</Trans>} />}</form.AppField>
+				<form.AppField name="date">
+					{(field) => <field.TextField label={<Trans>Date</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="website">
-					{(field) => <field.WebsiteField label={<Trans>Website</Trans>} hideLabelButton={inlineLink} />}
+					{(field) => (
+						<field.WebsiteField
+							label={<Trans>Website</Trans>}
+							hideLabelButton={inlineLink}
+						/>
+					)}
 				</form.AppField>
 
 				<form.Field name="website.inlineLink">
@@ -132,7 +148,12 @@ const PublicationForm = withForm({
 				</form.Field>
 
 				<form.AppField name="description">
-					{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+					{(field) => (
+						<field.RichTextField
+							label={<Trans>Description</Trans>}
+							formItemClassName="sm:col-span-full"
+						/>
+					)}
 				</form.AppField>
 			</>
 		);

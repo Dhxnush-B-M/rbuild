@@ -49,13 +49,19 @@ export function CountUp({
 				minimumFractionDigits: maxDecimals,
 				maximumFractionDigits: maxDecimals,
 			};
-			const formattedNumber = Intl.NumberFormat("en-US", options).format(latest);
-			return separator ? formattedNumber.replace(/,/g, separator) : formattedNumber;
+			const formattedNumber = Intl.NumberFormat("en-US", options).format(
+				latest,
+			);
+			return separator
+				? formattedNumber.replace(/,/g, separator)
+				: formattedNumber;
 		},
 		[maxDecimals, separator],
 	);
 
-	const formatCurrentValue = useEffectEvent((latest: number) => formatValue(latest));
+	const formatCurrentValue = useEffectEvent((latest: number) =>
+		formatValue(latest),
+	);
 
 	useEffect(() => {
 		if (ref.current) ref.current.textContent = formatCurrentValue(0);

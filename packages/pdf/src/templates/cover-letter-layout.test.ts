@@ -41,11 +41,17 @@ describe("cover letter PDF layout", () => {
 	it.each(pageFiles)("%s renders the shared page props", (file) => {
 		const source = readTemplate(file);
 
-		expect(source, basename(file)).toContain("pageSize, pageMinHeightStyle, showHeader, pageNumber");
-		expect(source, basename(file)).toContain("size={semanticPageSize ?? pageSize}");
+		expect(source, basename(file)).toContain(
+			"pageSize, pageMinHeightStyle, showHeader, pageNumber",
+		);
+		expect(source, basename(file)).toContain(
+			"size={semanticPageSize ?? pageSize}",
+		);
 		expect(source, basename(file)).toContain("pageNodeKey={pageNodeKey}");
 		expect(source, basename(file)).toContain("showHeader &&");
-		expect(source, basename(file)).not.toContain('from "../shared/cover-letter"');
+		expect(source, basename(file)).not.toContain(
+			'from "../shared/cover-letter"',
+		);
 		expect(source, basename(file)).not.toContain('from "../shared/page-size"');
 	});
 });

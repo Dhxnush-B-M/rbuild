@@ -1,63 +1,106 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { applyResumePatches, jsonPatchOperationSchema, ResumePatchError } from "./patch";
+import { describe, expect, it } from "vitest";
+import {
+	applyResumePatches,
+	jsonPatchOperationSchema,
+	ResumePatchError,
+} from "./patch";
 
 describe("jsonPatchOperationSchema", () => {
 	it("validates add op", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "add", path: "/foo", value: 1 });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "add",
+			path: "/foo",
+			value: 1,
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("requires value for add", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "add", path: "/foo" });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "add",
+			path: "/foo",
+		});
 		expect(result.success).toBe(false);
 	});
 
 	it("validates remove op without value", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "remove", path: "/foo" });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "remove",
+			path: "/foo",
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("validates replace op", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "replace", path: "/foo", value: 2 });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "replace",
+			path: "/foo",
+			value: 2,
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("validates move op with from", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "move", path: "/a", from: "/b" });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "move",
+			path: "/a",
+			from: "/b",
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("requires from for move", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "move", path: "/a" });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "move",
+			path: "/a",
+		});
 		expect(result.success).toBe(false);
 	});
 
 	it("validates copy op with from", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "copy", path: "/a", from: "/b" });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "copy",
+			path: "/a",
+			from: "/b",
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("validates test op with value", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "test", path: "/a", value: 1 });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "test",
+			path: "/a",
+			value: 1,
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it("rejects unknown op", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "swap", path: "/a", value: 1 });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "swap",
+			path: "/a",
+			value: 1,
+		});
 		expect(result.success).toBe(false);
 	});
 
 	it("permits any value type for add (unknown)", () => {
-		const result = jsonPatchOperationSchema.safeParse({ op: "add", path: "/x", value: { nested: { array: [1] } } });
+		const result = jsonPatchOperationSchema.safeParse({
+			op: "add",
+			path: "/x",
+			value: { nested: { array: [1] } },
+		});
 		expect(result.success).toBe(true);
 	});
 });
 
 describe("applyResumePatches", () => {
 	it("applies a single replace op", () => {
-		const result = applyResumePatches(defaultResumeData, [{ op: "replace", path: "/basics/name", value: "Alice" }]);
+		const result = applyResumePatches(defaultResumeData, [
+			{ op: "replace", path: "/basics/name", value: "Alice" },
+		]);
 
 		expect(result.basics.name).toBe("Alice");
 		// Original is preserved (not mutated)
@@ -66,7 +109,9 @@ describe("applyResumePatches", () => {
 
 	it("does not mutate the input data", () => {
 		const before = JSON.stringify(defaultResumeData);
-		applyResumePatches(defaultResumeData, [{ op: "replace", path: "/basics/name", value: "Bob" }]);
+		applyResumePatches(defaultResumeData, [
+			{ op: "replace", path: "/basics/name", value: "Bob" },
+		]);
 		expect(JSON.stringify(defaultResumeData)).toBe(before);
 	});
 
@@ -99,7 +144,9 @@ describe("applyResumePatches", () => {
 			],
 		} as unknown as ResumeData;
 
-		const result = applyResumePatches(data, [{ op: "replace", path: "/basics/name", value: "Ada" }]);
+		const result = applyResumePatches(data, [
+			{ op: "replace", path: "/basics/name", value: "Ada" },
+		]);
 
 		expect(result.customSections[0]?.items[0]).toMatchObject({
 			content: "<p>Compatible overlap</p>",
@@ -119,22 +166,31 @@ describe("applyResumePatches", () => {
 	});
 
 	it("supports replacing the root document", () => {
-		const snapshot = { ...defaultResumeData, basics: { ...defaultResumeData.basics, name: "Snapshot Name" } };
+		const snapshot = {
+			...defaultResumeData,
+			basics: { ...defaultResumeData.basics, name: "Snapshot Name" },
+		};
 
-		const result = applyResumePatches(defaultResumeData, [{ op: "replace", path: "", value: snapshot }]);
+		const result = applyResumePatches(defaultResumeData, [
+			{ op: "replace", path: "", value: snapshot },
+		]);
 
 		expect(result.basics.name).toBe("Snapshot Name");
 	});
 
 	it("throws ResumePatchError for unresolvable path", () => {
 		expect(() =>
-			applyResumePatches(defaultResumeData, [{ op: "replace", path: "/does/not/exist", value: "x" }]),
+			applyResumePatches(defaultResumeData, [
+				{ op: "replace", path: "/does/not/exist", value: "x" },
+			]),
 		).toThrow(ResumePatchError);
 	});
 
 	it("throws ResumePatchError for failed test op", () => {
 		try {
-			applyResumePatches(defaultResumeData, [{ op: "test", path: "/basics/name", value: "wrong-value" }]);
+			applyResumePatches(defaultResumeData, [
+				{ op: "test", path: "/basics/name", value: "wrong-value" },
+			]);
 			expect.unreachable();
 		} catch (error) {
 			expect(error).toBeInstanceOf(ResumePatchError);
@@ -147,7 +203,9 @@ describe("applyResumePatches", () => {
 
 	it("includes the failing operation in the error", () => {
 		try {
-			applyResumePatches(defaultResumeData, [{ op: "test", path: "/basics/name", value: "wrong" }]);
+			applyResumePatches(defaultResumeData, [
+				{ op: "test", path: "/basics/name", value: "wrong" },
+			]);
 			expect.unreachable();
 		} catch (error) {
 			expect((error as ResumePatchError).operation).toEqual({
@@ -161,7 +219,9 @@ describe("applyResumePatches", () => {
 	it("rolls back if patched document fails schema validation", () => {
 		// Setting picture.size to a value outside schema bounds (min 32, max 512)
 		expect(() =>
-			applyResumePatches(defaultResumeData, [{ op: "replace", path: "/picture/size", value: 9999 }]),
+			applyResumePatches(defaultResumeData, [
+				{ op: "replace", path: "/picture/size", value: 9999 },
+			]),
 		).toThrow(/Patch produced invalid resume data/);
 	});
 
@@ -206,14 +266,20 @@ describe("applyResumePatches", () => {
 			},
 		]);
 
-		const removed = applyResumePatches(withItem, [{ op: "remove", path: "/sections/skills/items/0" }]);
+		const removed = applyResumePatches(withItem, [
+			{ op: "remove", path: "/sections/skills/items/0" },
+		]);
 		expect(removed.sections.skills.items).toHaveLength(0);
 	});
 });
 
 describe("ResumePatchError", () => {
 	it("captures all expected properties", () => {
-		const error = new ResumePatchError("CODE", "msg", 2, { op: "test", path: "/x", value: 1 });
+		const error = new ResumePatchError("CODE", "msg", 2, {
+			op: "test",
+			path: "/x",
+			value: 1,
+		});
 		expect(error.name).toBe("ResumePatchError");
 		expect(error.code).toBe("CODE");
 		expect(error.message).toBe("msg");
@@ -222,7 +288,10 @@ describe("ResumePatchError", () => {
 	});
 
 	it("is instanceof Error", () => {
-		const error = new ResumePatchError("X", "y", 0, { op: "remove", path: "/x" });
+		const error = new ResumePatchError("X", "y", 0, {
+			op: "remove",
+			path: "/x",
+		});
 		expect(error).toBeInstanceOf(Error);
 	});
 });

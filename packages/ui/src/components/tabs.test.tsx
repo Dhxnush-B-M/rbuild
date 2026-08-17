@@ -24,12 +24,18 @@ describe("Tabs", () => {
 
 	it("defaults orientation to 'horizontal'", () => {
 		const { container } = renderTabs();
-		expect(container.querySelector("[data-slot=tabs]")).toHaveAttribute("data-orientation", "horizontal");
+		expect(container.querySelector("[data-slot=tabs]")).toHaveAttribute(
+			"data-orientation",
+			"horizontal",
+		);
 	});
 
 	it("supports vertical orientation", () => {
 		const { container } = renderTabs({ orientation: "vertical" });
-		expect(container.querySelector("[data-slot=tabs]")).toHaveAttribute("data-orientation", "vertical");
+		expect(container.querySelector("[data-slot=tabs]")).toHaveAttribute(
+			"data-orientation",
+			"vertical",
+		);
 	});
 
 	it("renders the default selected tab content", () => {
@@ -59,12 +65,17 @@ describe("Tabs", () => {
 describe("TabsList", () => {
 	it("uses data-slot='tabs-list'", () => {
 		const { container } = renderTabs();
-		expect(container.querySelector("[data-slot=tabs-list]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=tabs-list]"),
+		).toBeInTheDocument();
 	});
 
 	it("defaults variant to 'default'", () => {
 		const { container } = renderTabs();
-		expect(container.querySelector("[data-slot=tabs-list]")).toHaveAttribute("data-variant", "default");
+		expect(container.querySelector("[data-slot=tabs-list]")).toHaveAttribute(
+			"data-variant",
+			"default",
+		);
 	});
 
 	it("supports variant='line'", () => {
@@ -76,20 +87,27 @@ describe("TabsList", () => {
 				<TabsContent value="a">x</TabsContent>
 			</Tabs>,
 		);
-		expect(container.querySelector("[data-slot=tabs-list]")).toHaveAttribute("data-variant", "line");
+		expect(container.querySelector("[data-slot=tabs-list]")).toHaveAttribute(
+			"data-variant",
+			"line",
+		);
 	});
 });
 
 describe("TabsTrigger", () => {
 	it("uses data-slot='tabs-trigger'", () => {
 		const { container } = renderTabs();
-		expect(container.querySelector("[data-slot=tabs-trigger]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=tabs-trigger]"),
+		).toBeInTheDocument();
 	});
 });
 
 describe("TabsContent", () => {
 	it("uses data-slot='tabs-content'", () => {
 		const { container } = renderTabs();
-		expect(container.querySelector("[data-slot=tabs-content]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=tabs-content]"),
+		).toBeInTheDocument();
 	});
 });

@@ -5,13 +5,19 @@ import { describe, expect, it } from "vitest";
 
 const templatesDir = fileURLToPath(new URL("../", import.meta.url));
 // ponytail: richListItemContent moved to shared factory; guard the factory directly.
-const factoryFile = fileURLToPath(new URL("./base-template-styles.ts", import.meta.url));
+const factoryFile = fileURLToPath(
+	new URL("./base-template-styles.ts", import.meta.url),
+);
 
-const templatePageFiles = readdirSync(templatesDir, { withFileTypes: true }).flatMap((entry) => {
+const templatePageFiles = readdirSync(templatesDir, {
+	withFileTypes: true,
+}).flatMap((entry) => {
 	if (!entry.isDirectory() || entry.name === "shared") return [];
 
 	const templateDir = join(templatesDir, entry.name);
-	const pageFile = readdirSync(templateDir).find((file) => file.endsWith("Page.tsx"));
+	const pageFile = readdirSync(templateDir).find((file) =>
+		file.endsWith("Page.tsx"),
+	);
 
 	return pageFile ? [join(templateDir, pageFile)] : [];
 });
@@ -20,7 +26,9 @@ describe("rich text template styles", () => {
 	// The shared factory owns richListItemContent for all 15 templates.
 	it("base factory keeps list item rich text on the global body line height", () => {
 		const source = readFileSync(factoryFile, "utf8");
-		const richListItemContentBlock = source.match(/richListItemContent:\s*{(?<body>[\s\S]*?)^\s*},/m);
+		const richListItemContentBlock = source.match(
+			/richListItemContent:\s*{(?<body>[\s\S]*?)^\s*},/m,
+		);
 
 		expect(richListItemContentBlock?.groups?.body).toBeDefined();
 		expect(richListItemContentBlock?.groups?.body).toContain("...bodyText");
@@ -39,10 +47,14 @@ describe("rich text template styles", () => {
 			}
 
 			// Legacy: template defines richListItemContent inline — no lineHeight override allowed.
-			const richListItemContentBlock = source.match(/richListItemContent:\s*{(?<body>[\s\S]*?)^\s*},/m);
+			const richListItemContentBlock = source.match(
+				/richListItemContent:\s*{(?<body>[\s\S]*?)^\s*},/m,
+			);
 			expect(richListItemContentBlock?.groups?.body).toBeDefined();
 			expect(richListItemContentBlock?.groups?.body).toContain("...bodyText");
-			expect(richListItemContentBlock?.groups?.body).not.toMatch(/\blineHeight:/);
+			expect(richListItemContentBlock?.groups?.body).not.toMatch(
+				/\blineHeight:/,
+			);
 		},
 	);
 });

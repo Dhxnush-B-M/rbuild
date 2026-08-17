@@ -1,5 +1,5 @@
-import type { Template } from "@rbuilder/schema/templates";
 import { createSampleResumeData } from "@rbuilder/schema/resume/sample";
+import type { Template } from "@rbuilder/schema/templates";
 
 export const comprehensiveStylesheet = {
 	languageVersion: 1,
@@ -18,7 +18,9 @@ resume[template="azurill"] template-part[name="timeline-dot"] { background-color
 } as const;
 
 export const buildAllTemplatesFixture = (template: Template) => {
-	const data = structuredClone(createSampleResumeData("Semantic CSS Acceptance"));
+	const data = structuredClone(
+		createSampleResumeData("Semantic CSS Acceptance"),
+	);
 	data.summary.content = [
 		"<h1>Heading</h1>",
 		"<blockquote><p>Quote</p></blockquote>",
@@ -27,7 +29,8 @@ export const buildAllTemplatesFixture = (template: Template) => {
 		"<ul><li>Unordered</li></ul><ol><li>Ordered</li></ol><hr>",
 	].join("");
 	const firstExperience = data.sections.experience.items[0];
-	if (!firstExperience) throw new Error("The comprehensive fixture requires an experience item.");
+	if (!firstExperience)
+		throw new Error("The comprehensive fixture requires an experience item.");
 	firstExperience.roles = [
 		{
 			id: "experience-role-1",
@@ -43,7 +46,8 @@ export const buildAllTemplatesFixture = (template: Template) => {
 		roles: [],
 	});
 	const reference = data.sections.references.items[0];
-	if (!reference) throw new Error("The comprehensive fixture requires a reference item.");
+	if (!reference)
+		throw new Error("The comprehensive fixture requires a reference item.");
 	reference.position = "Engineering Director";
 	reference.phone = "+1 555 0100";
 	reference.description = "<p>Available for a reference.</p>";

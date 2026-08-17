@@ -7,13 +7,21 @@ import { toast } from "sonner";
 import { LoadingScreen } from "@/components/layout/loading-screen";
 import { ResumePreview } from "@/features/resume/preview/preview";
 import { BuilderDock } from "./dock";
-import { DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT, getNextBuilderPreviewPageLayout } from "./page-layout";
+import {
+	DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT,
+	getNextBuilderPreviewPageLayout,
+} from "./page-layout";
 
 export function PreviewPage() {
-	const [pageLayout, setPageLayout] = useState(DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT);
+	const [pageLayout, setPageLayout] = useState(
+		DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT,
+	);
 
 	useHotkey("Mod+S", () => {
-		toast.info(t`Your changes are saved automatically.`, { id: "auto-save", icon: <FloppyDiskIcon /> });
+		toast.info(t`Your changes are saved automatically.`, {
+			id: "auto-save",
+			icon: <FloppyDiskIcon />,
+		});
 	});
 
 	return (
@@ -34,7 +42,9 @@ export function PreviewPage() {
 					<BuilderDock
 						pageLayout={pageLayout}
 						onTogglePageLayout={() => {
-							setPageLayout((current) => getNextBuilderPreviewPageLayout(current));
+							setPageLayout((current) =>
+								getNextBuilderPreviewPageLayout(current),
+							);
 						}}
 					/>
 				</TransformWrapper>

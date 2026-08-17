@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 import z from "zod";
 import { sectionTypeSchema } from "./data";
 import { defaultResumeData } from "./default";
-import { createCustomSectionItemJsonSchemas, createResumeDataJsonSchema } from "./json-schema";
+import {
+	createCustomSectionItemJsonSchemas,
+	createResumeDataJsonSchema,
+} from "./json-schema";
 
 describe("createResumeDataJsonSchema", () => {
 	it("describes accepted ResumeData input even when the Zod schema contains transforms", () => {
@@ -11,7 +14,14 @@ describe("createResumeDataJsonSchema", () => {
 		expect(schema).toMatchObject({
 			$schema: "https://json-schema.org/draft/2020-12/schema",
 			type: "object",
-			required: ["picture", "basics", "summary", "sections", "customSections", "metadata"],
+			required: [
+				"picture",
+				"basics",
+				"summary",
+				"sections",
+				"customSections",
+				"metadata",
+			],
 			properties: {
 				picture: { type: "object" },
 				basics: { type: "object" },
@@ -35,13 +45,18 @@ describe("createResumeDataJsonSchema", () => {
 					hidden: false,
 					keepTogether: false,
 					startOnNewPage: false,
-					items: [{ id: "summary-item", hidden: false, content: "<p>Summary</p>" }],
+					items: [
+						{ id: "summary-item", hidden: false, content: "<p>Summary</p>" },
+					],
 				},
 			],
 		};
 		const mismatched = {
 			...valid,
-			customSections: valid.customSections.map((section) => ({ ...section, type: "experience" })),
+			customSections: valid.customSections.map((section) => ({
+				...section,
+				type: "experience",
+			})),
 		};
 
 		expect(generatedSchema.safeParse(valid).success).toBe(true);
@@ -61,7 +76,15 @@ describe("createCustomSectionItemJsonSchemas", () => {
 		expect(schemas.experience).toMatchObject({
 			schemaName: "experienceItemSchema",
 			schema: {
-				required: ["id", "hidden", "company", "position", "location", "period", "description"],
+				required: [
+					"id",
+					"hidden",
+					"company",
+					"position",
+					"location",
+					"period",
+					"description",
+				],
 			},
 		});
 		expect(schemas["cover-letter"]).toMatchObject({

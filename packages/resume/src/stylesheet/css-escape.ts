@@ -18,7 +18,8 @@ export function escapeCssIdentifier(value: string): string {
 			(codePoint >= 0x61 && codePoint <= 0x7a);
 
 		if (codePoint === 0) result += "�";
-		else if (isControl || (isDigit && (isFirst || isSecondAfterHyphen))) result += `\\${codePoint.toString(16)} `;
+		else if (isControl || (isDigit && (isFirst || isSecondAfterHyphen)))
+			result += `\\${codePoint.toString(16)} `;
 		else if (isIdentifierCharacter) result += character;
 		else result += `\\${character}`;
 
@@ -39,8 +40,10 @@ export function escapeCssString(value: string): string {
 		const codePoint = character.codePointAt(0);
 		if (codePoint === undefined) continue;
 		if (codePoint === 0) result += "�";
-		else if (character === '"' || character === "\\") result += `\\${character}`;
-		else if (codePoint <= 0x1f || codePoint === 0x7f) result += `\\${codePoint.toString(16)} `;
+		else if (character === '"' || character === "\\")
+			result += `\\${character}`;
+		else if (codePoint <= 0x1f || codePoint === 0x7f)
+			result += `\\${codePoint.toString(16)} `;
 		else result += character;
 	}
 

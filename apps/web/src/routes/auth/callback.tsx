@@ -9,7 +9,9 @@ export const Route = createFileRoute("/auth/callback")({
 
 export function AuthCallbackPage() {
 	const navigate = useNavigate();
-	const [statusMessage, setStatusMessage] = useState("Authenticating with Google...");
+	const [statusMessage, setStatusMessage] = useState(
+		"Authenticating with Google...",
+	);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -30,7 +32,9 @@ export function AuthCallbackPage() {
 				toast.success(`Welcome, ${result.user.name || "User"}!`);
 
 				// Validate redirect to prevent open redirects
-				const target = result.redirectTo.startsWith("/dashboard") ? "/dashboard/resumes" : "/onboarding";
+				const target = result.redirectTo.startsWith("/dashboard")
+					? "/dashboard/resumes"
+					: "/onboarding";
 				void navigate({ to: target, replace: true });
 			} catch (err) {
 				console.error("Auth callback error:", err);
@@ -53,7 +57,9 @@ export function AuthCallbackPage() {
 			<div className="flex flex-col items-center gap-4 rounded-3xl border border-border/80 bg-background/60 p-8 shadow-2xl backdrop-blur-2xl">
 				<div className="size-10 animate-spin rounded-full border-3 border-indigo-600 border-t-transparent" />
 				<h2 className="font-bold text-foreground text-lg">{statusMessage}</h2>
-				<p className="text-muted-foreground text-xs">Securing your session and checking account status...</p>
+				<p className="text-muted-foreground text-xs">
+					Securing your session and checking account status...
+				</p>
 			</div>
 		</div>
 	);

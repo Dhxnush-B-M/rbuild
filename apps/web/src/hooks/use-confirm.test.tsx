@@ -8,11 +8,15 @@ type HookWrapperProps = {
 	children: React.ReactNode;
 };
 
-const wrapper = ({ children }: HookWrapperProps) => <ConfirmDialogProvider>{children}</ConfirmDialogProvider>;
+const wrapper = ({ children }: HookWrapperProps) => (
+	<ConfirmDialogProvider>{children}</ConfirmDialogProvider>
+);
 
 describe("useConfirm", () => {
 	it("throws when used outside ConfirmDialogProvider", () => {
-		expect(() => renderHook(() => useConfirm())).toThrow(/useConfirm must be used within a <ConfirmDialogProvider \/>/);
+		expect(() => renderHook(() => useConfirm())).toThrow(
+			/useConfirm must be used within a <ConfirmDialogProvider \/>/,
+		);
 	});
 
 	it("returns a confirm function when wrapped in provider", () => {
@@ -39,9 +43,13 @@ describe("useConfirm", () => {
 		});
 
 		// Click the cancel button to close.
-		const cancelBtn = document.body.querySelector('button[type="button"][data-slot="alert-dialog-cancel"]');
+		const cancelBtn = document.body.querySelector(
+			'button[type="button"][data-slot="alert-dialog-cancel"]',
+		);
 		// Fallback: cancel buttons in shadcn/base-ui dialogs usually carry role="button" + text.
-		const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>("button"));
+		const buttons = Array.from(
+			document.body.querySelectorAll<HTMLButtonElement>("button"),
+		);
 		const cancel = buttons.find((b) => /cancel/i.test(b.textContent ?? ""));
 
 		await act(() => {
@@ -59,7 +67,9 @@ describe("useConfirm", () => {
 			promise = result.current("Heading", { confirmText: "Yes" });
 		});
 
-		const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>("button"));
+		const buttons = Array.from(
+			document.body.querySelectorAll<HTMLButtonElement>("button"),
+		);
 		const yes = buttons.find((b) => /yes/i.test(b.textContent ?? ""));
 
 		await act(() => {

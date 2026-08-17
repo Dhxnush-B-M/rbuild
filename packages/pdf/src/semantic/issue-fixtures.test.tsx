@@ -1,9 +1,9 @@
+import { compileStylesheet } from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it, vi } from "vitest";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { compileStylesheet } from "@rbuilder/resume/stylesheet";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it, vi } from "vitest";
 import { ResumeDocument } from "../document";
 import { semanticNodeKeys } from "./node-keys";
 import { resolveResumePresentation, resolveStylesheetMode } from "./resolve";
@@ -28,7 +28,11 @@ const findText = (node: HostNode, text: string): HostNode | undefined => {
 	}
 };
 
-const findPrimitive = (node: HostNode, type: string, text: string): HostNode | undefined => {
+const findPrimitive = (
+	node: HostNode,
+	type: string,
+	text: string,
+): HostNode | undefined => {
 	if (node.type === type && nodeText(node) === text) return node;
 	for (const child of node.children ?? []) {
 		const match = findPrimitive(child, type, text);
@@ -37,10 +41,22 @@ const findPrimitive = (node: HostNode, type: string, text: string): HostNode | u
 };
 
 const mergedStyle = (node: HostNode | undefined): Record<string, unknown> =>
-	Object.assign({}, ...(Array.isArray(node?.style) ? node.style : node?.style ? [node.style] : []));
+	Object.assign(
+		{},
+		...(Array.isArray(node?.style)
+			? node.style
+			: node?.style
+				? [node.style]
+				: []),
+	);
 
-const containsStyle = (node: HostNode, property: string, value: unknown): boolean =>
-	mergedStyle(node)[property] === value || (node.children ?? []).some((child) => containsStyle(child, property, value));
+const containsStyle = (
+	node: HostNode,
+	property: string,
+	value: unknown,
+): boolean =>
+	mergedStyle(node)[property] === value ||
+	(node.children ?? []).some((child) => containsStyle(child, property, value));
 
 const textRuns = (node: HostNode): string[] => [
 	...(node.type === "TEXT" ? [nodeText(node)] : []),
@@ -80,7 +96,9 @@ const buildIssueFixture = (): ResumeData => {
 			keywords: [],
 		},
 	];
-	data.metadata.layout.pages = [{ fullWidth: true, main: ["experience", "skills"], sidebar: [] }];
+	data.metadata.layout.pages = [
+		{ fullWidth: true, main: ["experience", "skills"], sidebar: [] },
+	];
 
 	return data;
 };
@@ -96,10 +114,17 @@ const resolveIssueFixture = (text: string) => {
 };
 
 const pageKey = semanticNodeKeys.page(1);
-const headerKey = semanticNodeKeys.header(semanticNodeKeys.region(pageKey, "header"));
+const headerKey = semanticNodeKeys.header(
+	semanticNodeKeys.region(pageKey, "header"),
+);
 const sectionItemKey = (section: string) =>
 	semanticNodeKeys.item(
-		semanticNodeKeys.sectionItems(semanticNodeKeys.section(semanticNodeKeys.region(pageKey, "main"), section)),
+		semanticNodeKeys.sectionItems(
+			semanticNodeKeys.section(
+				semanticNodeKeys.region(pageKey, "main"),
+				section,
+			),
+		),
 		"item-1",
 	);
 
@@ -109,7 +134,10 @@ describe("semantic issue fixtures", () => {
 			@version 1;
 			section[type="experience"] field[name="company"] { font-weight: 400; }
 		`);
-		const company = semanticNodeKeys.field(semanticNodeKeys.itemHeader(sectionItemKey("experience")), "company");
+		const company = semanticNodeKeys.field(
+			semanticNodeKeys.itemHeader(sectionItemKey("experience")),
+			"company",
+		);
 
 		expect(presentation[company]?.style?.fontWeight).toBe("400");
 	});
@@ -119,7 +147,10 @@ describe("semantic issue fixtures", () => {
 			@version 1;
 			link { text-decoration: none; }
 		`);
-		const contact = semanticNodeKeys.contactItem(semanticNodeKeys.contactList(headerKey), "email");
+		const contact = semanticNodeKeys.contactItem(
+			semanticNodeKeys.contactList(headerKey),
+			"email",
+		);
 		const link = semanticNodeKeys.link(contact, "contact");
 
 		expect(presentation[link]?.style?.textDecoration).toBe("none");
@@ -131,8 +162,14 @@ describe("semantic issue fixtures", () => {
 		const experience = data.sections.experience.items[0];
 		if (!experience) throw new Error("Expected experience fixture.");
 		experience.description = "<p>Description</p>";
-		const contact = semanticNodeKeys.contactItem(semanticNodeKeys.contactList(headerKey), "email");
-		const field = semanticNodeKeys.field(sectionItemKey("experience"), "description");
+		const contact = semanticNodeKeys.contactItem(
+			semanticNodeKeys.contactList(headerKey),
+			"email",
+		);
+		const field = semanticNodeKeys.field(
+			sectionItemKey("experience"),
+			"description",
+		);
 
 		const resolve = (text: string) =>
 			resolveResumePresentation({
@@ -142,13 +179,27 @@ describe("semantic issue fixtures", () => {
 				mode: "semantic",
 			});
 
-		expect(resolve("contact-item { color: red; } link { color: blue; }")[contact]?.style?.color).toBe("blue");
-		expect(resolve("link { color: blue; } contact-item { color: red; }")[contact]?.style?.color).toBe("red");
-		expect(resolve("field { color: red; } rich-text { color: blue; }")[field]?.style?.color).toBe("blue");
-		expect(resolve("rich-text { color: blue; } field { color: red; }")[field]?.style?.color).toBe("red");
-		expect(resolve("link { color: blue; } contact-item[name='email'] { color: red; }")[contact]?.style?.color).toBe(
-			"red",
-		);
+		expect(
+			resolve("contact-item { color: red; } link { color: blue; }")[contact]
+				?.style?.color,
+		).toBe("blue");
+		expect(
+			resolve("link { color: blue; } contact-item { color: red; }")[contact]
+				?.style?.color,
+		).toBe("red");
+		expect(
+			resolve("field { color: red; } rich-text { color: blue; }")[field]?.style
+				?.color,
+		).toBe("blue");
+		expect(
+			resolve("rich-text { color: blue; } field { color: red; }")[field]?.style
+				?.color,
+		).toBe("red");
+		expect(
+			resolve(
+				"link { color: blue; } contact-item[name='email'] { color: red; }",
+			)[contact]?.style?.color,
+		).toBe("red");
 	});
 
 	it("styles Basics/header nodes while rejecting unsupported gradients (#3137)", () => {
@@ -157,10 +208,16 @@ describe("semantic issue fixtures", () => {
 			header { background-color: #1e293b; }
 			name { color: white; }
 		`);
-		const invalid = compileStylesheet(applied("@version 1; header { background-image: linear-gradient(red, blue); }"));
+		const invalid = compileStylesheet(
+			applied(
+				"@version 1; header { background-image: linear-gradient(red, blue); }",
+			),
+		);
 
 		expect(valid[headerKey]?.style?.backgroundColor).toBe("#1e293b");
-		expect(valid[semanticNodeKeys.headerPart(headerKey, "name")]?.style?.color).toBe("white");
+		expect(
+			valid[semanticNodeKeys.headerPart(headerKey, "name")]?.style?.color,
+		).toBe("white");
 		expect(invalid.program).toBeNull();
 	});
 
@@ -169,8 +226,14 @@ describe("semantic issue fixtures", () => {
 			@version 1;
 			section[type="skills"] field[name="name"] { font-weight: 400; }
 		`);
-		const skillName = semanticNodeKeys.field(semanticNodeKeys.itemHeader(sectionItemKey("skills")), "name");
-		const company = semanticNodeKeys.field(semanticNodeKeys.itemHeader(sectionItemKey("experience")), "company");
+		const skillName = semanticNodeKeys.field(
+			semanticNodeKeys.itemHeader(sectionItemKey("skills")),
+			"name",
+		);
+		const company = semanticNodeKeys.field(
+			semanticNodeKeys.itemHeader(sectionItemKey("experience")),
+			"company",
+		);
 
 		expect(presentation[skillName]?.style?.fontWeight).toBe("400");
 		expect(presentation[company]?.style?.fontWeight).not.toBe("400");
@@ -208,16 +271,31 @@ describe("semantic issue fixtures", () => {
 			section[type="skills"] field[name="name"] { font-weight: 400; }
 			level icon[role~="active"] { opacity: 0.2; }
 		`);
-		data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
-		const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: stylesheet,
+			applied: stylesheet,
+		};
+		const element = createElement(ResumeDocument, {
+			data,
+			template: "onyx",
+		}) as unknown as Parameters<typeof pdf>[0];
 		const instance = pdf(element);
 		await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
 		const document = instance.container.document as HostNode;
 
-		expect(mergedStyle(findText(document, "Ada Lovelace"))).toMatchObject({ color: "white" });
-		expect(mergedStyle(findText(document, "Analytical Engines"))).toMatchObject({ fontWeight: "400" });
-		expect(mergedStyle(findText(document, "TypeScript"))).toMatchObject({ fontWeight: "400" });
-		expect(mergedStyle(findPrimitive(document, "LINK", "ada@example.com"))).toMatchObject({
+		expect(mergedStyle(findText(document, "Ada Lovelace"))).toMatchObject({
+			color: "white",
+		});
+		expect(mergedStyle(findText(document, "Analytical Engines"))).toMatchObject(
+			{ fontWeight: "400" },
+		);
+		expect(mergedStyle(findText(document, "TypeScript"))).toMatchObject({
+			fontWeight: "400",
+		});
+		expect(
+			mergedStyle(findPrimitive(document, "LINK", "ada@example.com")),
+		).toMatchObject({
 			textDecoration: "none",
 		});
 		expect(containsStyle(document, "backgroundColor", "#1e293b")).toBe(true);
@@ -230,36 +308,58 @@ describe("semantic issue fixtures", () => {
 			@version 1;
 			section[type="skills"] field[name="name"] { font-weight: 400; }
 		`);
-		data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
-		const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: stylesheet,
+			applied: stylesheet,
+		};
+		const element = createElement(ResumeDocument, {
+			data,
+			template: "onyx",
+		}) as unknown as Parameters<typeof pdf>[0];
 		const instance = pdf(element);
 		await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
 		const document = instance.container.document as HostNode;
 
-		expect(mergedStyle(findText(document, "TypeScript"))).toMatchObject({ fontWeight: "400" });
-		expect(mergedStyle(findText(document, "Analytical Engines")).fontWeight).not.toBe("400");
+		expect(mergedStyle(findText(document, "TypeScript"))).toMatchObject({
+			fontWeight: "400",
+		});
+		expect(
+			mergedStyle(findText(document, "Analytical Engines")).fontWeight,
+		).not.toBe("400");
 	});
 
 	it("renders descriptor filtering and stable item order instead of remapping raw arrays", async () => {
 		const data = buildIssueFixture();
-		data.sections.skills.items = ["First", "Hidden", "Last"].map((name, index) => ({
-			id: `item-${index + 1}`,
-			hidden: false,
-			icon: "",
-			iconColor: "",
-			name,
-			proficiency: `${name} proficiency`,
-			level: 0,
-			keywords: [],
-		}));
-		data.metadata.layout.pages = [{ fullWidth: true, main: ["skills"], sidebar: [] }];
+		data.sections.skills.items = ["First", "Hidden", "Last"].map(
+			(name, index) => ({
+				id: `item-${index + 1}`,
+				hidden: false,
+				icon: "",
+				iconColor: "",
+				name,
+				proficiency: `${name} proficiency`,
+				level: 0,
+				keywords: [],
+			}),
+		);
+		data.metadata.layout.pages = [
+			{ fullWidth: true, main: ["skills"], sidebar: [] },
+		];
 		const stylesheet = applied(`
 			@version 1;
 			section[type="skills"] item:nth-child(2) { display: none; }
 			section[type="skills"] item:last-child { order: -1; }
 		`);
-		data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
-		const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: stylesheet,
+			applied: stylesheet,
+		};
+		const element = createElement(ResumeDocument, {
+			data,
+			template: "onyx",
+		}) as unknown as Parameters<typeof pdf>[0];
 		const instance = pdf(element);
 		await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
 		const runs = textRuns(instance.container.document as HostNode);

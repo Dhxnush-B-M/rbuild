@@ -40,7 +40,9 @@ describe("downloadWithAnchor", () => {
 		vi.useFakeTimers();
 		originalCreate = URL.createObjectURL;
 		originalRevoke = URL.revokeObjectURL;
-		createObjectURLSpy = vi.fn<typeof URL.createObjectURL>(() => "blob:mock-url");
+		createObjectURLSpy = vi.fn<typeof URL.createObjectURL>(
+			() => "blob:mock-url",
+		);
 		revokeObjectURLSpy = vi.fn<typeof URL.revokeObjectURL>();
 		URL.createObjectURL = createObjectURLSpy;
 		URL.revokeObjectURL = revokeObjectURLSpy;
@@ -54,7 +56,9 @@ describe("downloadWithAnchor", () => {
 
 	it("creates an anchor with correct href, rel, and download attributes", () => {
 		const blob = new Blob(["hello"], { type: "text/plain" });
-		const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+		const clickSpy = vi
+			.spyOn(HTMLAnchorElement.prototype, "click")
+			.mockImplementation(() => {});
 
 		downloadWithAnchor(blob, "test.txt");
 

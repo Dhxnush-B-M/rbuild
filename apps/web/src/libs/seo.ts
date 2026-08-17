@@ -15,7 +15,10 @@ export const getCanonicalRootUrl = (origin?: string): string => {
 	}
 };
 
-export const createNoindexFollowMeta = () => ({ name: "robots", content: "noindex, follow" });
+export const createNoindexFollowMeta = () => ({
+	name: "robots",
+	content: "noindex, follow",
+});
 
 type ResumeSocialMetaOptions = {
 	canonicalUrl: string;
@@ -24,7 +27,12 @@ type ResumeSocialMetaOptions = {
 	imageUrl: string;
 };
 
-export const createResumeSocialMeta = ({ canonicalUrl, title, description, imageUrl }: ResumeSocialMetaOptions) => [
+export const createResumeSocialMeta = ({
+	canonicalUrl,
+	title,
+	description,
+	imageUrl,
+}: ResumeSocialMetaOptions) => [
 	{ property: "og:type", content: "profile" },
 	{ property: "og:title", content: title },
 	{ property: "og:description", content: description },

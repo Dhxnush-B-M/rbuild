@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 const updateResumeData = vi.hoisted(() => vi.fn());
 const richInputProps = vi.hoisted(() => ({
@@ -21,7 +21,9 @@ type RichInputProps = {
 };
 
 vi.mock("../shared/section-base", () => ({
-	SectionBase: ({ children }: SectionBaseProps) => <div data-testid="section-base">{children}</div>,
+	SectionBase: ({ children }: SectionBaseProps) => (
+		<div data-testid="section-base">{children}</div>
+	),
 }));
 vi.mock("@/components/input/rich-input", () => ({
 	RichInput: (props: RichInputProps) => {
@@ -51,7 +53,9 @@ describe("NotesSectionBuilder", () => {
 			</I18nProvider>,
 		);
 
-		expect(screen.getByText(/personal notes specific to this resume/)).toBeInTheDocument();
+		expect(
+			screen.getByText(/personal notes specific to this resume/),
+		).toBeInTheDocument();
 	});
 
 	it("seeds the rich input with the current notes value", () => {
@@ -75,7 +79,9 @@ describe("NotesSectionBuilder", () => {
 		expect(updateResumeData).toHaveBeenCalledTimes(1);
 
 		// updateResumeData receives a recipe that mutates the draft.
-		const recipe = updateResumeData.mock.calls[0]?.[0] as (draft: { metadata: { notes: string } }) => void;
+		const recipe = updateResumeData.mock.calls[0]?.[0] as (draft: {
+			metadata: { notes: string };
+		}) => void;
 		const draft = { metadata: { notes: "" } };
 		recipe(draft);
 		expect(draft.metadata.notes).toBe("<p>new note</p>");

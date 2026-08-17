@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { buildDocx } from "./index";
 
 const createRendererUnsafeResumeData = (): ResumeData => {
@@ -17,7 +17,13 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 			hidden: false,
 			keepTogether: false,
 			startOnNewPage: false,
-			items: [{ id: "summary-shaped-item", hidden: false, content: "<p>Missing company</p>" }],
+			items: [
+				{
+					id: "summary-shaped-item",
+					hidden: false,
+					content: "<p>Missing company</p>",
+				},
+			],
 		} as never,
 	];
 	return data;
@@ -48,9 +54,17 @@ describe("buildDocx", () => {
 	});
 
 	it("rejects renderer-unsafe data before DOCX builder dispatch", async () => {
-		const error = await buildDocx(createRendererUnsafeResumeData()).catch((caught: unknown) => caught);
+		const error = await buildDocx(createRendererUnsafeResumeData()).catch(
+			(caught: unknown) => caught,
+		);
 
-		expect(error).toHaveProperty("issues.0.path", ["customSections", 0, "items", 0, "company"]);
+		expect(error).toHaveProperty("issues.0.path", [
+			"customSections",
+			0,
+			"items",
+			0,
+			"company",
+		]);
 	});
 
 	it("normalizes valid legacy data before DOCX building", async () => {

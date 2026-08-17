@@ -67,7 +67,10 @@ function removeDeletedResumeId(id: string) {
 	try {
 		const set = getDeletedResumeIds();
 		set.delete(id);
-		localStorage.setItem("rbuilder_deleted_ids", JSON.stringify(Array.from(set)));
+		localStorage.setItem(
+			"rbuilder_deleted_ids",
+			JSON.stringify(Array.from(set)),
+		);
 	} catch {
 		// ignore
 	}
@@ -78,7 +81,10 @@ function addDeletedResumeId(id: string) {
 	try {
 		const set = getDeletedResumeIds();
 		set.add(id);
-		localStorage.setItem("rbuilder_deleted_ids", JSON.stringify(Array.from(set)));
+		localStorage.setItem(
+			"rbuilder_deleted_ids",
+			JSON.stringify(Array.from(set)),
+		);
 	} catch {
 		// ignore
 	}
@@ -87,7 +93,9 @@ function addDeletedResumeId(id: string) {
 /**
  * Fetch profile by email from Supabase (to verify subscription status across any device)
  */
-export async function getProfileByEmailFromSupabase(email: string): Promise<SupabaseUserProfile | null> {
+export async function getProfileByEmailFromSupabase(
+	email: string,
+): Promise<SupabaseUserProfile | null> {
 	if (!email) return null;
 	const lowerEmail = email.trim().toLowerCase();
 
@@ -114,7 +122,11 @@ export async function getProfileByEmailFromSupabase(email: string): Promise<Supa
 	}
 
 	try {
-		const { data, error } = await supabase.from("profiles").select("*").eq("email", lowerEmail).maybeSingle();
+		const { data, error } = await supabase
+			.from("profiles")
+			.select("*")
+			.eq("email", lowerEmail)
+			.maybeSingle();
 
 		if (!error && data) {
 			const profile = data as SupabaseUserProfile;
@@ -153,7 +165,10 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 
 		const user = session.user;
 		const userEmail = (user.email || "").toLowerCase();
-		const userName = (user.user_metadata?.full_name as string) || (user.user_metadata?.name as string) || "User";
+		const userName =
+			(user.user_metadata?.full_name as string) ||
+			(user.user_metadata?.name as string) ||
+			"User";
 		const userAvatar =
 			(user.user_metadata?.avatar_url as string) ||
 			`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`;
@@ -167,10 +182,13 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 			email: userEmail,
 			name: userName,
 			avatar_url: userAvatar,
-			username: (user.user_metadata?.user_name as string) || userEmail.split("@")[0],
+			username:
+				(user.user_metadata?.user_name as string) || userEmail.split("@")[0],
 			phone: (user.user_metadata?.phone as string) || "",
 			provider: user.app_metadata?.provider || "google_oauth2",
-			subscription_status: (user.user_metadata?.subscription_status as "active" | "inactive") || "inactive",
+			subscription_status:
+				(user.user_metadata?.subscription_status as "active" | "inactive") ||
+				"inactive",
 			onboarding_completed: Boolean(user.user_metadata?.onboarding_completed),
 			created_at: user.created_at,
 		};
@@ -188,8 +206,11 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 /**
  * Save / Update user profile directly in Supabase Database ('profiles' table) and local storage
  */
-export async function saveUserToSupabase(user: Partial<SupabaseUserProfile> & { email: string }) {
-	const current: Partial<SupabaseUserProfile> = (await getCurrentSupabaseUser()) ?? {};
+export async function saveUserToSupabase(
+	user: Partial<SupabaseUserProfile> & { email: string },
+) {
+	const current: Partial<SupabaseUserProfile> =
+		(await getCurrentSupabaseUser()) ?? {};
 	const email = user.email.trim().toLowerCase();
 	const userId = user.id || current.id || `user_${Date.now()}`;
 
@@ -205,24 +226,33 @@ export async function saveUserToSupabase(user: Partial<SupabaseUserProfile> & { 
 		phone: user.phone || current.phone || "",
 		provider: user.provider || current.provider || "google_oauth2",
 		subscription_plan: user.subscription_plan || current.subscription_plan,
-		subscription_status: user.subscription_status || current.subscription_status || "inactive",
-		subscription_amount: user.subscription_amount ?? current.subscription_amount,
-		subscription_expires_at: user.subscription_expires_at || current.subscription_expires_at,
+		subscription_status:
+			user.subscription_status || current.subscription_status || "inactive",
+		subscription_amount:
+			user.subscription_amount ?? current.subscription_amount,
+		subscription_expires_at:
+			user.subscription_expires_at || current.subscription_expires_at,
 		payment_id: user.payment_id || current.payment_id,
-		onboarding_completed: user.onboarding_completed ?? current.onboarding_completed ?? false,
+		onboarding_completed:
+			user.onboarding_completed ?? current.onboarding_completed ?? false,
 		updated_at: new Date().toISOString(),
 	};
 
 	if (typeof window !== "undefined") {
 		try {
-			localStorage.setItem("rbuilder_user_profile", JSON.stringify(profileData));
+			localStorage.setItem(
+				"rbuilder_user_profile",
+				JSON.stringify(profileData),
+			);
 		} catch {
 			// ignore
 		}
 	}
 
 	try {
-		await supabase.from("profiles").upsert(profileData, { onConflict: "email" });
+		await supabase
+			.from("profiles")
+			.upsert(profileData, { onConflict: "email" });
 	} catch (e) {
 		console.warn("Supabase profile sync exception:", e);
 	}
@@ -264,7 +294,10 @@ export async function saveResumeToSupabase(resume: {
 	// Save immediately to local cache
 	if (typeof window !== "undefined") {
 		try {
-			localStorage.setItem(`rbuilder_resume_${resume.id}`, JSON.stringify(record));
+			localStorage.setItem(
+				`rbuilder_resume_${resume.id}`,
+				JSON.stringify(record),
+			);
 		} catch {
 			// ignore quota errors
 		}
@@ -272,7 +305,10 @@ export async function saveResumeToSupabase(resume: {
 
 	// Persist to Supabase Database
 	try {
-		const { data, error } = await supabase.from("resumes").upsert(record, { onConflict: "id" }).select();
+		const { data, error } = await supabase
+			.from("resumes")
+			.upsert(record, { onConflict: "id" })
+			.select();
 		if (error) {
 			console.error("Supabase resume save error:", error);
 		} else if (data && data.length > 0) {
@@ -288,21 +324,28 @@ export async function saveResumeToSupabase(resume: {
 /**
  * Fetch resumes from Supabase Database ('resumes' table) with local cache fallback
  */
-export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> {
+export async function getResumesFromSupabase(): Promise<
+	SupabaseResumeRecord[]
+> {
 	const deletedIds = getDeletedResumeIds();
 
 	try {
 		const profile = await getCurrentSupabaseUser();
 		const userId = profile?.id;
 
-		let query = supabase.from("resumes").select("*").order("updated_at", { ascending: false });
+		let query = supabase
+			.from("resumes")
+			.select("*")
+			.order("updated_at", { ascending: false });
 		if (userId) {
 			query = query.eq("user_id", userId);
 		}
 
 		const { data, error } = await query;
 		if (!error && data && data.length > 0) {
-			const rows = (data as Record<string, unknown>[]).map(mapResumeRow).filter((r) => !deletedIds.has(r.id));
+			const rows = (data as Record<string, unknown>[])
+				.map(mapResumeRow)
+				.filter((r) => !deletedIds.has(r.id));
 
 			// Update local cache
 			if (typeof window !== "undefined") {
@@ -341,7 +384,9 @@ export async function getResumesFromSupabase(): Promise<SupabaseResumeRecord[]> 
 /**
  * Fetch a single resume by ID from local cache or Supabase
  */
-export async function getResumeByIdFromSupabase(id: string): Promise<SupabaseResumeRecord | null> {
+export async function getResumeByIdFromSupabase(
+	id: string,
+): Promise<SupabaseResumeRecord | null> {
 	if (getDeletedResumeIds().has(id)) return null;
 
 	// Check fast local cache first for instant opening
@@ -358,7 +403,11 @@ export async function getResumeByIdFromSupabase(id: string): Promise<SupabaseRes
 	}
 
 	try {
-		const { data, error } = await supabase.from("resumes").select("*").eq("id", id).maybeSingle();
+		const { data, error } = await supabase
+			.from("resumes")
+			.select("*")
+			.eq("id", id)
+			.maybeSingle();
 
 		if (!error && data) {
 			const mapped = mapResumeRow(data as Record<string, unknown>);
@@ -418,7 +467,10 @@ export async function deleteResumeFromSupabase(id: string): Promise<boolean> {
 /**
  * Fetch live counts of registered users and resumes for landing page from Supabase
  */
-export async function getLiveAppStats(): Promise<{ userCount: number; resumeCount: number }> {
+export async function getLiveAppStats(): Promise<{
+	userCount: number;
+	resumeCount: number;
+}> {
 	try {
 		const [profilesRes, resumesRes] = await Promise.all([
 			supabase.from("profiles").select("*", { count: "exact", head: true }),
@@ -437,7 +489,9 @@ export async function getLiveAppStats(): Promise<{ userCount: number; resumeCoun
 /**
  * Fetch feedbacks / testimonials from Supabase
  */
-export async function getFeedbacksFromSupabase(): Promise<SupabaseFeedbackRecord[]> {
+export async function getFeedbacksFromSupabase(): Promise<
+	SupabaseFeedbackRecord[]
+> {
 	try {
 		const { data, error } = await supabase
 			.from("feedbacks")
@@ -472,7 +526,8 @@ export async function submitFeedbackToSupabase(feedback: {
 			rating: feedback.rating,
 			comment: feedback.comment,
 			avatar_url:
-				feedback.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(feedback.email)}`,
+				feedback.avatar_url ||
+				`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(feedback.email)}`,
 		};
 
 		const { error } = await supabase.from("feedbacks").insert(record);
@@ -486,19 +541,27 @@ export async function submitFeedbackToSupabase(feedback: {
 /**
  * Upload image / avatar to Supabase Storage
  */
-export async function uploadPictureToSupabase(file: File, bucket = "avatars"): Promise<string | null> {
+export async function uploadPictureToSupabase(
+	file: File,
+	bucket = "avatars",
+): Promise<string | null> {
 	try {
 		const ext = file.name.split(".").pop() || "jpg";
 		const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
 		const filePath = `uploads/${fileName}`;
 
-		const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file, {
-			cacheControl: "3600",
-			upsert: true,
-		});
+		const { error: uploadError } = await supabase.storage
+			.from(bucket)
+			.upload(filePath, file, {
+				cacheControl: "3600",
+				upsert: true,
+			});
 
 		if (uploadError) {
-			console.warn("Storage upload note, using inline fallback:", uploadError.message);
+			console.warn(
+				"Storage upload note, using inline fallback:",
+				uploadError.message,
+			);
 			return await fileToDataUrl(file);
 		}
 

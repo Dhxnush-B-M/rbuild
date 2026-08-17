@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 vi.mock("@uiw/react-color-colorful", () => ({
 	default: () => null,
@@ -25,7 +25,9 @@ const renderPicker = (props: React.ComponentProps<typeof ColorPicker> = {}) =>
 describe("ColorPicker", () => {
 	it("renders a trigger swatch reflecting the current value", () => {
 		const { container } = renderPicker({ defaultValue: "rgba(231, 0, 11, 1)" });
-		const trigger = container.querySelector("[style*='background-color']") as HTMLElement | null;
+		const trigger = container.querySelector(
+			"[style*='background-color']",
+		) as HTMLElement | null;
 		expect(trigger).not.toBeNull();
 		// happy-dom serializes both the input rgba string and the rgb representation,
 		// depending on alpha; just confirm the color values surface.
@@ -39,11 +41,15 @@ describe("ColorPicker", () => {
 		renderPicker({ defaultValue: "rgba(0, 0, 0, 1)", onChange });
 
 		// Open the popover by clicking the trigger swatch.
-		const triggerSwatch = document.querySelector("[style*='background-color']") as HTMLElement;
+		const triggerSwatch = document.querySelector(
+			"[style*='background-color']",
+		) as HTMLElement;
 		fireEvent.click(triggerSwatch);
 
 		// Locate any preset button (they have aria-label='Use color rgba(...)').
-		const presetBtn = screen.getAllByRole("button", { name: /Use color rgba\(/ })[0];
+		const presetBtn = screen.getAllByRole("button", {
+			name: /Use color rgba\(/,
+		})[0];
 		fireEvent.click(presetBtn);
 
 		expect(onChange).toHaveBeenCalled();

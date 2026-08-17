@@ -1,4 +1,10 @@
-import type { Design, Layout, Page, ResumeData, Typography } from "@rbuilder/schema/resume/data";
+import type {
+	Design,
+	Layout,
+	Page,
+	ResumeData,
+	Typography,
+} from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
 import type { SemanticNode } from "./semantic-types";
 
@@ -82,7 +88,10 @@ export type ResolvedNodeStyle = {
 	order: number;
 };
 
-export type ResolvedPageSize = "A4" | "LETTER" | { width: number; height?: number };
+export type ResolvedPageSize =
+	| "A4"
+	| "LETTER"
+	| { width: number; height?: number };
 
 export type StructuralPresentation = {
 	breakBefore?: "page";
@@ -103,7 +112,10 @@ export type ResolveStylesheetInput = {
 	aliases?: Readonly<Record<string, readonly string[]>>;
 };
 
-export type ResolveStylesheetContext = Omit<ResolveStylesheetInput, "program" | "tree">;
+export type ResolveStylesheetContext = Omit<
+	ResolveStylesheetInput,
+	"program" | "tree"
+>;
 
 export type ResolveStylesheetResult = {
 	nodes: Readonly<Record<string, ResolvedNodeStyle>>;

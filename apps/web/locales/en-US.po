@@ -154,14 +154,6 @@ msgstr "Add Page"
 msgid "Add Role"
 msgstr "Add Role"
 
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "All changes are auto-saved to Supabase in real time."
-msgstr "All changes are auto-saved to Supabase in real time."
-
-#: src/features/auth/pages/register.tsx
-msgid "Already have an account? <0/>"
-msgstr "Already have an account? <0/>"
-
 #: src/dialogs/resume/import.tsx
 msgid "An error occurred while importing your resume."
 msgstr "An error occurred while importing your resume."
@@ -264,10 +256,6 @@ msgstr "Border Radius"
 msgid "Border Width"
 msgstr "Border Width"
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Build your own resume"
-msgstr "Build your own resume"
-
 #: src/components/ui/copyright.tsx
 msgid "Built for professional career growth."
 msgstr "Built for professional career growth."
@@ -304,10 +292,6 @@ msgstr "Certifications"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Check your email for a link to reset your password."
 msgstr "Check your email for a link to reset your password."
-
-#: src/features/auth/pages/register.tsx
-msgid "Check your email for a link to verify your account."
-msgstr "Check your email for a link to verify your account."
 
 #: src/features/resume/stylesheet/status.tsx
 msgid "Checking"
@@ -377,11 +361,6 @@ msgstr "Content"
 msgid "Continue"
 msgstr "Continue"
 
-#. Button label to continue to onboarding after successful registration
-#: src/features/auth/pages/register.tsx
-msgid "Continue to Onboarding"
-msgstr "Continue to Onboarding"
-
 #: src/routes/dashboard/resumes/-components/cards/import-card.tsx
 msgid "Continue where you left off"
 msgstr "Continue where you left off"
@@ -437,10 +416,6 @@ msgstr "Cover Letter"
 #: src/dialogs/resume/sections/volunteer.tsx
 msgid "Create"
 msgstr "Create"
-
-#: src/features/auth/pages/register.tsx
-msgid "Create a new account"
-msgstr "Create a new account"
 
 #: src/dialogs/resume/sections/award.tsx
 msgid "Create a new award"
@@ -627,10 +602,6 @@ msgstr "Download"
 msgid "Download options"
 msgstr "Download options"
 
-#: src/features/resume/public/public-resume.tsx
-msgid "Download PDF"
-msgstr "Download PDF"
-
 #: src/features/resume/export/download-dialog.tsx
 msgid "Download Resume"
 msgstr "Download Resume"
@@ -704,9 +675,7 @@ msgid "Email"
 msgstr "Email"
 
 #. Label for email input on forgot-password form
-#. Label for email input on registration form
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
 msgid "Email Address"
 msgstr "Email Address"
 
@@ -780,11 +749,6 @@ msgstr "Export"
 #: src/features/resume/export/download-dialog.tsx
 msgid "Export your high quality resume in PDF or DOCX format."
 msgstr "Export your high quality resume in PDF or DOCX format."
-
-#. Fallback toast when account registration fails without a server error message
-#: src/features/auth/pages/register.tsx
-msgid "Failed to create your account. Please try again."
-msgstr "Failed to create your account. Please try again."
 
 #: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Failed to delete resume."
@@ -978,7 +942,6 @@ msgstr "Hide Icons"
 msgid "Hide Link Underline"
 msgstr "Hide Link Underline"
 
-#. Accessible label for button that hides password in registration form
 #. Accessible label for button that hides password in reset-password form
 #. Accessible label for toggle button that hides the visible current password
 #. Accessible label for toggle button that hides the visible new password
@@ -987,7 +950,6 @@ msgstr "Hide Link Underline"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Hide password"
 msgstr "Hide password"
@@ -1052,20 +1014,8 @@ msgstr "Issuer"
 msgid "Italic"
 msgstr "Italic"
 
-#. Example full name placeholder on registration form
-#: src/features/auth/pages/register.tsx
-msgid "John Doe"
-msgstr "John Doe"
-
-#. Example username placeholder on registration form
-#: src/features/auth/pages/register.tsx
-msgid "john.doe"
-msgstr "john.doe"
-
 #. Example email placeholder on forgot-password form
-#. Example email placeholder on registration form
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
 msgid "john.doe@example.com"
 msgstr "john.doe@example.com"
 
@@ -1212,13 +1162,11 @@ msgstr "Move to"
 msgid "Must start with https://"
 msgstr "Must start with https://"
 
-#. Label for full name input on registration form
 #: src/dialogs/resume/index.tsx
 #: src/dialogs/resume/sections/interest.tsx
 #: src/dialogs/resume/sections/project.tsx
 #: src/dialogs/resume/sections/reference.tsx
 #: src/dialogs/resume/sections/skill.tsx
-#: src/features/auth/pages/register.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "Name"
 msgstr "Name"
@@ -1308,10 +1256,8 @@ msgstr "Paragraph"
 msgid "Paragraph and heading style"
 msgstr "Paragraph and heading style"
 
-#. Label for password input on registration form
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/resume-password.tsx
 msgid "Password"
 msgstr "Password"
@@ -1675,7 +1621,6 @@ msgstr "Show"
 msgid "Show link in title"
 msgstr "Show link in title"
 
-#. Accessible label for button that reveals password in registration form
 #. Accessible label for button that reveals password in reset-password form
 #. Accessible label for toggle button that reveals the masked current password
 #. Accessible label for toggle button that reveals the masked new password
@@ -1684,7 +1629,6 @@ msgstr "Show link in title"
 #: src/dialogs/auth/change-password.tsx
 #: src/dialogs/auth/disable-two-factor.tsx
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/features/auth/pages/register.tsx
 #: src/features/auth/pages/reset-password.tsx
 msgid "Show password"
 msgstr "Show password"
@@ -1699,24 +1643,13 @@ msgid "Sidebar Width"
 msgstr "Sidebar Width"
 
 #. Call-to-action link from forgot-password page to login page
-#. Call-to-action link from registration page to login page
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
 msgid "Sign in now"
 msgstr "Sign in now"
-
-#. Primary action button label on registration form
-#: src/features/auth/pages/register.tsx
-msgid "Sign up"
-msgstr "Sign up"
 
 #: src/features/user/dropdown-menu.tsx
 msgid "Signing out..."
 msgstr "Signing out..."
-
-#: src/features/auth/pages/register.tsx
-msgid "Signing up..."
-msgstr "Signing up..."
 
 #: src/dialogs/resume/template/data.ts
 msgid "Single-column with a magenta left border accent; compact and efficient for entry-level or internship applications."
@@ -1908,10 +1841,6 @@ msgstr "This resume's sharing settings changed elsewhere."
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "This section is reserved for your personal notes specific to this resume. The content here remains private and is not shared with anyone else."
 msgstr "This section is reserved for your personal notes specific to this resume. The content here remains private and is not shared with anyone else."
-
-#: src/features/auth/pages/register.tsx
-msgid "This step is optional, but recommended."
-msgstr "This step is optional, but recommended."
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "This will remove all items from this section."
@@ -2128,9 +2057,7 @@ msgstr "Uploading picture…"
 msgid "Use color {color}"
 msgstr "Use color {color}"
 
-#. Label for username input on registration form
 #: src/dialogs/resume/sections/profile.tsx
-#: src/features/auth/pages/register.tsx
 msgid "Username"
 msgstr "Username"
 
@@ -2159,14 +2086,6 @@ msgstr "Verifying code..."
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Verifying code…"
 msgstr "Verifying code…"
-
-#: src/features/auth/pages/register.tsx
-msgid "Verifying your email is required when resetting your password."
-msgstr "Verifying your email is required when resetting your password."
-
-#: src/routes/builder/$resumeId/-components/version-history.tsx
-msgid "Version history"
-msgstr "Version history"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -2209,7 +2128,6 @@ msgid "You have unsaved changes that will be lost."
 msgstr "You have unsaved changes that will be lost."
 
 #: src/features/auth/pages/forgot-password.tsx
-#: src/features/auth/pages/register.tsx
 msgid "You've got mail!"
 msgstr "You've got mail!"
 

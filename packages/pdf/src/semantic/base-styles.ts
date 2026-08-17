@@ -1,4 +1,7 @@
-import type { ResolvedNodeStyle, SemanticNode } from "@rbuilder/resume/stylesheet";
+import type {
+	ResolvedNodeStyle,
+	SemanticNode,
+} from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
 
@@ -36,10 +39,14 @@ type SectionBreaks = {
 	startOnNewPage?: boolean;
 };
 
-const resolveSectionBreaks = (data: ResumeData, id: string | undefined): SectionBreaks | undefined => {
+const resolveSectionBreaks = (
+	data: ResumeData,
+	id: string | undefined,
+): SectionBreaks | undefined => {
 	if (!id) return {};
 	if (id === "summary") return data.summary;
-	if (id in data.sections) return data.sections[id as keyof typeof data.sections];
+	if (id in data.sections)
+		return data.sections[id as keyof typeof data.sections];
 	return data.customSections.find((section) => section.id === id);
 };
 
@@ -75,17 +82,26 @@ export function buildPdfBaseStyles({
 
 		if (textKinds.has(node.kind)) {
 			style.color = data.metadata.design.colors.text;
-			style["font-size"] = headingKinds.has(node.kind) ? heading.fontSize : body.fontSize;
+			style["font-size"] = headingKinds.has(node.kind)
+				? heading.fontSize
+				: body.fontSize;
 			style["font-weight"] = headingKinds.has(node.kind)
 				? headingWeight
 				: node.roles.includes("primary-text") || node.kind === "strong"
 					? boldWeight
 					: bodyWeight;
-			style["line-height"] = headingKinds.has(node.kind) ? heading.lineHeight : body.lineHeight;
+			style["line-height"] = headingKinds.has(node.kind)
+				? heading.lineHeight
+				: body.lineHeight;
 		}
 
-		if (node.kind === "link" || (node.kind === "contact-item" && node.roles.includes("structured-link"))) {
-			style["text-decoration"] = data.metadata.page.hideLinkUnderline ? "none" : "underline";
+		if (
+			node.kind === "link" ||
+			(node.kind === "contact-item" && node.roles.includes("structured-link"))
+		) {
+			style["text-decoration"] = data.metadata.page.hideLinkUnderline
+				? "none"
+				: "underline";
 		}
 
 		if (node.kind === "picture") {

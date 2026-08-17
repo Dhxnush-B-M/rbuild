@@ -1,6 +1,6 @@
-import type * as React from "react";
 import { Input as InputPrimitive } from "@base-ui/react/input";
 import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
 	return (

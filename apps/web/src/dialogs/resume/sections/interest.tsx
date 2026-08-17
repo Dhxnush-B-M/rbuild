@@ -1,21 +1,29 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { interestItemSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
 import { cn } from "@rbuilder/utils/style";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
 import { ChipInput } from "@/components/input/chip-input";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -32,7 +40,9 @@ const defaultValues: FormValues = {
 	keywords: [],
 };
 
-export function CreateInterestDialog({ data }: DialogProps<"resume.sections.interests.create">) {
+export function CreateInterestDialog({
+	data,
+}: DialogProps<"resume.sections.interests.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -64,7 +74,9 @@ export function CreateInterestDialog({ data }: DialogProps<"resume.sections.inte
 	);
 }
 
-export function UpdateInterestDialog({ data }: DialogProps<"resume.sections.interests.update">) {
+export function UpdateInterestDialog({
+	data,
+}: DialogProps<"resume.sections.interests.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -101,11 +113,17 @@ const InterestForm = withForm({
 	render: function InterestFormRenderer({ form }) {
 		const nameMeta = useStore(form.store, (s) => s.fieldMeta?.name);
 
-		const isNameInvalid = (nameMeta?.isTouched ?? false) && (nameMeta?.errors?.length ?? 0) > 0;
+		const isNameInvalid =
+			(nameMeta?.isTouched ?? false) && (nameMeta?.errors?.length ?? 0) > 0;
 
 		return (
 			<>
-				<div className={cn("col-span-full flex items-end", isNameInvalid && "items-center")}>
+				<div
+					className={cn(
+						"col-span-full flex items-end",
+						isNameInvalid && "items-center",
+					)}
+				>
 					<form.Field name="icon">
 						{(field) => (
 							<FormItem className="shrink-0">
@@ -127,7 +145,13 @@ const InterestForm = withForm({
 
 					<form.Field name="name">
 						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								className="flex-1"
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Name</Trans>
 								</FormLabel>
@@ -138,7 +162,9 @@ const InterestForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -161,7 +187,10 @@ const InterestForm = withForm({
 												<PopoverTrigger className="h-9 rounded-e border-input border-y border-e px-2">
 													<div
 														className="size-4 shrink-0 cursor-pointer rounded-full border border-foreground/60 transition-all hover:scale-105 focus-visible:outline-hidden"
-														style={{ backgroundColor: field.state.value ?? "currentColor" }}
+														style={{
+															backgroundColor:
+																field.state.value ?? "currentColor",
+														}}
 													/>
 												</PopoverTrigger>
 											}
@@ -177,7 +206,9 @@ const InterestForm = withForm({
 					{(field) => (
 						<FormItem
 							className="col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormLabel>
 								<Trans>Keywords</Trans>

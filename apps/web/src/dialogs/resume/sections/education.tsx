@@ -1,16 +1,19 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { educationItemSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel } from "@rbuilder/ui/components/form";
 import { Switch } from "@rbuilder/ui/components/switch";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -31,7 +34,9 @@ const defaultValues: FormValues = {
 	description: "",
 };
 
-export function CreateEducationDialog({ data }: DialogProps<"resume.sections.education.create">) {
+export function CreateEducationDialog({
+	data,
+}: DialogProps<"resume.sections.education.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -63,7 +68,9 @@ export function CreateEducationDialog({ data }: DialogProps<"resume.sections.edu
 	);
 }
 
-export function UpdateEducationDialog({ data }: DialogProps<"resume.sections.education.update">) {
+export function UpdateEducationDialog({
+	data,
+}: DialogProps<"resume.sections.education.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -102,17 +109,29 @@ const EducationForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="school">{(field) => <field.TextField label={<Trans>School</Trans>} />}</form.AppField>
+				<form.AppField name="school">
+					{(field) => <field.TextField label={<Trans>School</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="area">{(field) => <field.TextField label={<Trans>Area of Study</Trans>} />}</form.AppField>
+				<form.AppField name="area">
+					{(field) => <field.TextField label={<Trans>Area of Study</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="degree">{(field) => <field.TextField label={<Trans>Degree</Trans>} />}</form.AppField>
+				<form.AppField name="degree">
+					{(field) => <field.TextField label={<Trans>Degree</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="grade">{(field) => <field.TextField label={<Trans>Grade</Trans>} />}</form.AppField>
+				<form.AppField name="grade">
+					{(field) => <field.TextField label={<Trans>Grade</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="location">{(field) => <field.TextField label={<Trans>Location</Trans>} />}</form.AppField>
+				<form.AppField name="location">
+					{(field) => <field.TextField label={<Trans>Location</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="period">{(field) => <field.TextField label={<Trans>Period</Trans>} />}</form.AppField>
+				<form.AppField name="period">
+					{(field) => <field.TextField label={<Trans>Period</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="website">
 					{(field) => (
@@ -145,7 +164,12 @@ const EducationForm = withForm({
 				</form.Field>
 
 				<form.AppField name="description">
-					{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+					{(field) => (
+						<field.RichTextField
+							label={<Trans>Description</Trans>}
+							formItemClassName="sm:col-span-full"
+						/>
+					)}
 				</form.AppField>
 			</>
 		);

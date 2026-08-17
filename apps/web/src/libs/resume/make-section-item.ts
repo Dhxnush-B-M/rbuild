@@ -10,7 +10,10 @@ import { generateId } from "@rbuilder/utils/string";
  * This helper intentionally does not deep-merge partial items. Callers should provide either a complete item
  * (duplicate) or no item (create) to keep the seam explicit and predictable.
  */
-export function makeSectionItem<T extends { id: string }>(defaultItem: T, item?: T): T {
+export function makeSectionItem<T extends { id: string }>(
+	defaultItem: T,
+	item?: T,
+): T {
 	if (item) return { ...item, id: generateId() };
 	return { ...defaultItem, id: generateId() };
 }

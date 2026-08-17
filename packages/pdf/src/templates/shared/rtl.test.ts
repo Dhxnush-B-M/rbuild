@@ -28,7 +28,15 @@ describe("createRtlStyleHelpers", () => {
 		const ltr = createRtlStyleHelpers(false).contactSeparator("#000", 4);
 		const rtl = createRtlStyleHelpers(true).contactSeparator("#000", 4);
 
-		expect(ltr).toMatchObject({ borderRightWidth: 1, paddingRight: 4, marginRight: 4 });
-		expect(rtl).toMatchObject({ borderLeftWidth: 1, paddingLeft: 4, marginLeft: 4 });
+		expect(ltr).toMatchObject({
+			borderRightWidth: 1,
+			paddingRight: 4,
+			marginRight: 4,
+		});
+		expect(rtl).toMatchObject({
+			borderLeftWidth: 1,
+			paddingLeft: 4,
+			marginLeft: 4,
+		});
 	});
 });

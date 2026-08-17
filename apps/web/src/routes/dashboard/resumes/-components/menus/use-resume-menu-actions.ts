@@ -1,10 +1,13 @@
-import type { SupabaseResumeRecord } from "@/libs/supabase/db";
 import { t } from "@lingui/core/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useDialogStore } from "@/dialogs/store";
 import { useConfirm } from "@/hooks/use-confirm";
-import { deleteResumeFromSupabase, saveResumeToSupabase } from "@/libs/supabase/db";
+import type { SupabaseResumeRecord } from "@/libs/supabase/db";
+import {
+	deleteResumeFromSupabase,
+	saveResumeToSupabase,
+} from "@/libs/supabase/db";
 
 export function useResumeMenuActions(resume: SupabaseResumeRecord) {
 	const confirm = useConfirm();
@@ -13,9 +16,12 @@ export function useResumeMenuActions(resume: SupabaseResumeRecord) {
 
 	const handleToggleLock = async () => {
 		if (!resume.is_locked) {
-			const confirmed = await confirm(t`Are you sure you want to lock this resume?`, {
-				description: t`When locked, the resume cannot be updated or deleted.`,
-			});
+			const confirmed = await confirm(
+				t`Are you sure you want to lock this resume?`,
+				{
+					description: t`When locked, the resume cannot be updated or deleted.`,
+				},
+			);
 			if (!confirmed) return;
 		}
 
@@ -30,9 +36,12 @@ export function useResumeMenuActions(resume: SupabaseResumeRecord) {
 	};
 
 	const handleDelete = async () => {
-		const confirmed = await confirm(t`Are you sure you want to delete this resume?`, {
-			description: t`This action cannot be undone.`,
-		});
+		const confirmed = await confirm(
+			t`Are you sure you want to delete this resume?`,
+			{
+				description: t`This action cannot be undone.`,
+			},
+		);
 		if (!confirmed) return;
 
 		const toastId = toast.loading(t`Deleting your resume...`);
@@ -40,7 +49,9 @@ export function useResumeMenuActions(resume: SupabaseResumeRecord) {
 
 		if (ok) {
 			await queryClient.invalidateQueries({ queryKey: ["resumes"] });
-			toast.success(t`Your resume has been deleted successfully.`, { id: toastId });
+			toast.success(t`Your resume has been deleted successfully.`, {
+				id: toastId,
+			});
 		} else {
 			toast.error(t`Failed to delete resume.`, { id: toastId });
 		}

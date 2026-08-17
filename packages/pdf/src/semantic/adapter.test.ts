@@ -4,16 +4,37 @@ import type {
 	ResolveStylesheetContext,
 	SemanticNode,
 } from "@rbuilder/resume/stylesheet";
-import { describe, expect, it } from "vitest";
-import { createElement } from "react";
-import { compileStylesheet, PROPERTY_REGISTRY_V1, resolveStylesheet } from "@rbuilder/resume/stylesheet";
+import {
+	compileStylesheet,
+	PROPERTY_REGISTRY_V1,
+	resolveStylesheet,
+} from "@rbuilder/resume/stylesheet";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { Document, Image, Page, renderToBuffer, Text, View } from "#react-pdf-renderer";
-import { adaptResolvedPdfNode, resolvedPdfFlowProps, resolvedPdfTextProps } from "./adapter";
+import { createElement } from "react";
+import { describe, expect, it } from "vitest";
+import {
+	Document,
+	Image,
+	Page,
+	renderToBuffer,
+	Text,
+	View,
+} from "#react-pdf-renderer";
+import {
+	adaptResolvedPdfNode,
+	resolvedPdfFlowProps,
+	resolvedPdfTextProps,
+} from "./adapter";
 
 const pictureFixture =
 	"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
-const borderShorthands = ["border", "border-top", "border-right", "border-bottom", "border-left"] as const;
+const borderShorthands = [
+	"border",
+	"border-top",
+	"border-right",
+	"border-bottom",
+	"border-left",
+] as const;
 const borderShorthandHints = [
 	"inherit",
 	"initial",
@@ -23,7 +44,12 @@ const borderShorthandHints = [
 	"1pt dashed",
 	"1pt solid",
 ] as const;
-const blankStyle: ResolvedNodeStyle = { style: {}, structural: {}, hidden: false, order: 0 };
+const blankStyle: ResolvedNodeStyle = {
+	style: {},
+	structural: {},
+	hidden: false,
+	order: 0,
+};
 const baseSettings: BaseSettingsSnapshot = {
 	picture: defaultResumeData.picture,
 	template: defaultResumeData.metadata.template,
@@ -37,10 +63,14 @@ const context: ResolveStylesheetContext = {
 	baseSettings,
 	pages: [{ pageKey: "page", width: 595.28, height: 841.89 }],
 };
-const fixedValueHints = Object.entries(PROPERTY_REGISTRY_V1).flatMap(([property, definition]) => {
-	const kind = definition?.appliesTo[0];
-	return kind ? definition.values.map((value) => ({ property, kind, value })) : [];
-});
+const fixedValueHints = Object.entries(PROPERTY_REGISTRY_V1).flatMap(
+	([property, definition]) => {
+		const kind = definition?.appliesTo[0];
+		return kind
+			? definition.values.map((value) => ({ property, kind, value }))
+			: [];
+	},
+);
 
 const node = (kind: SemanticNode["kind"]): SemanticNode => ({
 	key: kind,
@@ -50,7 +80,11 @@ const node = (kind: SemanticNode["kind"]): SemanticNode => ({
 	children: [],
 });
 
-async function renderFixedValueHint(property: string, kind: SemanticNode["kind"], value: string) {
+async function renderFixedValueHint(
+	property: string,
+	kind: SemanticNode["kind"],
+	value: string,
+) {
 	const compiled = compileStylesheet({
 		languageVersion: 1,
 		text: `@version 1; ${kind} { ${property}: ${value}; }`,
@@ -59,7 +93,10 @@ async function renderFixedValueHint(property: string, kind: SemanticNode["kind"]
 		compiled.diagnostics.filter(({ severity }) => severity === "error"),
 		`${property}: ${value} failed compilation`,
 	).toEqual([]);
-	expect(compiled.program, `${property}: ${value} did not compile`).not.toBeNull();
+	expect(
+		compiled.program,
+		`${property}: ${value} did not compile`,
+	).not.toBeNull();
 	if (!compiled.program) return;
 
 	const resolved = resolveStylesheet(compiled.program, node(kind), context);
@@ -68,7 +105,8 @@ async function renderFixedValueHint(property: string, kind: SemanticNode["kind"]
 		`${property}: ${value} failed cascade resolution`,
 	).toEqual([]);
 	const presentation = adaptResolvedPdfNode(resolved.nodes[kind] ?? blankStyle);
-	const style = presentation.style === undefined ? {} : { style: presentation.style };
+	const style =
+		presentation.style === undefined ? {} : { style: presentation.style };
 	const content =
 		kind === "picture"
 			? createElement(Image, {
@@ -77,7 +115,11 @@ async function renderFixedValueHint(property: string, kind: SemanticNode["kind"]
 					...resolvedPdfFlowProps(presentation),
 				})
 			: definitionIsText(property)
-				? createElement(Text, { ...style, ...resolvedPdfTextProps(presentation) }, "Value hint")
+				? createElement(
+						Text,
+						{ ...style, ...resolvedPdfTextProps(presentation) },
+						"Value hint",
+					)
 				: createElement(
 						View,
 						{ ...style, ...resolvedPdfFlowProps(presentation) },
@@ -89,7 +131,10 @@ async function renderFixedValueHint(property: string, kind: SemanticNode["kind"]
 		createElement(Page, { size: presentation.size ?? "A4" }, content),
 	) as unknown as Parameters<typeof renderToBuffer>[0];
 
-	await expect(renderToBuffer(document), `${property}: ${value} failed React PDF rendering`).resolves.toBeDefined();
+	await expect(
+		renderToBuffer(document),
+		`${property}: ${value} failed React PDF rendering`,
+	).resolves.toBeDefined();
 }
 
 const definitionIsText = (property: string) =>
@@ -98,9 +143,11 @@ const definitionIsText = (property: string) =>
 describe("adaptResolvedPdfNode", () => {
 	it("renders every published fixed value hint through cascade and the React PDF adapter", async () => {
 		for (const property of borderShorthands) {
-			expect(fixedValueHints.filter((hint) => hint.property === property).map(({ value }) => value)).toEqual(
-				borderShorthandHints,
-			);
+			expect(
+				fixedValueHints
+					.filter((hint) => hint.property === property)
+					.map(({ value }) => value),
+			).toEqual(borderShorthandHints);
 		}
 
 		for (const { property, kind, value } of fixedValueHints) {

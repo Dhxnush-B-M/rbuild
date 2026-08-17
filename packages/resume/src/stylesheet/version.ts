@@ -5,7 +5,10 @@ export const SUPPORTED_SEMANTIC_CSS_VERSIONS = Object.freeze([1] as const);
 type StylesheetCompiler = (rules: readonly CompiledStyleRule[]) => StyleProgram;
 
 function compileVersionOne(rules: readonly CompiledStyleRule[]): StyleProgram {
-	return Object.freeze({ languageVersion: 1, rules: Object.freeze([...rules]) });
+	return Object.freeze({
+		languageVersion: 1,
+		rules: Object.freeze([...rules]),
+	});
 }
 
 const COMPILERS = Object.freeze({ 1: compileVersionOne } satisfies Record<
@@ -13,6 +16,8 @@ const COMPILERS = Object.freeze({ 1: compileVersionOne } satisfies Record<
 	StylesheetCompiler
 >);
 
-export function getStylesheetCompiler(version: number): StylesheetCompiler | undefined {
+export function getStylesheetCompiler(
+	version: number,
+): StylesheetCompiler | undefined {
 	return COMPILERS[version as keyof typeof COMPILERS];
 }

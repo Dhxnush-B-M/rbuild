@@ -1,6 +1,6 @@
-import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
 import { AnimatePresence, m } from "motion/react";
+import type { RouterOutput } from "@/libs/orpc/client";
 import { CreateResumeCard } from "./cards/create-card";
 import { ResumeCard } from "./cards/resume-card";
 
@@ -46,7 +46,11 @@ export function GridView({ resumes, hasResumes }: Props) {
 							y: -20,
 							filter: "blur(8px)",
 						}}
-						transition={{ duration: 0.2, delay: Math.min(0.12, (index + 1) * 0.02), ease: "easeOut" }}
+						transition={{
+							duration: 0.2,
+							delay: Math.min(0.12, (index + 1) * 0.02),
+							ease: "easeOut",
+						}}
 						className="will-change-[transform,opacity]"
 					>
 						<ResumeCard resume={resume} />

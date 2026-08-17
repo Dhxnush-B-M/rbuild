@@ -1,20 +1,22 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { RouterOutput } from "@/libs/orpc/client";
 import { FileTextIcon, SparkleIcon } from "@phosphor-icons/react";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { cn } from "@rbuilder/utils/style";
 import { useQuery } from "@tanstack/react-query";
 import { useInView } from "motion/react";
 import { useEffect, useRef } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { cn } from "@rbuilder/utils/style";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { createPdfFirstPageImageUrl } from "@/features/resume/preview/pdf-thumbnail";
 import { getResumeThumbnailCacheKey } from "@/features/resume/preview/resume-thumbnail.shared";
+import type { RouterOutput } from "@/libs/orpc/client";
 
 type ResumeListItem = RouterOutput["resume"]["list"][number] & {
 	data?: ResumeData;
 };
 
-type ThumbnailState = { status: "error" | "idle" | "loading" } | { status: "ready"; url: string };
+type ThumbnailState =
+	| { status: "error" | "idle" | "loading" }
+	| { status: "ready"; url: string };
 
 type ResumeThumbnailProps = {
 	isLocked: boolean;
@@ -22,10 +24,14 @@ type ResumeThumbnailProps = {
 };
 
 const throwIfAborted = (signal: AbortSignal) => {
-	if (signal.aborted) throw new DOMException("Thumbnail generation aborted.", "AbortError");
+	if (signal.aborted)
+		throw new DOMException("Thumbnail generation aborted.", "AbortError");
 };
 
-const createResumeThumbnailUrl = async (data: ResumeData, signal: AbortSignal) => {
+const createResumeThumbnailUrl = async (
+	data: ResumeData,
+	signal: AbortSignal,
+) => {
 	const pdf = await createResumePdfBlob(data);
 	throwIfAborted(signal);
 
@@ -39,7 +45,10 @@ const createResumeThumbnailUrl = async (data: ResumeData, signal: AbortSignal) =
 	return url;
 };
 
-function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | undefined): ThumbnailState {
+function useResumeThumbnail(
+	data: ResumeData | undefined,
+	cacheKey: string | undefined,
+): ThumbnailState {
 	const {
 		data: thumbnailData,
 		error: thumbnailError,
@@ -47,7 +56,8 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 	} = useQuery({
 		queryKey: ["resume-thumbnail", cacheKey],
 		queryFn: ({ signal }) => {
-			if (!data) throw new Error("Resume data is required to generate a thumbnail.");
+			if (!data)
+				throw new Error("Resume data is required to generate a thumbnail.");
 			return createResumeThumbnailUrl(data, signal);
 		},
 		enabled: Boolean(data && cacheKey),
@@ -56,7 +66,8 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 	});
 
 	useEffect(() => {
-		if (thumbnailError) console.error("Failed to generate resume thumbnail", thumbnailError);
+		if (thumbnailError)
+			console.error("Failed to generate resume thumbnail", thumbnailError);
 	}, [thumbnailError]);
 
 	useEffect(() => {
@@ -76,20 +87,30 @@ function useResumeThumbnail(data: ResumeData | undefined, cacheKey: string | und
 
 export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const isInView = useInView(containerRef, { amount: 0.1, margin: "240px", once: true });
+	const isInView = useInView(containerRef, {
+		amount: 0.1,
+		margin: "240px",
+		once: true,
+	});
 	const activeData = (resume.data || defaultResumeData) as ResumeData;
 
 	const thumbnail = useResumeThumbnail(
 		activeData,
 		isInView
-			? getResumeThumbnailCacheKey(resume.id, new Date(resume.updatedAt || resume.updated_at || Date.now()))
+			? getResumeThumbnailCacheKey(
+					resume.id,
+					new Date(resume.updatedAt || resume.updated_at || Date.now()),
+				)
 			: undefined,
 	);
 
 	return (
 		<div
 			ref={containerRef}
-			className={cn("relative size-full overflow-hidden bg-background/60 transition-all", isLocked && "blur-xs")}
+			className={cn(
+				"relative size-full overflow-hidden bg-background/60 transition-all",
+				isLocked && "blur-xs",
+			)}
 		>
 			{thumbnail.status === "ready" ? (
 				<div
@@ -130,7 +151,9 @@ export function ResumeThumbnail({ isLocked, resume }: ResumeThumbnailProps) {
 
 					{/* Bottom Badge */}
 					<div className="flex items-center justify-between pt-1 text-[10px] text-muted-foreground">
-						<span className="font-mono text-[9px] text-primary/80 uppercase tracking-wider">Live Document</span>
+						<span className="font-mono text-[9px] text-primary/80 uppercase tracking-wider">
+							Live Document
+						</span>
 						<SparkleIcon className="size-3 animate-pulse text-primary" />
 					</div>
 				</div>

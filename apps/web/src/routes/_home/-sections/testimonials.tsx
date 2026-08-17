@@ -1,7 +1,15 @@
+import {
+	PaperPlaneIcon,
+	StarIcon,
+	UserCheckIcon,
+	XIcon,
+} from "@phosphor-icons/react";
 import type { FormEvent } from "react";
-import { PaperPlaneIcon, StarIcon, UserCheckIcon, XIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { getFeedbacksFromSupabase, submitFeedbackToSupabase } from "@/libs/supabase/db";
+import {
+	getFeedbacksFromSupabase,
+	submitFeedbackToSupabase,
+} from "@/libs/supabase/db";
 
 type Testimonial = {
 	id: string;
@@ -33,7 +41,9 @@ function getInitials(name: string) {
 function playCenterClickSound() {
 	try {
 		const AudioCtx =
-			window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+			window.AudioContext ||
+			(window as unknown as { webkitAudioContext: typeof AudioContext })
+				.webkitAudioContext;
 		if (!AudioCtx) return;
 		const ctx = new AudioCtx();
 		const osc = ctx.createOscillator();
@@ -88,7 +98,8 @@ export function Testimonials() {
 		e.preventDefault();
 		if (!name || !description) return;
 
-		const userEmail = email.trim() || `${name.toLowerCase().replace(/\s+/g, "")}@gmail.com`;
+		const userEmail =
+			email.trim() || `${name.toLowerCase().replace(/\s+/g, "")}@gmail.com`;
 
 		await submitFeedbackToSupabase({
 			name: name.trim(),
@@ -120,7 +131,10 @@ export function Testimonials() {
 	}
 
 	return (
-		<section id="testimonials" className="relative overflow-hidden border-border/40 border-b py-20 md:py-28">
+		<section
+			id="testimonials"
+			className="relative overflow-hidden border-border/40 border-b py-20 md:py-28"
+		>
 			<style>{`
 				@keyframes orbit {
 					from { transform: rotate(0deg); }
@@ -148,8 +162,9 @@ export function Testimonials() {
 					</h2>
 
 					<p className="max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-						Click the center <span className="font-semibold text-primary">rbuilder</span> circle to submit your feedback
-						or explore live reviews.
+						Click the center{" "}
+						<span className="font-semibold text-primary">rbuilder</span> circle
+						to submit your feedback or explore live reviews.
 					</p>
 				</div>
 
@@ -163,17 +178,25 @@ export function Testimonials() {
 						aria-label="Click to give feedback and play sound"
 						className="absolute z-20 flex size-20 cursor-pointer items-center justify-center rounded-full border-2 border-primary/40 bg-primary/10 p-4 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:scale-110 hover:border-primary hover:shadow-primary/30 active:scale-95 sm:size-24"
 					>
-						<span className="text-center font-extrabold text-primary text-sm sm:text-base">rbuilder</span>
+						<span className="text-center font-extrabold text-primary text-sm sm:text-base">
+							rbuilder
+						</span>
 					</button>
 
 					{/* Orbit Ring Container */}
 					<div className="relative flex size-[360px] animate-orbit items-center justify-center rounded-full border border-primary/30 border-dashed sm:size-[450px]">
 						{testimonialsList.length === 0 ? (
-							<div className="text-muted-foreground text-xs">Click the center circle to submit the first review!</div>
+							<div className="text-muted-foreground text-xs">
+								Click the center circle to submit the first review!
+							</div>
 						) : (
 							testimonialsList.slice(0, 6).map((item, idx) => {
-								const angle = (idx / Math.min(testimonialsList.length, 6)) * 2 * Math.PI;
-								const radius = typeof window !== "undefined" && window.innerWidth < 640 ? 140 : 180;
+								const angle =
+									(idx / Math.min(testimonialsList.length, 6)) * 2 * Math.PI;
+								const radius =
+									typeof window !== "undefined" && window.innerWidth < 640
+										? 140
+										: 180;
 								const x = Math.cos(angle) * radius;
 								const y = Math.sin(angle) * radius;
 
@@ -189,21 +212,35 @@ export function Testimonials() {
 											<div
 												className={`flex size-12 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br ${item.gradient} font-bold text-white shadow-lg transition-transform hover:scale-125 sm:size-14`}
 											>
-												<span className="text-xs sm:text-sm">{getInitials(item.name)}</span>
+												<span className="text-xs sm:text-sm">
+													{getInitials(item.name)}
+												</span>
 											</div>
 
 											{/* Hover Tooltip Card */}
 											<div className="pointer-events-none absolute bottom-16 z-30 w-56 -translate-x-1/2 rounded-2xl border border-white/20 bg-background/95 p-3.5 opacity-0 shadow-2xl backdrop-blur-xl transition-all group-hover/item:pointer-events-auto group-hover/item:opacity-100 sm:w-64">
 												<div className="flex items-center justify-between">
-													<p className="font-bold text-foreground text-xs">{item.name}</p>
+													<p className="font-bold text-foreground text-xs">
+														{item.name}
+													</p>
 													<div className="flex text-amber-400">
-														{Array.from({ length: item.rating }).map((_, i) => (
-															<StarIcon key={`star-${item.id}-${i}`} weight="fill" className="size-3" />
-														))}
+														{[1, 2, 3, 4, 5]
+															.slice(0, item.rating)
+															.map((star) => (
+																<StarIcon
+																	key={`star-${item.id}-${star}`}
+																	weight="fill"
+																	className="size-3"
+																/>
+															))}
 													</div>
 												</div>
-												<p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">"{item.description}"</p>
-												<p className="mt-1 font-medium text-[10px] text-primary">{item.date}</p>
+												<p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
+													"{item.description}"
+												</p>
+												<p className="mt-1 font-medium text-[10px] text-primary">
+													{item.date}
+												</p>
 											</div>
 										</div>
 									</div>
@@ -231,9 +268,12 @@ export function Testimonials() {
 								<div className="flex size-16 animate-bounce items-center justify-center rounded-full bg-emerald-500/20 text-emerald-500">
 									<UserCheckIcon weight="bold" className="size-8" />
 								</div>
-								<h3 className="mt-4 font-bold text-foreground text-xl">Thank You!</h3>
+								<h3 className="mt-4 font-bold text-foreground text-xl">
+									Thank You!
+								</h3>
 								<p className="mt-2 text-muted-foreground text-sm">
-									Your review has been saved to Supabase and joined the showcase!
+									Your review has been saved to Supabase and joined the
+									showcase!
 								</p>
 							</div>
 						) : (
@@ -243,7 +283,9 @@ export function Testimonials() {
 										<PaperPlaneIcon weight="fill" className="size-6" />
 									</div>
 									<div>
-										<h3 className="font-bold text-foreground text-xl">Give Your Feedback</h3>
+										<h3 className="font-bold text-foreground text-xl">
+											Give Your Feedback
+										</h3>
 										<p className="text-muted-foreground text-xs">
 											Fill out your name, rating, and review to join the circle!
 										</p>
@@ -252,7 +294,10 @@ export function Testimonials() {
 
 								<form onSubmit={handleSubmit} className="mt-6 space-y-4">
 									<div>
-										<label htmlFor="modal-name" className="block font-semibold text-foreground text-xs">
+										<label
+											htmlFor="modal-name"
+											className="block font-semibold text-foreground text-xs"
+										>
 											Your Name
 										</label>
 										<input
@@ -267,7 +312,10 @@ export function Testimonials() {
 									</div>
 
 									<div>
-										<label htmlFor="modal-email" className="block font-semibold text-foreground text-xs">
+										<label
+											htmlFor="modal-email"
+											className="block font-semibold text-foreground text-xs"
+										>
 											Your Email (Gmail)
 										</label>
 										<input
@@ -281,7 +329,9 @@ export function Testimonials() {
 									</div>
 
 									<div>
-										<span className="block font-semibold text-foreground text-xs">Rating</span>
+										<span className="block font-semibold text-foreground text-xs">
+											Rating
+										</span>
 										<div className="mt-1.5 flex items-center gap-1.5">
 											{[1, 2, 3, 4, 5].map((star) => (
 												<button
@@ -295,17 +345,24 @@ export function Testimonials() {
 													<StarIcon
 														weight="fill"
 														className={`size-7 ${
-															star <= (hoverRating || rating) ? "text-amber-400" : "text-muted-foreground/30"
+															star <= (hoverRating || rating)
+																? "text-amber-400"
+																: "text-muted-foreground/30"
 														}`}
 													/>
 												</button>
 											))}
-											<span className="ml-2 font-bold text-muted-foreground text-sm">{rating} / 5</span>
+											<span className="ml-2 font-bold text-muted-foreground text-sm">
+												{rating} / 5
+											</span>
 										</div>
 									</div>
 
 									<div>
-										<label htmlFor="modal-description" className="block font-semibold text-foreground text-xs">
+										<label
+											htmlFor="modal-description"
+											className="block font-semibold text-foreground text-xs"
+										>
 											Feedback / Review
 										</label>
 										<textarea

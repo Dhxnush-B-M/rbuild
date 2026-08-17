@@ -9,11 +9,14 @@ type LevelDisplaySizes = {
 	levelIconExplicitSize?: number | undefined;
 };
 
-export const resolveLevelDisplaySizes = (options: ResolveLevelDisplaySizesOptions): LevelDisplaySizes => {
+export const resolveLevelDisplaySizes = (
+	options: ResolveLevelDisplaySizesOptions,
+): LevelDisplaySizes => {
 	const defaultDecorationSize = options.bodyFontSize - 2;
 	const legacyLevelIconSize = defaultDecorationSize + 4;
 
-	const decorationSize = options.levelFontSize ?? options.iconFontSize ?? defaultDecorationSize;
+	const decorationSize =
+		options.levelFontSize ?? options.iconFontSize ?? defaultDecorationSize;
 
 	if (options.levelFontSize !== undefined) {
 		return { decorationSize, levelIconExplicitSize: options.levelFontSize };

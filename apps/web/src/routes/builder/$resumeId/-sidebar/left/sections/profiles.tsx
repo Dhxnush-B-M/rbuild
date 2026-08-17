@@ -1,14 +1,19 @@
-import type { profileItemSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { AnimatePresence, Reorder } from "motion/react";
+import type { profileItemSchema } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { AnimatePresence, Reorder } from "motion/react";
+import type z from "zod";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";
 import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 export function ProfilesSectionBuilder() {
-	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.profiles);
+	const section = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.sections.profiles,
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof profileItemSchema>[]) => {
@@ -18,11 +23,23 @@ export function ProfilesSectionBuilder() {
 	};
 
 	return (
-		<SectionBase type="profiles" className={cn("rounded-md border", section.items.length === 0 && "border-dashed")}>
+		<SectionBase
+			type="profiles"
+			className={cn(
+				"rounded-md border",
+				section.items.length === 0 && "border-dashed",
+			)}
+		>
 			<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
 				<AnimatePresence>
 					{section.items.map((item) => (
-						<SectionItem key={item.id} type="profiles" item={item} title={item.network} subtitle={item.username} />
+						<SectionItem
+							key={item.id}
+							type="profiles"
+							item={item}
+							title={item.network}
+							subtitle={item.username}
+						/>
 					))}
 				</AnimatePresence>
 			</Reorder.Group>

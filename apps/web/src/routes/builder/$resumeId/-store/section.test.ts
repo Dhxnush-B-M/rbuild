@@ -15,7 +15,9 @@ describe("useSectionStore", () => {
 	it("setCollapsed stores collapse state for a single id", () => {
 		useSectionStore.getState().setCollapsed("experience", true);
 
-		expect(useSectionStore.getState().sections.experience).toEqual({ collapsed: true });
+		expect(useSectionStore.getState().sections.experience).toEqual({
+			collapsed: true,
+		});
 	});
 
 	it("setCollapsed(false) overrides previous collapsed=true", () => {
@@ -23,7 +25,9 @@ describe("useSectionStore", () => {
 		setCollapsed("skills", true);
 		setCollapsed("skills", false);
 
-		expect(useSectionStore.getState().sections.skills).toEqual({ collapsed: false });
+		expect(useSectionStore.getState().sections.skills).toEqual({
+			collapsed: false,
+		});
 	});
 
 	it("toggleCollapsed flips from undefined → true → false", () => {
@@ -33,7 +37,9 @@ describe("useSectionStore", () => {
 		expect(useSectionStore.getState().sections.education?.collapsed).toBe(true);
 
 		toggleCollapsed("education");
-		expect(useSectionStore.getState().sections.education?.collapsed).toBe(false);
+		expect(useSectionStore.getState().sections.education?.collapsed).toBe(
+			false,
+		);
 	});
 
 	it("toggleAll collapses all built-in sidebar sections from a clean state", () => {

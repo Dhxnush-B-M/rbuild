@@ -1,15 +1,24 @@
-import type { BuilderLayout } from "./-store/sidebar";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { useResumeCleanup, useResumeStore } from "@/features/resume/builder/draft";
+import {
+	useResumeCleanup,
+	useResumeStore,
+} from "@/features/resume/builder/draft";
 import { initializeStylesheetStore } from "@/features/resume/stylesheet/store";
-import { checkAuthAndOnboardingAccess, verifyUserSubscriptionAcrossDevices } from "@/libs/auth/guard";
+import {
+	checkAuthAndOnboardingAccess,
+	verifyUserSubscriptionAcrossDevices,
+} from "@/libs/auth/guard";
 import { createNoindexFollowMeta } from "@/libs/seo";
-import { getResumeByIdFromSupabase, saveResumeToSupabase } from "@/libs/supabase/db";
+import {
+	getResumeByIdFromSupabase,
+	saveResumeToSupabase,
+} from "@/libs/supabase/db";
 import { DesktopBuilderShell } from "./-components/desktop-builder-shell";
 import { MobileBuilderShell } from "./-components/mobile-builder-shell";
+import type { BuilderLayout } from "./-store/sidebar";
 import { getBuilderLayout } from "./-store/sidebar";
 
 export const Route = createFileRoute("/builder/$resumeId")({
@@ -120,8 +129,14 @@ function RouteComponent() {
 	return <BuilderLayoutShell initialLayout={initialLayout} />;
 }
 
-function BuilderLayoutShell({ initialLayout }: { initialLayout: BuilderLayout }) {
-	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
+function BuilderLayoutShell({
+	initialLayout,
+}: {
+	initialLayout: BuilderLayout;
+}) {
+	const isMobile = useMediaQuery("(max-width: 767px)", {
+		initializeWithValue: false,
+	});
 
 	if (isMobile) return <MobileBuilderShell />;
 	return <DesktopBuilderShell initialLayout={initialLayout} />;

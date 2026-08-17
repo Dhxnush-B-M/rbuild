@@ -1,7 +1,7 @@
-import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
-import { produce } from "immer";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { produce } from "immer";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
 	addItemToSection,
 	createCustomSectionWithItem,
@@ -31,24 +31,37 @@ describe("getSourceSectionTitle", () => {
 				items: [],
 			});
 		});
-		expect(getSourceSectionTitle(data, "cover-letter", "ext-1")).toBe("My Custom Title");
+		expect(getSourceSectionTitle(data, "cover-letter", "ext-1")).toBe(
+			"My Custom Title",
+		);
 	});
 
 	it("returns localized default title when customSectionId is undefined", () => {
 		// Default section title comes from t`...` macro — we just check it's a non-empty string
-		expect(getSourceSectionTitle(defaultResumeData, "experience").length).toBeGreaterThan(0);
+		expect(
+			getSourceSectionTitle(defaultResumeData, "experience").length,
+		).toBeGreaterThan(0);
 	});
 
 	it("falls back to default title when custom section is not found", () => {
-		expect(getSourceSectionTitle(defaultResumeData, "experience", "non-existent").length).toBeGreaterThan(0);
+		expect(
+			getSourceSectionTitle(defaultResumeData, "experience", "non-existent")
+				.length,
+		).toBeGreaterThan(0);
 	});
 });
 
 describe("getCompatibleMoveTargets", () => {
 	it("excludes the source section itself", () => {
 		// Default has experience in main; trying to move from experience to other targets
-		const targets = getCompatibleMoveTargets(defaultResumeData, "experience", undefined);
-		expect(targets[0]?.sections.find((s) => s.sectionId === "experience")).toBeUndefined();
+		const targets = getCompatibleMoveTargets(
+			defaultResumeData,
+			"experience",
+			undefined,
+		);
+		expect(
+			targets[0]?.sections.find((s) => s.sectionId === "experience"),
+		).toBeUndefined();
 	});
 
 	it("returns only custom sections of the same type as source", () => {
@@ -68,12 +81,22 @@ describe("getCompatibleMoveTargets", () => {
 		});
 
 		// Source is also a cover-letter custom section, but with different id
-		const targets = getCompatibleMoveTargets(data, "cover-letter", "different-id");
-		expect(targets[0]?.sections.find((s) => s.sectionId === "ext-1")).toBeDefined();
+		const targets = getCompatibleMoveTargets(
+			data,
+			"cover-letter",
+			"different-id",
+		);
+		expect(
+			targets[0]?.sections.find((s) => s.sectionId === "ext-1"),
+		).toBeDefined();
 	});
 
 	it("returns empty per page when no compatible targets", () => {
-		const targets = getCompatibleMoveTargets(defaultResumeData, "cover-letter", undefined);
+		const targets = getCompatibleMoveTargets(
+			defaultResumeData,
+			"cover-letter",
+			undefined,
+		);
 		// No custom sections of cover-letter type in default
 		for (const page of targets) {
 			expect(page.sections).toHaveLength(0);
@@ -81,8 +104,14 @@ describe("getCompatibleMoveTargets", () => {
 	});
 
 	it("returns one entry per page", () => {
-		const targets = getCompatibleMoveTargets(defaultResumeData, "experience", undefined);
-		expect(targets).toHaveLength(defaultResumeData.metadata.layout.pages.length);
+		const targets = getCompatibleMoveTargets(
+			defaultResumeData,
+			"experience",
+			undefined,
+		);
+		expect(targets).toHaveLength(
+			defaultResumeData.metadata.layout.pages.length,
+		);
 	});
 });
 
@@ -137,7 +166,12 @@ describe("removeItemFromSource", () => {
 
 		let removedId: string | undefined;
 		const result = produce(initial, (draft) => {
-			const removed = removeItemFromSource(draft, "i1", "cover-letter", "ext-1");
+			const removed = removeItemFromSource(
+				draft,
+				"i1",
+				"cover-letter",
+				"ext-1",
+			);
 			removedId = (removed as { id?: string } | null)?.id;
 		});
 
@@ -148,7 +182,12 @@ describe("removeItemFromSource", () => {
 	it("returns null when custom section does not exist", () => {
 		let removed: unknown;
 		produce(defaultResumeData, (draft) => {
-			removed = removeItemFromSource(draft, "i1", "cover-letter", "non-existent");
+			removed = removeItemFromSource(
+				draft,
+				"i1",
+				"cover-letter",
+				"non-existent",
+			);
 		});
 		expect(removed).toBeNull();
 	});
@@ -208,7 +247,13 @@ describe("createCustomSectionWithItem", () => {
 	it("creates a new custom section and adds it to the target page main", () => {
 		let newSectionId = "";
 		const result = produce(defaultResumeData, (draft) => {
-			newSectionId = createCustomSectionWithItem(draft, { id: "i1" } as never, "cover-letter", "My Section", 0);
+			newSectionId = createCustomSectionWithItem(
+				draft,
+				{ id: "i1" } as never,
+				"cover-letter",
+				"My Section",
+				0,
+			);
 		});
 
 		expect(result.customSections).toHaveLength(1);
@@ -220,7 +265,13 @@ describe("createCustomSectionWithItem", () => {
 	it("returns the generated section id", () => {
 		let newSectionId = "";
 		produce(defaultResumeData, (draft) => {
-			newSectionId = createCustomSectionWithItem(draft, { id: "i1" } as never, "cover-letter", "X", 0);
+			newSectionId = createCustomSectionWithItem(
+				draft,
+				{ id: "i1" } as never,
+				"cover-letter",
+				"X",
+				0,
+			);
 		});
 		expect(newSectionId.length).toBeGreaterThan(0);
 	});
@@ -228,7 +279,13 @@ describe("createCustomSectionWithItem", () => {
 	it("does not crash on out-of-range page index (no main column to push to)", () => {
 		// targetPageIndex=99 — page does not exist; section should still be created
 		const result = produce(defaultResumeData, (draft) => {
-			createCustomSectionWithItem(draft, { id: "i1" } as never, "cover-letter", "X", 99);
+			createCustomSectionWithItem(
+				draft,
+				{ id: "i1" } as never,
+				"cover-letter",
+				"X",
+				99,
+			);
 		});
 		expect(result.customSections).toHaveLength(1);
 	});
@@ -238,7 +295,12 @@ describe("createPageWithSection", () => {
 	it("creates a new page with the new custom section in main", () => {
 		const initialPageCount = defaultResumeData.metadata.layout.pages.length;
 		const result = produce(defaultResumeData, (draft) => {
-			createPageWithSection(draft, { id: "i1" } as never, "cover-letter", "My New Page");
+			createPageWithSection(
+				draft,
+				{ id: "i1" } as never,
+				"cover-letter",
+				"My New Page",
+			);
 		});
 		expect(result.metadata.layout.pages).toHaveLength(initialPageCount + 1);
 
@@ -250,7 +312,12 @@ describe("createPageWithSection", () => {
 
 	it("adds the custom section to customSections array", () => {
 		const result = produce(defaultResumeData, (draft) => {
-			createPageWithSection(draft, { id: "i1" } as never, "cover-letter", "My Section");
+			createPageWithSection(
+				draft,
+				{ id: "i1" } as never,
+				"cover-letter",
+				"My Section",
+			);
 		});
 		expect(result.customSections).toHaveLength(1);
 		expect(result.customSections[0]?.title).toBe("My Section");

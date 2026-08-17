@@ -1,5 +1,10 @@
-import type { DialogData, DialogProps, DialogSchema, DialogType } from "./schemas";
 import { create } from "zustand/react";
+import type {
+	DialogData,
+	DialogProps,
+	DialogSchema,
+	DialogType,
+} from "./schemas";
 
 export type { DialogProps };
 
@@ -13,7 +18,9 @@ interface DialogStoreActions {
 	onOpenChange: (open: boolean, eventDetails?: { cancel?: () => void }) => void;
 	openDialog: <T extends DialogType>(type: T, data: DialogData<T>) => void;
 	closeDialog: () => void;
-	setOnBeforeClose: (handler: (() => boolean | Promise<boolean>) | null) => void;
+	setOnBeforeClose: (
+		handler: (() => boolean | Promise<boolean>) | null,
+	) => void;
 }
 
 type DialogStore = DialogStoreState & DialogStoreActions;

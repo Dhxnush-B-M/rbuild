@@ -1,9 +1,15 @@
 import type { Website } from "@rbuilder/schema/resume/data";
-import type * as React from "react";
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormDescription,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { InputGroupInput } from "@rbuilder/ui/components/input-group";
+import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+import type * as React from "react";
 import { RichInput } from "@/components/input/rich-input";
 import { URLInput } from "@/components/input/url-input";
 
@@ -14,7 +20,10 @@ type FieldFrameProps = {
 };
 
 type TextFieldProps = FieldFrameProps &
-	Omit<React.ComponentProps<typeof Input>, "children" | "defaultValue" | "name" | "onBlur" | "onChange" | "value">;
+	Omit<
+		React.ComponentProps<typeof Input>,
+		"children" | "defaultValue" | "name" | "onBlur" | "onChange" | "value"
+	>;
 
 type InputGroupTextFieldProps = FieldFrameProps &
 	Omit<
@@ -25,7 +34,13 @@ type InputGroupTextFieldProps = FieldFrameProps &
 type NumberFieldProps = FieldFrameProps &
 	Omit<
 		React.ComponentProps<typeof Input>,
-		"children" | "defaultValue" | "name" | "onBlur" | "onChange" | "type" | "value"
+		| "children"
+		| "defaultValue"
+		| "name"
+		| "onBlur"
+		| "onChange"
+		| "type"
+		| "value"
 	>;
 
 type WebsiteFieldProps = {
@@ -41,10 +56,16 @@ type RichTextFieldProps = {
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
-function TextField({ label, description, formItemClassName, ...props }: TextFieldProps) {
+function TextField({
+	label,
+	description,
+	formItemClassName,
+	...props
+}: TextFieldProps) {
 	const field = useFieldContext<string>();
 
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<FormItem hasError={hasError} className={formItemClassName}>
@@ -66,10 +87,16 @@ function TextField({ label, description, formItemClassName, ...props }: TextFiel
 	);
 }
 
-function InputGroupTextField({ label, description, formItemClassName, ...props }: InputGroupTextFieldProps) {
+function InputGroupTextField({
+	label,
+	description,
+	formItemClassName,
+	...props
+}: InputGroupTextFieldProps) {
 	const field = useFieldContext<string>();
 
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<FormItem hasError={hasError} className={formItemClassName}>
@@ -91,9 +118,15 @@ function InputGroupTextField({ label, description, formItemClassName, ...props }
 	);
 }
 
-function NumberField({ label, description, formItemClassName, ...props }: NumberFieldProps) {
+function NumberField({
+	label,
+	description,
+	formItemClassName,
+	...props
+}: NumberFieldProps) {
 	const field = useFieldContext<number>();
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 	const value = Number.isFinite(field.state.value) ? field.state.value : "";
 
 	return (
@@ -117,9 +150,14 @@ function NumberField({ label, description, formItemClassName, ...props }: Number
 	);
 }
 
-function WebsiteField({ label, formItemClassName, hideLabelButton }: WebsiteFieldProps) {
+function WebsiteField({
+	label,
+	formItemClassName,
+	hideLabelButton,
+}: WebsiteFieldProps) {
 	const field = useFieldContext<Website>();
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<FormItem hasError={hasError} className={formItemClassName}>
@@ -136,19 +174,33 @@ function WebsiteField({ label, formItemClassName, hideLabelButton }: WebsiteFiel
 
 function RichTextField({ label, formItemClassName }: RichTextFieldProps) {
 	const field = useFieldContext<string>();
-	const hasError = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+	const hasError =
+		field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
 	return (
 		<FormItem hasError={hasError} className={formItemClassName}>
 			<FormLabel>{label}</FormLabel>
-			<FormControl render={<RichInput value={field.state.value} onChange={(value) => field.handleChange(value)} />} />
+			<FormControl
+				render={
+					<RichInput
+						value={field.state.value}
+						onChange={(value) => field.handleChange(value)}
+					/>
+				}
+			/>
 			<FormMessage errors={field.state.meta.errors} />
 		</FormItem>
 	);
 }
 
 export const { useAppForm, withForm } = createFormHook({
-	fieldComponents: { InputGroupTextField, NumberField, RichTextField, TextField, WebsiteField },
+	fieldComponents: {
+		InputGroupTextField,
+		NumberField,
+		RichTextField,
+		TextField,
+		WebsiteField,
+	},
 	fieldContext,
 	formComponents: {},
 	formContext,

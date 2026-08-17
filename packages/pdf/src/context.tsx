@@ -1,8 +1,8 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { ReactNode } from "react";
-import type { SectionTitleResolver } from "./section-title";
-import { createContext, use, useMemo } from "react";
 import { isRTL } from "@rbuilder/utils/locale";
+import type { ReactNode } from "react";
+import { createContext, use, useMemo } from "react";
+import type { SectionTitleResolver } from "./section-title";
 
 export type ResumeRenderOptions = {
 	includeCoverLetterHeader?: boolean;
@@ -36,13 +36,18 @@ export const RenderProvider = ({
 		[data, resolveSectionTitle, renderOptions, rtl],
 	);
 
-	return <RenderContext.Provider value={contextValue}>{children}</RenderContext.Provider>;
+	return (
+		<RenderContext.Provider value={contextValue}>
+			{children}
+		</RenderContext.Provider>
+	);
 };
 
 export const useRender = (): RenderContextValue => {
 	const context = use(RenderContext);
 
-	if (!context) throw new Error("useRender must be called inside a <RenderProvider>.");
+	if (!context)
+		throw new Error("useRender must be called inside a <RenderProvider>.");
 
 	return context;
 };

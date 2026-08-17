@@ -45,7 +45,10 @@ describe("AlertDescription", () => {
 
 	it("applies data-slot='alert-description'", () => {
 		render(<AlertDescription>x</AlertDescription>);
-		expect(screen.getByText("x")).toHaveAttribute("data-slot", "alert-description");
+		expect(screen.getByText("x")).toHaveAttribute(
+			"data-slot",
+			"alert-description",
+		);
 	});
 });
 

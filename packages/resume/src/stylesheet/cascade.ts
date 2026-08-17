@@ -1,4 +1,9 @@
+import { createDiagnostic } from "./diagnostics";
+import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
+import { PROPERTY_REGISTRY_V1 } from "./registry/properties";
+import { createSystemVariables } from "./registry/system-variables";
 import type { Specificity } from "./selector";
+import { createSelectorMatcher } from "./selector";
 import type {
 	CompiledDeclaration,
 	CompiledMediaQuery,
@@ -14,11 +19,6 @@ import type {
 	StructuralPresentation,
 	StyleProgram,
 } from "./types";
-import { createDiagnostic } from "./diagnostics";
-import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
-import { PROPERTY_REGISTRY_V1 } from "./registry/properties";
-import { createSystemVariables } from "./registry/system-variables";
-import { createSelectorMatcher } from "./selector";
 import {
 	cssFunctionDepth,
 	decodeCssEscapes,
@@ -65,8 +65,10 @@ const absoluteUnitToPt = {
 } as const;
 
 const cssWideKeywords = new Set(["inherit", "initial", "revert", "unset"]);
-const maxVariableExpansionOutputCodeUnits = SEMANTIC_CSS_LIMITS_V1.maxSourceBytes;
-const maxVariableExpansionWorkCodeUnits = SEMANTIC_CSS_LIMITS_V1.maxSourceBytes * 4;
+const maxVariableExpansionOutputCodeUnits =
+	SEMANTIC_CSS_LIMITS_V1.maxSourceBytes;
+const maxVariableExpansionWorkCodeUnits =
+	SEMANTIC_CSS_LIMITS_V1.maxSourceBytes * 4;
 
 const structuralKeys: Readonly<Record<string, keyof StructuralPresentation>> = {
 	"break-before": "breakBefore",
@@ -87,9 +89,13 @@ function compareSpecificity(left: Specificity, right: Specificity): number {
 	return left[0] - right[0] || left[1] - right[1] || left[2] - right[2];
 }
 
-function candidateWins(candidate: Winner, current: Winner | undefined): boolean {
+function candidateWins(
+	candidate: Winner,
+	current: Winner | undefined,
+): boolean {
 	if (!current) return true;
-	if (candidate.declaration.important !== current.declaration.important) return candidate.declaration.important;
+	if (candidate.declaration.important !== current.declaration.important)
+		return candidate.declaration.important;
 	return (
 		compareSpecificity(candidate.specificity, current.specificity) > 0 ||
 		(compareSpecificity(candidate.specificity, current.specificity) === 0 &&
@@ -99,9 +105,11 @@ function candidateWins(candidate: Winner, current: Winner | undefined): boolean 
 
 function flattenTree(root: SemanticNode): FlatNode[] | null {
 	const result: FlatNode[] = [];
-	const stack: { node: SemanticNode; parent: FlatNode | null; pageKey: string | null }[] = [
-		{ node: root, parent: null, pageKey: null },
-	];
+	const stack: {
+		node: SemanticNode;
+		parent: FlatNode | null;
+		pageKey: string | null;
+	}[] = [{ node: root, parent: null, pageKey: null }];
 	while (stack.length > 0) {
 		const next = stack.pop();
 		if (!next) break;
@@ -110,7 +118,11 @@ function flattenTree(root: SemanticNode): FlatNode[] | null {
 		const flat = { node: next.node, parent: next.parent, pageKey };
 		result.push(flat);
 		const childCount = next.node.children.length;
-		if (childCount > SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes - result.length - stack.length) return null;
+		if (
+			childCount >
+			SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes - result.length - stack.length
+		)
+			return null;
 		for (let index = childCount - 1; index >= 0; index--) {
 			const child = next.node.children[index];
 			if (child) stack.push({ node: child, parent: flat, pageKey });
@@ -127,7 +139,8 @@ function matchingSpecificity(
 	let best: Specificity | null = null;
 	for (const selector of rule.selector.selectors) {
 		if (!matches({ selectors: [selector] }, nodeKey)) continue;
-		if (!best || compareSpecificity(selector.specificity, best) > 0) best = selector.specificity;
+		if (!best || compareSpecificity(selector.specificity, best) > 0)
+			best = selector.specificity;
 	}
 	return best;
 }
@@ -143,11 +156,17 @@ function initialPages(
 	flatNodes: readonly FlatNode[],
 	context: ResolveStylesheetContext,
 ): Map<string, ResolvedPageDimensions> {
-	const authored = new Map(context.pages.map((page) => [page.pageKey, { width: page.width, height: page.height }]));
+	const authored = new Map(
+		context.pages.map((page) => [
+			page.pageKey,
+			{ width: page.width, height: page.height },
+		]),
+	);
 	const fallback = defaultPageDimensions(context.baseSettings.page.format);
 	const pages = new Map<string, ResolvedPageDimensions>();
 	for (const { node } of flatNodes) {
-		if (node.kind === "page") pages.set(node.key, authored.get(node.key) ?? fallback);
+		if (node.kind === "page")
+			pages.set(node.key, authored.get(node.key) ?? fallback);
 	}
 	return pages;
 }
@@ -157,28 +176,48 @@ function pageFor(
 	pages: ReadonlyMap<string, ResolvedPageDimensions>,
 	fallback: ResolvedPageDimensions,
 ): ResolvedPageDimensions {
-	return (node.pageKey ? pages.get(node.pageKey) : undefined) ?? pages.values().next().value ?? fallback;
+	return (
+		(node.pageKey ? pages.get(node.pageKey) : undefined) ??
+		pages.values().next().value ??
+		fallback
+	);
 }
 
-function toPoints(value: string, property: string, context: LengthContext): number | string | null {
+function toPoints(
+	value: string,
+	property: string,
+	context: LengthContext,
+): number | string | null {
 	const match = value
 		.trim()
-		.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(pt|px|in|mm|cm|%|vw|vh|em|rem)?$/i);
+		.match(
+			/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?)\s*(pt|px|in|mm|cm|%|vw|vh|em|rem)?$/i,
+		);
 	if (!match) return null;
 	const number = Number(match[1]);
 	if (!Number.isFinite(number)) return null;
 	const unit = match[2]?.toLowerCase() ?? "pt";
-	if (unit === "%") return property === "font-size" ? (number / 100) * context.parentFontSize : `${number}%`;
+	if (unit === "%")
+		return property === "font-size"
+			? (number / 100) * context.parentFontSize
+			: `${number}%`;
 	if (unit === "vw") return (number / 100) * context.page.width;
 	if (unit === "vh") return (number / 100) * context.page.height;
 	if (unit === "rem") return number * context.rootFontSize;
 	if (unit === "em") {
-		return number * (property === "font-size" ? context.parentFontSize : context.fontSize);
+		return (
+			number *
+			(property === "font-size" ? context.parentFontSize : context.fontSize)
+		);
 	}
 	return number * absoluteUnitToPt[unit as keyof typeof absoluteUnitToPt];
 }
 
-function mediaMatches(query: CompiledMediaQuery, dimensions: ResolvedPageDimensions, rootFontSize: number): boolean {
+function mediaMatches(
+	query: CompiledMediaQuery,
+	dimensions: ResolvedPageDimensions,
+	rootFontSize: number,
+): boolean {
 	const lengthContext = {
 		page: dimensions,
 		parentFontSize: rootFontSize,
@@ -187,7 +226,10 @@ function mediaMatches(query: CompiledMediaQuery, dimensions: ResolvedPageDimensi
 	};
 	return query.features.every((feature) => {
 		if (feature.name === "orientation") {
-			return feature.value === (dimensions.width > dimensions.height ? "landscape" : "portrait");
+			return (
+				feature.value ===
+				(dimensions.width > dimensions.height ? "landscape" : "portrait")
+			);
 		}
 		const expected = toPoints(feature.value, feature.name, lengthContext);
 		if (typeof expected !== "number") return false;
@@ -205,7 +247,10 @@ function ruleApplies(
 	includeMedia: boolean,
 ): boolean {
 	if (rule.media.length === 0) return true;
-	return includeMedia && rule.media.some((query) => mediaMatches(query, dimensions, rootFontSize));
+	return (
+		includeMedia &&
+		rule.media.some((query) => mediaMatches(query, dimensions, rootFontSize))
+	);
 }
 
 function winnersFor(
@@ -260,7 +305,12 @@ function expandVariables(
 ): string | null {
 	if (depth > SEMANTIC_CSS_LIMITS_V1.maxVariableExpansionDepth) {
 		diagnostics.push(
-			createDiagnostic("RESOURCE_LIMIT", "error", "Variable expansion exceeds the Semantic CSS limit.", range),
+			createDiagnostic(
+				"RESOURCE_LIMIT",
+				"error",
+				"Variable expansion exceeds the Semantic CSS limit.",
+				range,
+			),
 		);
 		return null;
 	}
@@ -269,7 +319,12 @@ function expandVariables(
 		source.length > maxVariableExpansionWorkCodeUnits - budget.work
 	) {
 		diagnostics.push(
-			createDiagnostic("RESOURCE_LIMIT", "error", "Variable expansion exceeds the Semantic CSS limit.", range),
+			createDiagnostic(
+				"RESOURCE_LIMIT",
+				"error",
+				"Variable expansion exceeds the Semantic CSS limit.",
+				range,
+			),
 		);
 		return null;
 	}
@@ -278,7 +333,12 @@ function expandVariables(
 	let value = decodeCssEscapes(source);
 	if (value.length > maxVariableExpansionOutputCodeUnits) {
 		diagnostics.push(
-			createDiagnostic("RESOURCE_LIMIT", "error", "Variable expansion exceeds the Semantic CSS limit.", range),
+			createDiagnostic(
+				"RESOURCE_LIMIT",
+				"error",
+				"Variable expansion exceeds the Semantic CSS limit.",
+				range,
+			),
 		);
 		return null;
 	}
@@ -288,22 +348,48 @@ function expandVariables(
 		const opening = (match.index ?? 0) + match[0].lastIndexOf("(");
 		const closing = matchingParenthesis(value, opening);
 		if (closing < 0) {
-			diagnostics.push(createDiagnostic("INVALID_VALUE", "error", "Malformed var() expression.", range));
+			diagnostics.push(
+				createDiagnostic(
+					"INVALID_VALUE",
+					"error",
+					"Malformed var() expression.",
+					range,
+				),
+			);
 			return null;
 		}
 		const [name, fallback] = splitVariable(value.slice(opening + 1, closing));
 		if (!name.startsWith("--")) {
-			diagnostics.push(createDiagnostic("INVALID_VALUE", "error", "var() requires a custom-property name.", range));
+			diagnostics.push(
+				createDiagnostic(
+					"INVALID_VALUE",
+					"error",
+					"var() requires a custom-property name.",
+					range,
+				),
+			);
 			return null;
 		}
 		if (stack.includes(name)) {
-			diagnostics.push(createDiagnostic("VARIABLE_CYCLE", "error", `Variable cycle detected at ${name}.`, range));
+			diagnostics.push(
+				createDiagnostic(
+					"VARIABLE_CYCLE",
+					"error",
+					`Variable cycle detected at ${name}.`,
+					range,
+				),
+			);
 			return null;
 		}
 		const replacement = custom.get(name) ?? system[name] ?? fallback;
 		if (replacement === null || replacement === undefined) {
 			diagnostics.push(
-				createDiagnostic("UNRESOLVED_VARIABLE", "error", `No value or fallback exists for ${name}.`, range),
+				createDiagnostic(
+					"UNRESOLVED_VARIABLE",
+					"error",
+					`No value or fallback exists for ${name}.`,
+					range,
+				),
 			);
 			return null;
 		}
@@ -318,13 +404,19 @@ function expandVariables(
 			budget,
 		);
 		if (expanded === null) return null;
-		const nextLength = (match.index ?? 0) + expanded.length + value.length - closing - 1;
+		const nextLength =
+			(match.index ?? 0) + expanded.length + value.length - closing - 1;
 		if (
 			nextLength > maxVariableExpansionOutputCodeUnits ||
 			nextLength > maxVariableExpansionWorkCodeUnits - budget.work
 		) {
 			diagnostics.push(
-				createDiagnostic("RESOURCE_LIMIT", "error", "Variable expansion exceeds the Semantic CSS limit.", range),
+				createDiagnostic(
+					"RESOURCE_LIMIT",
+					"error",
+					"Variable expansion exceeds the Semantic CSS limit.",
+					range,
+				),
 			);
 			return null;
 		}
@@ -334,13 +426,23 @@ function expandVariables(
 
 	if (/\burl\s*\(/i.test(value)) {
 		diagnostics.push(
-			createDiagnostic("FORBIDDEN_CSS_VALUE", "error", "External CSS resources are not supported.", range),
+			createDiagnostic(
+				"FORBIDDEN_CSS_VALUE",
+				"error",
+				"External CSS resources are not supported.",
+				range,
+			),
 		);
 		return null;
 	}
 	if (cssFunctionDepth(value) > SEMANTIC_CSS_LIMITS_V1.maxFunctionDepth) {
 		diagnostics.push(
-			createDiagnostic("RESOURCE_LIMIT", "error", "CSS function nesting exceeds the Semantic CSS limit.", range),
+			createDiagnostic(
+				"RESOURCE_LIMIT",
+				"error",
+				"CSS function nesting exceeds the Semantic CSS limit.",
+				range,
+			),
 		);
 		return null;
 	}
@@ -360,15 +462,21 @@ function expandedWinnersFor(
 		if (!ruleApplies(rule, dimensions, rootFontSize, true)) continue;
 		for (const declaration of rule.declarations) {
 			if (declaration.property.startsWith("--")) continue;
-			const targets = expandShorthand(declaration.property, "inherit") ?? [[declaration.property, "inherit"]];
+			const targets = expandShorthand(declaration.property, "inherit") ?? [
+				[declaration.property, "inherit"],
+			];
 			for (const [property] of targets) {
 				const candidate = { declaration, specificity };
-				if (candidateWins(candidate, cascaded.get(property))) cascaded.set(property, candidate);
+				if (candidateWins(candidate, cascaded.get(property)))
+					cascaded.set(property, candidate);
 			}
 		}
 	}
 
-	const expansions = new Map<CompiledDeclaration, readonly [property: string, value: string][] | null>();
+	const expansions = new Map<
+		CompiledDeclaration,
+		readonly [property: string, value: string][] | null
+	>();
 	const winners = new Map<string, Winner>();
 	for (const [property, winner] of cascaded) {
 		if (property === "size") {
@@ -384,7 +492,10 @@ function expandedWinnersFor(
 				diagnostics,
 				winner.declaration.range,
 			);
-			declarations = expandedValue === null ? null : expandShorthand(winner.declaration.property, expandedValue);
+			declarations =
+				expandedValue === null
+					? null
+					: expandShorthand(winner.declaration.property, expandedValue);
 			if (expandedValue !== null && !declarations) {
 				diagnostics.push(
 					createDiagnostic(
@@ -397,7 +508,9 @@ function expandedWinnersFor(
 			}
 			expansions.set(winner.declaration, declarations);
 		}
-		const value = declarations?.find(([expandedProperty]) => expandedProperty === property)?.[1];
+		const value = declarations?.find(
+			([expandedProperty]) => expandedProperty === property,
+		)?.[1];
 		if (value === undefined) continue;
 		winners.set(property, {
 			declaration: { ...winner.declaration, property, value },
@@ -415,7 +528,8 @@ function customProperties(
 	for (const [property, { declaration }] of winners) {
 		if (!property.startsWith("--")) continue;
 		const keyword = cssWideKeyword(declaration.value);
-		if (keyword === "inherit" || keyword === "revert" || keyword === "unset") continue;
+		if (keyword === "inherit" || keyword === "revert" || keyword === "unset")
+			continue;
 		if (keyword === "initial") {
 			if (parent?.has(property)) {
 				custom ??= new Map(parent);
@@ -429,31 +543,48 @@ function customProperties(
 	return custom ?? (parent as Map<string, string> | undefined) ?? new Map();
 }
 
-function parsePageSize(value: string, lengthContext: LengthContext): ResolvedPageSize | null {
+function parsePageSize(
+	value: string,
+	lengthContext: LengthContext,
+): ResolvedPageSize | null {
 	if (value.toLowerCase() === "a4") return "A4";
 	if (value.toLowerCase() === "letter") return "LETTER";
 	const parts = value.trim().split(/\s+/);
 	if (parts.length < 1 || parts.length > 2) return null;
 	const width = toPoints(parts[0] ?? "", "size", lengthContext);
-	const height = parts[1] ? toPoints(parts[1], "size", lengthContext) : undefined;
-	if (typeof width !== "number" || (height !== undefined && typeof height !== "number")) return null;
+	const height = parts[1]
+		? toPoints(parts[1], "size", lengthContext)
+		: undefined;
+	if (
+		typeof width !== "number" ||
+		(height !== undefined && typeof height !== "number")
+	)
+		return null;
 	if (
 		width <= 0 ||
 		Math.abs(width) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt ||
-		(height !== undefined && (height <= 0 || Math.abs(height) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt))
+		(height !== undefined &&
+			(height <= 0 ||
+				Math.abs(height) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt))
 	) {
 		return null;
 	}
 	return height === undefined ? { width } : { width, height };
 }
 
-function dimensionsForSize(size: ResolvedPageSize, authored: ResolvedPageDimensions): ResolvedPageDimensions {
+function dimensionsForSize(
+	size: ResolvedPageSize,
+	authored: ResolvedPageDimensions,
+): ResolvedPageDimensions {
 	if (size === "A4") return { width: 595.28, height: 841.89 };
 	if (size === "LETTER") return { width: 612, height: 792 };
 	return { width: size.width, height: size.height ?? authored.height };
 }
 
-function builderPageSize(context: ResolveStylesheetContext, nodeKey: string): ResolvedPageSize {
+function builderPageSize(
+	context: ResolveStylesheetContext,
+	nodeKey: string,
+): ResolvedPageSize {
 	return (
 		context.baseStyles[nodeKey]?.structural.pageSize ??
 		(context.baseSettings.page.format === "letter" ? "LETTER" : "A4")
@@ -469,15 +600,26 @@ function cssWideValue(
 	const definition = PROPERTY_REGISTRY_V1[property];
 	if (keyword === "inherit") return parent?.[property];
 	if (keyword === "initial") return;
-	if (keyword === "unset") return definition?.inheritable ? parent?.[property] : undefined;
-	return base[property] ?? (definition?.inheritable ? parent?.[property] : undefined);
+	if (keyword === "unset")
+		return definition?.inheritable ? parent?.[property] : undefined;
+	return (
+		base[property] ?? (definition?.inheritable ? parent?.[property] : undefined)
+	);
 }
 
-function normalizeValue(property: string, value: string, context: LengthContext): string | number | null {
+function normalizeValue(
+	property: string,
+	value: string,
+	context: LengthContext,
+): string | number | null {
 	if (SEMANTIC_CSS_LENGTH_PROPERTIES.has(property)) {
 		const length = toPoints(value, property, context);
 		if (length !== null) return length;
-		if (/^(auto|none|normal|max-content|min-content|fit-content|thin|medium|thick)$/i.test(value)) {
+		if (
+			/^(auto|none|normal|max-content|min-content|fit-content|thin|medium|thick)$/i.test(
+				value,
+			)
+		) {
 			return value.toLowerCase();
 		}
 		return null;
@@ -486,7 +628,11 @@ function normalizeValue(property: string, value: string, context: LengthContext)
 		if (value.toLowerCase() === "normal") return "normal";
 		return toPoints(value, property, context);
 	}
-	if (/^(opacity|flex-grow|flex-shrink|order|orphans|widows|z-index|max-lines)$/i.test(property)) {
+	if (
+		/^(opacity|flex-grow|flex-shrink|order|orphans|widows|z-index|max-lines)$/i.test(
+			property,
+		)
+	) {
 		const number = Number(value);
 		if (!Number.isFinite(number)) return null;
 		if (property === "opacity" && (number < 0 || number > 1)) return null;
@@ -509,7 +655,8 @@ function applyStructuralCssWide(
 		keyword === "inherit"
 			? parent?.structural[key]
 			: keyword === "revert"
-				? (base.structural[key] ?? (key === "pageSize" ? revertPageSize : undefined))
+				? (base.structural[key] ??
+					(key === "pageSize" ? revertPageSize : undefined))
 				: undefined;
 	if (value === undefined) delete structural[key];
 	else Object.assign(structural, { [key]: value });
@@ -533,16 +680,20 @@ function structuralValue(
 		else return false;
 	}
 	if (property === "-resume-fixed") {
-		if (value === "true" || value === "1" || value === 1) structural.fixed = true;
-		else if (value === "false" || value === "0" || value === 0) structural.fixed = false;
+		if (value === "true" || value === "1" || value === 1)
+			structural.fixed = true;
+		else if (value === "false" || value === "0" || value === 0)
+			structural.fixed = false;
 		else return false;
 	}
 	if (property === "-resume-min-presence-ahead") {
-		if (typeof value === "number" && value >= 0) structural.minPresenceAhead = value;
+		if (typeof value === "number" && value >= 0)
+			structural.minPresenceAhead = value;
 		else return false;
 	}
 	if (property === "orphans" || property === "widows") {
-		if (typeof value !== "number" || !Number.isInteger(value) || value < 1) return false;
+		if (typeof value !== "number" || !Number.isInteger(value) || value < 1)
+			return false;
 		if (property === "orphans") structural.orphans = value;
 		else structural.widows = value;
 	}
@@ -563,15 +714,28 @@ function createRenderTree(
 		const source = flatNodes[index]?.node;
 		if (!source) continue;
 		const children = source.children
-			.map((child, sourceIndex) => ({ child: rendered.get(child.key), sourceIndex }))
-			.filter((entry): entry is { child: SemanticNode; sourceIndex: number } => entry.child !== undefined)
+			.map((child, sourceIndex) => ({
+				child: rendered.get(child.key),
+				sourceIndex,
+			}))
+			.filter(
+				(entry): entry is { child: SemanticNode; sourceIndex: number } =>
+					entry.child !== undefined,
+			)
 			.filter(({ child }) => !nodes[child.key]?.hidden)
 			.sort((left, right) => {
-				const order = (nodes[left.child.key]?.order ?? 0) - (nodes[right.child.key]?.order ?? 0);
+				const order =
+					(nodes[left.child.key]?.order ?? 0) -
+					(nodes[right.child.key]?.order ?? 0);
 				return order || left.sourceIndex - right.sourceIndex;
 			})
 			.map(({ child }) => child);
-		rendered.set(source.key, { ...source, attributes: { ...source.attributes }, roles: [...source.roles], children });
+		rendered.set(source.key, {
+			...source,
+			attributes: { ...source.attributes },
+			roles: [...source.roles],
+			children,
+		});
 	}
 	return rendered.get(tree.key) ?? tree;
 }
@@ -587,7 +751,11 @@ export function resolveStylesheet(
 			nodes: {},
 			renderTree: tree,
 			diagnostics: [
-				createDiagnostic("RESOURCE_LIMIT", "error", "The semantic tree exceeds the Semantic CSS node limit."),
+				createDiagnostic(
+					"RESOURCE_LIMIT",
+					"error",
+					"The semantic tree exceeds the Semantic CSS node limit.",
+				),
 			],
 		};
 	}
@@ -606,7 +774,11 @@ export function resolveStylesheet(
 			nodes: {},
 			renderTree: tree,
 			diagnostics: [
-				createDiagnostic("INVALID_VALUE", "error", "Authored page dimensions must be finite and positive."),
+				createDiagnostic(
+					"INVALID_VALUE",
+					"error",
+					"Authored page dimensions must be finite and positive.",
+				),
 			],
 		};
 	}
@@ -624,7 +796,9 @@ export function resolveStylesheet(
 	}
 	const nodeKinds = new Map(flatNodes.map(({ node }) => [node.key, node.kind]));
 	const cascadeKinds = new Map<string, ReadonlySet<SemanticNode["kind"]>>();
-	for (const [canonicalKey, aliasKeys] of Object.entries(context.aliases ?? {})) {
+	for (const [canonicalKey, aliasKeys] of Object.entries(
+		context.aliases ?? {},
+	)) {
 		const canonicalKind = nodeKinds.get(canonicalKey);
 		if (!canonicalKind) continue;
 		const kinds = new Set<SemanticNode["kind"]>([canonicalKind]);
@@ -644,14 +818,24 @@ export function resolveStylesheet(
 		);
 		if (matchingNodes.length === 0) {
 			diagnostics.push(
-				createDiagnostic("SELECTOR_NO_MATCH", "warning", "This selector matches no semantic resume node.", rule.range),
+				createDiagnostic(
+					"SELECTOR_NO_MATCH",
+					"warning",
+					"This selector matches no semantic resume node.",
+					rule.range,
+				),
 			);
 			continue;
 		}
 		for (const declaration of rule.declarations) {
 			if (declaration.property.startsWith("--")) continue;
 			const definition = PROPERTY_REGISTRY_V1[declaration.property];
-			if (definition && !matchingNodes.some(({ node }) => definition.appliesTo.includes(node.kind))) {
+			if (
+				definition &&
+				!matchingNodes.some(({ node }) =>
+					definition.appliesTo.includes(node.kind),
+				)
+			) {
 				diagnostics.push(
 					createDiagnostic(
 						"PROPERTY_NOT_APPLICABLE",
@@ -665,7 +849,9 @@ export function resolveStylesheet(
 	}
 
 	const rootFontSize = context.baseSettings.typography.body.fontSize;
-	const fallbackDimensions = defaultPageDimensions(context.baseSettings.page.format);
+	const fallbackDimensions = defaultPageDimensions(
+		context.baseSettings.page.format,
+	);
 	const pages = initialPages(flatNodes, context);
 	const resolvedPageSizes = new Map<string, ResolvedPageSize>();
 	const resolvedPageSizeValues = new Map<string, string>();
@@ -673,14 +859,28 @@ export function resolveStylesheet(
 
 	for (const node of flatNodes) {
 		const dimensions = pageFor(node, pages, fallbackDimensions);
-		const rawWinners = winnersFor(matched.get(node.node.key) ?? [], dimensions, rootFontSize, false);
-		const custom = customProperties(rawWinners, node.parent ? preliminaryCustom.get(node.parent.node.key) : undefined);
+		const rawWinners = winnersFor(
+			matched.get(node.node.key) ?? [],
+			dimensions,
+			rootFontSize,
+			false,
+		);
+		const custom = customProperties(
+			rawWinners,
+			node.parent ? preliminaryCustom.get(node.parent.node.key) : undefined,
+		);
 		preliminaryCustom.set(node.node.key, custom);
 		if (node.node.kind !== "page") continue;
 		const size = rawWinners.get("size");
 		if (!size) continue;
 		const system = createSystemVariables(context.baseSettings, dimensions);
-		const expanded = expandVariables(size.declaration.value, custom, system, diagnostics, size.declaration.range);
+		const expanded = expandVariables(
+			size.declaration.value,
+			custom,
+			system,
+			diagnostics,
+			size.declaration.range,
+		);
 		if (!expanded) continue;
 		const keyword = cssWideKeyword(expanded);
 		const parsed =
@@ -703,7 +903,14 @@ export function resolveStylesheet(
 			continue;
 		}
 		if (!parsed) {
-			diagnostics.push(createDiagnostic("INVALID_VALUE", "error", "Invalid page size.", size.declaration.range));
+			diagnostics.push(
+				createDiagnostic(
+					"INVALID_VALUE",
+					"error",
+					"Invalid page size.",
+					size.declaration.range,
+				),
+			);
 			continue;
 		}
 		resolvedPageSizeValues.set(node.node.key, expanded);
@@ -715,8 +922,16 @@ export function resolveStylesheet(
 	const resolved: Record<string, ResolvedNodeStyle> = {};
 	for (const node of flatNodes) {
 		const dimensions = pageFor(node, pages, fallbackDimensions);
-		const rawWinners = winnersFor(matched.get(node.node.key) ?? [], dimensions, rootFontSize, true);
-		const custom = customProperties(rawWinners, node.parent ? customByNode.get(node.parent.node.key) : undefined);
+		const rawWinners = winnersFor(
+			matched.get(node.node.key) ?? [],
+			dimensions,
+			rootFontSize,
+			true,
+		);
+		const custom = customProperties(
+			rawWinners,
+			node.parent ? customByNode.get(node.parent.node.key) : undefined,
+		);
 		customByNode.set(node.node.key, custom);
 		const system = createSystemVariables(context.baseSettings, dimensions);
 		const winners = expandedWinnersFor(
@@ -728,20 +943,31 @@ export function resolveStylesheet(
 			diagnostics,
 		);
 
-		const base = context.baseStyles[node.node.key] ?? { style: {}, structural: {}, hidden: false, order: 0 };
+		const base = context.baseStyles[node.node.key] ?? {
+			style: {},
+			structural: {},
+			hidden: false,
+			order: 0,
+		};
 		const parent = node.parent ? resolved[node.parent.node.key] : undefined;
 		const style: Record<string, string | number> = { ...base.style };
 		const specifiedStyleProperties = new Set<string>();
 		const hostBaseStyleProperties = new Set<string>();
 		for (const [property, definition] of Object.entries(PROPERTY_REGISTRY_V1)) {
 			if (!definition?.inheritable) continue;
-			const inheritedFromAuthoredRule = parent?.specifiedStyleProperties?.includes(property) && !winners.has(property);
+			const inheritedFromAuthoredRule =
+				parent?.specifiedStyleProperties?.includes(property) &&
+				!winners.has(property);
 			if (inheritedFromAuthoredRule) {
 				specifiedStyleProperties.add(property);
-				if (parent?.hostBaseStyleProperties?.includes(property)) hostBaseStyleProperties.add(property);
+				if (parent?.hostBaseStyleProperties?.includes(property))
+					hostBaseStyleProperties.add(property);
 				if (parent?.style[property] === undefined) delete style[property];
 				else style[property] = parent.style[property];
-			} else if (style[property] === undefined && parent?.style[property] !== undefined) {
+			} else if (
+				style[property] === undefined &&
+				parent?.style[property] !== undefined
+			) {
 				style[property] = parent.style[property];
 			}
 		}
@@ -751,20 +977,38 @@ export function resolveStylesheet(
 			typeof parent?.style["font-size"] === "number"
 				? parent.style["font-size"]
 				: context.baseSettings.typography.body.fontSize;
-		const applicableKinds = cascadeKinds.get(node.node.key) ?? new Set([node.node.kind]);
-		if (fontSizeWinner && PROPERTY_REGISTRY_V1["font-size"]?.appliesTo.some((kind) => applicableKinds.has(kind))) {
+		const applicableKinds =
+			cascadeKinds.get(node.node.key) ?? new Set([node.node.kind]);
+		if (
+			fontSizeWinner &&
+			PROPERTY_REGISTRY_V1["font-size"]?.appliesTo.some((kind) =>
+				applicableKinds.has(kind),
+			)
+		) {
 			const expanded = fontSizeWinner.declaration.value;
 			const keyword = cssWideKeyword(expanded);
 			if (keyword) {
 				specifiedStyleProperties.add("font-size");
 				if (keyword === "revert") hostBaseStyleProperties.add("font-size");
-				const wide = cssWideValue(keyword, "font-size", base.style, parent?.style);
+				const wide = cssWideValue(
+					keyword,
+					"font-size",
+					base.style,
+					parent?.style,
+				);
 				if (wide === undefined) delete style["font-size"];
 				else style["font-size"] = wide;
 			} else {
 				const syntaxError = valueSyntaxError("font-size", expanded);
 				if (syntaxError) {
-					diagnostics.push(createDiagnostic("INVALID_VALUE", "error", syntaxError, fontSizeWinner.declaration.range));
+					diagnostics.push(
+						createDiagnostic(
+							"INVALID_VALUE",
+							"error",
+							syntaxError,
+							fontSizeWinner.declaration.range,
+						),
+					);
 				} else {
 					const normalized = normalizeValue("font-size", expanded, {
 						page: dimensions,
@@ -774,11 +1018,17 @@ export function resolveStylesheet(
 					});
 					if (normalized === null) {
 						diagnostics.push(
-							createDiagnostic("INVALID_VALUE", "error", "Invalid font-size value.", fontSizeWinner.declaration.range),
+							createDiagnostic(
+								"INVALID_VALUE",
+								"error",
+								"Invalid font-size value.",
+								fontSizeWinner.declaration.range,
+							),
 						);
 					} else if (
 						typeof normalized === "number" &&
-						(normalized < 0 || normalized > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt)
+						(normalized < 0 ||
+							normalized > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt)
 					) {
 						diagnostics.push(
 							createDiagnostic(
@@ -791,7 +1041,10 @@ export function resolveStylesheet(
 					} else {
 						specifiedStyleProperties.add("font-size");
 						style["font-size"] = normalized;
-						if (typeof normalized === "number" && (normalized < 4 || normalized > 72)) {
+						if (
+							typeof normalized === "number" &&
+							(normalized < 4 || normalized > 72)
+						) {
 							diagnostics.push(
 								createDiagnostic(
 									"EXTREME_VALUE",
@@ -806,14 +1059,18 @@ export function resolveStylesheet(
 			}
 		}
 
-		const fontSize = typeof style["font-size"] === "number" ? style["font-size"] : parentFontSize;
+		const fontSize =
+			typeof style["font-size"] === "number"
+				? style["font-size"]
+				: parentFontSize;
 		const structural: StructuralPresentation = { ...base.structural };
 		let hidden = base.hidden;
 		let order = base.order;
 		for (const [property, winner] of winners) {
 			if (property.startsWith("--") || property === "font-size") continue;
 			const definition = PROPERTY_REGISTRY_V1[property];
-			if (!definition?.appliesTo.some((kind) => applicableKinds.has(kind))) continue;
+			if (!definition?.appliesTo.some((kind) => applicableKinds.has(kind)))
+				continue;
 			const expanded = winner.declaration.value;
 			if (property === "size") {
 				const resolvedValue = resolvedPageSizeValues.get(node.node.key);
@@ -830,7 +1087,8 @@ export function resolveStylesheet(
 					);
 				} else {
 					const pageSize = resolvedPageSizes.get(node.node.key);
-					if (pageSize) structuralValue(property, resolvedValue, structural, pageSize);
+					if (pageSize)
+						structuralValue(property, resolvedValue, structural, pageSize);
 				}
 				continue;
 			}
@@ -839,7 +1097,8 @@ export function resolveStylesheet(
 				if (property === "display") {
 					if (keyword === "inherit") {
 						hidden = parent?.hidden ?? false;
-						if (!hidden && parent?.style.display !== undefined) style.display = parent.style.display;
+						if (!hidden && parent?.style.display !== undefined)
+							style.display = parent.style.display;
 						else delete style.display;
 					} else if (keyword === "revert") {
 						hidden = base.hidden;
@@ -850,13 +1109,30 @@ export function resolveStylesheet(
 						delete style.display;
 					}
 				} else if (property === "order") {
-					order = keyword === "inherit" ? (parent?.order ?? 0) : keyword === "revert" ? base.order : 0;
+					order =
+						keyword === "inherit"
+							? (parent?.order ?? 0)
+							: keyword === "revert"
+								? base.order
+								: 0;
 				} else if (definition.category === "structural") {
-					applyStructuralCssWide(keyword, property, structural, base, parent, builderPageSize(context, node.node.key));
+					applyStructuralCssWide(
+						keyword,
+						property,
+						structural,
+						base,
+						parent,
+						builderPageSize(context, node.node.key),
+					);
 				} else {
 					specifiedStyleProperties.add(property);
 					if (keyword === "revert") hostBaseStyleProperties.add(property);
-					const wide = cssWideValue(keyword, property, base.style, parent?.style);
+					const wide = cssWideValue(
+						keyword,
+						property,
+						base.style,
+						parent?.style,
+					);
 					if (wide === undefined) delete style[property];
 					else style[property] = wide;
 				}
@@ -864,7 +1140,14 @@ export function resolveStylesheet(
 			}
 			const syntaxError = valueSyntaxError(property, expanded);
 			if (syntaxError) {
-				diagnostics.push(createDiagnostic("INVALID_VALUE", "error", syntaxError, winner.declaration.range));
+				diagnostics.push(
+					createDiagnostic(
+						"INVALID_VALUE",
+						"error",
+						syntaxError,
+						winner.declaration.range,
+					),
+				);
 				continue;
 			}
 
@@ -876,11 +1159,19 @@ export function resolveStylesheet(
 			});
 			if (normalized === null) {
 				diagnostics.push(
-					createDiagnostic("INVALID_VALUE", "error", `Invalid ${property} value.`, winner.declaration.range),
+					createDiagnostic(
+						"INVALID_VALUE",
+						"error",
+						`Invalid ${property} value.`,
+						winner.declaration.range,
+					),
 				);
 				continue;
 			}
-			if (typeof normalized === "number" && Math.abs(normalized) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt) {
+			if (
+				typeof normalized === "number" &&
+				Math.abs(normalized) > SEMANTIC_CSS_LIMITS_V1.maxAbsoluteLengthPt
+			) {
 				diagnostics.push(
 					createDiagnostic(
 						"INVALID_VALUE",
@@ -898,10 +1189,16 @@ export function resolveStylesheet(
 				continue;
 			}
 			if (property === "order") {
-				const nextOrder = typeof normalized === "number" ? normalized : Number(normalized);
+				const nextOrder =
+					typeof normalized === "number" ? normalized : Number(normalized);
 				if (!Number.isInteger(nextOrder)) {
 					diagnostics.push(
-						createDiagnostic("INVALID_VALUE", "error", "order must be an integer.", winner.declaration.range),
+						createDiagnostic(
+							"INVALID_VALUE",
+							"error",
+							"order must be an integer.",
+							winner.declaration.range,
+						),
 					);
 				} else order = nextOrder;
 				continue;
@@ -909,7 +1206,12 @@ export function resolveStylesheet(
 			if (definition.category === "structural") {
 				if (!structuralValue(property, normalized, structural)) {
 					diagnostics.push(
-						createDiagnostic("INVALID_VALUE", "error", `Invalid ${property} value.`, winner.declaration.range),
+						createDiagnostic(
+							"INVALID_VALUE",
+							"error",
+							`Invalid ${property} value.`,
+							winner.declaration.range,
+						),
 					);
 				}
 				continue;
@@ -930,5 +1232,9 @@ export function resolveStylesheet(
 	if (diagnostics.some(({ severity }) => severity === "error")) {
 		return { nodes: {}, renderTree: tree, diagnostics };
 	}
-	return { nodes: resolved, renderTree: createRenderTree(tree, flatNodes, resolved), diagnostics };
+	return {
+		nodes: resolved,
+		renderTree: createRenderTree(tree, flatNodes, resolved),
+		diagnostics,
+	};
 }

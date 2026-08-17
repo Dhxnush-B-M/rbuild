@@ -1,6 +1,10 @@
 import type { TemplateSemanticManifest } from "../../semantic/template-manifest";
 
-const inlineHeaderSectionTypes = ["experience", "education", "volunteer"] as const;
+const inlineHeaderSectionTypes = [
+	"experience",
+	"education",
+	"volunteer",
+] as const;
 
 export const meowthSemanticManifest = {
 	template: "meowth",
@@ -15,14 +19,26 @@ export const meowthSemanticManifest = {
 		{
 			name: "inline-item-header-leading",
 			key: "inline-item-header-leading",
-			owner: { kind: "item-header", key: "item-header", sectionTypes: inlineHeaderSectionTypes },
+			owner: {
+				kind: "item-header",
+				key: "item-header",
+				sectionTypes: inlineHeaderSectionTypes,
+			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
 			route: {
 				parent: "owner",
 				at: "start",
 				take: [
-					{ kind: "field", name: "position", sectionTypes: ["experience", "volunteer"] },
-					{ kind: "field", name: "location", sectionTypes: ["experience", "volunteer"] },
+					{
+						kind: "field",
+						name: "position",
+						sectionTypes: ["experience", "volunteer"],
+					},
+					{
+						kind: "field",
+						name: "location",
+						sectionTypes: ["experience", "volunteer"],
+					},
 					{ kind: "field", name: "area", sectionTypes: ["education"] },
 					{ kind: "field", name: "degree", sectionTypes: ["education"] },
 				],
@@ -31,7 +47,11 @@ export const meowthSemanticManifest = {
 		{
 			name: "inline-item-header-middle",
 			key: "inline-item-header-middle",
-			owner: { kind: "item-header", key: "item-header", sectionTypes: inlineHeaderSectionTypes },
+			owner: {
+				kind: "item-header",
+				key: "item-header",
+				sectionTypes: inlineHeaderSectionTypes,
+			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
 			route: {
 				parent: "owner",
@@ -47,9 +67,17 @@ export const meowthSemanticManifest = {
 		{
 			name: "inline-item-header-trailing",
 			key: "inline-item-header-trailing",
-			owner: { kind: "item-header", key: "item-header", sectionTypes: inlineHeaderSectionTypes },
+			owner: {
+				kind: "item-header",
+				key: "item-header",
+				sectionTypes: inlineHeaderSectionTypes,
+			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "owner", at: "start", take: [{ kind: "field", name: "period" }] },
+			route: {
+				parent: "owner",
+				at: "start",
+				take: [{ kind: "field", name: "period" }],
+			},
 		},
 		{
 			name: "education-grade-row",

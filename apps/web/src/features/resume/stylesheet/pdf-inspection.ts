@@ -1,12 +1,16 @@
 let pdfModule: Promise<typeof import("pdfjs-dist/legacy/build/pdf.mjs")>;
 
-const loadPdfModule = () => (pdfModule ??= import("pdfjs-dist/legacy/build/pdf.mjs"));
+const loadPdfModule = () =>
+	(pdfModule ??= import("pdfjs-dist/legacy/build/pdf.mjs"));
 
 const createNestedWorker = () =>
-	new Worker(new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url), {
-		type: "module",
-		name: "semantic-css-pdfjs",
-	});
+	new Worker(
+		new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url),
+		{
+			type: "module",
+			name: "semantic-css-pdfjs",
+		},
+	);
 
 export async function initializePdfInspection(): Promise<void> {
 	await loadPdfModule();
@@ -18,7 +22,9 @@ export async function inspectPdfPageCount(
 ): Promise<number> {
 	const { PDFWorker, getDocument } = await loadPdfModule();
 	const nestedWorker = createWorker();
-	const WorkerWithPort = PDFWorker as unknown as new (options: { port: Worker }) => InstanceType<typeof PDFWorker>;
+	const WorkerWithPort = PDFWorker as unknown as new (options: {
+		port: Worker;
+	}) => InstanceType<typeof PDFWorker>;
 	const worker = new WorkerWithPort({ port: nestedWorker });
 	let loadingTask: ReturnType<typeof getDocument> | undefined;
 

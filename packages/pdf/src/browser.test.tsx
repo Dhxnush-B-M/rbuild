@@ -1,7 +1,7 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { SectionTitleResolver } from "./section-title";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { SectionTitleResolver } from "./section-title";
 import { createPublicStyleProjection } from "./semantic/public-projection";
 
 const rendererMock = vi.hoisted(() => ({
@@ -52,7 +52,9 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 	const data = createLegacyRendererSafeResumeData();
 	const section = data.customSections[0];
 	if (!section) throw new Error("Expected a custom section fixture.");
-	section.items = [{ id: "summary-item", hidden: false, content: "<p>Missing company</p>" }] as never;
+	section.items = [
+		{ id: "summary-item", hidden: false, content: "<p>Missing company</p>" },
+	] as never;
 	return data;
 };
 
@@ -62,7 +64,8 @@ describe("createResumePdfBlob", () => {
 	});
 
 	it("renders ResumeDocument with data, template, and section title resolver", async () => {
-		const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglishTitle ?? input.sectionId;
+		const resolveSectionTitle: SectionTitleResolver = (input) =>
+			input.defaultEnglishTitle ?? input.sectionId;
 		const { createResumePdfBlob } = await import("./browser");
 		const data = createLegacyRendererSafeResumeData();
 
@@ -100,11 +103,17 @@ describe("createResumePdfBlob", () => {
 	it("rejects renderer-unsafe data before browser PDF dispatch", async () => {
 		const { createResumePdfBlob } = await import("./browser");
 
-		const error = await createResumePdfBlob({ data: createRendererUnsafeResumeData() }).catch(
-			(caught: unknown) => caught,
-		);
+		const error = await createResumePdfBlob({
+			data: createRendererUnsafeResumeData(),
+		}).catch((caught: unknown) => caught);
 
-		expect(error).toHaveProperty("issues.0.path", ["customSections", 0, "items", 0, "company"]);
+		expect(error).toHaveProperty("issues.0.path", [
+			"customSections",
+			0,
+			"items",
+			0,
+			"company",
+		]);
 		expect(rendererMock.pdf).not.toHaveBeenCalled();
 	});
 
@@ -122,14 +131,26 @@ describe("createResumePdfBlob", () => {
 
 	it("renders a source-free public projection through the semantic runtime", async () => {
 		const semanticData = structuredClone(sampleResumeData);
-		const applied = { languageVersion: 1, text: "@version 1;\nname { color: #123456; }\n" };
-		semanticData.metadata.stylesheet = { mode: "semantic", source: applied, applied };
-		const projection = await createPublicStyleProjection({ data: semanticData });
+		const applied = {
+			languageVersion: 1,
+			text: "@version 1;\nname { color: #123456; }\n",
+		};
+		semanticData.metadata.stylesheet = {
+			mode: "semantic",
+			source: applied,
+			applied,
+		};
+		const projection = await createPublicStyleProjection({
+			data: semanticData,
+		});
 		const publicData = structuredClone(semanticData);
 		delete publicData.metadata.stylesheet;
 		const { createResumePdfBlob } = await import("./browser");
 
-		await createResumePdfBlob({ data: publicData, publicStyleProjection: projection });
+		await createResumePdfBlob({
+			data: publicData,
+			publicStyleProjection: projection,
+		});
 
 		expect(rendererMock.pdf).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -137,7 +158,9 @@ describe("createResumePdfBlob", () => {
 					data: publicData,
 					semanticRuntime: expect.objectContaining({
 						presentation: expect.objectContaining({
-							"page-1/region-header/header/name": { style: { color: "#123456" } },
+							"page-1/region-header/header/name": {
+								style: { color: "#123456" },
+							},
 						}),
 					}),
 				}),
@@ -147,8 +170,15 @@ describe("createResumePdfBlob", () => {
 
 	it("returns semantic diagnostics without rendering an invalid applied source", async () => {
 		const data = structuredClone(sampleResumeData);
-		const invalid = { languageVersion: 1, text: "@version 1; section { color: ; }" };
-		data.metadata.stylesheet = { mode: "semantic", source: invalid, applied: invalid };
+		const invalid = {
+			languageVersion: 1,
+			text: "@version 1; section { color: ; }",
+		};
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: invalid,
+			applied: invalid,
+		};
 		const { createResumePdfBlobResult } = await import("./browser");
 
 		const result = await createResumePdfBlobResult({ data });
@@ -162,8 +192,15 @@ describe("createResumePdfBlob", () => {
 
 	it("rejects unchecked rendering instead of producing an unstyled PDF for semantic errors", async () => {
 		const data = structuredClone(sampleResumeData);
-		const invalid = { languageVersion: 1, text: "@version 1; section { color: ; }" };
-		data.metadata.stylesheet = { mode: "semantic", source: invalid, applied: invalid };
+		const invalid = {
+			languageVersion: 1,
+			text: "@version 1; section { color: ; }",
+		};
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: invalid,
+			applied: invalid,
+		};
 		const { createResumePdfBlob } = await import("./browser");
 
 		await expect(createResumePdfBlob({ data })).rejects.toMatchObject({
@@ -176,12 +213,27 @@ describe("createResumePdfBlob", () => {
 		const { createResumePdfBlobResult } = await import("./browser");
 		const inspection = {
 			presentation: {},
-			sourceTree: { key: "resume", kind: "resume", attributes: {}, roles: [], children: [] },
-			renderTree: { key: "resume", kind: "resume", attributes: {}, roles: [], children: [] },
+			sourceTree: {
+				key: "resume",
+				kind: "resume",
+				attributes: {},
+				roles: [],
+				children: [],
+			},
+			renderTree: {
+				key: "resume",
+				kind: "resume",
+				attributes: {},
+				roles: [],
+				children: [],
+			},
 			diagnostics: [],
 		} as const;
 
-		const result = await createResumePdfBlobResult({ data: sampleResumeData, inspection });
+		const result = await createResumePdfBlobResult({
+			data: sampleResumeData,
+			inspection,
+		});
 
 		expect(result).toMatchObject({ ok: true, diagnostics: [] });
 		expect(rendererMock.pdf).toHaveBeenCalledTimes(1);

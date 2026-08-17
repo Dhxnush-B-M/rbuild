@@ -1,16 +1,19 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { projectItemSchema } from "@rbuilder/schema/resume/data";
 import { FormControl, FormItem, FormLabel } from "@rbuilder/ui/components/form";
 import { Switch } from "@rbuilder/ui/components/switch";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -27,7 +30,9 @@ const defaultValues: FormValues = {
 	description: "",
 };
 
-export function CreateProjectDialog({ data }: DialogProps<"resume.sections.projects.create">) {
+export function CreateProjectDialog({
+	data,
+}: DialogProps<"resume.sections.projects.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -59,7 +64,9 @@ export function CreateProjectDialog({ data }: DialogProps<"resume.sections.proje
 	);
 }
 
-export function UpdateProjectDialog({ data }: DialogProps<"resume.sections.projects.update">) {
+export function UpdateProjectDialog({
+	data,
+}: DialogProps<"resume.sections.projects.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -98,9 +105,13 @@ const ProjectForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="name">{(field) => <field.TextField label={<Trans>Name</Trans>} />}</form.AppField>
+				<form.AppField name="name">
+					{(field) => <field.TextField label={<Trans>Name</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="period">{(field) => <field.TextField label={<Trans>Period</Trans>} />}</form.AppField>
+				<form.AppField name="period">
+					{(field) => <field.TextField label={<Trans>Period</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="website">
 					{(field) => (
@@ -133,7 +144,12 @@ const ProjectForm = withForm({
 				</form.Field>
 
 				<form.AppField name="description">
-					{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+					{(field) => (
+						<field.RichTextField
+							label={<Trans>Description</Trans>}
+							formItemClassName="sm:col-span-full"
+						/>
+					)}
 				</form.AppField>
 			</>
 		);

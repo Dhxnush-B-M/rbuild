@@ -1,21 +1,30 @@
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
 import fc from "fast-check";
+import { describe, expect, it } from "vitest";
 import { StylesheetCompilationCache, stylesheetCacheKey } from "./cache";
 import { compileStylesheet } from "./compile";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
 
-function escapedIdentifier(identifier: string, escaped: readonly boolean[], uppercase: readonly boolean[]): string {
+function escapedIdentifier(
+	identifier: string,
+	escaped: readonly boolean[],
+	uppercase: readonly boolean[],
+): string {
 	return [...identifier]
 		.map((character, index) => {
 			const cased = uppercase[index] ? character.toUpperCase() : character;
-			return escaped[index] ? `\\${cased.codePointAt(0)?.toString(16)} ` : cased;
+			return escaped[index]
+				? `\\${cased.codePointAt(0)?.toString(16)} `
+				: cased;
 		})
 		.join("");
 }
 
 function mediaList(count: number): string {
-	return Array.from({ length: count }, (_, index) => `(min-width: ${index + 1}pt)`).join(",");
+	return Array.from(
+		{ length: count },
+		(_, index) => `(min-width: ${index + 1}pt)`,
+	).join(",");
 }
 
 function legacyFingerprint(source: string): string {
@@ -27,22 +36,47 @@ function legacyFingerprint(source: string): string {
 	return `${hash >>> 0}:${source.length}`;
 }
 
-function expectedSides(tokens: readonly number[]): readonly [number, number, number, number] {
+function expectedSides(
+	tokens: readonly number[],
+): readonly [number, number, number, number] {
 	switch (tokens.length) {
 		case 1:
-			return [tokens[0] as number, tokens[0] as number, tokens[0] as number, tokens[0] as number];
+			return [
+				tokens[0] as number,
+				tokens[0] as number,
+				tokens[0] as number,
+				tokens[0] as number,
+			];
 		case 2:
-			return [tokens[0] as number, tokens[1] as number, tokens[0] as number, tokens[1] as number];
+			return [
+				tokens[0] as number,
+				tokens[1] as number,
+				tokens[0] as number,
+				tokens[1] as number,
+			];
 		case 3:
-			return [tokens[0] as number, tokens[1] as number, tokens[2] as number, tokens[1] as number];
+			return [
+				tokens[0] as number,
+				tokens[1] as number,
+				tokens[2] as number,
+				tokens[1] as number,
+			];
 		default:
-			return [tokens[0] as number, tokens[1] as number, tokens[2] as number, tokens[3] as number];
+			return [
+				tokens[0] as number,
+				tokens[1] as number,
+				tokens[2] as number,
+				tokens[3] as number,
+			];
 	}
 }
 
 describe("Semantic CSS value compilation", () => {
 	it("compiles and caches the portable version-one fixture as plain data", () => {
-		const text = readFileSync(new URL("./__fixtures__/v1/portable-theme.css", import.meta.url), "utf8");
+		const text = readFileSync(
+			new URL("./__fixtures__/v1/portable-theme.css", import.meta.url),
+			"utf8",
+		);
 		const first = compileStylesheet({ languageVersion: 1, text });
 		const second = compileStylesheet({ languageVersion: 1, text });
 
@@ -59,12 +93,19 @@ describe("Semantic CSS value compilation", () => {
 
 		expect(result.program).toBeNull();
 		expect(result.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "SYSTEM_VARIABLE_READONLY", severity: "error" }),
+			expect.objectContaining({
+				code: "SYSTEM_VARIABLE_READONLY",
+				severity: "error",
+			}),
 		);
 	});
 
 	it("revalidates custom-property values so forbidden functions cannot hide", () => {
-		for (const value of ["url('https://example.com/x')", "URL(x)", "u\\72l(x)"]) {
+		for (const value of [
+			"url('https://example.com/x')",
+			"URL(x)",
+			"u\\72l(x)",
+		]) {
 			const result = compileStylesheet({
 				languageVersion: 1,
 				text: `@version 1; :root { --asset: ${value}; } picture { background-color: var(--asset); }`,
@@ -72,7 +113,10 @@ describe("Semantic CSS value compilation", () => {
 
 			expect(result.program, value).toBeNull();
 			expect(result.diagnostics, value).toContainEqual(
-				expect.objectContaining({ code: "FORBIDDEN_CSS_VALUE", severity: "error" }),
+				expect.objectContaining({
+					code: "FORBIDDEN_CSS_VALUE",
+					severity: "error",
+				}),
 			);
 		}
 	});
@@ -84,7 +128,9 @@ describe("Semantic CSS value compilation", () => {
 		});
 
 		expect(result.program).not.toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "EXTREME_VALUE", severity: "warning" }));
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "EXTREME_VALUE", severity: "warning" }),
+		);
 	});
 
 	it("rejects non-finite or technically unrenderable absolute lengths", () => {
@@ -100,7 +146,17 @@ describe("Semantic CSS value compilation", () => {
 		}
 	});
 
-	it.each(["auto", "none", "normal", "max-content", "min-content", "fit-content", "thin", "medium", "thick"])(
+	it.each([
+		"auto",
+		"none",
+		"normal",
+		"max-content",
+		"min-content",
+		"fit-content",
+		"thin",
+		"medium",
+		"thick",
+	])(
 		"preserves the accepted generic length keyword %s when reference hints are narrower",
 		(value) => {
 			const result = compileStylesheet({
@@ -109,7 +165,9 @@ describe("Semantic CSS value compilation", () => {
 			});
 
 			expect(result.program).not.toBeNull();
-			expect(result.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
+			expect(
+				result.diagnostics.filter(({ severity }) => severity === "error"),
+			).toEqual([]);
 		},
 	);
 
@@ -122,7 +180,9 @@ describe("Semantic CSS value compilation", () => {
 			});
 
 			expect(result.program).toBeNull();
-			expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }));
+			expect(result.diagnostics).toContainEqual(
+				expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }),
+			);
 		},
 	);
 
@@ -131,7 +191,13 @@ describe("Semantic CSS value compilation", () => {
 			name: "source bytes",
 			exact: (() => {
 				const prefix = "@version 1;";
-				return prefix + " ".repeat(SEMANTIC_CSS_LIMITS_V1.maxSourceBytes - new TextEncoder().encode(prefix).byteLength);
+				return (
+					prefix +
+					" ".repeat(
+						SEMANTIC_CSS_LIMITS_V1.maxSourceBytes -
+							new TextEncoder().encode(prefix).byteLength,
+					)
+				);
 			})(),
 			oneOver: (() => {
 				const prefix = "@version 1;";
@@ -174,7 +240,9 @@ describe("Semantic CSS value compilation", () => {
 			const accepted = compileStylesheet({ languageVersion: 1, text: exact });
 			expect(accepted.program?.rules).toHaveLength(expectedRules);
 			if (expectedDeclarations !== undefined) {
-				expect(accepted.program?.rules[0]?.declarations).toHaveLength(expectedDeclarations);
+				expect(accepted.program?.rules[0]?.declarations).toHaveLength(
+					expectedDeclarations,
+				);
 			}
 
 			const rejected = compileStylesheet({ languageVersion: 1, text: oneOver });
@@ -196,7 +264,10 @@ describe("Semantic CSS value compilation", () => {
 
 				expect(result.program).toBeNull();
 				expect(result.diagnostics).toContainEqual(
-					expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
+					expect.objectContaining({
+						code: "RESOURCE_LIMIT",
+						severity: "error",
+					}),
 				);
 			}),
 			{ numRuns: 8 },
@@ -205,17 +276,24 @@ describe("Semantic CSS value compilation", () => {
 
 	it("rejects invalid trailing flex tokens instead of silently ignoring them", () => {
 		fc.assert(
-			fc.property(fc.integer({ min: 0, max: 10 }), fc.stringMatching(/^[a-z]{1,6}$/), (grow, trailing) => {
-				const result = compileStylesheet({
-					languageVersion: 1,
-					text: `@version 1;section{flex:${grow} auto ${trailing}}`,
-				});
+			fc.property(
+				fc.integer({ min: 0, max: 10 }),
+				fc.stringMatching(/^[a-z]{1,6}$/),
+				(grow, trailing) => {
+					const result = compileStylesheet({
+						languageVersion: 1,
+						text: `@version 1;section{flex:${grow} auto ${trailing}}`,
+					});
 
-				expect(result.program).toBeNull();
-				expect(result.diagnostics).toContainEqual(
-					expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }),
-				);
-			}),
+					expect(result.program).toBeNull();
+					expect(result.diagnostics).toContainEqual(
+						expect.objectContaining({
+							code: "INVALID_VALUE",
+							severity: "error",
+						}),
+					);
+				},
+			),
 			{ numRuns: 20 },
 		);
 	});
@@ -257,21 +335,29 @@ describe("Semantic CSS value compilation", () => {
 		expect(result.program?.rules[0]?.declarations).toContainEqual(
 			expect.objectContaining({ property: "--tokens", value: "row inherit" }),
 		);
-		expect(result.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
+		expect(
+			result.diagnostics.filter(({ severity }) => severity === "error"),
+		).toEqual([]);
 	});
 
 	it("expands generated one-to-four-token shorthands with CSS side semantics", () => {
 		fc.assert(
 			fc.property(
 				fc.constantFrom("margin", "padding", "border-width"),
-				fc.array(fc.integer({ min: 0, max: 100 }), { minLength: 1, maxLength: 4 }),
+				fc.array(fc.integer({ min: 0, max: 100 }), {
+					minLength: 1,
+					maxLength: 4,
+				}),
 				(property, tokens) => {
 					const values = tokens.map((token) => `${token}pt`).join(" ");
 					const result = compileStylesheet({
 						languageVersion: 1,
 						text: `@version 1;section{${property}:${values}}`,
 					});
-					if (!result.program) throw new Error(result.diagnostics.map(({ code }) => code).join(","));
+					if (!result.program)
+						throw new Error(
+							result.diagnostics.map(({ code }) => code).join(","),
+						);
 					const [top, right, bottom, left] = expectedSides(tokens);
 					const expected =
 						property === "border-width"
@@ -290,7 +376,9 @@ describe("Semantic CSS value compilation", () => {
 
 					expect(
 						Object.fromEntries(
-							(result.program.rules[0]?.declarations ?? []).map(({ property: name, value }) => [name, value]),
+							(result.program.rules[0]?.declarations ?? []).map(
+								({ property: name, value }) => [name, value],
+							),
 						),
 					).toEqual(expected);
 				},
@@ -304,15 +392,21 @@ describe("Semantic CSS value compilation", () => {
 		const second = "b(tT0e7(";
 
 		expect(legacyFingerprint(first)).toBe(legacyFingerprint(second));
-		expect(stylesheetCacheKey(1, first, "registry")).not.toBe(stylesheetCacheKey(1, second, "registry"));
+		expect(stylesheetCacheKey(1, first, "registry")).not.toBe(
+			stylesheetCacheKey(1, second, "registry"),
+		);
 	});
 
 	it("uses a bounded least-recently-used cache by entry count and aggregate bytes", () => {
 		const cache = new StylesheetCompilationCache();
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 1;" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 1;",
+		});
 
 		cache.set("first", result);
-		for (let index = 0; index < 128; index++) cache.set(`next-${index}`, result);
+		for (let index = 0; index < 128; index++)
+			cache.set(`next-${index}`, result);
 
 		expect(cache.get("first")).toBeUndefined();
 		expect(cache.get("next-0")).toBe(result);
@@ -358,9 +452,18 @@ describe("Semantic CSS value compilation", () => {
 	it("never throws for malformed Unicode or case/escape-varied attack values", () => {
 		fc.assert(
 			fc.property(
-				fc.string({ unit: fc.integer({ min: 0, max: 0xffff }).map((codeUnit) => String.fromCharCode(codeUnit)) }),
+				fc.string({
+					unit: fc
+						.integer({ min: 0, max: 0xffff })
+						.map((codeUnit) => String.fromCharCode(codeUnit)),
+				}),
 				(body) => {
-					expect(() => compileStylesheet({ languageVersion: 1, text: `@version 1;${body}` })).not.toThrow();
+					expect(() =>
+						compileStylesheet({
+							languageVersion: 1,
+							text: `@version 1;${body}`,
+						}),
+					).not.toThrow();
 				},
 			),
 			{ numRuns: 100 },
@@ -405,9 +508,14 @@ describe("Semantic CSS value compilation", () => {
 		);
 		fc.assert(
 			fc.property(forbiddenBody, ({ body, code }) => {
-				const result = compileStylesheet({ languageVersion: 1, text: `@version 1;${body}` });
+				const result = compileStylesheet({
+					languageVersion: 1,
+					text: `@version 1;${body}`,
+				});
 				expect(result.program).toBeNull();
-				expect(result.diagnostics).toContainEqual(expect.objectContaining({ code, severity: "error" }));
+				expect(result.diagnostics).toContainEqual(
+					expect.objectContaining({ code, severity: "error" }),
+				);
 			}),
 			{ numRuns: 100 },
 		);
@@ -432,14 +540,22 @@ describe("Semantic CSS value compilation", () => {
 
 	it("keeps every successful compiled program structured-clone-safe", () => {
 		fc.assert(
-			fc.property(fc.constantFrom("red", "#123456", "rgb(1, 2, 3)", "var(--accent, blue)"), (color) => {
-				const result = compileStylesheet({
-					languageVersion: 1,
-					text: `@version 1; name { color: ${color}; }`,
-				});
-				expect(result.program).not.toBeNull();
-				expect(() => structuredClone(result.program)).not.toThrow();
-			}),
+			fc.property(
+				fc.constantFrom(
+					"red",
+					"#123456",
+					"rgb(1, 2, 3)",
+					"var(--accent, blue)",
+				),
+				(color) => {
+					const result = compileStylesheet({
+						languageVersion: 1,
+						text: `@version 1; name { color: ${color}; }`,
+					});
+					expect(result.program).not.toBeNull();
+					expect(() => structuredClone(result.program)).not.toThrow();
+				},
+			),
 			{ numRuns: 20 },
 		);
 	});

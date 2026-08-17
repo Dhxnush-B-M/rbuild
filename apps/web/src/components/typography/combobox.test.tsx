@@ -5,7 +5,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FontWeightCombobox } from "./combobox";
 
 const comboboxMock = vi.hoisted(() => ({
-	props: undefined as { onValueChange?: (value: string[] | null) => void } | undefined,
+	props: undefined as
+		| { onValueChange?: (value: string[] | null) => void }
+		| undefined,
 }));
 
 type ComboboxProps = {
@@ -27,7 +29,13 @@ describe("FontWeightCombobox", () => {
 	it("emits selected font weights in ascending order", () => {
 		const onValueChange = vi.fn();
 
-		render(<FontWeightCombobox fontFamily="Source Sans 3" value={["400"]} onValueChange={onValueChange} />);
+		render(
+			<FontWeightCombobox
+				fontFamily="Source Sans 3"
+				value={["400"]}
+				onValueChange={onValueChange}
+			/>,
+		);
 
 		comboboxMock.props?.onValueChange?.(["800", "600", "400"]);
 

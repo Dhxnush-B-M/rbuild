@@ -41,7 +41,10 @@ describe("AlertDialog", () => {
 				<AlertDialogContent>x</AlertDialogContent>
 			</AlertDialog>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "alert-dialog-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-trigger",
+		);
 	});
 
 	it("content uses size 'default' by default", () => {
@@ -68,17 +71,26 @@ describe("AlertDialog", () => {
 describe("AlertDialog subcomponents", () => {
 	it("AlertDialogHeader uses data-slot='alert-dialog-header'", () => {
 		render(<AlertDialogHeader data-testid="h">x</AlertDialogHeader>);
-		expect(screen.getByTestId("h")).toHaveAttribute("data-slot", "alert-dialog-header");
+		expect(screen.getByTestId("h")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-header",
+		);
 	});
 
 	it("AlertDialogFooter uses data-slot='alert-dialog-footer'", () => {
 		render(<AlertDialogFooter data-testid="f">x</AlertDialogFooter>);
-		expect(screen.getByTestId("f")).toHaveAttribute("data-slot", "alert-dialog-footer");
+		expect(screen.getByTestId("f")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-footer",
+		);
 	});
 
 	it("AlertDialogMedia uses data-slot='alert-dialog-media'", () => {
 		render(<AlertDialogMedia data-testid="m">x</AlertDialogMedia>);
-		expect(screen.getByTestId("m")).toHaveAttribute("data-slot", "alert-dialog-media");
+		expect(screen.getByTestId("m")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-media",
+		);
 	});
 
 	it("AlertDialogTitle uses data-slot='alert-dialog-title'", () => {
@@ -90,7 +102,10 @@ describe("AlertDialog subcomponents", () => {
 				</AlertDialogContent>
 			</AlertDialog>,
 		);
-		expect(screen.getByText("Are you sure?")).toHaveAttribute("data-slot", "alert-dialog-title");
+		expect(screen.getByText("Are you sure?")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-title",
+		);
 	});
 
 	it("AlertDialogDescription uses data-slot='alert-dialog-description'", () => {
@@ -102,7 +117,10 @@ describe("AlertDialog subcomponents", () => {
 				</AlertDialogContent>
 			</AlertDialog>,
 		);
-		expect(screen.getByText("This is permanent")).toHaveAttribute("data-slot", "alert-dialog-description");
+		expect(screen.getByText("This is permanent")).toHaveAttribute(
+			"data-slot",
+			"alert-dialog-description",
+		);
 	});
 
 	it("AlertDialogAction renders a Button with data-slot='alert-dialog-action'", () => {

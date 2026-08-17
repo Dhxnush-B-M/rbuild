@@ -1,9 +1,9 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import type { Template } from "@rbuilder/schema/templates";
-import { describe, expect, it } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { ResumeDocument } from "../document";
 
 type HostNode = {
@@ -17,9 +17,19 @@ const nodeText = (node: HostNode): string =>
 	node.value ?? (node.children ?? []).map((child) => nodeText(child)).join("");
 
 const mergedStyle = (node: HostNode): Record<string, unknown> =>
-	Object.assign({}, ...(Array.isArray(node.style) ? node.style : node.style ? [node.style] : []));
+	Object.assign(
+		{},
+		...(Array.isArray(node.style)
+			? node.style
+			: node.style
+				? [node.style]
+				: []),
+	);
 
-const findPath = (node: HostNode, predicate: (candidate: HostNode) => boolean): HostNode[] | undefined => {
+const findPath = (
+	node: HostNode,
+	predicate: (candidate: HostNode) => boolean,
+): HostNode[] | undefined => {
 	if (predicate(node)) return [node];
 	for (const child of node.children ?? []) {
 		const path = findPath(child, predicate);
@@ -27,14 +37,25 @@ const findPath = (node: HostNode, predicate: (candidate: HostNode) => boolean): 
 	}
 };
 
-const nodesWithStyle = (node: HostNode, property: string, value: unknown): HostNode[] => [
+const nodesWithStyle = (
+	node: HostNode,
+	property: string,
+	value: unknown,
+): HostNode[] => [
 	...(mergedStyle(node)[property] === value ? [node] : []),
-	...(node.children ?? []).flatMap((child) => nodesWithStyle(child, property, value)),
+	...(node.children ?? []).flatMap((child) =>
+		nodesWithStyle(child, property, value),
+	),
 ];
 
 const buildFixture = (
 	text: string,
-	section: "summary" | "skills" | "experience" | "languages" | "references" = "summary",
+	section:
+		| "summary"
+		| "skills"
+		| "experience"
+		| "languages"
+		| "references" = "summary",
 ): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	data.picture.hidden = true;
@@ -80,7 +101,13 @@ const buildFixture = (
 		},
 	];
 	data.sections.languages.items = [
-		{ id: "language-1", hidden: false, language: "English", fluency: "Native", level: 0 },
+		{
+			id: "language-1",
+			hidden: false,
+			language: "English",
+			fluency: "Native",
+			level: 0,
+		},
 	];
 	data.sections.references.items = [
 		{
@@ -95,14 +122,26 @@ const buildFixture = (
 	];
 	data.metadata.page.hideSectionIcons = false;
 	data.metadata.page.hideIcons = false;
-	data.metadata.layout.pages = [{ fullWidth: true, main: [section], sidebar: [] }];
+	data.metadata.layout.pages = [
+		{ fullWidth: true, main: [section], sidebar: [] },
+	];
 	const stylesheet = { languageVersion: 1, text: `@version 1; ${text}` };
-	data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
+	data.metadata.stylesheet = {
+		mode: "semantic",
+		source: stylesheet,
+		applied: stylesheet,
+	};
 	return data;
 };
 
-const renderFixture = async (template: Template, data: ResumeData): Promise<HostNode> => {
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
+const renderFixture = async (
+	template: Template,
+	data: ResumeData,
+): Promise<HostNode> => {
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	return instance.container.document as HostNode;
@@ -123,41 +162,84 @@ describe("semantic binding host fidelity", () => {
 				"skills",
 			),
 		);
-		const emailPath = findPath(document, (node) => node.type === "LINK" && nodeText(node) === "ada@example.com");
-		const headingPath = findPath(document, (node) => node.type === "TEXT" && nodeText(node) === "Expertise");
-		const skillPath = findPath(document, (node) => node.type === "TEXT" && nodeText(node) === "TypeScript");
-
-		expect(emailPath?.some((node) => mergedStyle(node).backgroundColor === "#202020")).toBe(true);
-		expect(headingPath?.some((node) => node.type === "VIEW" && mergedStyle(node).backgroundColor === "#303030")).toBe(
-			true,
+		const emailPath = findPath(
+			document,
+			(node) => node.type === "LINK" && nodeText(node) === "ada@example.com",
 		);
-		expect(mergedStyle(headingPath?.at(-1) as HostNode).backgroundColor).toBeUndefined();
-		expect(skillPath?.some((node) => mergedStyle(node).backgroundColor === "#404040")).toBe(true);
-		expect(skillPath?.some((node) => mergedStyle(node).backgroundColor === "#101010")).toBe(true);
-		expect(nodesWithStyle(document, "opacity", 0.25).some(({ type }) => type === "SVG")).toBe(true);
+		const headingPath = findPath(
+			document,
+			(node) => node.type === "TEXT" && nodeText(node) === "Expertise",
+		);
+		const skillPath = findPath(
+			document,
+			(node) => node.type === "TEXT" && nodeText(node) === "TypeScript",
+		);
+
+		expect(
+			emailPath?.some(
+				(node) => mergedStyle(node).backgroundColor === "#202020",
+			),
+		).toBe(true);
+		expect(
+			headingPath?.some(
+				(node) =>
+					node.type === "VIEW" &&
+					mergedStyle(node).backgroundColor === "#303030",
+			),
+		).toBe(true);
+		expect(
+			mergedStyle(headingPath?.at(-1) as HostNode).backgroundColor,
+		).toBeUndefined();
+		expect(
+			skillPath?.some(
+				(node) => mergedStyle(node).backgroundColor === "#404040",
+			),
+		).toBe(true);
+		expect(
+			skillPath?.some(
+				(node) => mergedStyle(node).backgroundColor === "#101010",
+			),
+		).toBe(true);
+		expect(
+			nodesWithStyle(document, "opacity", 0.25).some(
+				({ type }) => type === "SVG",
+			),
+		).toBe(true);
 	});
 
 	it.each([
 		["languages", "English"],
 		["references", "Charles Babbage"],
-	] as const)("keeps direct %s Text siblings outside the item-header contract", async (section, text) => {
-		const document = await renderFixture(
-			"onyx",
-			buildFixture(
-				`
+	] as const)(
+		"keeps direct %s Text siblings outside the item-header contract",
+		async (section, text) => {
+			const document = await renderFixture(
+				"onyx",
+				buildFixture(
+					`
 					item-header { display: none; background-color: #414141; break-before: page; }
 					field[role~="primary-text"] { color: #515151; }
 				`,
-				section,
-			),
-		);
-		const textPath = findPath(document, (node) => node.type === "TEXT" && nodeText(node) === text);
-		const textNode = textPath?.at(-1);
+					section,
+				),
+			);
+			const textPath = findPath(
+				document,
+				(node) => node.type === "TEXT" && nodeText(node) === text,
+			);
+			const textNode = textPath?.at(-1);
 
-		expect(textNode).toBeDefined();
-		expect(textNode && mergedStyle(textNode)).toMatchObject({ color: "#515151" });
-		expect(textPath?.some((node) => mergedStyle(node).backgroundColor === "#414141")).toBe(false);
-	});
+			expect(textNode).toBeDefined();
+			expect(textNode && mergedStyle(textNode)).toMatchObject({
+				color: "#515151",
+			});
+			expect(
+				textPath?.some(
+					(node) => mergedStyle(node).backgroundColor === "#414141",
+				),
+			).toBe(false);
+		},
+	);
 
 	it("binds nested experience-role item and item-header styles to their existing Views", async () => {
 		const document = await renderFixture(
@@ -170,12 +252,24 @@ describe("semantic binding host fidelity", () => {
 				"experience",
 			),
 		);
-		const rolePath = findPath(document, (node) => node.type === "TEXT" && nodeText(node) === "Architect");
-
-		expect(rolePath?.some((node) => node.type === "VIEW" && mergedStyle(node).backgroundColor === "#515151")).toBe(
-			true,
+		const rolePath = findPath(
+			document,
+			(node) => node.type === "TEXT" && nodeText(node) === "Architect",
 		);
-		expect(rolePath?.some((node) => node.type === "VIEW" && mergedStyle(node).borderTopWidth === 7)).toBe(true);
+
+		expect(
+			rolePath?.some(
+				(node) =>
+					node.type === "VIEW" &&
+					mergedStyle(node).backgroundColor === "#515151",
+			),
+		).toBe(true);
+		expect(
+			rolePath?.some(
+				(node) =>
+					node.type === "VIEW" && mergedStyle(node).borderTopWidth === 7,
+			),
+		).toBe(true);
 	});
 
 	it("binds Rhyhorn's outer contact owner, nested content primitive, link alias, and last-owner alias separately", async () => {
@@ -188,14 +282,29 @@ describe("semantic binding host fidelity", () => {
 				contact-item[part~="contact-item-last"] { border-bottom-width: 9pt; }
 			`),
 		);
-		const emailPath = findPath(document, (node) => node.type === "LINK" && nodeText(node) === "ada@example.com");
+		const emailPath = findPath(
+			document,
+			(node) => node.type === "LINK" && nodeText(node) === "ada@example.com",
+		);
 		const link = emailPath?.at(-1);
 
-		expect(link && mergedStyle(link)).toMatchObject({ color: "#717171", textDecoration: "none" });
-		expect(emailPath?.some((node) => node.type === "VIEW" && mergedStyle(node).backgroundColor === "#616161")).toBe(
-			true,
-		);
-		expect(emailPath?.some((node) => node.type === "VIEW" && mergedStyle(node).borderBottomWidth === 9)).toBe(true);
+		expect(link && mergedStyle(link)).toMatchObject({
+			color: "#717171",
+			textDecoration: "none",
+		});
+		expect(
+			emailPath?.some(
+				(node) =>
+					node.type === "VIEW" &&
+					mergedStyle(node).backgroundColor === "#616161",
+			),
+		).toBe(true);
+		expect(
+			emailPath?.some(
+				(node) =>
+					node.type === "VIEW" && mergedStyle(node).borderBottomWidth === 9,
+			),
+		).toBe(true);
 	});
 
 	it.each([
@@ -209,12 +318,18 @@ describe("semantic binding host fidelity", () => {
 		["pikachu", 1],
 		["rhyhorn", 1],
 		["scizor", 1],
-	] as const)("%s attaches every visible primitive template part to an existing host", async (template, expected) => {
-		const section = template === "meowth" ? "experience" : "summary";
-		const document = await renderFixture(template, buildFixture("template-part { opacity: 0.37; }", section));
+	] as const)(
+		"%s attaches every visible primitive template part to an existing host",
+		async (template, expected) => {
+			const section = template === "meowth" ? "experience" : "summary";
+			const document = await renderFixture(
+				template,
+				buildFixture("template-part { opacity: 0.37; }", section),
+			);
 
-		expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(expected);
-	});
+			expect(nodesWithStyle(document, "opacity", 0.37)).toHaveLength(expected);
+		},
+	);
 
 	it("honors primitive template-part visibility on the exact existing host", async () => {
 		const document = await renderFixture(

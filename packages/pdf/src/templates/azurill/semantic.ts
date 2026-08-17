@@ -13,7 +13,12 @@ export const azurillSemanticManifest = {
 		{
 			name: "timeline-line",
 			key: "timeline-line",
-			owner: { kind: "section-items", key: "section-items", placement: "main", columns: 1 },
+			owner: {
+				kind: "section-items",
+				key: "section-items",
+				placement: "main",
+				columns: 1,
+			},
 			binding: { type: "primitive", primitive: "View", source: "existing" },
 			route: { parent: "owner", at: "start" },
 		},

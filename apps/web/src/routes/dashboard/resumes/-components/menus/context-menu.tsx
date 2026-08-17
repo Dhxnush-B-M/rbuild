@@ -1,6 +1,9 @@
-import type { RouterOutput } from "@/libs/orpc/client";
 import { Trans } from "@lingui/react/macro";
-import { LockSimpleIcon, LockSimpleOpenIcon, TrashSimpleIcon } from "@phosphor-icons/react";
+import {
+	LockSimpleIcon,
+	LockSimpleOpenIcon,
+	TrashSimpleIcon,
+} from "@phosphor-icons/react";
 import {
 	ContextMenu,
 	ContextMenuContent,
@@ -8,6 +11,7 @@ import {
 	ContextMenuSeparator,
 	ContextMenuTrigger,
 } from "@rbuilder/ui/components/context-menu";
+import type { RouterOutput } from "@/libs/orpc/client";
 import { useResumeMenuActions } from "./use-resume-menu-actions";
 
 type Props = {
@@ -26,17 +30,27 @@ export function ResumeContextMenu({ resume, children }: Props) {
 				<ContextMenuItem onClick={handleToggleLock}>
 					{resume.isLocked ? <LockSimpleOpenIcon /> : <LockSimpleIcon />}
 					{resume.isLocked ? (
-						<Trans comment="Resume card context menu action to remove edit lock">Unlock</Trans>
+						<Trans comment="Resume card context menu action to remove edit lock">
+							Unlock
+						</Trans>
 					) : (
-						<Trans comment="Resume card context menu action to prevent edits">Lock</Trans>
+						<Trans comment="Resume card context menu action to prevent edits">
+							Lock
+						</Trans>
 					)}
 				</ContextMenuItem>
 
 				<ContextMenuSeparator />
 
-				<ContextMenuItem variant="destructive" disabled={resume.isLocked} onClick={handleDelete}>
+				<ContextMenuItem
+					variant="destructive"
+					disabled={resume.isLocked}
+					onClick={handleDelete}
+				>
 					<TrashSimpleIcon />
-					<Trans comment="Resume card context menu destructive action to remove a resume">Delete</Trans>
+					<Trans comment="Resume card context menu destructive action to remove a resume">
+						Delete
+					</Trans>
 				</ContextMenuItem>
 			</ContextMenuContent>
 		</ContextMenu>

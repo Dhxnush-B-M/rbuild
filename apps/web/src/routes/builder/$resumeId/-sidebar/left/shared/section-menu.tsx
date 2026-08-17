@@ -1,4 +1,3 @@
-import type { SectionType } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import {
@@ -10,6 +9,7 @@ import {
 	PencilSimpleLineIcon,
 	PlusIcon,
 } from "@phosphor-icons/react";
+import type { SectionType } from "@rbuilder/schema/resume/data";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DropdownMenu,
@@ -25,7 +25,10 @@ import {
 	DropdownMenuTrigger,
 } from "@rbuilder/ui/components/dropdown-menu";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 
@@ -40,7 +43,8 @@ export function SectionDropdownMenu({ type }: Props) {
 
 	const updateResumeData = useUpdateResumeData();
 	const resume = useCurrentResume();
-	const section = type === "summary" ? resume.data.summary : resume.data.sections[type];
+	const section =
+		type === "summary" ? resume.data.summary : resume.data.sections[type];
 
 	const onAddItem = () => {
 		if (type === "summary") return;
@@ -58,10 +62,13 @@ export function SectionDropdownMenu({ type }: Props) {
 	};
 
 	const onRenameSection = async () => {
-		const newTitle = await prompt(t`What do you want to rename this section to?`, {
-			description: t`Leave empty to reset the title to the original.`,
-			defaultValue: section.title,
-		});
+		const newTitle = await prompt(
+			t`What do you want to rename this section to?`,
+			{
+				description: t`Leave empty to reset the title to the original.`,
+				defaultValue: section.title,
+			},
+		);
 
 		if (newTitle === null || newTitle === section.title) return;
 
@@ -85,17 +92,22 @@ export function SectionDropdownMenu({ type }: Props) {
 	};
 
 	const onReset = async () => {
-		const confirmed = await confirm(t`Are you sure you want to reset this section?`, {
-			description: t`This will remove all items from this section.`,
-			confirmText: t({
-				comment: "Destructive confirmation button label when resetting a resume section",
-				message: "Reset",
-			}),
-			cancelText: t({
-				comment: "Confirmation dialog button label to abort resetting a resume section",
-				message: "Cancel",
-			}),
-		});
+		const confirmed = await confirm(
+			t`Are you sure you want to reset this section?`,
+			{
+				description: t`This will remove all items from this section.`,
+				confirmText: t({
+					comment:
+						"Destructive confirmation button label when resetting a resume section",
+					message: "Reset",
+				}),
+				cancelText: t({
+					comment:
+						"Confirmation dialog button label to abort resetting a resume section",
+					message: "Cancel",
+				}),
+			},
+		);
 
 		if (!confirmed) return;
 
@@ -150,7 +162,10 @@ export function SectionDropdownMenu({ type }: Props) {
 						</DropdownMenuSubTrigger>
 
 						<DropdownMenuSubContent>
-							<DropdownMenuRadioGroup value={section.columns.toString()} onValueChange={onSetColumns}>
+							<DropdownMenuRadioGroup
+								value={section.columns.toString()}
+								onValueChange={onSetColumns}
+							>
 								{[1, 2, 3, 4, 5, 6].map((column) => (
 									<DropdownMenuRadioItem key={column} value={column.toString()}>
 										<Plural value={column} one="# Column" other="# Columns" />

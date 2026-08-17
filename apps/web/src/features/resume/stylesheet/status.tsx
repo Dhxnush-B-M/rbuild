@@ -1,21 +1,36 @@
-import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import { Trans } from "@lingui/react/macro";
 import { WarningCircleIcon, WarningIcon } from "@phosphor-icons/react";
-import { Alert, AlertDescription, AlertTitle } from "@rbuilder/ui/components/alert";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
+import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@rbuilder/ui/components/alert";
 import { Badge } from "@rbuilder/ui/components/badge";
 import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 
 export type StylesheetStatusProps = {
 	mode: "legacy" | "semantic";
-	status: "idle" | "compiling" | "preflighting" | "saving" | "applied" | "error";
+	status:
+		| "idle"
+		| "compiling"
+		| "preflighting"
+		| "saving"
+		| "applied"
+		| "error";
 	diagnostics: readonly SemanticCssDiagnostic[];
 };
 
-export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatusProps) {
+export function StylesheetStatus({
+	mode,
+	status,
+	diagnostics,
+}: StylesheetStatusProps) {
 	const errors = diagnostics.filter(({ severity }) => severity === "error");
 	const warnings = diagnostics.filter(({ severity }) => severity === "warning");
 	const hasErrors = status === "error" || errors.length > 0;
-	const isPending = status === "compiling" || status === "preflighting" || status === "saving";
+	const isPending =
+		status === "compiling" || status === "preflighting" || status === "saving";
 
 	return (
 		<div className="space-y-2" aria-live="polite">
@@ -25,15 +40,29 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 					<Trans>Error</Trans>
 				</Badge>
 			) : isPending ? (
-				<Badge variant="outline">{mode === "legacy" ? <Trans>Checking draft</Trans> : <Trans>Checking</Trans>}</Badge>
+				<Badge variant="outline">
+					{mode === "legacy" ? (
+						<Trans>Checking draft</Trans>
+					) : (
+						<Trans>Checking</Trans>
+					)}
+				</Badge>
 			) : warnings.length > 0 ? (
 				<Badge variant="secondary">
 					<WarningIcon data-icon="inline-start" />
-					{mode === "legacy" ? <Trans>Ready to activate with warnings</Trans> : <Trans>Applied with warnings</Trans>}
+					{mode === "legacy" ? (
+						<Trans>Ready to activate with warnings</Trans>
+					) : (
+						<Trans>Applied with warnings</Trans>
+					)}
 				</Badge>
 			) : (
 				<Badge variant="secondary">
-					{mode === "legacy" ? <Trans>Ready to activate</Trans> : <Trans>Applied</Trans>}
+					{mode === "legacy" ? (
+						<Trans>Ready to activate</Trans>
+					) : (
+						<Trans>Applied</Trans>
+					)}
 				</Badge>
 			)}
 
@@ -53,11 +82,15 @@ export function StylesheetStatus({ mode, status, diagnostics }: StylesheetStatus
 				<ScrollArea className="max-h-32 rounded-md border">
 					<ul className="space-y-2 p-3 text-xs">
 						{diagnostics.map((diagnostic) => (
-							<li key={`${diagnostic.code}-${diagnostic.range.start.offset}`} className="space-y-0.5">
+							<li
+								key={`${diagnostic.code}-${diagnostic.range.start.offset}`}
+								className="space-y-0.5"
+							>
 								<p className="font-medium">{diagnostic.message}</p>
 								<p className="text-muted-foreground">
 									<Trans>
-										Line {diagnostic.range.start.line}, column {diagnostic.range.start.column}
+										Line {diagnostic.range.start.line}, column{" "}
+										{diagnostic.range.start.column}
 									</Trans>
 								</p>
 							</li>

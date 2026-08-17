@@ -1,10 +1,10 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { sampleResumeData } from "@rbuilder/schema/resume/sample";
 import type { Template } from "@rbuilder/schema/templates";
-import { describe, expect, it, vi } from "vitest";
+import { templateSchema } from "@rbuilder/schema/templates";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { sampleResumeData } from "@rbuilder/schema/resume/sample";
-import { templateSchema } from "@rbuilder/schema/templates";
+import { describe, expect, it, vi } from "vitest";
 import { ResumeDocument } from "../document";
 
 vi.mock("@react-pdf/renderer", async (importOriginal) => ({
@@ -59,8 +59,14 @@ const buildFixture = (mode: "legacy" | "semantic"): ResumeData => {
 	return data;
 };
 
-const renderHostTree = async (data: ResumeData, template: Template): Promise<HostNode> => {
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
+const renderHostTree = async (
+	data: ResumeData,
+	template: Template,
+): Promise<HostNode> => {
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
 	return instance.container.document as HostNode;

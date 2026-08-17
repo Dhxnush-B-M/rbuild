@@ -1,19 +1,26 @@
-import type { Template } from "@rbuilder/schema/templates";
-import type { CSSProperties } from "react";
-import type { ResolvedResumePreviewProps } from "./preview.shared";
-import type { PreviewPageSize } from "./preview.shared.utils";
 import { t } from "@lingui/core/macro";
-import { AnimatePresence, m } from "motion/react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+import type { Template } from "@rbuilder/schema/templates";
 import { isRTL } from "@rbuilder/utils/locale";
 import { cn } from "@rbuilder/utils/style";
+import { AnimatePresence, m } from "motion/react";
+import type { CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { createResumePdfBlob } from "@/features/resume/export/pdf-document";
 import { useStylesheetStore } from "@/features/resume/stylesheet/store";
-import { usePreviewPausedStore, useResumeData, useResumeStore } from "../builder/draft";
+import {
+	usePreviewPausedStore,
+	useResumeData,
+	useResumeStore,
+} from "../builder/draft";
 import { PdfCanvasDocument, PdfCanvasPage } from "./pdf-canvas";
+import type { ResolvedResumePreviewProps } from "./preview.shared";
 import { ResumePreviewLoader } from "./preview.shared";
-import { getResumePreviewGapValue, getResumePreviewPageCount } from "./preview.shared.utils";
+import type { PreviewPageSize } from "./preview.shared.utils";
+import {
+	getResumePreviewGapValue,
+	getResumePreviewPageCount,
+} from "./preview.shared.utils";
 import { ResumeAccessibleText } from "./resume-accessible-text";
 
 type PreviewPdf = {
@@ -29,7 +36,12 @@ type PreviewPdf = {
 const UPDATE_DEBOUNCE_MS = 350;
 const CROSSFADE_DURATION_MS = 180;
 
-const createPreviewPdf = (file: Blob, id: number, hasExistingPreview: boolean, template: Template): PreviewPdf => ({
+const createPreviewPdf = (
+	file: Blob,
+	id: number,
+	hasExistingPreview: boolean,
+	template: Template,
+): PreviewPdf => ({
 	file,
 	id,
 	numPages: 0,
@@ -44,12 +56,24 @@ const addPreviewLayer = (layers: PreviewPdf[], nextPdf: PreviewPdf) => {
 	return activeLayers.length === 0 ? [nextPdf] : [...activeLayers, nextPdf];
 };
 
-const getActivePreviewLayer = (layers: PreviewPdf[]) => layers.find((layer) => layer.phase === "active") ?? null;
+const getActivePreviewLayer = (layers: PreviewPdf[]) =>
+	layers.find((layer) => layer.phase === "active") ?? null;
 
-const setPreviewPageCount = (layers: PreviewPdf[], layerId: number, numPages: number) =>
-	layers.map((layer) => (layer.id === layerId ? { ...layer, numPages } : layer));
+const setPreviewPageCount = (
+	layers: PreviewPdf[],
+	layerId: number,
+	numPages: number,
+) =>
+	layers.map((layer) =>
+		layer.id === layerId ? { ...layer, numPages } : layer,
+	);
 
-const setPreviewPageSize = (layers: PreviewPdf[], layerId: number, pageNumber: number, pageSize: PreviewPageSize) =>
+const setPreviewPageSize = (
+	layers: PreviewPdf[],
+	layerId: number,
+	pageNumber: number,
+	pageSize: PreviewPageSize,
+) =>
 	layers.map((layer) =>
 		layer.id === layerId
 			? {
@@ -62,11 +86,16 @@ const setPreviewPageSize = (layers: PreviewPdf[], layerId: number, pageNumber: n
 			: layer,
 	);
 
-const markPreviewPageRendered = (layers: PreviewPdf[], layerId: number, pageNumber: number) => {
+const markPreviewPageRendered = (
+	layers: PreviewPdf[],
+	layerId: number,
+	pageNumber: number,
+) => {
 	let shouldPromoteLayer = false;
 
 	const nextLayers = layers.map((layer) => {
-		if (layer.id !== layerId || layer.renderedPages.includes(pageNumber)) return layer;
+		if (layer.id !== layerId || layer.renderedPages.includes(pageNumber))
+			return layer;
 
 		const renderedPages = [...layer.renderedPages, pageNumber];
 		const nextLayer = { ...layer, renderedPages };
@@ -83,13 +112,15 @@ const markPreviewPageRendered = (layers: PreviewPdf[], layerId: number, pageNumb
 
 	return nextLayers.map((layer) => {
 		if (layer.id === layerId) return layer;
-		if (layer.phase === "active") return { ...layer, phase: "exiting" as const };
+		if (layer.phase === "active")
+			return { ...layer, phase: "exiting" as const };
 
 		return layer;
 	});
 };
 
-const removePreviewLayer = (layers: PreviewPdf[], layerId: number) => layers.filter((layer) => layer.id !== layerId);
+const removePreviewLayer = (layers: PreviewPdf[], layerId: number) =>
+	layers.filter((layer) => layer.id !== layerId);
 
 export function ResumePreviewClient({
 	className,
@@ -108,7 +139,9 @@ export function ResumePreviewClient({
 	const applied = useStylesheetStore((state) => state.applied);
 	const presentation = useMemo(
 		() =>
-			data === undefined && builderResumeId !== undefined && stylesheetResumeId === builderResumeId
+			data === undefined &&
+			builderResumeId !== undefined &&
+			stylesheetResumeId === builderResumeId
 				? { stylesheet: { mode, applied } }
 				: undefined,
 		[applied, builderResumeId, data, mode, stylesheetResumeId],
@@ -133,7 +166,12 @@ export function ResumePreviewClient({
 		const generatePdfPreview = async () => {
 			try {
 				if (cancelled || requestId !== requestIdRef.current) return;
-				const blob = await createResumePdfBlob(resumeData, undefined, undefined, presentation);
+				const blob = await createResumePdfBlob(
+					resumeData,
+					undefined,
+					undefined,
+					presentation,
+				);
 
 				if (!cancelled && requestId === requestIdRef.current) {
 					const nextPdf = createPreviewPdf(
@@ -148,9 +186,12 @@ export function ResumePreviewClient({
 				}
 			} catch {
 				if (cancelled || requestId !== requestIdRef.current) return;
-				toast.error(t`The resume preview could not be updated. The last valid preview is still shown.`, {
-					id: "resume-preview-render-error",
-				});
+				toast.error(
+					t`The resume preview could not be updated. The last valid preview is still shown.`,
+					{
+						id: "resume-preview-render-error",
+					},
+				);
 			}
 		};
 
@@ -194,21 +235,37 @@ export function ResumePreviewClient({
 						key={visiblePdf.id}
 						aria-hidden={visiblePdf.phase !== "active"}
 						data-resume-preview-template={visiblePdf.template}
-						style={{ "--resume-preview-page-gap": resolvedPageGap } as CSSProperties}
-						className={cn("col-start-1 row-start-1", visiblePdf.phase !== "active" && "pointer-events-none")}
+						style={
+							{ "--resume-preview-page-gap": resolvedPageGap } as CSSProperties
+						}
+						className={cn(
+							"col-start-1 row-start-1",
+							visiblePdf.phase !== "active" && "pointer-events-none",
+						)}
 						initial={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						animate={{ opacity: visiblePdf.phase === "active" ? 1 : 0 }}
 						exit={{ opacity: 0 }}
-						transition={{ duration: CROSSFADE_DURATION_MS / 1000, ease: "easeOut" }}
+						transition={{
+							duration: CROSSFADE_DURATION_MS / 1000,
+							ease: "easeOut",
+						}}
 						onAnimationComplete={() => {
 							if (visiblePdf.phase !== "exiting") return;
-							setPreviewLayers((current) => removePreviewLayer(current, visiblePdf.id));
+							setPreviewLayers((current) =>
+								removePreviewLayer(current, visiblePdf.id),
+							);
 						}}
 					>
 						<PdfCanvasDocument
 							file={visiblePdf.file}
 							onLoadSuccess={(document) => {
-								setPreviewLayers((current) => setPreviewPageCount(current, visiblePdf.id, document.numPages));
+								setPreviewLayers((current) =>
+									setPreviewPageCount(
+										current,
+										visiblePdf.id,
+										document.numPages,
+									),
+								);
 							}}
 						>
 							{(document) => (
@@ -216,7 +273,9 @@ export function ResumePreviewClient({
 									dir={isRTL(resumeData.metadata.page.locale) ? "rtl" : "ltr"}
 									className={cn(
 										"flex justify-start gap-(--resume-preview-page-gap)",
-										pageLayout === "horizontal" ? "flex-row items-start" : "flex-col items-center",
+										pageLayout === "horizontal"
+											? "flex-row items-start"
+											: "flex-col items-center",
 									)}
 								>
 									{Array.from({ length: visiblePdf.numPages }, (_, index) => {
@@ -236,13 +295,24 @@ export function ResumePreviewClient({
 												showPageNumbers={showPageNumbers}
 												onLoadSuccess={(_, pageSize) => {
 													setPreviewLayers((current) =>
-														setPreviewPageSize(current, visiblePdf.id, pageNumber, pageSize),
+														setPreviewPageSize(
+															current,
+															visiblePdf.id,
+															pageNumber,
+															pageSize,
+														),
 													);
 												}}
 												onRenderSuccess={() => {
 													if (visiblePdf.phase !== "staged") return;
 
-													setPreviewLayers((current) => markPreviewPageRendered(current, visiblePdf.id, pageNumber));
+													setPreviewLayers((current) =>
+														markPreviewPageRendered(
+															current,
+															visiblePdf.id,
+															pageNumber,
+														),
+													);
 												}}
 											/>
 										);

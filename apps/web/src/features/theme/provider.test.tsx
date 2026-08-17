@@ -15,14 +15,20 @@ const { ThemeProvider, useTheme } = await import("./provider");
 
 describe("useTheme", () => {
 	it("throws when used outside ThemeProvider", () => {
-		const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
-		expect(() => renderHook(() => useTheme())).toThrow(/useTheme must be used within a ThemeProvider/);
+		const consoleError = vi
+			.spyOn(console, "error")
+			.mockImplementation(() => {});
+		expect(() => renderHook(() => useTheme())).toThrow(
+			/useTheme must be used within a ThemeProvider/,
+		);
 		consoleError.mockRestore();
 	});
 
 	it("returns the theme and helpers when wrapped in ThemeProvider", () => {
 		const { result } = renderHook(() => useTheme(), {
-			wrapper: ({ children }) => <ThemeProvider theme="dark">{children}</ThemeProvider>,
+			wrapper: ({ children }) => (
+				<ThemeProvider theme="dark">{children}</ThemeProvider>
+			),
 		});
 
 		expect(result.current.theme).toBe("dark");

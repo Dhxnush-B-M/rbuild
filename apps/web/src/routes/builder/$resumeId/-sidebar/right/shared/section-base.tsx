@@ -1,9 +1,14 @@
-import type { RightSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@rbuilder/ui/components/accordion";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@rbuilder/ui/components/accordion";
 import { Button } from "@rbuilder/ui/components/button";
 import { cn } from "@rbuilder/utils/style";
+import type { RightSidebarSection } from "@/libs/resume/section";
 import { getSectionIcon, getSectionTitle } from "@/libs/resume/section";
 import { useSectionStore } from "../../../-store/section";
 
@@ -12,7 +17,9 @@ type Props = React.ComponentProps<typeof AccordionContent> & {
 };
 
 export function SectionBase({ type, className, ...props }: Props) {
-	const collapsed = useSectionStore((state) => state.sections[type]?.collapsed ?? false);
+	const collapsed = useSectionStore(
+		(state) => state.sections[type]?.collapsed ?? false,
+	);
 	const toggleCollapsed = useSectionStore((state) => state.toggleCollapsed);
 	const sectionTitle = getSectionTitle(type);
 
@@ -21,7 +28,11 @@ export function SectionBase({ type, className, ...props }: Props) {
 			id={`sidebar-${type}`}
 			className="relative rounded-2xl border border-white/10 bg-card/40 p-4 shadow-lg backdrop-blur-xl transition-all duration-300 hover:border-primary/30 hover:bg-card/50"
 		>
-			<Accordion value={collapsed ? [] : [type]} onValueChange={() => toggleCollapsed(type)} className="space-y-3">
+			<Accordion
+				value={collapsed ? [] : [type]}
+				onValueChange={() => toggleCollapsed(type)}
+				className="space-y-3"
+			>
 				<AccordionItem value={type} className="group/accordion-item space-y-3">
 					<div className="flex items-center justify-between">
 						<div className="flex flex-1 items-center gap-x-2.5">
@@ -48,7 +59,10 @@ export function SectionBase({ type, className, ...props }: Props) {
 						</div>
 					</div>
 
-					<AccordionContent className={cn("overflow-hidden pt-2 pb-0", className)} {...props} />
+					<AccordionContent
+						className={cn("overflow-hidden pt-2 pb-0", className)}
+						{...props}
+					/>
 				</AccordionItem>
 			</Accordion>
 		</div>

@@ -5,7 +5,10 @@ type HiddenItem = {
 	[key: string]: unknown;
 };
 
-type TitleBackedSectionType = Exclude<CustomSectionType, "summary" | "cover-letter">;
+type TitleBackedSectionType = Exclude<
+	CustomSectionType,
+	"summary" | "cover-letter"
+>;
 
 type ItemSectionLike<T extends HiddenItem = HiddenItem> = {
 	hidden: boolean;
@@ -43,7 +46,9 @@ const isItemSection = (section: unknown): section is ItemSectionLike => {
 };
 
 const isSummarySection = (section: unknown): section is Summary => {
-	return typeof section === "object" && section !== null && "content" in section;
+	return (
+		typeof section === "object" && section !== null && "content" in section
+	);
 };
 
 const hasText = (value: unknown): value is string => {
@@ -54,7 +59,10 @@ const getPrimaryTitleField = (sectionType?: string): string | undefined => {
 	return primaryTitleFields[sectionType as TitleBackedSectionType];
 };
 
-const hasValidPrimaryTitle = (item: HiddenItem, sectionType?: string): boolean => {
+const hasValidPrimaryTitle = (
+	item: HiddenItem,
+	sectionType?: string,
+): boolean => {
 	const titleField = getPrimaryTitleField(sectionType);
 
 	if (!titleField) return true;
@@ -63,10 +71,17 @@ const hasValidPrimaryTitle = (item: HiddenItem, sectionType?: string): boolean =
 };
 
 const hasVisibleExperienceRole = (role: unknown): boolean => {
-	return typeof role === "object" && role !== null && hasText((role as { position?: unknown }).position);
+	return (
+		typeof role === "object" &&
+		role !== null &&
+		hasText((role as { position?: unknown }).position)
+	);
 };
 
-const filterExperienceRoles = <T extends HiddenItem>(item: T, sectionType?: string): T => {
+const filterExperienceRoles = <T extends HiddenItem>(
+	item: T,
+	sectionType?: string,
+): T => {
 	if (sectionType !== "experience") return item;
 
 	const roles = (item as { roles?: unknown }).roles;
@@ -80,7 +95,10 @@ const filterExperienceRoles = <T extends HiddenItem>(item: T, sectionType?: stri
 	return { ...item, roles: visibleRoles } as T;
 };
 
-export const filterItems = <T extends HiddenItem>(items: T[], sectionType?: string): T[] => {
+export const filterItems = <T extends HiddenItem>(
+	items: T[],
+	sectionType?: string,
+): T[] => {
 	const visibleItems: T[] = [];
 
 	for (const item of items) {
@@ -91,21 +109,32 @@ export const filterItems = <T extends HiddenItem>(items: T[], sectionType?: stri
 	return visibleItems;
 };
 
-export const hasVisibleItems = (section: ItemSectionLike, sectionType?: string): boolean => {
+export const hasVisibleItems = (
+	section: ItemSectionLike,
+	sectionType?: string,
+): boolean => {
 	return !section.hidden && filterItems(section.items, sectionType).length > 0;
 };
 
-export const isVisibleSummary = (summary: Pick<Summary, "hidden" | "content">): boolean => {
+export const isVisibleSummary = (
+	summary: Pick<Summary, "hidden" | "content">,
+): boolean => {
 	return !summary.hidden && summary.content.trim().length > 0;
 };
 
 const getSectionForFiltering = (sectionId: string, data: FilterableData) => {
 	if (sectionId === "summary") return data.summary;
 
-	return data.sections[sectionId] ?? data.customSections.find((section) => section.id === sectionId);
+	return (
+		data.sections[sectionId] ??
+		data.customSections.find((section) => section.id === sectionId)
+	);
 };
 
-const getSectionTypeForFiltering = (sectionId: string, section: unknown): string | undefined => {
+const getSectionTypeForFiltering = (
+	sectionId: string,
+	section: unknown,
+): string | undefined => {
 	if (sectionId === "summary") return "summary";
 
 	if (typeof section === "object" && section !== null && "type" in section) {
@@ -117,7 +146,10 @@ const getSectionTypeForFiltering = (sectionId: string, section: unknown): string
 	return sectionId;
 };
 
-export const isSectionVisible = (sectionId: string, data: FilterableData): boolean => {
+export const isSectionVisible = (
+	sectionId: string,
+	data: FilterableData,
+): boolean => {
 	const section = getSectionForFiltering(sectionId, data);
 	const sectionType = getSectionTypeForFiltering(sectionId, section);
 
@@ -128,6 +160,9 @@ export const isSectionVisible = (sectionId: string, data: FilterableData): boole
 	return false;
 };
 
-export const filterSections = (sectionIds: string[], data: FilterableData): string[] => {
+export const filterSections = (
+	sectionIds: string[],
+	data: FilterableData,
+): string[] => {
 	return sectionIds.filter((sectionId) => isSectionVisible(sectionId, data));
 };

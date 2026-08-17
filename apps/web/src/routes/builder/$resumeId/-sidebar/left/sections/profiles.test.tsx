@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import type { Resume } from "@/features/resume/builder/draft";
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Resume } from "@/features/resume/builder/draft";
 
 const sectionItems = vi.hoisted(() => [
 	{
@@ -45,7 +45,14 @@ vi.mock("@/features/resume/builder/draft", () => ({
 	useCurrentBuilderResumeSelector: (selector: (resume: Resume) => unknown) =>
 		selector({
 			data: {
-				sections: { profiles: { title: "Profiles", columns: 1, hidden: false, items: sectionItems } },
+				sections: {
+					profiles: {
+						title: "Profiles",
+						columns: 1,
+						hidden: false,
+						items: sectionItems,
+					},
+				},
 			},
 		} as unknown as Resume),
 	useUpdateResumeData: () => vi.fn(),
@@ -58,7 +65,9 @@ vi.mock("../shared/section-base", () => ({
 	),
 }));
 vi.mock("../shared/section-item", () => ({
-	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => <button type="button">{children}</button>,
+	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => (
+		<button type="button">{children}</button>
+	),
 	SectionItem: ({ title, subtitle }: SectionItemProps) => (
 		<div>
 			<span data-testid="item-title">{title}</span>
@@ -81,10 +90,14 @@ describe("ProfilesSectionBuilder", () => {
 			</I18nProvider>,
 		);
 
-		const titles = screen.getAllByTestId("item-title").map((el) => el.textContent);
+		const titles = screen
+			.getAllByTestId("item-title")
+			.map((el) => el.textContent);
 		expect(titles).toEqual(["GitHub", "LinkedIn"]);
 
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles).toEqual(["jane", "jane-doe"]);
 	});
 
@@ -94,7 +107,9 @@ describe("ProfilesSectionBuilder", () => {
 				<ProfilesSectionBuilder />
 			</I18nProvider>,
 		);
-		expect(screen.getByRole("button", { name: "Add a new profile" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Add a new profile" }),
+		).toBeInTheDocument();
 	});
 
 	it("uses non-dashed border when items are present", () => {

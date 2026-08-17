@@ -35,9 +35,12 @@ describe("useSyncFormValues", () => {
 	it("calls reset when values prop changes to a different shape", () => {
 		const form = makeForm<{ a: number }>({ a: 1 });
 
-		const { rerender } = renderHook(({ values }) => useSyncFormValues(form, values), {
-			initialProps: { values: { a: 1 } },
-		});
+		const { rerender } = renderHook(
+			({ values }) => useSyncFormValues(form, values),
+			{
+				initialProps: { values: { a: 1 } },
+			},
+		);
 
 		expect(form.reset).not.toHaveBeenCalled();
 
@@ -50,9 +53,12 @@ describe("useSyncFormValues", () => {
 	it("ignores new value identity when deeply equal", () => {
 		const form = makeForm<{ a: number }>({ a: 1 });
 
-		const { rerender } = renderHook(({ values }) => useSyncFormValues(form, values), {
-			initialProps: { values: { a: 1 } },
-		});
+		const { rerender } = renderHook(
+			({ values }) => useSyncFormValues(form, values),
+			{
+				initialProps: { values: { a: 1 } },
+			},
+		);
 
 		rerender({ values: { a: 1 } });
 

@@ -37,7 +37,9 @@ export const getRichTextSemanticKind = (
 	if (tag === "hr") return "horizontal-rule";
 	if (tag === "mark") return "mark";
 	if (tag === "span") {
-		return element.getAttribute("class")?.split(/\s+/).includes(markClassName) ? "mark" : "text-span";
+		return element.getAttribute("class")?.split(/\s+/).includes(markClassName)
+			? "mark"
+			: "text-span";
 	}
 
 	return undefined;
@@ -59,9 +61,15 @@ export const getRichTextSemanticNodeKey = (
 	let nodeKey = rootNodeKey;
 	for (const [ancestryIndex, ancestor] of ancestry.reverse().entries()) {
 		const parent = ancestor.parentNode;
-		const elementIndex = isElement(parent) ? parent.childNodes.filter(isElement).indexOf(ancestor) : 0;
+		const elementIndex = isElement(parent)
+			? parent.childNodes.filter(isElement).indexOf(ancestor)
+			: 0;
 		const kind = getRichTextSemanticKind(ancestor, markClassName);
-		nodeKey = semanticNodeKeys.richTextNode(nodeKey, kind ?? `html-${ancestor.rawTagName.toLowerCase()}`, elementIndex);
+		nodeKey = semanticNodeKeys.richTextNode(
+			nodeKey,
+			kind ?? `html-${ancestor.rawTagName.toLowerCase()}`,
+			elementIndex,
+		);
 
 		if (kind === "list-item" && ancestryIndex < ancestry.length - 1) {
 			nodeKey = semanticNodeKeys.richTextNode(nodeKey, "list-item-content", 0);

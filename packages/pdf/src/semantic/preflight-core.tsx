@@ -1,14 +1,14 @@
 import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import type { StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
 import type { Template } from "@rbuilder/schema/templates";
-import type { PdfPreflightFailureCode } from "./preflight-reference";
 import { createElement } from "react";
-import { parseResumeData } from "@rbuilder/schema/resume/data";
 import { pdf } from "#react-pdf-renderer";
 import { ResumeDocument } from "../document";
 import { getTemplatePageSize } from "../templates/shared/page-size";
 import { semanticNodeKeys } from "./node-keys";
+import type { PdfPreflightFailureCode } from "./preflight-reference";
 import { resolveResumeRuntime } from "./resolve";
 
 export type { PdfPreflightFailureCode } from "./preflight-reference";
@@ -57,7 +57,9 @@ export type BrowserPdfPreflightResult =
 	| (Extract<PdfPreflightResult, { ok: true }> & { pdf: ArrayBuffer })
 	| PdfPreflightFailure;
 
-const pageDimensions = (size: "A4" | "LETTER" | { width: number; height?: number }) => {
+const pageDimensions = (
+	size: "A4" | "LETTER" | { width: number; height?: number },
+) => {
 	if (size === "LETTER") return { width: 612, height: 792 };
 	if (size === "A4") return { width: 595.28, height: 841.89 };
 	return { width: size.width, height: size.height ?? 841.89 };
@@ -71,9 +73,14 @@ const pageSizeFailure = (
 	const fallbackSize = getTemplatePageSize(data.metadata.page.format);
 
 	for (const index of data.metadata.layout.pages.keys()) {
-		const size = presentation[semanticNodeKeys.page(index + 1)]?.size ?? fallbackSize;
+		const size =
+			presentation[semanticNodeKeys.page(index + 1)]?.size ?? fallbackSize;
 		const { width, height } = pageDimensions(size);
-		if (width > limits.maxPageWidthPt || height > limits.maxPageHeightPt || width * height > limits.maxPageAreaPt2) {
+		if (
+			width > limits.maxPageWidthPt ||
+			height > limits.maxPageHeightPt ||
+			width * height > limits.maxPageAreaPt2
+		) {
 			return {
 				ok: false,
 				code: "STYLESHEET_PREFLIGHT_PAGE_SIZE_LIMIT",
@@ -116,11 +123,19 @@ export async function renderPreflightPdf(
 		};
 	}
 
-	const pageFailure = pageSizeFailure(data, inspection.presentation, pageLimits);
-	if (pageFailure) return { ...pageFailure, diagnostics: inspection.diagnostics };
+	const pageFailure = pageSizeFailure(
+		data,
+		inspection.presentation,
+		pageLimits,
+	);
+	if (pageFailure)
+		return { ...pageFailure, diagnostics: inspection.diagnostics };
 
 	try {
-		const document = createElement(ResumeDocument, { data, template: input.template }) as Parameters<typeof pdf>[0];
+		const document = createElement(ResumeDocument, {
+			data,
+			template: input.template,
+		}) as Parameters<typeof pdf>[0];
 		const blob = await pdf(document).toBlob();
 		return {
 			ok: true,

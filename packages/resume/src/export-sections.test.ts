@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { describe, expect, it } from "vitest";
 import { getResumeExportData, resumeHasCoverLetter } from "./export-sections";
 
 describe("resume export sections", () => {
@@ -12,10 +12,15 @@ describe("resume export sections", () => {
 	it("removes cover letter sections from resume-only exports", () => {
 		const data = getResumeExportData(sampleResumeData, "resume");
 
-		expect(data.customSections.some((section) => section.type === "cover-letter")).toBe(false);
-		expect(data.metadata.layout.pages.flatMap((page) => [...page.main, ...page.sidebar])).not.toContain(
-			"019bef5b-0b3d-7e2a-8a7c-12d9e23a4f6b",
-		);
+		expect(
+			data.customSections.some((section) => section.type === "cover-letter"),
+		).toBe(false);
+		expect(
+			data.metadata.layout.pages.flatMap((page) => [
+				...page.main,
+				...page.sidebar,
+			]),
+		).not.toContain("019bef5b-0b3d-7e2a-8a7c-12d9e23a4f6b");
 	});
 
 	it("keeps only cover letter sections for cover-letter exports", () => {
@@ -24,7 +29,11 @@ describe("resume export sections", () => {
 		expect(data.customSections).toHaveLength(1);
 		expect(data.customSections[0]?.type).toBe("cover-letter");
 		expect(data.metadata.layout.pages).toEqual([
-			{ fullWidth: true, main: ["019bef5b-0b3d-7e2a-8a7c-12d9e23a4f6b"], sidebar: [] },
+			{
+				fullWidth: true,
+				main: ["019bef5b-0b3d-7e2a-8a7c-12d9e23a4f6b"],
+				sidebar: [],
+			},
 		]);
 	});
 });

@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
 import { act, renderHook } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
-import { i18n } from "@lingui/core";
 import { PromptDialogProvider, usePrompt } from "./use-prompt";
 
 type HookWrapperProps = {
@@ -13,16 +13,22 @@ beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const wrapper = ({ children }: HookWrapperProps) => <PromptDialogProvider>{children}</PromptDialogProvider>;
+const wrapper = ({ children }: HookWrapperProps) => (
+	<PromptDialogProvider>{children}</PromptDialogProvider>
+);
 
 const clickButton = (re: RegExp) => {
-	const buttons = Array.from(document.body.querySelectorAll<HTMLButtonElement>("button"));
+	const buttons = Array.from(
+		document.body.querySelectorAll<HTMLButtonElement>("button"),
+	);
 	buttons.find((b) => re.test(b.textContent ?? ""))?.click();
 };
 
 describe("usePrompt", () => {
 	it("throws when used outside PromptDialogProvider", () => {
-		expect(() => renderHook(() => usePrompt())).toThrow(/usePrompt must be used within a <PromptDialogProvider \/>/);
+		expect(() => renderHook(() => usePrompt())).toThrow(
+			/usePrompt must be used within a <PromptDialogProvider \/>/,
+		);
 	});
 
 	it("returns a function when wrapped in provider", () => {
@@ -69,7 +75,9 @@ describe("usePrompt", () => {
 		});
 
 		// The input element should hold the default before we click anything.
-		const input = document.body.querySelector("input") as HTMLInputElement | null;
+		const input = document.body.querySelector(
+			"input",
+		) as HTMLInputElement | null;
 		expect(input?.value).toBe("preset");
 
 		await act(() => {

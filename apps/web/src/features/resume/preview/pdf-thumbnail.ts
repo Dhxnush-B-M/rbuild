@@ -1,5 +1,8 @@
 import type { PreviewPageSize } from "./preview.shared.utils";
-import { getResumeThumbnailRenderSize, RESUME_THUMBNAIL_TARGET_WIDTH } from "./resume-thumbnail.shared";
+import {
+	getResumeThumbnailRenderSize,
+	RESUME_THUMBNAIL_TARGET_WIDTH,
+} from "./resume-thumbnail.shared";
 
 const canvasToBlob = (canvas: HTMLCanvasElement) =>
 	new Promise<Blob>((resolve, reject) => {
@@ -14,8 +17,13 @@ const canvasToBlob = (canvas: HTMLCanvasElement) =>
 	});
 
 export const createPdfFirstPageImageUrl = async (file: Blob) => {
-	const { AnnotationMode, GlobalWorkerOptions, getDocument } = await import("pdfjs-dist/legacy/build/pdf.mjs");
-	GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+	const { AnnotationMode, GlobalWorkerOptions, getDocument } = await import(
+		"pdfjs-dist/legacy/build/pdf.mjs"
+	);
+	GlobalWorkerOptions.workerSrc = new URL(
+		"pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+		import.meta.url,
+	).toString();
 
 	const arrayBuffer = await file.arrayBuffer();
 	const loadingTask = getDocument({ data: new Uint8Array(arrayBuffer) });
@@ -27,7 +35,10 @@ export const createPdfFirstPageImageUrl = async (file: Blob) => {
 
 		try {
 			const baseViewport = page.getViewport({ scale: 1 });
-			const pageSize: PreviewPageSize = { height: baseViewport.height, width: baseViewport.width };
+			const pageSize: PreviewPageSize = {
+				height: baseViewport.height,
+				width: baseViewport.width,
+			};
 			const renderSize = getResumeThumbnailRenderSize(
 				pageSize,
 				RESUME_THUMBNAIL_TARGET_WIDTH,
@@ -37,7 +48,8 @@ export const createPdfFirstPageImageUrl = async (file: Blob) => {
 			const canvas = document.createElement("canvas");
 			const canvasContext = canvas.getContext("2d");
 
-			if (!canvasContext) throw new Error("Failed to create resume thumbnail canvas context.");
+			if (!canvasContext)
+				throw new Error("Failed to create resume thumbnail canvas context.");
 
 			canvas.height = renderSize.height;
 			canvas.width = renderSize.width;

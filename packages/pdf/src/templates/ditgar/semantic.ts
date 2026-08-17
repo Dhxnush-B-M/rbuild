@@ -24,7 +24,11 @@ export const ditgarSemanticManifest = {
 		{ name: "main", placement: "main", origins: ["main"] },
 	],
 	header: { region: "header", placement: "sidebar" },
-	specialSummary: { region: "featured", placement: "main", source: "main-with-header" },
+	specialSummary: {
+		region: "featured",
+		placement: "main",
+		source: "main-with-header",
+	},
 	parts: [
 		{
 			name: "featured-summary",
@@ -37,7 +41,11 @@ export const ditgarSemanticManifest = {
 			name: "sidebar-background",
 			key: "sidebar-background",
 			owner: { kind: "region", key: "sidebar" },
-			binding: { type: "alias", canonicalKind: "region", token: "sidebar-background" },
+			binding: {
+				type: "alias",
+				canonicalKind: "region",
+				token: "sidebar-background",
+			},
 		},
 		{
 			name: "item-header-border",
@@ -47,7 +55,11 @@ export const ditgarSemanticManifest = {
 				key: "item-header",
 				sectionTypes: borderedItemHeaderSectionTypes,
 			},
-			binding: { type: "alias", canonicalKind: "item-header", token: "item-header-border" },
+			binding: {
+				type: "alias",
+				canonicalKind: "item-header",
+				token: "item-header-border",
+			},
 		},
 	],
 } as const satisfies TemplateSemanticManifest;

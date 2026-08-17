@@ -1,9 +1,18 @@
-import { CheckCircleIcon, ShieldCheckIcon, SparkleIcon, UserIcon } from "@phosphor-icons/react";
+import {
+	CheckCircleIcon,
+	ShieldCheckIcon,
+	SparkleIcon,
+	UserIcon,
+} from "@phosphor-icons/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { m } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { initiateRazorpayPayment, SUBSCRIPTION_PLANS, type SubscriptionPlanOption } from "@/libs/payment/razorpay";
+import {
+	initiateRazorpayPayment,
+	SUBSCRIPTION_PLANS,
+	type SubscriptionPlanOption,
+} from "@/libs/payment/razorpay";
 import { getCurrentSupabaseUser, saveUserToSupabase } from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({
@@ -15,7 +24,9 @@ function OnboardingPage() {
 	const [fullName, setFullName] = useState("");
 	const [jobTitle, setJobTitle] = useState("");
 	const [email, setEmail] = useState("");
-	const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanOption>(SUBSCRIPTION_PLANS[0]!);
+	const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanOption>(
+		SUBSCRIPTION_PLANS[0]!,
+	);
 	const [isLoading, setIsLoading] = useState(false);
 	const [paymentSuccess, setPaymentSuccess] = useState(false);
 
@@ -97,7 +108,10 @@ function OnboardingPage() {
 
 	return (
 		<div className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#CBD8FF] via-[#E8EDFD] to-[#FDE8EE] px-4 py-8 dark:from-[#0B0F19] dark:via-[#111827] dark:to-[#1E1B4B]">
-			<div aria-hidden="true" className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-45">
+			<div
+				aria-hidden="true"
+				className="pointer-events-none fixed inset-0 flex items-center justify-center opacity-45"
+			>
 				<div className="size-[700px] animate-pulse rounded-full bg-gradient-to-tr from-indigo-300/30 via-sky-300/30 to-pink-300/30 blur-3xl" />
 			</div>
 
@@ -123,7 +137,10 @@ function OnboardingPage() {
 					{/* Profile Inputs */}
 					<div className="mt-5 w-full space-y-3 text-left">
 						<div>
-							<label htmlFor="name" className="font-semibold text-foreground text-xs">
+							<label
+								htmlFor="name"
+								className="font-semibold text-foreground text-xs"
+							>
 								Your Full Name
 							</label>
 							<div className="relative mt-1">
@@ -142,7 +159,10 @@ function OnboardingPage() {
 						</div>
 
 						<div>
-							<label htmlFor="role" className="font-semibold text-foreground text-xs">
+							<label
+								htmlFor="role"
+								className="font-semibold text-foreground text-xs"
+							>
 								Target Job Title
 							</label>
 							<input
@@ -158,7 +178,9 @@ function OnboardingPage() {
 
 					{/* Plan Selection */}
 					<div className="mt-5 w-full text-left">
-						<label className="font-semibold text-foreground text-xs">Select Plan</label>
+						<label className="font-semibold text-foreground text-xs">
+							Select Plan
+						</label>
 						<div className="mt-2 grid grid-cols-2 gap-2.5">
 							{SUBSCRIPTION_PLANS.map((plan) => {
 								const isSelected = selectedPlan.id === plan.id;
@@ -178,11 +200,15 @@ function OnboardingPage() {
 												{plan.badge}
 											</span>
 										)}
-										<div className="font-bold text-foreground text-xs">{plan.durationText}</div>
+										<div className="font-bold text-foreground text-xs">
+											{plan.durationText}
+										</div>
 										<div className="mt-1 font-extrabold text-indigo-600 text-lg dark:text-indigo-400">
 											₹{plan.amountInRupees}
 										</div>
-										<p className="text-[10px] text-muted-foreground">Full Pro Features</p>
+										<p className="text-[10px] text-muted-foreground">
+											Full Pro Features
+										</p>
 									</button>
 								);
 							})}
@@ -198,7 +224,11 @@ function OnboardingPage() {
 							className="group flex h-12 w-full items-center justify-center gap-2 rounded-full border-2 border-white/90 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 font-bold text-sm text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
 						>
 							<ShieldCheckIcon className="size-4" weight="bold" />
-							<span>{isLoading ? "Processing..." : `Upgrade Pro (₹${selectedPlan.amountInRupees})`}</span>
+							<span>
+								{isLoading
+									? "Processing..."
+									: `Upgrade Pro (₹${selectedPlan.amountInRupees})`}
+							</span>
 						</button>
 
 						<button
@@ -222,4 +252,3 @@ function OnboardingPage() {
 		</div>
 	);
 }
-

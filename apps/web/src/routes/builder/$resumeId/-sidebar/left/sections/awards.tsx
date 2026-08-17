@@ -1,14 +1,19 @@
-import type { awardItemSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { AnimatePresence, Reorder } from "motion/react";
+import type { awardItemSchema } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { AnimatePresence, Reorder } from "motion/react";
+import type z from "zod";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";
 import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 export function AwardsSectionBuilder() {
-	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.awards);
+	const section = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.sections.awards,
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof awardItemSchema>[]) => {
@@ -18,11 +23,23 @@ export function AwardsSectionBuilder() {
 	};
 
 	return (
-		<SectionBase type="awards" className={cn("rounded-md border", section.items.length === 0 && "border-dashed")}>
+		<SectionBase
+			type="awards"
+			className={cn(
+				"rounded-md border",
+				section.items.length === 0 && "border-dashed",
+			)}
+		>
 			<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
 				<AnimatePresence>
 					{section.items.map((item) => (
-						<SectionItem key={item.id} type="awards" item={item} title={item.title} subtitle={item.awarder} />
+						<SectionItem
+							key={item.id}
+							type="awards"
+							item={item}
+							title={item.title}
+							subtitle={item.awarder}
+						/>
 					))}
 				</AnimatePresence>
 			</Reorder.Group>

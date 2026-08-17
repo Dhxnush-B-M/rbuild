@@ -1,10 +1,12 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { AtIcon, PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { profileItemSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import {
 	InputGroup,
@@ -15,13 +17,19 @@ import {
 import { PopoverTrigger } from "@rbuilder/ui/components/popover";
 import { Switch } from "@rbuilder/ui/components/switch";
 import { cn } from "@rbuilder/utils/style";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -39,7 +47,9 @@ const defaultValues: FormValues = {
 	website: { url: "", label: "", inlineLink: false },
 };
 
-export function CreateProfileDialog({ data }: DialogProps<"resume.sections.profiles.create">) {
+export function CreateProfileDialog({
+	data,
+}: DialogProps<"resume.sections.profiles.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -71,7 +81,9 @@ export function CreateProfileDialog({ data }: DialogProps<"resume.sections.profi
 	);
 }
 
-export function UpdateProfileDialog({ data }: DialogProps<"resume.sections.profiles.update">) {
+export function UpdateProfileDialog({
+	data,
+}: DialogProps<"resume.sections.profiles.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -109,11 +121,15 @@ const ProfileForm = withForm({
 		const networkMeta = useStore(form.store, (s) => s.fieldMeta?.network);
 		const inlineLink = useStore(form.store, (s) => s.values.website.inlineLink);
 
-		const isNetworkInvalid = (networkMeta?.isTouched ?? false) && (networkMeta?.errors?.length ?? 0) > 0;
+		const isNetworkInvalid =
+			(networkMeta?.isTouched ?? false) &&
+			(networkMeta?.errors?.length ?? 0) > 0;
 
 		return (
 			<>
-				<div className={cn("flex items-end", isNetworkInvalid && "items-center")}>
+				<div
+					className={cn("flex items-end", isNetworkInvalid && "items-center")}
+				>
 					<form.Field name="icon">
 						{(field) => (
 							<FormItem className="shrink-0">
@@ -135,7 +151,13 @@ const ProfileForm = withForm({
 
 					<form.Field name="network">
 						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								className="flex-1"
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Network</Trans>
 								</FormLabel>
@@ -146,7 +168,9 @@ const ProfileForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -169,7 +193,10 @@ const ProfileForm = withForm({
 												<PopoverTrigger className="h-9 rounded-e border-input border-y border-e px-2">
 													<div
 														className="size-4 shrink-0 cursor-pointer rounded-full border border-foreground/60 transition-all hover:scale-105 focus-visible:outline-hidden"
-														style={{ backgroundColor: field.state.value ?? "currentColor" }}
+														style={{
+															backgroundColor:
+																field.state.value ?? "currentColor",
+														}}
 													/>
 												</PopoverTrigger>
 											}
@@ -183,7 +210,11 @@ const ProfileForm = withForm({
 
 				<form.Field name="username">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Username</Trans>
 							</FormLabel>
@@ -200,7 +231,9 @@ const ProfileForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>

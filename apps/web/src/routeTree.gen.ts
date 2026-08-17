@@ -13,7 +13,6 @@ import { Route as HomeRouteRouteImport } from "./routes/_home/route";
 import { Route as AuthRouteRouteImport } from "./routes/auth/route";
 import { Route as DashboardRouteRouteImport } from "./routes/dashboard/route";
 import { Route as OnboardingRouteImport } from "./routes/onboarding";
-import { Route as UsernameSlugRouteImport } from "./routes/$username/$slug";
 import { Route as HomeIndexRouteImport } from "./routes/_home/index";
 import { Route as AuthIndexRouteImport } from "./routes/auth/index";
 import { Route as AuthCallbackRouteImport } from "./routes/auth/callback";
@@ -51,11 +50,6 @@ const DashboardRouteRoute = DashboardRouteRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: "/onboarding",
   path: "/onboarding",
-  getParentRoute: () => rootRouteImport,
-} as any);
-const UsernameSlugRoute = UsernameSlugRouteImport.update({
-  id: "/$username/$slug",
-  path: "/$username/$slug",
   getParentRoute: () => rootRouteImport,
 } as any);
 const HomeIndexRoute = HomeIndexRouteImport.update({
@@ -161,7 +155,6 @@ export interface FileRoutesByFullPath {
   "/dashboard": typeof DashboardRouteRouteWithChildren;
   "/onboarding": typeof OnboardingRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
-  "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -182,7 +175,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   "/onboarding": typeof OnboardingRoute;
-  "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -209,7 +201,6 @@ export interface FileRoutesById {
   "/dashboard": typeof DashboardRouteRouteWithChildren;
   "/onboarding": typeof OnboardingRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
-  "/$username/$slug": typeof UsernameSlugRoute;
   "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
@@ -237,7 +228,6 @@ export interface FileRouteTypes {
     | "/dashboard"
     | "/onboarding"
     | "/builder/$resumeId"
-    | "/$username/$slug"
     | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -258,7 +248,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo;
   to:
     | "/onboarding"
-    | "/$username/$slug"
     | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -284,7 +273,6 @@ export interface FileRouteTypes {
     | "/dashboard"
     | "/onboarding"
     | "/builder/$resumeId"
-    | "/$username/$slug"
     | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
@@ -311,7 +299,6 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren;
   OnboardingRoute: typeof OnboardingRoute;
   BuilderResumeIdRouteRoute: typeof BuilderResumeIdRouteRouteWithChildren;
-  UsernameSlugRoute: typeof UsernameSlugRoute;
   TemplatesSplatRoute: typeof TemplatesSplatRoute;
   BuilderIndexRoute: typeof BuilderIndexRoute;
 }
@@ -344,13 +331,6 @@ declare module "@tanstack/react-router" {
       path: "/onboarding";
       fullPath: "/onboarding";
       preLoaderRoute: typeof OnboardingRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/$username/$slug": {
-      id: "/$username/$slug";
-      path: "/$username/$slug";
-      fullPath: "/$username/$slug";
-      preLoaderRoute: typeof UsernameSlugRouteImport;
       parentRoute: typeof rootRouteImport;
     };
     "/_home/": {
@@ -566,7 +546,6 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   OnboardingRoute: OnboardingRoute,
   BuilderResumeIdRouteRoute: BuilderResumeIdRouteRouteWithChildren,
-  UsernameSlugRoute: UsernameSlugRoute,
   TemplatesSplatRoute: TemplatesSplatRoute,
   BuilderIndexRoute: BuilderIndexRoute,
 };

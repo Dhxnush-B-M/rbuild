@@ -8,7 +8,10 @@ type ResettableForm<TValues> = {
 	};
 };
 
-export function useSyncFormValues<TValues>(form: ResettableForm<TValues>, values: TValues) {
+export function useSyncFormValues<TValues>(
+	form: ResettableForm<TValues>,
+	values: TValues,
+) {
 	useEffect(() => {
 		if (isEqual(form.state.values, values)) return;
 		form.reset(values);

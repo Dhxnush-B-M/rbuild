@@ -1,5 +1,4 @@
 import { t } from "@lingui/core/macro";
-import * as React from "react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -12,13 +11,17 @@ import {
 } from "@rbuilder/ui/components/alert-dialog";
 import { Input } from "@rbuilder/ui/components/input";
 import { cn } from "@rbuilder/utils/style";
+import * as React from "react";
 
 type PromptOptions = {
 	description?: string;
 	defaultValue?: string;
 	confirmText?: string;
 	cancelText?: string;
-	inputProps?: Omit<React.ComponentProps<typeof Input>, "value" | "onChange" | "onKeyDown">;
+	inputProps?: Omit<
+		React.ComponentProps<typeof Input>,
+		"value" | "onChange" | "onKeyDown"
+	>;
 };
 
 type PromptState = PromptOptions & {
@@ -67,21 +70,24 @@ export function PromptDialogProvider({ children }: PromptDialogProviderProps) {
 		return () => window.clearTimeout(timeoutId);
 	}, [state.open]);
 
-	const prompt = React.useCallback((title: string, options?: PromptOptions): Promise<string | null> => {
-		return new Promise<string | null>((resolve) => {
-			setState({
-				open: true,
-				resolve,
-				title,
-				value: options?.defaultValue ?? "",
-				description: options?.description,
-				defaultValue: options?.defaultValue,
-				confirmText: options?.confirmText,
-				cancelText: options?.cancelText,
-				inputProps: options?.inputProps,
+	const prompt = React.useCallback(
+		(title: string, options?: PromptOptions): Promise<string | null> => {
+			return new Promise<string | null>((resolve) => {
+				setState({
+					open: true,
+					resolve,
+					title,
+					value: options?.defaultValue ?? "",
+					description: options?.description,
+					defaultValue: options?.defaultValue,
+					confirmText: options?.confirmText,
+					cancelText: options?.cancelText,
+					inputProps: options?.inputProps,
+				});
 			});
-		});
-	}, []);
+		},
+		[],
+	);
 
 	const handleConfirm = React.useCallback(() => {
 		if (state.resolve) state.resolve(state.value);
@@ -95,9 +101,12 @@ export function PromptDialogProvider({ children }: PromptDialogProviderProps) {
 		setState((prev) => ({ ...prev, open: false, resolve: null }));
 	}, [state.resolve]);
 
-	const handleValueChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		setState((prev) => ({ ...prev, value: e.target.value }));
-	}, []);
+	const handleValueChange = React.useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setState((prev) => ({ ...prev, value: e.target.value }));
+		},
+		[],
+	);
 
 	const handleKeyDown = React.useCallback(
 		(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -106,17 +115,25 @@ export function PromptDialogProvider({ children }: PromptDialogProviderProps) {
 		[handleConfirm],
 	);
 
-	const contextValue = React.useMemo<PromptContextType>(() => ({ prompt }), [prompt]);
+	const contextValue = React.useMemo<PromptContextType>(
+		() => ({ prompt }),
+		[prompt],
+	);
 
 	return (
 		<PromptContext.Provider value={contextValue}>
 			{children}
 
-			<AlertDialog open={state.open} onOpenChange={(open) => !open && handleCancel()}>
+			<AlertDialog
+				open={state.open}
+				onOpenChange={(open) => !open && handleCancel()}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>{state.title}</AlertDialogTitle>
-						<AlertDialogDescription className={cn(!state.description && "sr-only")}>
+						<AlertDialogDescription
+							className={cn(!state.description && "sr-only")}
+						>
 							{state.description}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
@@ -130,8 +147,12 @@ export function PromptDialogProvider({ children }: PromptDialogProviderProps) {
 					/>
 
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={handleCancel}>{cancelText}</AlertDialogCancel>
-						<AlertDialogAction onClick={handleConfirm}>{confirmText}</AlertDialogAction>
+						<AlertDialogCancel onClick={handleCancel}>
+							{cancelText}
+						</AlertDialogCancel>
+						<AlertDialogAction onClick={handleConfirm}>
+							{confirmText}
+						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
@@ -143,7 +164,9 @@ export function usePrompt() {
 	const context = React.use(PromptContext);
 
 	if (!context) {
-		throw new Error("usePrompt must be used within a <PromptDialogProvider />.");
+		throw new Error(
+			"usePrompt must be used within a <PromptDialogProvider />.",
+		);
 	}
 
 	return context.prompt;

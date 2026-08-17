@@ -45,7 +45,9 @@ describe("defaultResumeData", () => {
 	});
 
 	it("uses serif font family for body", () => {
-		expect(defaultResumeData.metadata.typography.body.fontFamily).toBe("IBM Plex Serif");
+		expect(defaultResumeData.metadata.typography.body.fontFamily).toBe(
+			"IBM Plex Serif",
+		);
 	});
 
 	it("default sidebar width is 35%", () => {

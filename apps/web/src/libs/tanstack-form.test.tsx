@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
+import { I18nProvider } from "@lingui/react";
 import type { Website } from "@rbuilder/schema/resume/data";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { i18n } from "@lingui/core";
-import { I18nProvider } from "@lingui/react";
 import { useAppForm } from "./tanstack-form";
 
 vi.mock("@/components/input/url-input", () => ({
@@ -28,8 +28,18 @@ vi.mock("@/components/input/url-input", () => ({
 }));
 
 vi.mock("@/components/input/rich-input", () => ({
-	RichInput: ({ value, onChange }: { value: string; onChange: (value: string) => void }) => (
-		<textarea aria-label="Description value" value={value} onChange={(event) => onChange(event.target.value)} />
+	RichInput: ({
+		value,
+		onChange,
+	}: {
+		value: string;
+		onChange: (value: string) => void;
+	}) => (
+		<textarea
+			aria-label="Description value"
+			value={value}
+			onChange={(event) => onChange(event.target.value)}
+		/>
 	),
 }));
 
@@ -41,7 +51,11 @@ function TestForm() {
 	const form = useAppForm({
 		defaultValues: {
 			description: "Initial description",
-			website: { url: "https://example.com", label: "Example", inlineLink: false },
+			website: {
+				url: "https://example.com",
+				label: "Example",
+				inlineLink: false,
+			},
 		},
 	});
 
@@ -49,16 +63,33 @@ function TestForm() {
 		<I18nProvider i18n={i18n}>
 			<form.AppField
 				name="website"
-				validators={{ onChange: ({ value }) => (value.url ? undefined : "Website is required") }}
+				validators={{
+					onChange: ({ value }) =>
+						value.url ? undefined : "Website is required",
+				}}
 			>
-				{(field) => <field.WebsiteField label="Website" hideLabelButton formItemClassName="website-field" />}
+				{(field) => (
+					<field.WebsiteField
+						label="Website"
+						hideLabelButton
+						formItemClassName="website-field"
+					/>
+				)}
 			</form.AppField>
 
 			<form.AppField
 				name="description"
-				validators={{ onChange: ({ value }) => (value ? undefined : "Description is required") }}
+				validators={{
+					onChange: ({ value }) =>
+						value ? undefined : "Description is required",
+				}}
 			>
-				{(field) => <field.RichTextField label="Description" formItemClassName="description-field" />}
+				{(field) => (
+					<field.RichTextField
+						label="Description"
+						formItemClassName="description-field"
+					/>
+				)}
 			</form.AppField>
 		</I18nProvider>
 	);
@@ -73,7 +104,10 @@ describe("registered resume fields", () => {
 		expect(screen.getByText("Description")).toBeInTheDocument();
 		expect(container.querySelector(".website-field")).toBeInTheDocument();
 		expect(container.querySelector(".description-field")).toBeInTheDocument();
-		expect(screen.getByLabelText("Website value")).toHaveAttribute("data-hide-label-button", "true");
+		expect(screen.getByLabelText("Website value")).toHaveAttribute(
+			"data-hide-label-button",
+			"true",
+		);
 
 		await user.clear(screen.getByLabelText("Website value"));
 		await user.clear(screen.getByLabelText("Description value"));

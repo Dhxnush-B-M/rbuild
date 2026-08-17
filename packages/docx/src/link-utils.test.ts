@@ -11,7 +11,9 @@ describe("toSafeDocxLink", () => {
 	});
 
 	it("trims surrounding whitespace", () => {
-		expect(toSafeDocxLink("  https://example.com  ")).toBe("https://example.com/");
+		expect(toSafeDocxLink("  https://example.com  ")).toBe(
+			"https://example.com/",
+		);
 	});
 
 	it("accepts https URLs", () => {
@@ -23,11 +25,15 @@ describe("toSafeDocxLink", () => {
 	});
 
 	it("preserves path and query", () => {
-		expect(toSafeDocxLink("https://example.com/p?a=1")).toBe("https://example.com/p?a=1");
+		expect(toSafeDocxLink("https://example.com/p?a=1")).toBe(
+			"https://example.com/p?a=1",
+		);
 	});
 
 	it("returns mailto: for valid email", () => {
-		expect(toSafeDocxLink("mailto:user@example.com")).toBe("mailto:user@example.com");
+		expect(toSafeDocxLink("mailto:user@example.com")).toBe(
+			"mailto:user@example.com",
+		);
 	});
 
 	it("returns null for empty mailto:", () => {
@@ -36,7 +42,9 @@ describe("toSafeDocxLink", () => {
 	});
 
 	it("trims email body within mailto:", () => {
-		expect(toSafeDocxLink("mailto:  user@example.com  ")).toBe("mailto:user@example.com");
+		expect(toSafeDocxLink("mailto:  user@example.com  ")).toBe(
+			"mailto:user@example.com",
+		);
 	});
 
 	it("rejects javascript: protocol", () => {
@@ -44,7 +52,9 @@ describe("toSafeDocxLink", () => {
 	});
 
 	it("rejects data: protocol", () => {
-		expect(toSafeDocxLink("data:text/html,<script>alert(1)</script>")).toBeNull();
+		expect(
+			toSafeDocxLink("data:text/html,<script>alert(1)</script>"),
+		).toBeNull();
 	});
 
 	it("rejects file: protocol", () => {

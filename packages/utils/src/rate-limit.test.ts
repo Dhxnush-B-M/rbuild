@@ -30,28 +30,48 @@ describe("rateLimitConfig", () => {
 		});
 
 		it("rate-limits sign-in/email more strictly than global default", () => {
-			expect(rateLimitConfig.betterAuth.global.customRules["/sign-in/email"]).toEqual({ window: 60, max: 5 });
+			expect(
+				rateLimitConfig.betterAuth.global.customRules["/sign-in/email"],
+			).toEqual({ window: 60, max: 5 });
 		});
 
 		it("rate-limits sign-up/email even more strictly", () => {
-			expect(rateLimitConfig.betterAuth.global.customRules["/sign-up/email"]).toEqual({ window: 60, max: 3 });
+			expect(
+				rateLimitConfig.betterAuth.global.customRules["/sign-up/email"],
+			).toEqual({ window: 60, max: 3 });
 		});
 
 		it("uses long window for password reset to deter abuse", () => {
-			expect(rateLimitConfig.betterAuth.global.customRules["/request-password-reset"]).toEqual({
+			expect(
+				rateLimitConfig.betterAuth.global.customRules[
+					"/request-password-reset"
+				],
+			).toEqual({
 				window: 600,
 				max: 3,
 			});
 		});
 
 		it("rate-limits 2FA verification with longer windows", () => {
-			expect(rateLimitConfig.betterAuth.global.customRules["/two-factor/verify-otp"].window).toBe(600);
-			expect(rateLimitConfig.betterAuth.global.customRules["/two-factor/verify-totp"].window).toBe(600);
-			expect(rateLimitConfig.betterAuth.global.customRules["/two-factor/verify-backup-code"].window).toBe(600);
+			expect(
+				rateLimitConfig.betterAuth.global.customRules["/two-factor/verify-otp"]
+					.window,
+			).toBe(600);
+			expect(
+				rateLimitConfig.betterAuth.global.customRules["/two-factor/verify-totp"]
+					.window,
+			).toBe(600);
+			expect(
+				rateLimitConfig.betterAuth.global.customRules[
+					"/two-factor/verify-backup-code"
+				].window,
+			).toBe(600);
 		});
 
 		it("allows generous polling for username availability", () => {
-			expect(rateLimitConfig.betterAuth.global.customRules["/is-username-available"]).toEqual({
+			expect(
+				rateLimitConfig.betterAuth.global.customRules["/is-username-available"],
+			).toEqual({
 				window: 60,
 				max: 20,
 			});
@@ -79,19 +99,31 @@ describe("rateLimitConfig", () => {
 
 	describe("orpc", () => {
 		it("limits resume password reset to 5 per 10 minutes", () => {
-			expect(rateLimitConfig.orpc.resumePassword).toEqual({ maxRequests: 5, window: 10 * 60 * 1000 });
+			expect(rateLimitConfig.orpc.resumePassword).toEqual({
+				maxRequests: 5,
+				window: 10 * 60 * 1000,
+			});
 		});
 
 		it("limits PDF export to 5 per minute", () => {
-			expect(rateLimitConfig.orpc.pdfExport).toEqual({ maxRequests: 5, window: 60 * 1000 });
+			expect(rateLimitConfig.orpc.pdfExport).toEqual({
+				maxRequests: 5,
+				window: 60 * 1000,
+			});
 		});
 
 		it("limits AI requests to 20 per minute", () => {
-			expect(rateLimitConfig.orpc.aiRequest).toEqual({ maxRequests: 20, window: 60 * 1000 });
+			expect(rateLimitConfig.orpc.aiRequest).toEqual({
+				maxRequests: 20,
+				window: 60 * 1000,
+			});
 		});
 
 		it("provides reasonable mutation throughput for resume edits", () => {
-			expect(rateLimitConfig.orpc.resumeMutations).toEqual({ maxRequests: 300, window: 60 * 1000 });
+			expect(rateLimitConfig.orpc.resumeMutations).toEqual({
+				maxRequests: 300,
+				window: 60 * 1000,
+			});
 		});
 
 		it("limits storage uploads more strictly than deletes", () => {

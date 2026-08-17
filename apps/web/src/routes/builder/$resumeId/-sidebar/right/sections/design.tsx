@@ -1,21 +1,32 @@
-import type { ReactNode } from "react";
-import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useStore } from "@tanstack/react-form";
-import { AnimatePresence, m } from "motion/react";
-import { colorDesignSchema, levelDesignSchema } from "@rbuilder/schema/resume/data";
+import {
+	colorDesignSchema,
+	levelDesignSchema,
+} from "@rbuilder/schema/resume/data";
 import { resolveLevelDisplaySizes } from "@rbuilder/schema/resume/level-display-sizes";
 import { resolveStyleRuleFontSize } from "@rbuilder/schema/resume/style-rules";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { Separator } from "@rbuilder/ui/components/separator";
 import { cn } from "@rbuilder/utils/style";
+import { useStore } from "@tanstack/react-form";
+import { AnimatePresence, m } from "motion/react";
+import type { ReactNode } from "react";
+import type z from "zod";
 import { ColorPicker } from "@/components/input/color-picker";
 import { IconPicker } from "@/components/input/icon-picker";
 import { LevelTypeCombobox } from "@/components/level/combobox";
 import { LevelDisplay } from "@/components/level/display";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -32,7 +43,10 @@ export function DesignSectionBuilder() {
 
 type ColorValues = z.infer<typeof colorDesignSchema>;
 
-function useColorSectionForm(colors: ColorValues, persist: (data: ColorValues) => void) {
+function useColorSectionForm(
+	colors: ColorValues,
+	persist: (data: ColorValues) => void,
+) {
 	const form = useAppForm({
 		defaultValues: colors,
 		validators: { onChange: colorDesignSchema },
@@ -77,7 +91,9 @@ function ColorSectionForm() {
 				{(field) => (
 					<FormItem
 						className="flex flex-wrap gap-2.5 p-1"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
 					>
 						{quickColorOptions.map((color) => (
 							<QuickColorCircle
@@ -93,9 +109,22 @@ function ColorSectionForm() {
 				)}
 			</form.Field>
 
-			<ColorFormField form={form} name="primary" label={<Trans>Primary Color</Trans>} controlled />
-			<ColorFormField form={form} name="text" label={<Trans>Text Color</Trans>} />
-			<ColorFormField form={form} name="background" label={<Trans>Background Color</Trans>} />
+			<ColorFormField
+				form={form}
+				name="primary"
+				label={<Trans>Primary Color</Trans>}
+				controlled
+			/>
+			<ColorFormField
+				form={form}
+				name="text"
+				label={<Trans>Text Color</Trans>}
+			/>
+			<ColorFormField
+				form={form}
+				name="background"
+				label={<Trans>Background Color</Trans>}
+			/>
 		</form>
 	);
 }
@@ -107,15 +136,26 @@ type ColorFormFieldProps = {
 	controlled?: boolean;
 };
 
-function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) {
+function ColorFormField({
+	form,
+	name,
+	label,
+	controlled,
+}: ColorFormFieldProps) {
 	return (
 		<form.Field name={name}>
 			{(field) => (
-				<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+				<FormItem
+					hasError={
+						field.state.meta.isTouched && field.state.meta.errors.length > 0
+					}
+				>
 					<FormLabel>{label}</FormLabel>
 					<div className="flex items-center gap-3">
 						<ColorPicker
-							{...(controlled ? { value: field.state.value } : { defaultValue: field.state.value })}
+							{...(controlled
+								? { value: field.state.value }
+								: { defaultValue: field.state.value })}
 							onChange={(color) => {
 								field.handleChange(color);
 							}}
@@ -171,7 +211,13 @@ type QuickColorCircleProps = React.ComponentProps<"button"> & {
 	onSelect: (color: string) => void;
 };
 
-function QuickColorCircle({ color, active, onSelect, className, ...props }: QuickColorCircleProps) {
+function QuickColorCircle({
+	color,
+	active,
+	onSelect,
+	className,
+	...props
+}: QuickColorCircleProps) {
 	return (
 		<button
 			type="button"
@@ -184,7 +230,10 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 			)}
 			{...props}
 		>
-			<div style={{ backgroundColor: color }} className="size-6 shrink-0 rounded-md" />
+			<div
+				style={{ backgroundColor: color }}
+				className="size-6 shrink-0 rounded-md"
+			/>
 
 			<AnimatePresence>
 				{active && (
@@ -235,7 +284,9 @@ function LevelSectionForm() {
 	const previewType = useStore(form.store, (s) => s.values.type);
 	const previewIcon = useStore(form.store, (s) => s.values.icon);
 	const iconFontSize = resolveStyleRuleFontSize(resume.data, { slot: "icon" });
-	const levelFontSize = resolveStyleRuleFontSize(resume.data, { slot: "level" });
+	const levelFontSize = resolveStyleRuleFontSize(resume.data, {
+		slot: "level",
+	});
 	const { decorationSize, levelIconExplicitSize } = resolveLevelDisplaySizes({
 		bodyFontSize: resume.data.metadata.typography.body.fontSize,
 		iconFontSize,
@@ -256,7 +307,12 @@ function LevelSectionForm() {
 			</h4>
 
 			<div
-				style={{ "--page-primary-color": colors.primary, backgroundColor: colors.background } as React.CSSProperties}
+				style={
+					{
+						"--page-primary-color": colors.primary,
+						backgroundColor: colors.background,
+					} as React.CSSProperties
+				}
 				className="flex items-center justify-center rounded-md p-6"
 			>
 				<LevelDisplay
@@ -272,7 +328,12 @@ function LevelSectionForm() {
 			<div className="flex items-center gap-3">
 				<form.Field name="icon">
 					{(field) => (
-						<FormItem className="shrink-0" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							className="shrink-0"
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Icon</Trans>
 							</FormLabel>
@@ -293,7 +354,12 @@ function LevelSectionForm() {
 
 				<form.Field name="type">
 					{(field) => (
-						<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							className="flex-1"
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Type</Trans>
 							</FormLabel>

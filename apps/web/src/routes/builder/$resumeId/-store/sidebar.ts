@@ -1,6 +1,6 @@
-import type { Layout, usePanelRef } from "react-resizable-panels";
 import Cookies from "js-cookie";
 import { useCallback } from "react";
+import type { Layout, usePanelRef } from "react-resizable-panels";
 import { useMediaQuery, useWindowSize } from "usehooks-ts";
 import { create } from "zustand/react";
 
@@ -28,39 +28,59 @@ type BuilderSidebarResizeConfigInput = {
 	width: number;
 };
 
-export const getBuilderSidebarResizeConfig = ({ isMobile, width }: BuilderSidebarResizeConfigInput) => ({
+export const getBuilderSidebarResizeConfig = ({
+	isMobile,
+	width,
+}: BuilderSidebarResizeConfigInput) => ({
 	maxSidebarSize: !width ? 0 : isMobile ? "95%" : "45%",
 	minSidebarSize: !width ? 0 : isMobile ? 0 : DESKTOP_BUILDER_SIDEBAR_MIN_SIZE,
-	collapsedSidebarSize: !width ? 0 : isMobile ? 0 : DESKTOP_BUILDER_SIDEBAR_COLLAPSED_SIZE,
+	collapsedSidebarSize: !width
+		? 0
+		: isMobile
+			? 0
+			: DESKTOP_BUILDER_SIDEBAR_COLLAPSED_SIZE,
 	expandSize: isMobile ? "95%" : "30%",
 	groupResizeBehavior: "preserve-pixel-size" as const,
 });
 
-export const mapPanelLayoutToBuilderLayout = (layout: Layout): BuilderLayout => {
+export const mapPanelLayoutToBuilderLayout = (
+	layout: Layout,
+): BuilderLayout => {
 	const left = layout.left;
 	const artboard = layout.artboard;
 	const right = layout.right;
 
-	if (typeof left !== "number" || typeof artboard !== "number" || typeof right !== "number")
+	if (
+		typeof left !== "number" ||
+		typeof artboard !== "number" ||
+		typeof right !== "number"
+	)
 		return DEFAULT_BUILDER_LAYOUT;
 
 	return { left, artboard, right };
 };
 
-export const parseBuilderLayoutCookie = (value?: string | null): BuilderLayout => {
+export const parseBuilderLayoutCookie = (
+	value?: string | null,
+): BuilderLayout => {
 	if (!value) return DEFAULT_BUILDER_LAYOUT;
 
 	try {
 		const parsed = JSON.parse(value);
 
 		if (Array.isArray(parsed)) return DEFAULT_BUILDER_LAYOUT;
-		if (typeof parsed !== "object" || parsed === null) return DEFAULT_BUILDER_LAYOUT;
+		if (typeof parsed !== "object" || parsed === null)
+			return DEFAULT_BUILDER_LAYOUT;
 
 		const left = (parsed as { left?: unknown }).left;
 		const artboard = (parsed as { artboard?: unknown }).artboard;
 		const right = (parsed as { right?: unknown }).right;
 
-		if (typeof left !== "number" || typeof artboard !== "number" || typeof right !== "number")
+		if (
+			typeof left !== "number" ||
+			typeof artboard !== "number" ||
+			typeof right !== "number"
+		)
 			return DEFAULT_BUILDER_LAYOUT;
 
 		return { left, artboard, right };
@@ -102,11 +122,18 @@ type UseBuilderSidebarReturn = {
 };
 
 export function useBuilderSidebar(): UseBuilderSidebarReturn {
-	const isMobile = useMediaQuery("(max-width: 767px)", { initializeWithValue: false });
+	const isMobile = useMediaQuery("(max-width: 767px)", {
+		initializeWithValue: false,
+	});
 	const { width } = useWindowSize();
 
-	const { maxSidebarSize, minSidebarSize, collapsedSidebarSize, expandSize, groupResizeBehavior } =
-		getBuilderSidebarResizeConfig({ isMobile, width });
+	const {
+		maxSidebarSize,
+		minSidebarSize,
+		collapsedSidebarSize,
+		expandSize,
+		groupResizeBehavior,
+	} = getBuilderSidebarResizeConfig({ isMobile, width });
 
 	const isCollapsed = useCallback((side: "left" | "right") => {
 		const sidebar =
@@ -127,7 +154,8 @@ export function useBuilderSidebar(): UseBuilderSidebarReturn {
 
 			if (!sidebar) return;
 
-			const shouldExpand = forceState === undefined ? sidebar.isCollapsed() : forceState;
+			const shouldExpand =
+				forceState === undefined ? sidebar.isCollapsed() : forceState;
 
 			if (shouldExpand) sidebar.resize(expandSize);
 			else sidebar.collapse();
@@ -147,7 +175,9 @@ export function useBuilderSidebar(): UseBuilderSidebarReturn {
 
 export const setBuilderLayout = (data: BuilderLayout) => {
 	const layout = parseBuilderLayoutCookie(JSON.stringify(data));
-	Cookies.set(BUILDER_LAYOUT_COOKIE_NAME, JSON.stringify(layout), { path: "/" });
+	Cookies.set(BUILDER_LAYOUT_COOKIE_NAME, JSON.stringify(layout), {
+		path: "/",
+	});
 };
 
 export const getBuilderLayout = (): BuilderLayout => {

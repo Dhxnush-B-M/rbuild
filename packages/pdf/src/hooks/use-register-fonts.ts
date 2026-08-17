@@ -1,7 +1,4 @@
 import type { FontWeight } from "@rbuilder/fonts";
-import type { ResumeData, Typography } from "@rbuilder/schema/resume/data";
-import type { Locale, Script } from "@rbuilder/utils/locale";
-import { letters as cjkLetters } from "cjk-regex";
 import {
 	getFont,
 	getPdfFallbackFontFamilies,
@@ -10,8 +7,11 @@ import {
 	resolveLegacyFontAlias,
 	sortFontWeights,
 } from "@rbuilder/fonts";
+import type { ResumeData, Typography } from "@rbuilder/schema/resume/data";
+import type { Locale, Script } from "@rbuilder/utils/locale";
 import { isCJKLocale } from "@rbuilder/utils/locale";
 import { Font } from "@react-pdf/renderer";
+import { letters as cjkLetters } from "cjk-regex";
 
 type FontWeightRange = {
 	lowest: number;
@@ -21,14 +21,33 @@ type FontWeightRange = {
 const registeredFontVariants = new Set<string>();
 const fallbackFontFamily = "IBM Plex Serif";
 const cjkLetterRegex = cjkLetters().toRegExp();
-const fontWeightValues = new Set<FontWeight>(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
-const preferredFallbackFontWeights = ["400", "700", "600", "500"] satisfies FontWeight[];
+const fontWeightValues = new Set<FontWeight>([
+	"100",
+	"200",
+	"300",
+	"400",
+	"500",
+	"600",
+	"700",
+	"800",
+	"900",
+]);
+const preferredFallbackFontWeights = [
+	"400",
+	"700",
+	"600",
+	"500",
+] satisfies FontWeight[];
 
 // `fontFamily` is widened to `string | string[]` so react-pdf can do
 // glyph-level font fallback for CJK characters (#2986).
 type PdfTypography = Omit<Typography, "body" | "heading"> & {
-	body: Omit<Typography["body"], "fontFamily"> & { fontFamily: string | string[] };
-	heading: Omit<Typography["heading"], "fontFamily"> & { fontFamily: string | string[] };
+	body: Omit<Typography["body"], "fontFamily"> & {
+		fontFamily: string | string[];
+	};
+	heading: Omit<Typography["heading"], "fontFamily"> & {
+		fontFamily: string | string[];
+	};
 };
 
 const getFontWeightRange = (fontWeights: string[]): FontWeightRange => {
@@ -48,16 +67,21 @@ const getFontWeightRange = (fontWeights: string[]): FontWeightRange => {
 	return { lowest, highest };
 };
 
-const isFontWeight = (weight: string): weight is FontWeight => fontWeightValues.has(weight as FontWeight);
+const isFontWeight = (weight: string): weight is FontWeight =>
+	fontWeightValues.has(weight as FontWeight);
 
 const uniqueSortedFontWeights = (fontWeights: FontWeight[]): FontWeight[] => {
 	return [...new Set(sortFontWeights(fontWeights))];
 };
 
-const getFallbackFontWeights = (availableWeights: FontWeight[]): FontWeight[] => {
+const getFallbackFontWeights = (
+	availableWeights: FontWeight[],
+): FontWeight[] => {
 	const sortedAvailableWeights = uniqueSortedFontWeights(availableWeights);
 	const availableWeightSet = new Set(sortedAvailableWeights);
-	const preferredWeights = preferredFallbackFontWeights.filter((weight) => availableWeightSet.has(weight));
+	const preferredWeights = preferredFallbackFontWeights.filter((weight) =>
+		availableWeightSet.has(weight),
+	);
 
 	if (preferredWeights.length >= 2) {
 		return uniqueSortedFontWeights(preferredWeights.slice(0, 2));
@@ -68,17 +92,25 @@ const getFallbackFontWeights = (availableWeights: FontWeight[]): FontWeight[] =>
 		if (!firstWeight) return [];
 
 		const secondWeight =
-			sortedAvailableWeights.find((weight) => Number(weight) > Number(firstWeight)) ??
-			sortedAvailableWeights.find((weight) => weight !== firstWeight);
+			sortedAvailableWeights.find(
+				(weight) => Number(weight) > Number(firstWeight),
+			) ?? sortedAvailableWeights.find((weight) => weight !== firstWeight);
 
-		return uniqueSortedFontWeights(secondWeight ? [firstWeight, secondWeight] : [firstWeight]);
+		return uniqueSortedFontWeights(
+			secondWeight ? [firstWeight, secondWeight] : [firstWeight],
+		);
 	}
 
 	return sortedAvailableWeights.slice(0, 2);
 };
 
-const resolvePdfFontWeights = (family: string, fontWeights: string[]): FontWeight[] => {
-	const requestedWeights = uniqueSortedFontWeights(fontWeights.filter(isFontWeight));
+const resolvePdfFontWeights = (
+	family: string,
+	fontWeights: string[],
+): FontWeight[] => {
+	const requestedWeights = uniqueSortedFontWeights(
+		fontWeights.filter(isFontWeight),
+	);
 	const availableWeights = getFont(family)?.weights;
 
 	if (!availableWeights || availableWeights.length === 0) {
@@ -87,7 +119,8 @@ const resolvePdfFontWeights = (family: string, fontWeights: string[]): FontWeigh
 
 	const availableWeightSet = new Set(availableWeights);
 	const allRequestedWeightsAreAvailable =
-		requestedWeights.length > 0 && requestedWeights.every((weight) => availableWeightSet.has(weight));
+		requestedWeights.length > 0 &&
+		requestedWeights.every((weight) => availableWeightSet.has(weight));
 
 	if (allRequestedWeightsAreAvailable) return requestedWeights;
 
@@ -119,13 +152,27 @@ const resolvePdfFontFamily = (family: string) => {
 const resolvePdfTypography = (typography: Typography): Typography => {
 	const bodyFontFamily = resolvePdfFontFamily(typography.body.fontFamily);
 	const headingFontFamily = resolvePdfFontFamily(typography.heading.fontFamily);
-	const bodyFontWeights = resolvePdfFontWeights(bodyFontFamily, typography.body.fontWeights);
-	const headingFontWeights = resolvePdfFontWeights(headingFontFamily, typography.heading.fontWeights);
+	const bodyFontWeights = resolvePdfFontWeights(
+		bodyFontFamily,
+		typography.body.fontWeights,
+	);
+	const headingFontWeights = resolvePdfFontWeights(
+		headingFontFamily,
+		typography.heading.fontWeights,
+	);
 
 	return {
 		...typography,
-		body: { ...typography.body, fontFamily: bodyFontFamily, fontWeights: bodyFontWeights },
-		heading: { ...typography.heading, fontFamily: headingFontFamily, fontWeights: headingFontWeights },
+		body: {
+			...typography.body,
+			fontFamily: bodyFontFamily,
+			fontWeights: bodyFontWeights,
+		},
+		heading: {
+			...typography.heading,
+			fontFamily: headingFontFamily,
+			fontWeights: headingFontWeights,
+		},
 	};
 };
 
@@ -134,7 +181,9 @@ const containsCjkLetters = (value: unknown): boolean => {
 	if (!value || typeof value !== "object") return false;
 	if (Array.isArray(value)) return value.some(containsCjkLetters);
 
-	return Object.values(value as Record<string, unknown>).some(containsCjkLetters);
+	return Object.values(value as Record<string, unknown>).some(
+		containsCjkLetters,
+	);
 };
 
 export const resumeContentContainsCJK = (data: ResumeData): boolean => {
@@ -182,7 +231,8 @@ const collectScripts = (value: unknown, scripts: Set<Script>): void => {
 		return;
 	}
 
-	for (const item of Object.values(value as Record<string, unknown>)) collectScripts(item, scripts);
+	for (const item of Object.values(value as Record<string, unknown>))
+		collectScripts(item, scripts);
 };
 
 export const resumeContentScripts = (data: ResumeData): Set<Script> => {
@@ -240,7 +290,12 @@ export const registerFonts = (
 		const source = getWebFontSource(family, normalizedWeight, italic);
 		if (!source) return;
 
-		Font.register({ family, src: source, fontWeight: Number(normalizedWeight), fontStyle });
+		Font.register({
+			family,
+			src: source,
+			fontWeight: Number(normalizedWeight),
+			fontStyle,
+		});
 		registeredFontVariants.add(key);
 	};
 
@@ -262,11 +317,19 @@ export const registerFonts = (
 	// without an explicit script set, assume Han so a SC fallback is registered.
 	if (hasCjkContent) fallbackScripts.add("han-simplified");
 
-	const bodyFallbacks = getPdfFallbackFontFamilies(bodyFontFamily, { locale, scripts: fallbackScripts });
-	const headingFallbacks = getPdfFallbackFontFamilies(headingFontFamily, { locale, scripts: fallbackScripts });
+	const bodyFallbacks = getPdfFallbackFontFamilies(bodyFontFamily, {
+		locale,
+		scripts: fallbackScripts,
+	});
+	const headingFallbacks = getPdfFallbackFontFamilies(headingFontFamily, {
+		locale,
+		scripts: fallbackScripts,
+	});
 
 	const registerFallbacks = (families: string[], ranges: FontWeightRange[]) => {
-		const weights = new Set(ranges.flatMap(({ lowest, highest }) => [lowest, highest]));
+		const weights = new Set(
+			ranges.flatMap(({ lowest, highest }) => [lowest, highest]),
+		);
 
 		for (const family of families) {
 			for (const weight of weights) {
@@ -292,9 +355,14 @@ export const registerFonts = (
 		return pdfTypography as PdfTypography;
 	}
 
-	const bodyStack: string | string[] = bodyFallbacks.length > 0 ? [bodyFontFamily, ...bodyFallbacks] : bodyFontFamily;
+	const bodyStack: string | string[] =
+		bodyFallbacks.length > 0
+			? [bodyFontFamily, ...bodyFallbacks]
+			: bodyFontFamily;
 	const headingStack: string | string[] =
-		headingFallbacks.length > 0 ? [headingFontFamily, ...headingFallbacks] : headingFontFamily;
+		headingFallbacks.length > 0
+			? [headingFontFamily, ...headingFallbacks]
+			: headingFontFamily;
 
 	return {
 		body: { ...pdfTypography.body, fontFamily: bodyStack },

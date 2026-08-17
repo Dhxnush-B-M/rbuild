@@ -1,12 +1,5 @@
-import type { DialogProps } from "../store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
-import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
-import { toast } from "sonner";
-import z from "zod";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	DialogContent,
@@ -15,13 +8,29 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormDescription,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { generateId, slugify } from "@rbuilder/utils/string";
+import { useStore } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
+import z from "zod";
 import { usePatchResume } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
-import { getResumeByIdFromSupabase, saveResumeToSupabase } from "@/libs/supabase/db";
+import {
+	getResumeByIdFromSupabase,
+	saveResumeToSupabase,
+} from "@/libs/supabase/db";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
+import type { DialogProps } from "../store";
 import { useDialogStore } from "../store";
 
 const formSchema = z.object({
@@ -78,7 +87,8 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 	}, [form, name]);
 
 	useFormBlocker(form, {
-		shouldBlock: () => !didCreateRef.current && form.state.isDirty && !form.state.isSubmitting,
+		shouldBlock: () =>
+			!didCreateRef.current && form.state.isDirty && !form.state.isSubmitting,
 	});
 
 	return (
@@ -104,7 +114,11 @@ export function CreateResumeDialog(_: DialogProps<"resume.create">) {
 				<ResumeForm form={form} />
 
 				<DialogFooter>
-					<Button type="submit" size="lg" className="w-full font-bold sm:w-auto">
+					<Button
+						type="submit"
+						size="lg"
+						className="w-full font-bold sm:w-auto"
+					>
 						<Trans>Create</Trans>
 					</Button>
 				</DialogFooter>
@@ -152,7 +166,9 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 					<Trans>Update Resume</Trans>
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Update the details of your resume, such as its name, slug, and tags.</Trans>
+					<Trans>
+						Update the details of your resume, such as its name, slug, and tags.
+					</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
@@ -176,7 +192,9 @@ export function UpdateResumeDialog({ data }: DialogProps<"resume.update">) {
 	);
 }
 
-export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">) {
+export function DuplicateResumeDialog({
+	data,
+}: DialogProps<"resume.duplicate">) {
 	const navigate = useNavigate();
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 
@@ -224,7 +242,9 @@ export function DuplicateResumeDialog({ data }: DialogProps<"resume.duplicate">)
 					<Trans>Duplicate Resume</Trans>
 				</DialogTitle>
 				<DialogDescription>
-					<Trans>Duplicate your resume to create a new one, just like the original.</Trans>
+					<Trans>
+						Duplicate your resume to create a new one, just like the original.
+					</Trans>
 				</DialogDescription>
 			</DialogHeader>
 
@@ -254,7 +274,11 @@ const ResumeForm = withForm({
 		return (
 			<form.Field name="name">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Name</Trans>
 						</FormLabel>
@@ -274,7 +298,10 @@ const ResumeForm = withForm({
 						/>
 						<FormMessage errors={field.state.meta.errors} />
 						<FormDescription>
-							<Trans>Tip: You can name the resume referring to the position you are applying for.</Trans>
+							<Trans>
+								Tip: You can name the resume referring to the position you are
+								applying for.
+							</Trans>
 						</FormDescription>
 					</FormItem>
 				)}

@@ -1,4 +1,11 @@
-import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	mkdtempSync,
+	realpathSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -61,7 +68,9 @@ describe("getLocalDataDirectory", () => {
 	it("returns workspaceRoot/data when manifest is found", () => {
 		writeFileSync(join(tempDir, "pnpm-workspace.yaml"), "packages: ['*']");
 
-		expect(getLocalDataDirectory(undefined, tempDir)).toBe(join(tempDir, "data"));
+		expect(getLocalDataDirectory(undefined, tempDir)).toBe(
+			join(tempDir, "data"),
+		);
 	});
 
 	it("falls back to cwd/data when no manifest found", () => {

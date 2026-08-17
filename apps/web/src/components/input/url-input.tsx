@@ -1,8 +1,7 @@
-import type { Website } from "@rbuilder/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { TagIcon } from "@phosphor-icons/react";
-import { useCallback } from "react";
+import type { Website } from "@rbuilder/schema/resume/data";
 import { Input } from "@rbuilder/ui/components/input";
 import {
 	InputGroup,
@@ -12,8 +11,13 @@ import {
 	InputGroupText,
 } from "@rbuilder/ui/components/input-group";
 import { Label } from "@rbuilder/ui/components/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@rbuilder/ui/components/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@rbuilder/ui/components/popover";
 import { cn } from "@rbuilder/utils/style";
+import { useCallback } from "react";
 
 const PREFIX = "https://";
 
@@ -26,13 +30,21 @@ function ensurePrefix(url: string) {
 	return url.startsWith(PREFIX) ? url : PREFIX + url;
 }
 
-type Props<TValue extends Website = Website> = Omit<React.ComponentProps<"input">, "value" | "onChange"> & {
+type Props<TValue extends Website = Website> = Omit<
+	React.ComponentProps<"input">,
+	"value" | "onChange"
+> & {
 	value: TValue;
 	onChange: (value: TValue) => void;
 	hideLabelButton?: boolean;
 };
 
-export function URLInput<TValue extends Website>({ value, onChange, hideLabelButton, ...props }: Props<TValue>) {
+export function URLInput<TValue extends Website>({
+	value,
+	onChange,
+	hideLabelButton,
+	...props
+}: Props<TValue>) {
 	const handleUrlChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			onChange({
@@ -73,7 +85,8 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 								<InputGroupButton
 									size="icon-sm"
 									title={t({
-										comment: "Tooltip for action button that opens URL label editor",
+										comment:
+											"Tooltip for action button that opens URL label editor",
 										message: "Add a label to the URL",
 									})}
 								>
@@ -84,11 +97,22 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 
 						<PopoverContent className="pt-3">
 							{/** biome-ignore lint/a11y/noStaticElementInteractions: for stopPropagation */}
-							<div role="presentation" className="grid gap-2" onMouseDown={(e) => e.stopPropagation()}>
+							<div
+								role="presentation"
+								className="grid gap-2"
+								onMouseDown={(e) => e.stopPropagation()}
+							>
 								<Label htmlFor="url-label">
-									<Trans comment="Short field label for custom display text associated with a URL">Label</Trans>
+									<Trans comment="Short field label for custom display text associated with a URL">
+										Label
+									</Trans>
 								</Label>
-								<Input id="url-label" name="url-label" value={value.label} onChange={handleLabelChange} />
+								<Input
+									id="url-label"
+									name="url-label"
+									value={value.label}
+									onChange={handleLabelChange}
+								/>
 							</div>
 						</PopoverContent>
 					</Popover>

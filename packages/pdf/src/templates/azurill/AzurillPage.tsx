@@ -1,16 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type {
-	TemplateColorRoles,
-	TemplateFeatureStyleSlots,
-	TemplateFeatures,
-	TemplateStyleContext,
-	TemplateStyleSlots,
-} from "../shared/types";
-import { Fragment, useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { Fragment, useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -35,7 +28,18 @@ import {
 } from "../shared/primitives";
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
-import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
+import {
+	composeStyles,
+	headerNameLineHeight,
+	resolvePlacementColor,
+} from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateFeatureStyleSlots,
+	TemplateFeatures,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type AzurillStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -65,15 +69,31 @@ const azurillFeatures = {
 	sectionTimeline: true,
 } satisfies TemplateFeatures;
 
-export const AzurillPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const AzurillPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles, featureStyles } = useAzurillTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
 
 	return (
 		<Page
@@ -90,7 +110,11 @@ export const AzurillPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 			>
 				{showHeader && <Header styles={styles} />}
 
-				<View style={composeStyles(styles.contentRow, { columnGap: metrics.columnGap })}>
+				<View
+					style={composeStyles(styles.contentRow, {
+						columnGap: metrics.columnGap,
+					})}
+				>
 					<SemanticRegionView
 						region="sidebar"
 						style={composeStyles(styles.sidebarColumn, {
@@ -106,7 +130,12 @@ export const AzurillPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 						))}
 					</SemanticRegionView>
 
-					<SemanticRegionView region="main" style={composeStyles(styles.mainColumn, { rowGap: metrics.sectionGap })}>
+					<SemanticRegionView
+						region="main"
+						style={composeStyles(styles.mainColumn, {
+							rowGap: metrics.sectionGap,
+						})}
+					>
 						{mainSections.map((section) => (
 							<Section key={section} section={section} placement="main" />
 						))}
@@ -123,7 +152,9 @@ const Header = ({ styles }: AzurillHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 
 			<View style={styles.headerTitle}>
 				<View style={styles.headerIdentity}>
@@ -133,12 +164,28 @@ const Header = ({ styles }: AzurillHeaderProps) => {
 			</View>
 
 			<SemanticContactListView style={styles.headerContactRow}>
-				<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-				<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-				<LocationContactItem location={basics.location} style={styles.headerContactItem} />
-				<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+				<EmailContactItem
+					email={basics.email}
+					style={styles.headerContactItem}
+				/>
+				<PhoneContactItem
+					phone={basics.phone}
+					style={styles.headerContactItem}
+				/>
+				<LocationContactItem
+					location={basics.location}
+					style={styles.headerContactItem}
+				/>
+				<WebsiteContactItem
+					website={basics.website}
+					style={styles.headerContactItem}
+				/>
 				{basics.customFields.map((field) => (
-					<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
+					<CustomFieldContactItem
+						key={field.id}
+						field={field}
+						style={styles.headerContactItem}
+					/>
 				))}
 			</SemanticContactListView>
 		</SemanticHeaderView>
@@ -156,7 +203,14 @@ const useAzurillTemplate = (): AzurillTemplate => {
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -278,13 +332,34 @@ const useAzurillTemplate = (): AzurillTemplate => {
 			featureStyles,
 			styles: {
 				...baseStyles,
-				text: (context) => ({ ...baseStyles.text, color: foregroundFor(context) }),
-				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
-				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				richParagraph: (context) => ({ ...baseStyles.richParagraph, color: foregroundFor(context) }),
-				richListItemMarker: (context) => ({ ...baseStyles.richListItemMarker, color: foregroundFor(context) }),
-				richListItemContent: (context) => ({ ...baseStyles.richListItemContent, color: foregroundFor(context) }),
-				sectionHeading: (context) => ({ ...baseStyles.sectionHeading, color: accentFor(context) }),
+				text: (context) => ({
+					...baseStyles.text,
+					color: foregroundFor(context),
+				}),
+				heading: (context) => ({
+					...baseStyles.heading,
+					color: foregroundFor(context),
+				}),
+				link: (context) => ({
+					...baseStyles.link,
+					color: foregroundFor(context),
+				}),
+				richParagraph: (context) => ({
+					...baseStyles.richParagraph,
+					color: foregroundFor(context),
+				}),
+				richListItemMarker: (context) => ({
+					...baseStyles.richListItemMarker,
+					color: foregroundFor(context),
+				}),
+				richListItemContent: (context) => ({
+					...baseStyles.richListItemContent,
+					color: foregroundFor(context),
+				}),
+				sectionHeading: (context) => ({
+					...baseStyles.sectionHeading,
+					color: accentFor(context),
+				}),
 				icon: (context) => ({
 					display: metadata.page.hideIcons ? "none" : "flex",
 					size: metadata.typography.body.fontSize,

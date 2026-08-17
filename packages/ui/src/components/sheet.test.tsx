@@ -1,6 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./sheet";
+import {
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+} from "./sheet";
 
 describe("Sheet", () => {
 	it("does not render content by default", () => {
@@ -34,15 +42,21 @@ describe("Sheet", () => {
 		expect(content).toHaveAttribute("data-side", "right");
 	});
 
-	it.each(["top", "right", "bottom", "left"] as const)("supports side=%s", (side) => {
-		render(
-			<Sheet open>
-				<SheetTrigger>x</SheetTrigger>
-				<SheetContent side={side}>visible {side}</SheetContent>
-			</Sheet>,
-		);
-		expect(screen.getByText(`visible ${side}`)).toHaveAttribute("data-side", side);
-	});
+	it.each(["top", "right", "bottom", "left"] as const)(
+		"supports side=%s",
+		(side) => {
+			render(
+				<Sheet open>
+					<SheetTrigger>x</SheetTrigger>
+					<SheetContent side={side}>visible {side}</SheetContent>
+				</Sheet>,
+			);
+			expect(screen.getByText(`visible ${side}`)).toHaveAttribute(
+				"data-side",
+				side,
+			);
+		},
+	);
 
 	it("renders close button by default", () => {
 		render(
@@ -68,12 +82,18 @@ describe("Sheet", () => {
 describe("SheetHeader / SheetFooter", () => {
 	it("SheetHeader uses data-slot='sheet-header'", () => {
 		render(<SheetHeader data-testid="h">x</SheetHeader>);
-		expect(screen.getByTestId("h")).toHaveAttribute("data-slot", "sheet-header");
+		expect(screen.getByTestId("h")).toHaveAttribute(
+			"data-slot",
+			"sheet-header",
+		);
 	});
 
 	it("SheetFooter uses data-slot='sheet-footer'", () => {
 		render(<SheetFooter data-testid="f">x</SheetFooter>);
-		expect(screen.getByTestId("f")).toHaveAttribute("data-slot", "sheet-footer");
+		expect(screen.getByTestId("f")).toHaveAttribute(
+			"data-slot",
+			"sheet-footer",
+		);
 	});
 });
 
@@ -87,7 +107,10 @@ describe("SheetTitle / SheetDescription", () => {
 				</SheetContent>
 			</Sheet>,
 		);
-		expect(screen.getByText("Title")).toHaveAttribute("data-slot", "sheet-title");
+		expect(screen.getByText("Title")).toHaveAttribute(
+			"data-slot",
+			"sheet-title",
+		);
 	});
 
 	it("SheetDescription uses data-slot='sheet-description'", () => {
@@ -99,6 +122,9 @@ describe("SheetTitle / SheetDescription", () => {
 				</SheetContent>
 			</Sheet>,
 		);
-		expect(screen.getByText("Description")).toHaveAttribute("data-slot", "sheet-description");
+		expect(screen.getByText("Description")).toHaveAttribute(
+			"data-slot",
+			"sheet-description",
+		);
 	});
 });

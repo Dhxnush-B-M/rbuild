@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, test } from "vitest";
 import { createPortal } from "react-dom";
+import { describe, expect, it, test } from "vitest";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -32,17 +32,26 @@ describe("InputGroup", () => {
 describe("InputGroupAddon", () => {
 	it("defaults align to 'inline-start'", () => {
 		render(<InputGroupAddon data-testid="addon" />);
-		expect(screen.getByTestId("addon")).toHaveAttribute("data-align", "inline-start");
+		expect(screen.getByTestId("addon")).toHaveAttribute(
+			"data-align",
+			"inline-start",
+		);
 	});
 
-	it.each(["inline-start", "inline-end", "block-start", "block-end"] as const)("supports align=%s", (align) => {
-		render(<InputGroupAddon data-testid="addon" align={align} />);
-		expect(screen.getByTestId("addon")).toHaveAttribute("data-align", align);
-	});
+	it.each(["inline-start", "inline-end", "block-start", "block-end"] as const)(
+		"supports align=%s",
+		(align) => {
+			render(<InputGroupAddon data-testid="addon" align={align} />);
+			expect(screen.getByTestId("addon")).toHaveAttribute("data-align", align);
+		},
+	);
 
 	it("uses data-slot='input-group-addon'", () => {
 		render(<InputGroupAddon data-testid="addon" />);
-		expect(screen.getByTestId("addon")).toHaveAttribute("data-slot", "input-group-addon");
+		expect(screen.getByTestId("addon")).toHaveAttribute(
+			"data-slot",
+			"input-group-addon",
+		);
 	});
 
 	it("focuses sibling input on click outside of buttons", () => {
@@ -162,7 +171,10 @@ describe("InputGroupText", () => {
 describe("InputGroupInput", () => {
 	it("uses data-slot='input-group-control'", () => {
 		render(<InputGroupInput data-testid="i" />);
-		expect(screen.getByTestId("i")).toHaveAttribute("data-slot", "input-group-control");
+		expect(screen.getByTestId("i")).toHaveAttribute(
+			"data-slot",
+			"input-group-control",
+		);
 	});
 });
 

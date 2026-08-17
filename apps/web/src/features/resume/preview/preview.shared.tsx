@@ -1,8 +1,12 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { CSSProperties } from "react";
 import { Spinner } from "@rbuilder/ui/components/spinner";
 import { cn } from "@rbuilder/utils/style";
-import { DEFAULT_PDF_PAGE_SIZE, getResumePreviewGapValue, getScaledPreviewPageSize } from "./preview.shared.utils";
+import type { CSSProperties } from "react";
+import {
+	DEFAULT_PDF_PAGE_SIZE,
+	getResumePreviewGapValue,
+	getScaledPreviewPageSize,
+} from "./preview.shared.utils";
 
 export type ResumePreviewProps = {
 	className?: string;
@@ -20,7 +24,10 @@ export type ResolvedResumePreviewProps = ResumePreviewProps & {
 	showPageNumbers: boolean;
 };
 
-type ResumePreviewLoaderProps = Pick<ResumePreviewProps, "pageClassName" | "showPageNumbers"> & {
+type ResumePreviewLoaderProps = Pick<
+	ResumePreviewProps,
+	"pageClassName" | "showPageNumbers"
+> & {
 	pageCount?: number;
 	pageGap?: CSSProperties["gap"];
 	pageLayout?: "horizontal" | "vertical";
@@ -47,7 +54,9 @@ export function ResumePreviewLoader({
 			style={{ "--resume-preview-page-gap": resolvedPageGap } as CSSProperties}
 			className={cn(
 				"flex justify-start gap-(--resume-preview-page-gap)",
-				pageLayout === "horizontal" ? "flex-row items-start" : "flex-col items-center",
+				pageLayout === "horizontal"
+					? "flex-row items-start"
+					: "flex-col items-center",
 			)}
 		>
 			{Array.from({ length: pageCount }, (_, index) => {
@@ -65,7 +74,10 @@ export function ResumePreviewLoader({
 							role="img"
 							aria-label={`Loading resume page ${pageNumber} of ${pageCount}`}
 							style={pageSize}
-							className={cn("aspect-page overflow-hidden rounded-md bg-white", pageClassName)}
+							className={cn(
+								"aspect-page overflow-hidden rounded-md bg-white",
+								pageClassName,
+							)}
 						>
 							<Spinner className="size-10" />
 						</div>

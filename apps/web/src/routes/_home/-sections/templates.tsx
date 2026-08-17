@@ -1,7 +1,7 @@
+import { templateSchema } from "@rbuilder/schema/templates";
 import { useNavigate } from "@tanstack/react-router";
 import * as m from "motion/react-m";
 import { useState } from "react";
-import { templateSchema } from "@rbuilder/schema/templates";
 
 export function TemplatesSection() {
 	const navigate = useNavigate();
@@ -22,7 +22,8 @@ export function TemplatesSection() {
 					Designed to stand out.
 				</h2>
 				<p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground leading-relaxed md:text-lg">
-					Hover to pause the 3D rotating showcase of professional resume templates crafted for maximum impact.
+					Hover to pause the 3D rotating showcase of professional resume
+					templates crafted for maximum impact.
 				</p>
 			</m.div>
 
@@ -70,7 +71,8 @@ export function TemplatesSection() {
 												src={imageUrl}
 												alt={name}
 												onError={(e) => {
-													(e.target as HTMLImageElement).src = "/images/hero-builder-preview.png";
+													(e.target as HTMLImageElement).src =
+														"/images/hero-builder-preview.png";
 												}}
 												className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
 											/>
@@ -78,7 +80,9 @@ export function TemplatesSection() {
 											{/* Subtle overlay gradient on hover */}
 											<div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 											<div className="absolute inset-x-0 bottom-0 p-3 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-												<p className="font-bold text-sm tracking-wide drop-shadow-md">{name}</p>
+												<p className="font-bold text-sm tracking-wide drop-shadow-md">
+													{name}
+												</p>
 											</div>
 										</div>
 									</m.div>

@@ -1,7 +1,13 @@
-import type React from "react";
-import { m, useMotionTemplate, useMotionValue, useSpring, useTransform } from "motion/react";
-import { useRef } from "react";
 import { cn } from "@rbuilder/utils/style";
+import {
+	m,
+	useMotionTemplate,
+	useMotionValue,
+	useSpring,
+	useTransform,
+} from "motion/react";
+import type React from "react";
+import { useRef } from "react";
 
 type Props = {
 	rotateDepth?: number;
@@ -28,11 +34,27 @@ export const CometCard = ({
 	const mouseXSpring = useSpring(x);
 	const mouseYSpring = useSpring(y);
 
-	const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [`-${rotateDepth}deg`, `${rotateDepth}deg`]);
-	const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [`${rotateDepth}deg`, `-${rotateDepth}deg`]);
+	const rotateX = useTransform(
+		mouseYSpring,
+		[-0.5, 0.5],
+		[`-${rotateDepth}deg`, `${rotateDepth}deg`],
+	);
+	const rotateY = useTransform(
+		mouseXSpring,
+		[-0.5, 0.5],
+		[`${rotateDepth}deg`, `-${rotateDepth}deg`],
+	);
 
-	const translateX = useTransform(mouseXSpring, [-0.5, 0.5], [`-${translateDepth}px`, `${translateDepth}px`]);
-	const translateY = useTransform(mouseYSpring, [-0.5, 0.5], [`${translateDepth}px`, `-${translateDepth}px`]);
+	const translateX = useTransform(
+		mouseXSpring,
+		[-0.5, 0.5],
+		[`-${translateDepth}px`, `${translateDepth}px`],
+	);
+	const translateY = useTransform(
+		mouseYSpring,
+		[-0.5, 0.5],
+		[`${translateDepth}px`, `-${translateDepth}px`],
+	);
 
 	const glareX = useTransform(mouseXSpring, [-0.5, 0.5], [0, 100]);
 	const glareY = useTransform(mouseYSpring, [-0.5, 0.5], [0, 100]);
@@ -70,8 +92,17 @@ export const CometCard = ({
 				onMouseMove={handleMouseMove}
 				onMouseLeave={handleMouseLeave}
 				className="relative rounded-md will-change-transform"
-				whileHover={{ z: 50, scale: scaleFactor, transition: { duration: 0.2 } }}
-				style={{ rotateX: rotateX, rotateY: rotateY, translateX: translateX, translateY: translateY }}
+				whileHover={{
+					z: 50,
+					scale: scaleFactor,
+					transition: { duration: 0.2 },
+				}}
+				style={{
+					rotateX: rotateX,
+					rotateY: rotateY,
+					translateX: translateX,
+					translateY: translateY,
+				}}
 			>
 				{children}
 

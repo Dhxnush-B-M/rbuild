@@ -10,7 +10,11 @@ export function Prefooter() {
 			</div>
 
 			<div className="relative space-y-8">
-				<TextMaskEffect aria-hidden="true" text="rbuilder" className="block w-full" />
+				<TextMaskEffect
+					aria-hidden="true"
+					text="rbuilder"
+					className="block w-full"
+				/>
 
 				<m.div
 					className="mx-auto max-w-3xl space-y-8 px-6 text-center will-change-[transform,opacity] md:px-8 xl:px-0"
@@ -24,8 +28,9 @@ export function Prefooter() {
 					</h2>
 
 					<p className="text-muted-foreground leading-relaxed">
-						rbuilder empowers job seekers with powerful design tools, instant PDF generation, and full data privacy.
-						Build your resume with confidence and land your dream role.
+						rbuilder empowers job seekers with powerful design tools, instant
+						PDF generation, and full data privacy. Build your resume with
+						confidence and land your dream role.
 					</p>
 				</m.div>
 			</div>

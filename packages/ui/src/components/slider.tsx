@@ -3,13 +3,25 @@ import { cn } from "@rbuilder/utils/style";
 
 const THUMB_POSITION_KEYS = ["single", "start", "end"] as const;
 
-function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }: SliderPrimitive.Root.Props) {
-	const _values = Array.isArray(value) ? value : Array.isArray(defaultValue) ? defaultValue : [min, max];
+function Slider({
+	className,
+	defaultValue,
+	value,
+	min = 0,
+	max = 100,
+	...props
+}: SliderPrimitive.Root.Props) {
+	const _values = Array.isArray(value)
+		? value
+		: Array.isArray(defaultValue)
+			? defaultValue
+			: [min, max];
 	const thumbDescriptors = _values.map((thumbValue, position) => ({
 		key:
 			_values.length === 1
 				? THUMB_POSITION_KEYS[0]
-				: (THUMB_POSITION_KEYS[position + 1] ?? `thumb-${position}-${thumbValue}`),
+				: (THUMB_POSITION_KEYS[position + 1] ??
+					`thumb-${position}-${thumbValue}`),
 	}));
 
 	return (

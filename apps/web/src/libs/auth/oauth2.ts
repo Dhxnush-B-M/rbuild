@@ -1,5 +1,8 @@
 import { supabase } from "@/libs/supabase/client";
-import { getProfileByEmailFromSupabase, saveUserToSupabase } from "@/libs/supabase/db";
+import {
+	getProfileByEmailFromSupabase,
+	saveUserToSupabase,
+} from "@/libs/supabase/db";
 
 export interface GoogleOAuthUser {
 	id: string;
@@ -15,10 +18,14 @@ export interface GoogleOAuthUser {
 /**
  * Initiates Supabase Google OAuth flow with rbuilder callback
  */
-export async function initiateGoogleOAuth2(options?: { redirectTo?: string }): Promise<boolean> {
+export async function initiateGoogleOAuth2(options?: {
+	redirectTo?: string;
+}): Promise<boolean> {
 	const redirectUri =
 		options?.redirectTo ||
-		(typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : "https://rbuilder.space/auth/callback");
+		(typeof window !== "undefined"
+			? `${window.location.origin}/auth/callback`
+			: "https://rbuilder.space/auth/callback");
 
 	try {
 		const { data, error } = await supabase.auth.signInWithOAuth({
@@ -52,7 +59,8 @@ export async function initiateGoogleOAuth2(options?: { redirectTo?: string }): P
  * Initiates transparent guest / local workspace access
  */
 export function initiateGuestSession(options?: { redirectTo?: string }) {
-	const redirectUri = options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
+	const redirectUri =
+		options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
 	const guestUser: GoogleOAuthUser = {
 		id: `user_${Date.now()}`,
 		email: "user@rbuilder.app",
@@ -88,7 +96,8 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	user: GoogleOAuthUser | null;
 	redirectTo: string;
 }> {
-	if (typeof window === "undefined") return { user: null, redirectTo: "/auth/login" };
+	if (typeof window === "undefined")
+		return { user: null, redirectTo: "/auth/login" };
 
 	let googleUser: GoogleOAuthUser | null = null;
 
@@ -104,8 +113,14 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 				googleUser = {
 					id: u.id,
 					email: userEmail,
-					name: (u.user_metadata?.full_name as string) || (u.user_metadata?.name as string) || userEmail.split("@")[0] || "User",
-					picture: (u.user_metadata?.avatar_url as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+					name:
+						(u.user_metadata?.full_name as string) ||
+						(u.user_metadata?.name as string) ||
+						userEmail.split("@")[0] ||
+						"User",
+					picture:
+						(u.user_metadata?.avatar_url as string) ||
+						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
 				};
 			}
 		}
@@ -116,15 +131,23 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	// 2. Check current Supabase session
 	if (!googleUser) {
 		try {
-			const { data: { session } } = await supabase.auth.getSession();
+			const {
+				data: { session },
+			} = await supabase.auth.getSession();
 			if (session?.user?.email) {
 				const u = session.user;
 				const userEmail = (u.email || "").toLowerCase().trim();
 				googleUser = {
 					id: u.id,
 					email: userEmail,
-					name: (u.user_metadata?.full_name as string) || (u.user_metadata?.name as string) || userEmail.split("@")[0] || "User",
-					picture: (u.user_metadata?.avatar_url as string) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+					name:
+						(u.user_metadata?.full_name as string) ||
+						(u.user_metadata?.name as string) ||
+						userEmail.split("@")[0] ||
+						"User",
+					picture:
+						(u.user_metadata?.avatar_url as string) ||
+						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
 				};
 			}
 		} catch (e) {
@@ -199,7 +222,8 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 			email: userEmail,
 			name: googleUser.name || "Karthik Dhanush",
 			avatar_url:
-				googleUser.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
+				googleUser.picture ||
+				`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
 			subscription_plan: "3_months" as const,
 			subscription_status: "active" as const,
 			subscription_amount: 0,
@@ -222,12 +246,19 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 
 	if (existingProfile) {
 		// Update user picture or name if needed
-		existingProfile.avatar_url = googleUser.picture || existingProfile.avatar_url;
+		existingProfile.avatar_url =
+			googleUser.picture || existingProfile.avatar_url;
 		existingProfile.name = googleUser.name || existingProfile.name;
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(existingProfile));
+		localStorage.setItem(
+			"rbuilder_user_profile",
+			JSON.stringify(existingProfile),
+		);
 
 		// Check if already paid & onboarded
-		if (existingProfile.onboarding_completed && existingProfile.subscription_status === "active") {
+		if (
+			existingProfile.onboarding_completed &&
+			existingProfile.subscription_status === "active"
+		) {
 			return {
 				user: {
 					...googleUser,

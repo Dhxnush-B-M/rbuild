@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -32,6 +31,11 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type LeafishStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -59,10 +63,20 @@ type LeafishHeaderProps = {
 	styles: LeafishStyles;
 };
 
-export const LeafishPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const LeafishPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useLeafishTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
@@ -72,7 +86,9 @@ export const LeafishPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 	);
 	const sidebarSections = useRenderedSectionIds(
 		pageNodeKey,
-		filterSections(page.sidebar, data).filter((section) => section !== "summary"),
+		filterSections(page.sidebar, data).filter(
+			(section) => section !== "summary",
+		),
 	);
 
 	return (
@@ -81,11 +97,20 @@ export const LeafishPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showHeader && <Header styles={styles} />}
 
 				<View style={styles.body}>
-					<SemanticRegionView region="main" style={composeStyles(styles.mainColumn, { rowGap: metrics.sectionGap })}>
+					<SemanticRegionView
+						region="main"
+						style={composeStyles(styles.mainColumn, {
+							rowGap: metrics.sectionGap,
+						})}
+					>
 						{mainSections.map((section) => (
 							<Section key={section} section={section} placement="main" />
 						))}
@@ -116,9 +141,17 @@ const Header = ({ styles }: LeafishHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			<SemanticTemplatePartView partKeys={["header-intro"]} style={styles.headerIntro}>
-				<SemanticTemplatePartView partKeys={["header-intro", "header-body"]} style={styles.headerBody}>
-					{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			<SemanticTemplatePartView
+				partKeys={["header-intro"]}
+				style={styles.headerIntro}
+			>
+				<SemanticTemplatePartView
+					partKeys={["header-intro", "header-body"]}
+					style={styles.headerBody}
+				>
+					{hasPicture && (
+						<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+					)}
 
 					<View style={styles.headerTitle}>
 						<View style={styles.headerIdentity}>
@@ -131,14 +164,27 @@ const Header = ({ styles }: LeafishHeaderProps) => {
 				</SemanticTemplatePartView>
 			</SemanticTemplatePartView>
 
-			<SemanticTemplatePartView partKeys={["header-contact-band"]} style={styles.headerContactBand}>
+			<SemanticTemplatePartView
+				partKeys={["header-contact-band"]}
+				style={styles.headerContactBand}
+			>
 				<SemanticContactListView style={styles.contactList}>
 					<EmailContactItem email={basics.email} style={styles.contactItem} />
 					<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-					<LocationContactItem location={basics.location} style={styles.contactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+					<LocationContactItem
+						location={basics.location}
+						style={styles.contactItem}
+					/>
+					<WebsiteContactItem
+						website={basics.website}
+						style={styles.contactItem}
+					/>
 					{basics.customFields.map((field) => (
-						<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
+						<CustomFieldContactItem
+							key={field.id}
+							field={field}
+							style={styles.contactItem}
+						/>
 					))}
 				</SemanticContactListView>
 			</SemanticTemplatePartView>
@@ -154,12 +200,25 @@ const useLeafishTemplate = (): LeafishTemplate => {
 		const foreground = rgbaStringToHex(metadata.design.colors.text);
 		const background = rgbaStringToHex(metadata.design.colors.background);
 		const primary = rgbaStringToHex(metadata.design.colors.primary);
-		const primaryTintLight = getPrimaryAlpha(metadata.design.colors.primary, 0.1);
-		const primaryTintDark = getPrimaryAlpha(metadata.design.colors.primary, 0.2);
+		const primaryTintLight = getPrimaryAlpha(
+			metadata.design.colors.primary,
+			0.1,
+		);
+		const primaryTintDark = getPrimaryAlpha(
+			metadata.design.colors.primary,
+			0.2,
+		);
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -242,7 +301,10 @@ const useLeafishTemplate = (): LeafishTemplate => {
 			colors,
 			styles: {
 				...baseStyles,
-				sectionHeading: (context) => ({ ...baseStyles.sectionHeading, color: accentFor(context) }),
+				sectionHeading: (context) => ({
+					...baseStyles.sectionHeading,
+					color: accentFor(context),
+				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),
 				icon: (context) => ({

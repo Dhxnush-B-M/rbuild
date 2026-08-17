@@ -1,11 +1,16 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { summaryItemSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
 import { RichInput } from "@/components/input/rich-input";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -23,7 +28,9 @@ const defaultValues: FormValues = {
 	content: "",
 };
 
-export function CreateSummaryItemDialog({ data }: DialogProps<"resume.sections.summary.create">) {
+export function CreateSummaryItemDialog({
+	data,
+}: DialogProps<"resume.sections.summary.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -33,7 +40,9 @@ export function CreateSummaryItemDialog({ data }: DialogProps<"resume.sections.s
 		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
 				if (data?.customSectionId) {
-					const section = draft.customSections.find((s) => s.id === data.customSectionId);
+					const section = draft.customSections.find(
+						(s) => s.id === data.customSectionId,
+					);
 					if (section) section.items.push(value);
 				}
 			});
@@ -59,7 +68,9 @@ export function CreateSummaryItemDialog({ data }: DialogProps<"resume.sections.s
 	);
 }
 
-export function UpdateSummaryItemDialog({ data }: DialogProps<"resume.sections.summary.update">) {
+export function UpdateSummaryItemDialog({
+	data,
+}: DialogProps<"resume.sections.summary.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeStore = useUpdateResumeData();
 
@@ -69,7 +80,9 @@ export function UpdateSummaryItemDialog({ data }: DialogProps<"resume.sections.s
 		onSubmit: ({ value }) => {
 			updateResumeStore((draft) => {
 				if (data?.customSectionId) {
-					const section = draft.customSections.find((s) => s.id === data.customSectionId);
+					const section = draft.customSections.find(
+						(s) => s.id === data.customSectionId,
+					);
 					if (!section) return;
 					const index = section.items.findIndex((item) => item.id === value.id);
 					if (index !== -1) section.items[index] = value;
@@ -103,11 +116,22 @@ const SummaryItemForm = withForm({
 		return (
 			<form.Field name="content">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Content</Trans>
 						</FormLabel>
-						<FormControl render={<RichInput value={field.state.value} onChange={(v) => field.handleChange(v)} />} />
+						<FormControl
+							render={
+								<RichInput
+									value={field.state.value}
+									onChange={(v) => field.handleChange(v)}
+								/>
+							}
+						/>
 						<FormMessage errors={field.state.meta.errors} />
 					</FormItem>
 				)}

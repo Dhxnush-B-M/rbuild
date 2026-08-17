@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -31,6 +30,11 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type ScizorStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -54,15 +58,31 @@ type ScizorHeaderProps = {
 	styles: ScizorStyles;
 };
 
-export const ScizorPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const ScizorPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useScizorTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, page.fullWidth ? [] : filterSections(page.sidebar, data));
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		page.fullWidth ? [] : filterSections(page.sidebar, data),
+	);
 	const sections = [...mainSections, ...sidebarSections];
 
 	return (
@@ -71,10 +91,17 @@ export const ScizorPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showHeader && <Header styles={styles} />}
 
-				<SemanticRegionView region="main" style={composeStyles(styles.sections, { rowGap: metrics.sectionGap })}>
+				<SemanticRegionView
+					region="main"
+					style={composeStyles(styles.sections, { rowGap: metrics.sectionGap })}
+				>
 					{sections.map((section) => (
 						<Section key={section} section={section} placement="main" />
 					))}
@@ -92,21 +119,44 @@ const Header = ({ styles }: ScizorHeaderProps) => {
 		<SemanticHeaderView style={styles.header}>
 			<View style={styles.headerIdentity}>
 				<Heading style={styles.headerName}>{basics.name}</Heading>
-				<SemanticTemplatePartView partKeys={["header-name-rule"]} style={styles.headerNameRule} />
-				{basics.headline && <Text style={styles.headerHeadline}>{basics.headline}</Text>}
+				<SemanticTemplatePartView
+					partKeys={["header-name-rule"]}
+					style={styles.headerNameRule}
+				/>
+				{basics.headline && (
+					<Text style={styles.headerHeadline}>{basics.headline}</Text>
+				)}
 
 				<SemanticContactListView style={styles.headerContactRow}>
-					<LocationContactItem location={basics.location} style={styles.headerContactItem} />
-					<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-					<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+					<LocationContactItem
+						location={basics.location}
+						style={styles.headerContactItem}
+					/>
+					<EmailContactItem
+						email={basics.email}
+						style={styles.headerContactItem}
+					/>
+					<PhoneContactItem
+						phone={basics.phone}
+						style={styles.headerContactItem}
+					/>
+					<WebsiteContactItem
+						website={basics.website}
+						style={styles.headerContactItem}
+					/>
 					{basics.customFields.map((field) => (
-						<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
+						<CustomFieldContactItem
+							key={field.id}
+							field={field}
+							style={styles.headerContactItem}
+						/>
 					))}
 				</SemanticContactListView>
 			</View>
 
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 		</SemanticHeaderView>
 	);
 };
@@ -122,7 +172,14 @@ const useScizorTemplate = (): ScizorTemplate => {
 		const divider = "#D8DCE2";
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -134,8 +191,14 @@ const useScizorTemplate = (): ScizorTemplate => {
 				paddingVertical: metrics.page.paddingVertical,
 				rowGap: metrics.sectionGap,
 			},
-			heading: { ...base.heading, fontWeight: metadata.typography.heading.fontWeights.at(-1) ?? "700" },
-			bold: { fontWeight: metadata.typography.body.fontWeights.at(-1) ?? "700", color: foreground },
+			heading: {
+				...base.heading,
+				fontWeight: metadata.typography.heading.fontWeights.at(-1) ?? "700",
+			},
+			bold: {
+				fontWeight: metadata.typography.body.fontWeights.at(-1) ?? "700",
+				color: foreground,
+			},
 			section: {
 				flexDirection: "column",
 				rowGap: metrics.gapY(0.25),

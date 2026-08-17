@@ -5,11 +5,11 @@
 // shape: render a SectionItem per data row with title/subtitle mapped to specific
 // fields, plus an "Add a new X" button. Test them together to amortize the mock setup.
 
-import type { Resume } from "@/features/resume/builder/draft";
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Resume } from "@/features/resume/builder/draft";
 
 const sections = vi.hoisted(() => ({
 	awards: [
@@ -34,8 +34,25 @@ const sections = vi.hoisted(() => ({
 			website: { url: "", label: "", inlineLink: false },
 		},
 	],
-	interests: [{ id: "i1", name: "Cooking", keywords: [], hidden: false, icon: "", iconColor: "" }],
-	languages: [{ id: "l1", language: "English", fluency: "Native", level: 5, hidden: false }],
+	interests: [
+		{
+			id: "i1",
+			name: "Cooking",
+			keywords: [],
+			hidden: false,
+			icon: "",
+			iconColor: "",
+		},
+	],
+	languages: [
+		{
+			id: "l1",
+			language: "English",
+			fluency: "Native",
+			level: 5,
+			hidden: false,
+		},
+	],
 	publications: [
 		{
 			id: "p1",
@@ -92,13 +109,48 @@ vi.mock("@/features/resume/builder/draft", () => ({
 		selector({
 			data: {
 				sections: {
-					awards: { title: "Awards", columns: 1, hidden: false, items: sections.awards },
-					certifications: { title: "Certifications", columns: 1, hidden: false, items: sections.certifications },
-					interests: { title: "Interests", columns: 1, hidden: false, items: sections.interests },
-					languages: { title: "Languages", columns: 1, hidden: false, items: sections.languages },
-					publications: { title: "Publications", columns: 1, hidden: false, items: sections.publications },
-					references: { title: "References", columns: 1, hidden: false, items: sections.references },
-					volunteer: { title: "Volunteer", columns: 1, hidden: false, items: sections.volunteer },
+					awards: {
+						title: "Awards",
+						columns: 1,
+						hidden: false,
+						items: sections.awards,
+					},
+					certifications: {
+						title: "Certifications",
+						columns: 1,
+						hidden: false,
+						items: sections.certifications,
+					},
+					interests: {
+						title: "Interests",
+						columns: 1,
+						hidden: false,
+						items: sections.interests,
+					},
+					languages: {
+						title: "Languages",
+						columns: 1,
+						hidden: false,
+						items: sections.languages,
+					},
+					publications: {
+						title: "Publications",
+						columns: 1,
+						hidden: false,
+						items: sections.publications,
+					},
+					references: {
+						title: "References",
+						columns: 1,
+						hidden: false,
+						items: sections.references,
+					},
+					volunteer: {
+						title: "Volunteer",
+						columns: 1,
+						hidden: false,
+						items: sections.volunteer,
+					},
 				},
 			},
 		} as unknown as Resume),
@@ -137,7 +189,9 @@ beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const wrap = (ui: React.ReactNode) => <I18nProvider i18n={i18n}>{ui}</I18nProvider>;
+const wrap = (ui: React.ReactNode) => (
+	<I18nProvider i18n={i18n}>{ui}</I18nProvider>
+);
 
 describe("left sidebar section builders — title/subtitle mapping", () => {
 	const cases = [
@@ -196,7 +250,9 @@ describe("left sidebar section builders — title/subtitle mapping", () => {
 		it(`${name}: maps fields and renders the add button`, () => {
 			const { unmount } = render(wrap(<Component />));
 			expect(screen.getByTestId("item-title").textContent).toBe(title);
-			expect(screen.getByTestId("item-subtitle").textContent ?? "").toBe(subtitle);
+			expect(screen.getByTestId("item-subtitle").textContent ?? "").toBe(
+				subtitle,
+			);
 			expect(screen.getByRole("button", { name: addCopy })).toBeInTheDocument();
 			unmount();
 		});

@@ -10,7 +10,9 @@ import {
 import { safeTextStyle } from "./safe-text-style";
 import { composeStyles } from "./styles";
 
-export const toRichTextStyleArray = (style: Style | Style[] | undefined): Style[] => {
+export const toRichTextStyleArray = (
+	style: Style | Style[] | undefined,
+): Style[] => {
 	if (!style) return [];
 	if (Array.isArray(style)) return style.filter(Boolean);
 
@@ -50,7 +52,12 @@ export const renderRichTextParagraph = ({
 		safeTextStyle,
 	);
 
-	const content = rtl && applyRtlDirection ? applyRtlDirection(children) : children;
+	const content =
+		rtl && applyRtlDirection ? applyRtlDirection(children) : children;
 
-	return createElement(PdfText, { ...textProps, style: composedStyle }, content);
+	return createElement(
+		PdfText,
+		{ ...textProps, style: composedStyle },
+		content,
+	);
 };

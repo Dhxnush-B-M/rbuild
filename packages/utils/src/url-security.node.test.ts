@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { isAllowedOAuthRedirectUri, isPrivateOrLoopbackHost, parseUrl } from "./url-security.node";
+import {
+	isAllowedOAuthRedirectUri,
+	isPrivateOrLoopbackHost,
+	parseUrl,
+} from "./url-security.node";
 
 describe("isPrivateOrLoopbackHost", () => {
 	it.each([
@@ -250,52 +254,94 @@ describe("isAllowedOAuthRedirectUri", () => {
 	});
 
 	it("returns false when credentials present", () => {
-		expect(isAllowedOAuthRedirectUri("https://u:p@app.example.com", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("https://u:p@app.example.com", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("returns false when fragment present", () => {
-		expect(isAllowedOAuthRedirectUri("https://app.example.com/cb#x", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("https://app.example.com/cb#x", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("allows http for loopback (localhost)", () => {
-		expect(isAllowedOAuthRedirectUri("http://localhost:3000/cb", trustedOrigins)).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri("http://localhost:3000/cb", trustedOrigins),
+		).toBe(true);
 	});
 
 	it("allows http for 127.0.0.1", () => {
-		expect(isAllowedOAuthRedirectUri("http://127.0.0.1/cb", trustedOrigins)).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri("http://127.0.0.1/cb", trustedOrigins),
+		).toBe(true);
 	});
 
 	it("allows http for IPv6 loopback", () => {
-		expect(isAllowedOAuthRedirectUri("http://[::1]/cb", trustedOrigins)).toBe(true);
+		expect(isAllowedOAuthRedirectUri("http://[::1]/cb", trustedOrigins)).toBe(
+			true,
+		);
 	});
 
 	it("rejects http for non-loopback hosts", () => {
-		expect(isAllowedOAuthRedirectUri("http://example.com/cb", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("http://example.com/cb", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("rejects non-https/non-http protocols", () => {
-		expect(isAllowedOAuthRedirectUri("ftp://example.com/cb", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("ftp://example.com/cb", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("rejects https with private/loopback host", () => {
-		expect(isAllowedOAuthRedirectUri("https://192.168.1.1/cb", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("https://192.168.1.1/cb", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("matches trusted origins", () => {
-		expect(isAllowedOAuthRedirectUri("https://app.example.com/cb", trustedOrigins)).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri("https://app.example.com/cb", trustedOrigins),
+		).toBe(true);
 	});
 
 	it("rejects public https hosts outside trusted origins", () => {
-		expect(isAllowedOAuthRedirectUri("https://api.example.com/cb", trustedOrigins)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("https://api.example.com/cb", trustedOrigins),
+		).toBe(false);
 	});
 
 	it("allows any parseable URI when unsafe mode is enabled", () => {
 		const options = { allowUnsafe: true };
 
-		expect(isAllowedOAuthRedirectUri("myapp://callback", trustedOrigins, options)).toBe(true);
-		expect(isAllowedOAuthRedirectUri("http://example.com/cb", trustedOrigins, options)).toBe(true);
-		expect(isAllowedOAuthRedirectUri("https://192.168.1.1/cb", trustedOrigins, options)).toBe(true);
-		expect(isAllowedOAuthRedirectUri("https://u:p@app.example.com/cb#x", trustedOrigins, options)).toBe(true);
-		expect(isAllowedOAuthRedirectUri("not a url", trustedOrigins, options)).toBe(false);
+		expect(
+			isAllowedOAuthRedirectUri("myapp://callback", trustedOrigins, options),
+		).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri(
+				"http://example.com/cb",
+				trustedOrigins,
+				options,
+			),
+		).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri(
+				"https://192.168.1.1/cb",
+				trustedOrigins,
+				options,
+			),
+		).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri(
+				"https://u:p@app.example.com/cb#x",
+				trustedOrigins,
+				options,
+			),
+		).toBe(true);
+		expect(
+			isAllowedOAuthRedirectUri("not a url", trustedOrigins, options),
+		).toBe(false);
 	});
 });

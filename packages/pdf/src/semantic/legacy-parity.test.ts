@@ -1,13 +1,16 @@
-import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
-import type { Template } from "@rbuilder/schema/templates";
-import type { LegacyParityHostNode } from "./legacy-parity";
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import type { ResumeData, StyleRule } from "@rbuilder/schema/resume/data";
 import { styleRulesSchema } from "@rbuilder/schema/resume/data";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import type { Template } from "@rbuilder/schema/templates";
+import { describe, expect, it } from "vitest";
 import { convertLegacyStyleRules } from "./legacy-converter";
-import { compareLegacyParityHostNodes, compareLegacySemanticPresentation } from "./legacy-parity";
+import type { LegacyParityHostNode } from "./legacy-parity";
+import {
+	compareLegacyParityHostNodes,
+	compareLegacySemanticPresentation,
+} from "./legacy-parity";
 
 const fixtureNames = [
 	"all-templates-smoke",
@@ -46,7 +49,12 @@ const templates = [
 
 const readRules = (name: string): StyleRule[] =>
 	styleRulesSchema.parse(
-		JSON.parse(readFileSync(new URL(`./__fixtures__/legacy/${name}.json`, import.meta.url), "utf8")),
+		JSON.parse(
+			readFileSync(
+				new URL(`./__fixtures__/legacy/${name}.json`, import.meta.url),
+				"utf8",
+			),
+		),
 	);
 
 const buildFixture = (rules: StyleRule[]): ResumeData => {
@@ -72,7 +80,11 @@ const buildFixture = (rules: StyleRule[]): ResumeData => {
 			position: "Engineer",
 			location: "London",
 			period: "1842",
-			website: { url: "https://example.com/work", label: "Work", inlineLink: true },
+			website: {
+				url: "https://example.com/work",
+				label: "Work",
+				inlineLink: true,
+			},
 			description: "<p>Built engines.</p>",
 			roles: [
 				{
@@ -149,7 +161,14 @@ const buildFixture = (rules: StyleRule[]): ResumeData => {
 	data.metadata.layout.pages = [
 		{
 			fullWidth: true,
-			main: ["summary", "experience", "education", "skills", "awards", "1d7312cb-9ba2-4d42-9ca8-2a9ca05f9f37"],
+			main: [
+				"summary",
+				"experience",
+				"education",
+				"skills",
+				"awards",
+				"1d7312cb-9ba2-4d42-9ca8-2a9ca05f9f37",
+			],
 			sidebar: [],
 		},
 	];
@@ -161,7 +180,9 @@ describe("compareLegacySemanticPresentation", () => {
 	it("renders the mandatory target shapes in the shared parity document", () => {
 		const data = buildFixture([]);
 
-		expect(data.sections.experience.items[0]?.roles[0]?.position).toBe("Senior Engineer");
+		expect(data.sections.experience.items[0]?.roles[0]?.position).toBe(
+			"Senior Engineer",
+		);
 		expect(data.customSections).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({
@@ -170,22 +191,27 @@ describe("compareLegacySemanticPresentation", () => {
 				}),
 			]),
 		);
-		expect(data.metadata.layout.pages[0]?.main).toContain("1d7312cb-9ba2-4d42-9ca8-2a9ca05f9f37");
+		expect(data.metadata.layout.pages[0]?.main).toContain(
+			"1d7312cb-9ba2-4d42-9ca8-2a9ca05f9f37",
+		);
 	});
 
-	it.each(fixtureNames)("matches final primitive props for %s", async (fixture) => {
-		const data = buildFixture(readRules(fixture));
-		const conversion = convertLegacyStyleRules(data);
-		const comparison = await compareLegacySemanticPresentation({
-			data,
-			convertedSource: conversion.source,
-			templates: ["onyx"],
-		});
+	it.each(fixtureNames)(
+		"matches final primitive props for %s",
+		async (fixture) => {
+			const data = buildFixture(readRules(fixture));
+			const conversion = convertLegacyStyleRules(data);
+			const comparison = await compareLegacySemanticPresentation({
+				data,
+				convertedSource: conversion.source,
+				templates: ["onyx"],
+			});
 
-		expect(comparison.pageCountMismatches).toEqual([]);
-		expect(comparison.primitivePropMismatches).toEqual([]);
-		expect(comparison.mismatches).toEqual([]);
-	});
+			expect(comparison.pageCountMismatches).toEqual([]);
+			expect(comparison.primitivePropMismatches).toEqual([]);
+			expect(comparison.mismatches).toEqual([]);
+		},
+	);
 
 	it("matches final primitive props on every template", async () => {
 		const data = buildFixture(readRules("all-templates-smoke"));
@@ -247,18 +273,46 @@ describe("compareLegacySemanticPresentation", () => {
 	);
 
 	it.each([
-		["text", { type: "TEXT", value: "legacy" }, { type: "TEXT", value: "semantic" }],
+		[
+			"text",
+			{ type: "TEXT", value: "legacy" },
+			{ type: "TEXT", value: "semantic" },
+		],
 		[
 			"props",
 			{ type: "LINK", props: { src: "https://legacy.example" } },
 			{ type: "LINK", props: { src: "https://semantic.example" } },
 		],
-		["alpha", { type: "TEXT", style: { color: "#11223380" } }, { type: "TEXT", style: { color: "#112233" } }],
-		["transparent", { type: "TEXT", style: { color: "transparent" } }, { type: "TEXT", style: { color: "black" } }],
-		["unsupported color", { type: "TEXT", style: { color: "brand-ink" } }, { type: "TEXT", style: { color: "black" } }],
-		["units", { type: "TEXT", style: { fontSize: "12pt" } }, { type: "TEXT", style: { fontSize: "12px" } }],
-		["hierarchy", { type: "VIEW", children: [{ type: "TEXT", value: "same" }] }, { type: "TEXT", value: "same" }],
-		["geometry", { type: "VIEW", style: { width: 10 } }, { type: "VIEW", style: { width: 11 } }],
+		[
+			"alpha",
+			{ type: "TEXT", style: { color: "#11223380" } },
+			{ type: "TEXT", style: { color: "#112233" } },
+		],
+		[
+			"transparent",
+			{ type: "TEXT", style: { color: "transparent" } },
+			{ type: "TEXT", style: { color: "black" } },
+		],
+		[
+			"unsupported color",
+			{ type: "TEXT", style: { color: "brand-ink" } },
+			{ type: "TEXT", style: { color: "black" } },
+		],
+		[
+			"units",
+			{ type: "TEXT", style: { fontSize: "12pt" } },
+			{ type: "TEXT", style: { fontSize: "12px" } },
+		],
+		[
+			"hierarchy",
+			{ type: "VIEW", children: [{ type: "TEXT", value: "same" }] },
+			{ type: "TEXT", value: "same" },
+		],
+		[
+			"geometry",
+			{ type: "VIEW", style: { width: 10 } },
+			{ type: "VIEW", style: { width: 11 } },
+		],
 		[
 			"split wrapper inherited style",
 			{
@@ -298,7 +352,10 @@ describe("compareLegacySemanticPresentation", () => {
 			{ type: "TEXT", props: { id: "semantic-payload" } },
 		] satisfies LegacyParityHostNode[]) {
 			expect(
-				compareLegacyParityHostNodes({ type: "VIEW", children: [meaningfulEmptyText] }, { type: "VIEW", children: [] }),
+				compareLegacyParityHostNodes(
+					{ type: "VIEW", children: [meaningfulEmptyText] },
+					{ type: "VIEW", children: [] },
+				),
 			).not.toEqual([]);
 		}
 	});
@@ -311,7 +368,11 @@ describe("compareLegacySemanticPresentation", () => {
 					style: { color: "rgb(18, 52, 86)", fontWeight: 400 },
 					children: [{ type: "TEXT", value: "same" }],
 				},
-				{ type: "TEXT", style: { color: "#123456" }, children: [{ type: "TEXT", value: "same" }] },
+				{
+					type: "TEXT",
+					style: { color: "#123456" },
+					children: [{ type: "TEXT", value: "same" }],
+				},
 			),
 		).toEqual([]);
 	});

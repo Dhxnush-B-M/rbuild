@@ -80,6 +80,8 @@ export type PreflightWorkerReady = {
 	type: "preflight_ready";
 };
 
-export function getPreflightTransferables(response: PreflightWorkerResponse): Transferable[] {
+export function getPreflightTransferables(
+	response: PreflightWorkerResponse,
+): Transferable[] {
 	return response.result.ok ? [response.result.pdf] : [];
 }

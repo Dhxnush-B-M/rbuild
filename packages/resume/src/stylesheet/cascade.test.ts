@@ -1,11 +1,16 @@
-import type { BaseSettingsSnapshot, ResolvedNodeStyle, ResolveStylesheetContext, SemanticNode } from "./types";
-import { describe, expect, it } from "vitest";
-import fc from "fast-check";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import fc from "fast-check";
+import { describe, expect, it } from "vitest";
 import { resolveStylesheet } from "./cascade";
 import { compileStylesheet } from "./compile";
 import { SEMANTIC_CSS_LIMITS_V1 } from "./limits";
 import { PROPERTY_REGISTRY_V1, SEMANTIC_NODE_KINDS } from "./registry";
+import type {
+	BaseSettingsSnapshot,
+	ResolvedNodeStyle,
+	ResolveStylesheetContext,
+	SemanticNode,
+} from "./types";
 
 const node = (
 	key: string,
@@ -22,7 +27,11 @@ const node = (
 	});
 
 const items = node("items-experience", "section-items", {
-	children: [node("item-1", "item"), node("item-2", "item"), node("item-3", "item")],
+	children: [
+		node("item-1", "item"),
+		node("item-2", "item"),
+		node("item-3", "item"),
+	],
 });
 const tree = node("resume", "resume", {
 	attributes: { template: "onyx" },
@@ -35,8 +44,17 @@ const tree = node("resume", "resume", {
 					children: [
 						node("section-experience", "section", {
 							id: "experience",
-							attributes: { type: "experience", placement: "main", origin: "native" },
-							children: [node("heading-experience", "section-heading", { roles: ["section-title"] }), items],
+							attributes: {
+								type: "experience",
+								placement: "main",
+								origin: "native",
+							},
+							children: [
+								node("heading-experience", "section-heading", {
+									roles: ["section-title"],
+								}),
+								items,
+							],
 						}),
 					],
 				}),
@@ -54,7 +72,12 @@ const baseSettings: BaseSettingsSnapshot = {
 	layout: { sidebarWidth: defaultResumeData.metadata.layout.sidebarWidth },
 };
 
-const blankStyle: ResolvedNodeStyle = { style: {}, structural: {}, hidden: false, order: 0 };
+const blankStyle: ResolvedNodeStyle = {
+	style: {},
+	structural: {},
+	hidden: false,
+	order: 0,
+};
 const context: ResolveStylesheetContext = {
 	baseStyles: {
 		resume: blankStyle,
@@ -65,7 +88,9 @@ const context: ResolveStylesheetContext = {
 };
 
 const registryTree = node("resume", "resume", {
-	children: SEMANTIC_NODE_KINDS.filter((kind) => kind !== "resume").map((kind) => node(kind, kind)),
+	children: SEMANTIC_NODE_KINDS.filter((kind) => kind !== "resume").map(
+		(kind) => node(kind, kind),
+	),
 });
 
 const registryContext: ResolveStylesheetContext = {
@@ -74,29 +99,59 @@ const registryContext: ResolveStylesheetContext = {
 	pages: [{ pageKey: "page", width: 595.28, height: 841.89 }],
 };
 
-const advertisedPropertyHints = Object.entries(PROPERTY_REGISTRY_V1).flatMap(([property, definition]) => {
-	if (!definition) return [];
-	const kind = definition.appliesTo[0];
-	if (!kind) return [];
-	return [
-		...definition.values.map((value) => ({ property, kind, hint: `keyword ${value}`, value })),
-		...definition.units.map((unit) => ({ property, kind, hint: `unit ${unit}`, value: `1${unit}` })),
-	];
-});
+const advertisedPropertyHints = Object.entries(PROPERTY_REGISTRY_V1).flatMap(
+	([property, definition]) => {
+		if (!definition) return [];
+		const kind = definition.appliesTo[0];
+		if (!kind) return [];
+		return [
+			...definition.values.map((value) => ({
+				property,
+				kind,
+				hint: `keyword ${value}`,
+				value,
+			})),
+			...definition.units.map((unit) => ({
+				property,
+				kind,
+				hint: `unit ${unit}`,
+				value: `1${unit}`,
+			})),
+		];
+	},
+);
 
-function resolve(source: string, customContext: ResolveStylesheetContext = context) {
-	const compiled = compileStylesheet({ languageVersion: 1, text: `@version 1;${source}` });
-	if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
+function resolve(
+	source: string,
+	customContext: ResolveStylesheetContext = context,
+) {
+	const compiled = compileStylesheet({
+		languageVersion: 1,
+		text: `@version 1;${source}`,
+	});
+	if (!compiled.program)
+		throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
 	return resolveStylesheet(compiled.program, tree, customContext);
 }
 
-function resolveTree(source: string, semanticTree: SemanticNode, customContext: ResolveStylesheetContext) {
-	const compiled = compileStylesheet({ languageVersion: 1, text: `@version 1;${source}` });
-	if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
+function resolveTree(
+	source: string,
+	semanticTree: SemanticNode,
+	customContext: ResolveStylesheetContext,
+) {
+	const compiled = compileStylesheet({
+		languageVersion: 1,
+		text: `@version 1;${source}`,
+	});
+	if (!compiled.program)
+		throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
 	return resolveStylesheet(compiled.program, semanticTree, customContext);
 }
 
-function find(nodeToSearch: SemanticNode, key: string): SemanticNode | undefined {
+function find(
+	nodeToSearch: SemanticNode,
+	key: string,
+): SemanticNode | undefined {
 	if (nodeToSearch.key === key) return nodeToSearch;
 	for (const child of nodeToSearch.children) {
 		const match = find(child, key);
@@ -104,24 +159,37 @@ function find(nodeToSearch: SemanticNode, key: string): SemanticNode | undefined
 	}
 }
 
-function semanticTreeOfSize(size: number, shape: "deep" | "wide"): SemanticNode {
+function semanticTreeOfSize(
+	size: number,
+	shape: "deep" | "wide",
+): SemanticNode {
 	if (shape === "wide") {
 		return node("root", "resume", {
-			children: Array.from({ length: size - 1 }, (_, index) => node(`item-${index}`, "item")),
+			children: Array.from({ length: size - 1 }, (_, index) =>
+				node(`item-${index}`, "item"),
+			),
 		});
 	}
 
 	let root = node("node-0", "item");
-	for (let index = 1; index < size; index++) root = node(`node-${index}`, "item", { children: [root] });
+	for (let index = 1; index < size; index++)
+		root = node(`node-${index}`, "item", { children: [root] });
 	return root;
 }
 
-function oversizedFrontierTree(): { tree: SemanticNode; childReads: () => number } {
+function oversizedFrontierTree(): {
+	tree: SemanticNode;
+	childReads: () => number;
+} {
 	let childReads = 0;
 	const children = new Proxy({} as readonly SemanticNode[], {
 		get: (_target, property) => {
-			if (property === "length") return SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes + 1;
-			if (property === Symbol.iterator || (typeof property === "string" && /^\d+$/.test(property))) {
+			if (property === "length")
+				return SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes + 1;
+			if (
+				property === Symbol.iterator ||
+				(typeof property === "string" && /^\d+$/.test(property))
+			) {
 				childReads++;
 				throw new Error("Oversized frontier entries must not be read.");
 			}
@@ -145,10 +213,17 @@ describe("Semantic CSS cascade and structural resolution", () => {
 				compiled.diagnostics.filter(({ severity }) => severity === "error"),
 				`${property}: ${value} failed compilation`,
 			).toEqual([]);
-			expect(compiled.program, `${property}: ${value} did not compile`).not.toBeNull();
+			expect(
+				compiled.program,
+				`${property}: ${value} did not compile`,
+			).not.toBeNull();
 			if (!compiled.program) return;
 
-			const resolved = resolveStylesheet(compiled.program, registryTree, registryContext);
+			const resolved = resolveStylesheet(
+				compiled.program,
+				registryTree,
+				registryContext,
+			);
 			expect(
 				resolved.diagnostics.filter(({ severity }) => severity === "error"),
 				`${property}: ${value} failed cascade resolution`,
@@ -187,7 +262,11 @@ describe("Semantic CSS cascade and structural resolution", () => {
 								node("contact-email", "contact-item", {
 									attributes: { name: "email" },
 									roles: ["structured-link"],
-									children: [node("contact-email-link", "link", { roles: ["structured-link"] })],
+									children: [
+										node("contact-email-link", "link", {
+											roles: ["structured-link"],
+										}),
+									],
 								}),
 							],
 						}),
@@ -201,8 +280,16 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			aliases: { "contact-email": ["contact-email-link"] },
 		} satisfies ResolveStylesheetContext;
 
-		const laterAlias = resolveTree("contact-item { color: red; } link { color: blue; }", contactTree, aliasContext);
-		const laterCanonical = resolveTree("link { color: blue; } contact-item { color: red; }", contactTree, aliasContext);
+		const laterAlias = resolveTree(
+			"contact-item { color: red; } link { color: blue; }",
+			contactTree,
+			aliasContext,
+		);
+		const laterCanonical = resolveTree(
+			"link { color: blue; } contact-item { color: red; }",
+			contactTree,
+			aliasContext,
+		);
 		const specificCanonical = resolveTree(
 			"contact-item[name='email'] { color: red; } link { color: blue; }",
 			contactTree,
@@ -231,12 +318,20 @@ describe("Semantic CSS cascade and structural resolution", () => {
 								node("contact-phone", "contact-item", {
 									attributes: { name: "phone" },
 									roles: ["structured-link"],
-									children: [node("contact-phone-link", "link", { roles: ["structured-link"] })],
+									children: [
+										node("contact-phone-link", "link", {
+											roles: ["structured-link"],
+										}),
+									],
 								}),
 								node("contact-email", "contact-item", {
 									attributes: { name: "email" },
 									roles: ["structured-link"],
-									children: [node("contact-email-link", "link", { roles: ["structured-link"] })],
+									children: [
+										node("contact-email-link", "link", {
+											roles: ["structured-link"],
+										}),
+									],
 								}),
 							],
 						}),
@@ -252,14 +347,23 @@ describe("Semantic CSS cascade and structural resolution", () => {
 				"contact-phone": ["contact-phone-link"],
 			},
 		} satisfies ResolveStylesheetContext;
-		const ordered = resolveTree("contact-item[name='email'] > link { order: -1; }", contactTree, aliasContext);
-		const hidden = resolveTree("contact-item[name='email'] > link { display: none; }", contactTree, aliasContext);
+		const ordered = resolveTree(
+			"contact-item[name='email'] > link { order: -1; }",
+			contactTree,
+			aliasContext,
+		);
+		const hidden = resolveTree(
+			"contact-item[name='email'] > link { display: none; }",
+			contactTree,
+			aliasContext,
+		);
 
-		expect(find(ordered.renderTree, "contact-list")?.children.map(({ key }) => key)).toEqual([
-			"contact-email",
-			"contact-phone",
-		]);
-		expect(find(hidden.renderTree, "contact-list")?.children.map(({ key }) => key)).toEqual(["contact-phone"]);
+		expect(
+			find(ordered.renderTree, "contact-list")?.children.map(({ key }) => key),
+		).toEqual(["contact-email", "contact-phone"]);
+		expect(
+			find(hidden.renderTree, "contact-list")?.children.map(({ key }) => key),
+		).toEqual(["contact-phone"]);
 		expect(hidden.nodes["contact-email"]?.hidden).toBe(true);
 	});
 
@@ -269,19 +373,26 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			section { color: inherit; }
 			section-heading { color: var(--missing, var(--accent)); }
 		`);
-		expect(valid.nodes["heading-experience"]?.style.color).toBe(baseSettings.design.colors.primary);
+		expect(valid.nodes["heading-experience"]?.style.color).toBe(
+			baseSettings.design.colors.primary,
+		);
 
-		const reverted = resolve("section { color: red; } section-heading { color: revert; }");
+		const reverted = resolve(
+			"section { color: red; } section-heading { color: revert; }",
+		);
 		expect(reverted.nodes["heading-experience"]?.style.color).toBe("black");
 
 		const compiled = compileStylesheet({
 			languageVersion: 1,
 			text: "@version 1; :root { --a: var(--b); --b: var(--a); } section { color: var(--a); }",
 		});
-		if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
+		if (!compiled.program)
+			throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
 		const cycled = resolveStylesheet(compiled.program, tree, context);
 		expect(cycled.nodes).toEqual({});
-		expect(cycled.diagnostics).toContainEqual(expect.objectContaining({ code: "VARIABLE_CYCLE", severity: "error" }));
+		expect(cycled.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "VARIABLE_CYCLE", severity: "error" }),
+		);
 	});
 
 	it("normalizes PDF lengths with the correct font-relative bases and expands spacing shorthands", () => {
@@ -357,10 +468,14 @@ describe("Semantic CSS cascade and structural resolution", () => {
 	});
 
 	it("warns after variable expansion when a value is extreme but technically renderable", () => {
-		const result = resolve(":root { --tiny: 3pt; } section-heading { font-size: var(--tiny); }");
+		const result = resolve(
+			":root { --tiny: 3pt; } section-heading { font-size: var(--tiny); }",
+		);
 
 		expect(result.nodes["heading-experience"]?.style["font-size"]).toBe(3);
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "EXTREME_VALUE", severity: "warning" }));
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "EXTREME_VALUE", severity: "warning" }),
+		);
 	});
 
 	it("resolves authored size before media and rejects size inside media", () => {
@@ -371,7 +486,10 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			`,
 			{ ...context, pages: [{ pageKey: "page-1", width: 800, height: 400 }] },
 		);
-		expect(result.nodes["page-1"]?.structural.pageSize).toEqual({ width: 400, height: 600 });
+		expect(result.nodes["page-1"]?.structural.pageSize).toEqual({
+			width: 400,
+			height: 600,
+		});
 		expect(result.nodes["page-1"]?.style["margin-top"]).toBe(10);
 		expect(result.nodes["page-1"]?.style["padding-top"]).toBe(400);
 
@@ -380,7 +498,9 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			text: "@version 1; @media (width: 400pt) { page { size: A4; } }",
 		});
 		expect(invalid.program).toBeNull();
-		expect(invalid.diagnostics).toContainEqual(expect.objectContaining({ code: "MEDIA_PAGE_SIZE", severity: "error" }));
+		expect(invalid.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "MEDIA_PAGE_SIZE", severity: "error" }),
+		);
 	});
 
 	it("resolves a relative authored page size exactly once against authored dimensions", () => {
@@ -396,30 +516,51 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			},
 		);
 
-		expect(result.nodes["page-1"]?.structural.pageSize).toEqual({ width: 400, height: 300 });
+		expect(result.nodes["page-1"]?.structural.pageSize).toEqual({
+			width: 400,
+			height: 300,
+		});
 		expect(result.diagnostics).not.toContainEqual(
-			expect.objectContaining({ code: "UNRESOLVED_VARIABLE", severity: "error" }),
+			expect.objectContaining({
+				code: "UNRESOLVED_VARIABLE",
+				severity: "error",
+			}),
 		);
 	});
 
 	it("bounds generated branching variable expansion by aggregate work and output", () => {
 		fc.assert(
 			fc.property(fc.integer({ min: 3, max: 4 }), (branches) => {
-				const depth = Math.ceil(Math.log(SEMANTIC_CSS_LIMITS_V1.maxSourceBytes) / Math.log(branches)) + 1;
+				const depth =
+					Math.ceil(
+						Math.log(SEMANTIC_CSS_LIMITS_V1.maxSourceBytes) /
+							Math.log(branches),
+					) + 1;
 				const variables = Array.from({ length: depth }, (_, index) => {
 					const next =
-						index === depth - 1 ? "r" : Array.from({ length: branches }, () => `var(--v${index + 1})`).join("");
+						index === depth - 1
+							? "r"
+							: Array.from(
+									{ length: branches },
+									() => `var(--v${index + 1})`,
+								).join("");
 					return `--v${index}:${next};`;
 				}).join("");
 				const compiled = compileStylesheet({
 					languageVersion: 1,
 					text: `@version 1;:root{${variables}}section-heading{color:var(--v0);}`,
 				});
-				if (!compiled.program) throw new Error(compiled.diagnostics.map(({ code }) => code).join(","));
+				if (!compiled.program)
+					throw new Error(
+						compiled.diagnostics.map(({ code }) => code).join(","),
+					);
 				const result = resolveStylesheet(compiled.program, tree, context);
 				expect(result.nodes).toEqual({});
 				expect(result.diagnostics).toContainEqual(
-					expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
+					expect.objectContaining({
+						code: "RESOURCE_LIMIT",
+						severity: "error",
+					}),
 				);
 			}),
 			{ numRuns: 8 },
@@ -427,10 +568,38 @@ describe("Semantic CSS cascade and structural resolution", () => {
 	});
 
 	it.each([
-		{ keyword: "InItIaL", color: undefined, hidden: false, order: 0, fixed: undefined, breakBefore: undefined },
-		{ keyword: "uNsEt", color: "purple", hidden: false, order: 0, fixed: undefined, breakBefore: undefined },
-		{ keyword: "ReVeRt", color: "navy", hidden: true, order: 7, fixed: true, breakBefore: "page" },
-		{ keyword: "InHeRiT", color: "purple", hidden: true, order: 3, fixed: true, breakBefore: "page" },
+		{
+			keyword: "InItIaL",
+			color: undefined,
+			hidden: false,
+			order: 0,
+			fixed: undefined,
+			breakBefore: undefined,
+		},
+		{
+			keyword: "uNsEt",
+			color: "purple",
+			hidden: false,
+			order: 0,
+			fixed: undefined,
+			breakBefore: undefined,
+		},
+		{
+			keyword: "ReVeRt",
+			color: "navy",
+			hidden: true,
+			order: 7,
+			fixed: true,
+			breakBefore: "page",
+		},
+		{
+			keyword: "InHeRiT",
+			color: "purple",
+			hidden: true,
+			order: 3,
+			fixed: true,
+			breakBefore: "page",
+		},
 	] as const)(
 		"applies case-insensitive $keyword semantics to style, hidden, order, and structural properties",
 		({ keyword, color, hidden, order, fixed, breakBefore }) => {
@@ -463,10 +632,15 @@ describe("Semantic CSS cascade and structural resolution", () => {
 				customContext,
 			);
 
-			expect(result.nodes["section-experience"]).toMatchObject({ hidden, order });
+			expect(result.nodes["section-experience"]).toMatchObject({
+				hidden,
+				order,
+			});
 			expect(result.nodes["section-experience"]?.style.color).toBe(color);
 			expect(result.nodes["section-experience"]?.structural.fixed).toBe(fixed);
-			expect(result.nodes["section-experience"]?.structural.breakBefore).toBe(breakBefore);
+			expect(result.nodes["section-experience"]?.structural.breakBefore).toBe(
+				breakBefore,
+			);
 		},
 	);
 
@@ -484,22 +658,30 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		{ keyword: "unset", expected: undefined },
 		{ keyword: "inherit", expected: "LETTER" },
 		{ keyword: "revert", expected: { width: 700, height: 900 } },
-	] as const)("applies $keyword to page size structure", ({ keyword, expected }) => {
-		const result = resolve(`page { size: ${keyword}; }`, {
-			...context,
-			baseStyles: {
-				...context.baseStyles,
-				resume: { ...blankStyle, structural: { pageSize: "LETTER" } },
-				"page-1": { ...blankStyle, structural: { pageSize: { width: 700, height: 900 } } },
-			},
-			pages: [{ pageKey: "page-1", width: 800, height: 600 }],
-		});
+	] as const)(
+		"applies $keyword to page size structure",
+		({ keyword, expected }) => {
+			const result = resolve(`page { size: ${keyword}; }`, {
+				...context,
+				baseStyles: {
+					...context.baseStyles,
+					resume: { ...blankStyle, structural: { pageSize: "LETTER" } },
+					"page-1": {
+						...blankStyle,
+						structural: { pageSize: { width: 700, height: 900 } },
+					},
+				},
+				pages: [{ pageKey: "page-1", width: 800, height: 600 }],
+			});
 
-		expect(result.nodes["page-1"]?.structural.pageSize).toEqual(expected);
-	});
+			expect(result.nodes["page-1"]?.structural.pageSize).toEqual(expected);
+		},
+	);
 
 	it("normalizes supported line-height lengths and enforces font-size and opacity bounds", () => {
-		const valid = resolve("section-heading { line-height: 12pt; font-size: 0; opacity: 0; }");
+		const valid = resolve(
+			"section-heading { line-height: 12pt; font-size: 0; opacity: 0; }",
+		);
 		expect(valid.nodes["heading-experience"]?.style).toMatchObject({
 			"line-height": 12,
 			"font-size": 0,
@@ -508,7 +690,11 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		const upper = resolve("section-heading { opacity: 1; }");
 		expect(upper.nodes["heading-experience"]?.style.opacity).toBe(1);
 
-		for (const declaration of ["font-size: -0.01pt", "opacity: -0.0001", "opacity: 1.0001"]) {
+		for (const declaration of [
+			"font-size: -0.01pt",
+			"opacity: -0.0001",
+			"opacity: 1.0001",
+		]) {
 			const compiled = compileStylesheet({
 				languageVersion: 1,
 				text: `@version 1;section-heading{${declaration}}`,
@@ -519,9 +705,13 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			);
 		}
 
-		const variable = resolve(":root { --bad: 1.0001; } section-heading { opacity: var(--bad); }");
+		const variable = resolve(
+			":root { --bad: 1.0001; } section-heading { opacity: var(--bad); }",
+		);
 		expect(variable.nodes).toEqual({});
-		expect(variable.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }));
+		expect(variable.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "INVALID_VALUE", severity: "error" }),
+		);
 	});
 
 	it("matches positional selectors before applying display and stable order exactly once", () => {
@@ -531,12 +721,15 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		`);
 		const renderedItems = find(result.renderTree, "items-experience");
 
-		expect(renderedItems?.children.map(({ key }) => key)).toEqual(["item-3", "item-1"]);
-		expect(tree.children[0]?.children[0]?.children[0]?.children[1]?.children.map(({ key }) => key)).toEqual([
-			"item-1",
-			"item-2",
+		expect(renderedItems?.children.map(({ key }) => key)).toEqual([
 			"item-3",
+			"item-1",
 		]);
+		expect(
+			tree.children[0]?.children[0]?.children[0]?.children[1]?.children.map(
+				({ key }) => key,
+			),
+		).toEqual(["item-1", "item-2", "item-3"]);
 	});
 
 	it("maps structural declarations without mixing them into renderer styles", () => {
@@ -546,24 +739,38 @@ describe("Semantic CSS cascade and structural resolution", () => {
 		`);
 
 		expect(result.nodes["section-experience"]).toMatchObject({
-			structural: { breakBefore: "page", breakInside: "avoid", fixed: true, minPresenceAhead: 12 },
+			structural: {
+				breakBefore: "page",
+				breakInside: "avoid",
+				fixed: true,
+				minPresenceAhead: 12,
+			},
 		});
 		expect(result.nodes["heading-experience"]).toMatchObject({
 			structural: { orphans: 2, widows: 3 },
 			order: 4,
 		});
-		expect(result.nodes["section-experience"]?.style["break-before"]).toBeUndefined();
+		expect(
+			result.nodes["section-experience"]?.style["break-before"],
+		).toBeUndefined();
 	});
 
 	it.each([
 		["0", false],
 		["1", true],
-	] as const)("maps the accepted -resume-fixed value %s to %s", (value, expected) => {
-		const result = resolve(`section { -resume-fixed: ${value}; }`);
+	] as const)(
+		"maps the accepted -resume-fixed value %s to %s",
+		(value, expected) => {
+			const result = resolve(`section { -resume-fixed: ${value}; }`);
 
-		expect(result.nodes["section-experience"]?.structural.fixed).toBe(expected);
-		expect(result.diagnostics.filter(({ severity }) => severity === "error")).toEqual([]);
-	});
+			expect(result.nodes["section-experience"]?.structural.fixed).toBe(
+				expected,
+			);
+			expect(
+				result.diagnostics.filter(({ severity }) => severity === "error"),
+			).toEqual([]);
+		},
+	);
 
 	it("accepts the exact semantic node budget and rejects deep or wide trees one node over", () => {
 		const program = { languageVersion: 1, rules: [] };
@@ -572,7 +779,9 @@ describe("Semantic CSS cascade and structural resolution", () => {
 			semanticTreeOfSize(SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes, "wide"),
 			context,
 		);
-		expect(Object.keys(exact.nodes)).toHaveLength(SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes);
+		expect(Object.keys(exact.nodes)).toHaveLength(
+			SEMANTIC_CSS_LIMITS_V1.maxSemanticNodes,
+		);
 
 		for (const shape of ["deep", "wide"] as const) {
 			const result = resolveStylesheet(
@@ -581,16 +790,24 @@ describe("Semantic CSS cascade and structural resolution", () => {
 				context,
 			);
 			expect(result.nodes).toEqual({});
-			expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }));
+			expect(result.diagnostics).toContainEqual(
+				expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
+			);
 		}
 	});
 
 	it("rejects an oversized root frontier without reading or queueing child entries", () => {
 		const frontier = oversizedFrontierTree();
-		const result = resolveStylesheet({ languageVersion: 1, rules: [] }, frontier.tree, context);
+		const result = resolveStylesheet(
+			{ languageVersion: 1, rules: [] },
+			frontier.tree,
+			context,
+		);
 
 		expect(result.nodes).toEqual({});
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }));
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "RESOURCE_LIMIT", severity: "error" }),
+		);
 		expect(frontier.childReads()).toBe(0);
 	});
 });

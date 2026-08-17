@@ -1,9 +1,6 @@
-import type { AuthSession } from "@/libs/auth/session";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PaletteIcon, SignOutIcon } from "@phosphor-icons/react";
-import { useRouter } from "@tanstack/react-router";
-import { toast } from "sonner";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -17,12 +14,19 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@rbuilder/ui/components/dropdown-menu";
+import { useRouter } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
+import type { AuthSession } from "@/libs/auth/session";
 import { isTheme } from "@/libs/theme";
 
 type Props = {
-	children: ({ session }: { session: AuthSession }) => React.ComponentProps<typeof DropdownMenuTrigger>["render"];
+	children: ({
+		session,
+	}: {
+		session: AuthSession;
+	}) => React.ComponentProps<typeof DropdownMenuTrigger>["render"];
 };
 
 export function UserDropdownMenu({ children }: Props) {
@@ -95,15 +99,24 @@ export function UserDropdownMenu({ children }: Props) {
 					<DropdownMenuSub>
 						<DropdownMenuSubTrigger>
 							<PaletteIcon />
-							<Trans comment="Menu item that opens appearance theme selection submenu">Theme</Trans>
+							<Trans comment="Menu item that opens appearance theme selection submenu">
+								Theme
+							</Trans>
 						</DropdownMenuSubTrigger>
 						<DropdownMenuSubContent>
-							<DropdownMenuRadioGroup value={theme} onValueChange={handleThemeChange}>
+							<DropdownMenuRadioGroup
+								value={theme}
+								onValueChange={handleThemeChange}
+							>
 								<DropdownMenuRadioItem value="light">
-									<Trans comment="Appearance theme option for light mode">Light</Trans>
+									<Trans comment="Appearance theme option for light mode">
+										Light
+									</Trans>
 								</DropdownMenuRadioItem>
 								<DropdownMenuRadioItem value="dark">
-									<Trans comment="Appearance theme option for dark mode">Dark</Trans>
+									<Trans comment="Appearance theme option for dark mode">
+										Dark
+									</Trans>
 								</DropdownMenuRadioItem>
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
@@ -114,7 +127,9 @@ export function UserDropdownMenu({ children }: Props) {
 
 				<DropdownMenuItem onClick={handleLogout}>
 					<SignOutIcon />
-					<Trans comment="User menu action to sign out of current account">Logout</Trans>
+					<Trans comment="User menu action to sign out of current account">
+						Logout
+					</Trans>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

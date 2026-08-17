@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it, vi } from "vitest";
 import { getResumeSectionTitle, resolveSectionTitle } from "./section-title";
 
 describe("resolveSectionTitle", () => {
@@ -82,23 +82,34 @@ describe("getResumeSectionTitle", () => {
 	});
 
 	it("uses default English title for built-in sections", () => {
-		expect(getResumeSectionTitle(defaultResumeData, "experience")).toBe("Experience");
+		expect(getResumeSectionTitle(defaultResumeData, "experience")).toBe(
+			"Experience",
+		);
 		expect(getResumeSectionTitle(defaultResumeData, "skills")).toBe("Skills");
 	});
 
 	it("falls back to legacyFallback for unknown section ids", () => {
-		expect(getResumeSectionTitle(defaultResumeData, "unknown-id", "Custom Legacy")).toBe("Custom Legacy");
+		expect(
+			getResumeSectionTitle(defaultResumeData, "unknown-id", "Custom Legacy"),
+		).toBe("Custom Legacy");
 	});
 
 	it("falls back to sectionId for unknown sections without legacyFallback", () => {
-		expect(getResumeSectionTitle(defaultResumeData, "unknown-section")).toBe("unknown-section");
+		expect(getResumeSectionTitle(defaultResumeData, "unknown-section")).toBe(
+			"unknown-section",
+		);
 	});
 
 	it("calls user's resolveSectionTitle when present", () => {
 		const resolver = vi.fn().mockReturnValue("Translated");
 		const data = { ...defaultResumeData, resolveSectionTitle: resolver };
 		expect(getResumeSectionTitle(data, "experience")).toBe("Translated");
-		expect(resolver).toHaveBeenCalledWith(expect.objectContaining({ sectionId: "experience", sectionKind: "builtin" }));
+		expect(resolver).toHaveBeenCalledWith(
+			expect.objectContaining({
+				sectionId: "experience",
+				sectionKind: "builtin",
+			}),
+		);
 	});
 
 	it("uses custom section's title when defined", () => {

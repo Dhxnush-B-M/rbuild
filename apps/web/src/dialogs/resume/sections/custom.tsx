@@ -1,12 +1,9 @@
 import type { MessageDescriptor } from "@lingui/core";
-import type { CustomSectionType } from "@rbuilder/schema/resume/data";
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
+import type { CustomSectionType } from "@rbuilder/schema/resume/data";
 import { customSectionSchema } from "@rbuilder/schema/resume/data";
 import { Button } from "@rbuilder/ui/components/button";
 import {
@@ -16,12 +13,20 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { generateId } from "@rbuilder/utils/string";
 import { cn } from "@rbuilder/utils/style";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
 import { IconPicker } from "@/components/input/icon-picker";
 import { Combobox } from "@/components/ui/combobox";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
@@ -44,7 +49,10 @@ const defaultValues: FormValues = {
 	items: [],
 };
 
-const SECTION_TYPE_OPTIONS: { value: CustomSectionType; label: MessageDescriptor }[] = [
+const SECTION_TYPE_OPTIONS: {
+	value: CustomSectionType;
+	label: MessageDescriptor;
+}[] = [
 	{ value: "summary", label: msg`Summary` },
 	{ value: "experience", label: msg`Experience` },
 	{ value: "education", label: msg`Education` },
@@ -60,7 +68,9 @@ const SECTION_TYPE_OPTIONS: { value: CustomSectionType; label: MessageDescriptor
 	{ value: "references", label: msg`References` },
 ];
 
-function isCustomSectionType(value: string | null | undefined): value is CustomSectionType {
+function isCustomSectionType(
+	value: string | null | undefined,
+): value is CustomSectionType {
 	return SECTION_TYPE_OPTIONS.some((option) => option.value === value);
 }
 
@@ -70,7 +80,9 @@ function getIconPickerValue(icon: string, type: CustomSectionType): string {
 	return icon || defaultSectionIconNames[type];
 }
 
-export function CreateCustomSectionDialog({ data }: DialogProps<"resume.sections.custom.create">) {
+export function CreateCustomSectionDialog({
+	data,
+}: DialogProps<"resume.sections.custom.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -135,7 +147,9 @@ export function CreateCustomSectionDialog({ data }: DialogProps<"resume.sections
 	);
 }
 
-export function UpdateCustomSectionDialog({ data }: DialogProps<"resume.sections.custom.update">) {
+export function UpdateCustomSectionDialog({
+	data,
+}: DialogProps<"resume.sections.custom.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -147,7 +161,9 @@ export function UpdateCustomSectionDialog({ data }: DialogProps<"resume.sections
 		validators: { onSubmit: formSchema },
 		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
-				const index = draft.customSections.findIndex((item) => item.id === value.id);
+				const index = draft.customSections.findIndex(
+					(item) => item.id === value.id,
+				);
 				if (index === -1) return;
 				draft.customSections[index] = value;
 			});
@@ -199,16 +215,25 @@ const CreateCustomSectionForm = withForm({
 		const titleMeta = useStore(form.store, (state) => state.fieldMeta?.title);
 		const sectionType = useStore(form.store, (state) => state.values.type);
 
-		const isTitleInvalid = (titleMeta?.isTouched ?? false) && (titleMeta?.errors?.length ?? 0) > 0;
+		const isTitleInvalid =
+			(titleMeta?.isTouched ?? false) && (titleMeta?.errors?.length ?? 0) > 0;
 
 		return (
 			<>
-				<div className={cn("flex items-end sm:col-span-full", isTitleInvalid && "items-center")}>
+				<div
+					className={cn(
+						"flex items-end sm:col-span-full",
+						isTitleInvalid && "items-center",
+					)}
+				>
 					<form.Field name="icon">
 						{(field) => (
 							<FormItem
 								className="shrink-0"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
 							>
 								<FormControl
 									render={
@@ -227,7 +252,13 @@ const CreateCustomSectionForm = withForm({
 
 					<form.Field name="title">
 						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								className="flex-1"
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Title</Trans>
 								</FormLabel>
@@ -238,7 +269,9 @@ const CreateCustomSectionForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -252,7 +285,9 @@ const CreateCustomSectionForm = withForm({
 					{(field) => (
 						<FormItem
 							className="sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormLabel>
 								<Trans>Section Type</Trans>
@@ -289,16 +324,25 @@ const UpdateCustomSectionForm = withForm({
 		const titleMeta = useStore(form.store, (state) => state.fieldMeta?.title);
 		const sectionType = useStore(form.store, (state) => state.values.type);
 
-		const isTitleInvalid = (titleMeta?.isTouched ?? false) && (titleMeta?.errors?.length ?? 0) > 0;
+		const isTitleInvalid =
+			(titleMeta?.isTouched ?? false) && (titleMeta?.errors?.length ?? 0) > 0;
 
 		return (
 			<>
-				<div className={cn("flex items-end sm:col-span-full", isTitleInvalid && "items-center")}>
+				<div
+					className={cn(
+						"flex items-end sm:col-span-full",
+						isTitleInvalid && "items-center",
+					)}
+				>
 					<form.Field name="icon">
 						{(field) => (
 							<FormItem
 								className="shrink-0"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
 							>
 								<FormControl
 									render={
@@ -317,7 +361,13 @@ const UpdateCustomSectionForm = withForm({
 
 					<form.Field name="title">
 						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								className="flex-1"
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Title</Trans>
 								</FormLabel>
@@ -328,7 +378,9 @@ const UpdateCustomSectionForm = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -342,7 +394,9 @@ const UpdateCustomSectionForm = withForm({
 					{(field) => (
 						<FormItem
 							className="sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
 						>
 							<FormLabel>
 								<Trans>Section Type</Trans>

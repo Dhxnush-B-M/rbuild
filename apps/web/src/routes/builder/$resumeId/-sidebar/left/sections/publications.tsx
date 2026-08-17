@@ -1,14 +1,19 @@
-import type { publicationItemSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { AnimatePresence, Reorder } from "motion/react";
+import type { publicationItemSchema } from "@rbuilder/schema/resume/data";
 import { cn } from "@rbuilder/utils/style";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { AnimatePresence, Reorder } from "motion/react";
+import type z from "zod";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { SectionBase } from "../shared/section-base";
 import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
 export function PublicationsSectionBuilder() {
-	const section = useCurrentBuilderResumeSelector((resume) => resume.data.sections.publications);
+	const section = useCurrentBuilderResumeSelector(
+		(resume) => resume.data.sections.publications,
+	);
 	const updateResumeData = useUpdateResumeData();
 
 	const handleReorder = (items: z.infer<typeof publicationItemSchema>[]) => {
@@ -18,11 +23,23 @@ export function PublicationsSectionBuilder() {
 	};
 
 	return (
-		<SectionBase type="publications" className={cn("rounded-md border", section.items.length === 0 && "border-dashed")}>
+		<SectionBase
+			type="publications"
+			className={cn(
+				"rounded-md border",
+				section.items.length === 0 && "border-dashed",
+			)}
+		>
 			<Reorder.Group axis="y" values={section.items} onReorder={handleReorder}>
 				<AnimatePresence>
 					{section.items.map((item) => (
-						<SectionItem key={item.id} type="publications" item={item} title={item.title} subtitle={item.publisher} />
+						<SectionItem
+							key={item.id}
+							type="publications"
+							item={item}
+							title={item.title}
+							subtitle={item.publisher}
+						/>
 					))}
 				</AnimatePresence>
 			</Reorder.Group>

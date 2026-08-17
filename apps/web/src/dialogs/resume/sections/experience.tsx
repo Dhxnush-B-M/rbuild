@@ -1,22 +1,35 @@
-import type { RoleItem } from "@rbuilder/schema/resume/data";
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
-import { PencilSimpleLineIcon, PlusIcon, RowsIcon, TrashSimpleIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
-import { AnimatePresence, Reorder, useDragControls } from "motion/react";
+import {
+	PencilSimpleLineIcon,
+	PlusIcon,
+	RowsIcon,
+	TrashSimpleIcon,
+} from "@phosphor-icons/react";
+import type { RoleItem } from "@rbuilder/schema/resume/data";
 import { experienceItemSchema } from "@rbuilder/schema/resume/data";
 import { Button } from "@rbuilder/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { Switch } from "@rbuilder/ui/components/switch";
 import { generateId } from "@rbuilder/utils/string";
+import { useStore } from "@tanstack/react-form";
+import { AnimatePresence, Reorder, useDragControls } from "motion/react";
+import type z from "zod";
 import { RichInput } from "@/components/input/rich-input";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -36,7 +49,9 @@ const defaultValues: FormValues = {
 	roles: [] as RoleItem[],
 };
 
-export function CreateExperienceDialog({ data }: DialogProps<"resume.sections.experience.create">) {
+export function CreateExperienceDialog({
+	data,
+}: DialogProps<"resume.sections.experience.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -68,7 +83,9 @@ export function CreateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	);
 }
 
-export function UpdateExperienceDialog({ data }: DialogProps<"resume.sections.experience.update">) {
+export function UpdateExperienceDialog({
+	data,
+}: DialogProps<"resume.sections.experience.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -113,13 +130,21 @@ const ExperienceForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="company">{(field) => <field.TextField label={<Trans>Company</Trans>} />}</form.AppField>
+				<form.AppField name="company">
+					{(field) => <field.TextField label={<Trans>Company</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="location">{(field) => <field.TextField label={<Trans>Location</Trans>} />}</form.AppField>
+				<form.AppField name="location">
+					{(field) => <field.TextField label={<Trans>Location</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="position">{(field) => <field.TextField label={<Trans>Position</Trans>} />}</form.AppField>
+				<form.AppField name="position">
+					{(field) => <field.TextField label={<Trans>Position</Trans>} />}
+				</form.AppField>
 
-				<form.AppField name="period">{(field) => <field.TextField label={<Trans>Period</Trans>} />}</form.AppField>
+				<form.AppField name="period">
+					{(field) => <field.TextField label={<Trans>Period</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="website">
 					{(field) => (
@@ -158,7 +183,10 @@ const ExperienceForm = withForm({
 							<Trans>Role Progression</Trans>
 						</p>
 						<p className="text-muted-foreground text-xs">
-							<Trans>Add multiple roles to show career progression at the same company.</Trans>
+							<Trans>
+								Add multiple roles to show career progression at the same
+								company.
+							</Trans>
 						</p>
 					</div>
 
@@ -190,17 +218,19 @@ const ExperienceForm = withForm({
 								className="flex flex-col gap-4 sm:col-span-full"
 							>
 								<AnimatePresence>
-									{rolesField.state.value.map((role: RoleItem, index: number) => (
-										<RoleFields
-											key={role.id}
-											form={form}
-											role={role}
-											index={index}
-											onRemove={() => {
-												rolesField.removeValue(index);
-											}}
-										/>
-									))}
+									{rolesField.state.value.map(
+										(role: RoleItem, index: number) => (
+											<RoleFields
+												key={role.id}
+												form={form}
+												role={role}
+												index={index}
+												onRemove={() => {
+													rolesField.removeValue(index);
+												}}
+											/>
+										),
+									)}
 								</AnimatePresence>
 							</Reorder.Group>
 						)}
@@ -210,7 +240,12 @@ const ExperienceForm = withForm({
 				{/* Single Role Description — only show when no roles are defined */}
 				{!hasRoles && (
 					<form.AppField name="description">
-						{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+						{(field) => (
+							<field.RichTextField
+								label={<Trans>Description</Trans>}
+								formItemClassName="sm:col-span-full"
+							/>
+						)}
 					</form.AppField>
 				)}
 			</>
@@ -257,7 +292,12 @@ const RoleFields = withForm({
 						<Trans>Reorder</Trans>
 					</Button>
 
-					<Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={onRemove}>
+					<Button
+						size="sm"
+						variant="ghost"
+						className="text-destructive hover:text-destructive"
+						onClick={onRemove}
+					>
 						<TrashSimpleIcon />
 						<Trans>Remove</Trans>
 					</Button>
@@ -266,7 +306,12 @@ const RoleFields = withForm({
 				<div className="grid gap-4 p-4 sm:col-span-full sm:grid-cols-2">
 					<form.Field name={`roles[${index}].position`}>
 						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Position</Trans>
 								</FormLabel>
@@ -276,7 +321,9 @@ const RoleFields = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -287,7 +334,12 @@ const RoleFields = withForm({
 
 					<form.Field name={`roles[${index}].period`}>
 						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Period</Trans>
 								</FormLabel>
@@ -297,7 +349,9 @@ const RoleFields = withForm({
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -310,12 +364,22 @@ const RoleFields = withForm({
 						{(field) => (
 							<FormItem
 								className="sm:col-span-full"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
 							>
 								<FormLabel>
 									<Trans>Description</Trans>
 								</FormLabel>
-								<FormControl render={<RichInput value={field.state.value} onChange={(v) => field.handleChange(v)} />} />
+								<FormControl
+									render={
+										<RichInput
+											value={field.state.value}
+											onChange={(v) => field.handleChange(v)}
+										/>
+									}
+								/>
 								<FormMessage errors={field.state.meta.errors} />
 							</FormItem>
 						)}

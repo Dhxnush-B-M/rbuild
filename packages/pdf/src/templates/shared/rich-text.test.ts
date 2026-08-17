@@ -1,8 +1,8 @@
-import type { ReactElement } from "react";
-import { describe, expect, it } from "vitest";
 import { Text as PdfText } from "@react-pdf/renderer";
 import { parse } from "node-html-parser";
+import type { ReactElement } from "react";
 import { createElement } from "react";
+import { describe, expect, it } from "vitest";
 import { normalizeRichTextHtml } from "./rich-text-html";
 import { renderRichTextParagraph } from "./rich-text-renderers";
 import { createRichTextStylesheet } from "./rich-text-stylesheet";
@@ -24,13 +24,19 @@ describe("normalizeRichTextHtml", () => {
 	});
 
 	it("preserves existing block rich text", () => {
-		expect(normalizeRichTextHtml("<p>Existing paragraph.</p><ul><li><p>Existing item.</p></li></ul>")).toBe(
-			"<p>Existing paragraph.</p><ul><li>Existing item.</li></ul>",
-		);
+		expect(
+			normalizeRichTextHtml(
+				"<p>Existing paragraph.</p><ul><li><p>Existing item.</p></li></ul>",
+			),
+		).toBe("<p>Existing paragraph.</p><ul><li>Existing item.</li></ul>");
 	});
 
 	it("wraps inline runs around top-level blocks", () => {
-		expect(normalizeRichTextHtml("Intro <strong>text</strong><ul><li><p>Item</p></li></ul>Outro")).toBe(
+		expect(
+			normalizeRichTextHtml(
+				"Intro <strong>text</strong><ul><li><p>Item</p></li></ul>Outro",
+			),
+		).toBe(
 			"<p>Intro <strong>text</strong></p><ul><li>Item</li></ul><p>Outro</p>",
 		);
 	});
@@ -38,14 +44,20 @@ describe("normalizeRichTextHtml", () => {
 
 describe("renderRichTextParagraph", () => {
 	it("keeps unmarked paragraph text inside a PDF text node", () => {
-		const paragraph = parse("<p>Plain <strong>bold</strong> text</p>").querySelector("p");
+		const paragraph = parse(
+			"<p>Plain <strong>bold</strong> text</p>",
+		).querySelector("p");
 
 		if (!paragraph) throw new Error("Expected paragraph to exist.");
 
 		const rendered = renderRichTextParagraph({
 			element: paragraph,
 			style: { fontSize: 10 },
-			children: ["Plain ", createElement(PdfText, { key: "bold" }, "bold"), " text"],
+			children: [
+				"Plain ",
+				createElement(PdfText, { key: "bold" }, "bold"),
+				" text",
+			],
 		});
 		const props = getPdfElementProps(rendered);
 
@@ -99,9 +111,15 @@ describe("createRichTextStylesheet", () => {
 	it("can force rich text links to render without underlines", () => {
 		const stylesheet = createRichTextStylesheet({
 			hideLinkUnderline: true,
-			richLinkRuleStyle: { textDecoration: "underline", textDecorationStyle: "dotted" },
+			richLinkRuleStyle: {
+				textDecoration: "underline",
+				textDecorationStyle: "dotted",
+			},
 		});
 
-		expect(stylesheet.a).toMatchObject({ textDecoration: "none", textDecorationStyle: "dotted" });
+		expect(stylesheet.a).toMatchObject({
+			textDecoration: "none",
+			textDecorationStyle: "dotted",
+		});
 	});
 });

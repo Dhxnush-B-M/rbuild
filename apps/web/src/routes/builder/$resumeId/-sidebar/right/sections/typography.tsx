@@ -1,9 +1,11 @@
-import type { ReactNode } from "react";
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
-import { useStore } from "@tanstack/react-form";
 import { typographySchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -11,9 +13,18 @@ import {
 	InputGroupText,
 } from "@rbuilder/ui/components/input-group";
 import { Separator } from "@rbuilder/ui/components/separator";
-import { FontFamilyCombobox, FontWeightCombobox } from "@/components/typography/combobox";
+import { useStore } from "@tanstack/react-form";
+import type { ReactNode } from "react";
+import type z from "zod";
+import {
+	FontFamilyCombobox,
+	FontWeightCombobox,
+} from "@/components/typography/combobox";
 import { getNextWeights } from "@/components/typography/get-next-weights";
-import { useResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../shared/section-base";
@@ -32,7 +43,10 @@ type FormValues = z.infer<typeof formSchema>;
 type FontWeight = FormValues["body"]["fontWeights"][number];
 type TypographyPrefix = "body" | "heading";
 
-function useTypographyForm(typography: FormValues | undefined, persist: (data: FormValues) => void) {
+function useTypographyForm(
+	typography: FormValues | undefined,
+	persist: (data: FormValues) => void,
+) {
 	const form = useAppForm({
 		defaultValues: typography,
 		validators: { onChange: formSchema },
@@ -73,10 +87,28 @@ function TypographySectionForm() {
 				void form.handleSubmit();
 			}}
 		>
-			<TypographyFieldGroup label={<Trans context="Body Text (paragraphs, lists, etc.)">Body</Trans>} />
-			<TypographyGroupFields form={form} prefix="body" handleAutoSave={handleAutoSave} />
-			<TypographyFieldGroup label={<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">Heading</Trans>} />
-			<TypographyGroupFields form={form} prefix="heading" handleAutoSave={handleAutoSave} />
+			<TypographyFieldGroup
+				label={
+					<Trans context="Body Text (paragraphs, lists, etc.)">Body</Trans>
+				}
+			/>
+			<TypographyGroupFields
+				form={form}
+				prefix="body"
+				handleAutoSave={handleAutoSave}
+			/>
+			<TypographyFieldGroup
+				label={
+					<Trans context="Headings or Titles (H1, H2, H3, H4, H5, H6)">
+						Heading
+					</Trans>
+				}
+			/>
+			<TypographyGroupFields
+				form={form}
+				prefix="heading"
+				handleAutoSave={handleAutoSave}
+			/>
 		</form>
 	);
 }
@@ -87,7 +119,11 @@ type TypographyGroupFieldsProps = {
 	handleAutoSave: () => void;
 };
 
-function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroupFieldsProps) {
+function TypographyGroupFields({
+	form,
+	prefix,
+	handleAutoSave,
+}: TypographyGroupFieldsProps) {
 	const fontFamily = useStore(form.store, (s) => s.values[prefix].fontFamily);
 
 	return (
@@ -96,7 +132,9 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 				{(field) => (
 					<FormItem
 						className="col-span-full"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
 					>
 						<FormLabel>
 							<Trans>Font Family</Trans>
@@ -110,7 +148,8 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 										if (value === null) return;
 										field.handleChange(value);
 										const nextWeights = getNextWeights(value);
-										if (nextWeights) form.setFieldValue(`${prefix}.fontWeights`, nextWeights);
+										if (nextWeights)
+											form.setFieldValue(`${prefix}.fontWeights`, nextWeights);
 										handleAutoSave();
 									}}
 								/>
@@ -125,9 +164,17 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 				{(field) => (
 					<FormItem
 						className="col-span-full"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
 					>
-						<FormLabel>{prefix === "body" ? <Trans>Font Weights</Trans> : <Trans>Font Weight</Trans>}</FormLabel>
+						<FormLabel>
+							{prefix === "body" ? (
+								<Trans>Font Weights</Trans>
+							) : (
+								<Trans>Font Weight</Trans>
+							)}
+						</FormLabel>
 						<FormControl
 							render={
 								<FontWeightCombobox
@@ -148,7 +195,11 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 
 			<form.Field name={`${prefix}.fontSize`}>
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Font Size</Trans>
 						</FormLabel>
@@ -165,7 +216,8 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 										onBlur={field.handleBlur}
 										onChange={(e) => {
 											const value = e.target.value;
-											if (value === "") field.handleChange("" as unknown as number);
+											if (value === "")
+												field.handleChange("" as unknown as number);
 											else field.handleChange(Number(value));
 											handleAutoSave();
 										}}
@@ -182,7 +234,11 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 
 			<form.Field name={`${prefix}.lineHeight`}>
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Line Height</Trans>
 						</FormLabel>
@@ -199,7 +255,8 @@ function TypographyGroupFields({ form, prefix, handleAutoSave }: TypographyGroup
 										onBlur={field.handleBlur}
 										onChange={(e) => {
 											const value = e.target.value;
-											if (value === "") field.handleChange("" as unknown as number);
+											if (value === "")
+												field.handleChange("" as unknown as number);
 											else field.handleChange(Number(value));
 											handleAutoSave();
 										}}

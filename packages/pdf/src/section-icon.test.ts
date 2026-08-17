@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { getResumeSectionIcon } from "./section-icon";
 
 describe("getResumeSectionIcon", () => {
@@ -9,7 +9,10 @@ describe("getResumeSectionIcon", () => {
 				...defaultResumeData,
 				sections: {
 					...defaultResumeData.sections,
-					experience: { ...defaultResumeData.sections.experience, icon: "rocket" },
+					experience: {
+						...defaultResumeData.sections.experience,
+						icon: "rocket",
+					},
 				},
 			};
 			expect(getResumeSectionIcon(data, "experience")).toBe("rocket");
@@ -49,8 +52,14 @@ describe("getResumeSectionIcon", () => {
 					languages: { ...defaultResumeData.sections.languages, icon: "" },
 					interests: { ...defaultResumeData.sections.interests, icon: "" },
 					awards: { ...defaultResumeData.sections.awards, icon: "" },
-					certifications: { ...defaultResumeData.sections.certifications, icon: "" },
-					publications: { ...defaultResumeData.sections.publications, icon: "" },
+					certifications: {
+						...defaultResumeData.sections.certifications,
+						icon: "",
+					},
+					publications: {
+						...defaultResumeData.sections.publications,
+						icon: "",
+					},
 					volunteer: { ...defaultResumeData.sections.volunteer, icon: "" },
 					references: { ...defaultResumeData.sections.references, icon: "" },
 				},
@@ -155,7 +164,9 @@ describe("getResumeSectionIcon", () => {
 					},
 				],
 			};
-			expect(getResumeSectionIcon(data, "custom-cover-letter")).toBe("envelope-simple");
+			expect(getResumeSectionIcon(data, "custom-cover-letter")).toBe(
+				"envelope-simple",
+			);
 		});
 
 		it("returns empty when custom section icon is 'none'", () => {
@@ -179,7 +190,9 @@ describe("getResumeSectionIcon", () => {
 		});
 
 		it("returns empty string for non-existent section id", () => {
-			expect(getResumeSectionIcon(defaultResumeData, "non-existent-id")).toBe("");
+			expect(getResumeSectionIcon(defaultResumeData, "non-existent-id")).toBe(
+				"",
+			);
 		});
 	});
 });

@@ -1,12 +1,14 @@
-import type { ResumePreviewProps } from "./preview.shared";
 import { lazy, Suspense } from "react";
 import { useIsClient } from "usehooks-ts";
 import { useResumeData } from "../builder/draft";
+import type { ResumePreviewProps } from "./preview.shared";
 import { ResumePreviewLoader } from "./preview.shared";
 import { getResumePreviewPageCount } from "./preview.shared.utils";
 
 const ResumePreviewClient = lazy(() =>
-	import("./preview.browser").then((module) => ({ default: module.ResumePreviewClient })),
+	import("./preview.browser").then((module) => ({
+		default: module.ResumePreviewClient,
+	})),
 );
 
 export type { ResumePreviewProps };
@@ -26,7 +28,13 @@ export function ResumePreview({
 
 	if (!isClient) return null;
 
-	const resolvedProps = { ...rest, pageGap, pageLayout, pageScale, showPageNumbers };
+	const resolvedProps = {
+		...rest,
+		pageGap,
+		pageLayout,
+		pageScale,
+		showPageNumbers,
+	};
 
 	return (
 		<Suspense

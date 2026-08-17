@@ -15,7 +15,9 @@ describe("getScaledPreviewPageSize", () => {
 	});
 
 	it("returns the default A4 page size unchanged when scaled by 1", () => {
-		expect(getScaledPreviewPageSize(DEFAULT_PDF_PAGE_SIZE, 1)).toEqual(DEFAULT_PDF_PAGE_SIZE);
+		expect(getScaledPreviewPageSize(DEFAULT_PDF_PAGE_SIZE, 1)).toEqual(
+			DEFAULT_PDF_PAGE_SIZE,
+		);
 	});
 
 	it("supports fractional scaling", () => {

@@ -10,18 +10,26 @@ describe("Slider", () => {
 
 	it("renders one thumb per value", () => {
 		const { container } = render(<Slider defaultValue={[10, 90]} />);
-		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(2);
+		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(
+			2,
+		);
 	});
 
 	it("renders single thumb for single value", () => {
 		const { container } = render(<Slider defaultValue={[50]} />);
-		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(1);
+		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(
+			1,
+		);
 	});
 
 	it("renders track and range", () => {
 		const { container } = render(<Slider defaultValue={[50]} />);
-		expect(container.querySelector("[data-slot=slider-track]")).toBeInTheDocument();
-		expect(container.querySelector("[data-slot=slider-range]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=slider-track]"),
+		).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=slider-range]"),
+		).toBeInTheDocument();
 	});
 
 	it("respects custom min and max", () => {
@@ -31,13 +39,17 @@ describe("Slider", () => {
 	});
 
 	it("merges custom className", () => {
-		render(<Slider data-testid="s" defaultValue={[50]} className="custom-slider" />);
+		render(
+			<Slider data-testid="s" defaultValue={[50]} className="custom-slider" />,
+		);
 		expect(screen.getByTestId("s")).toHaveClass("custom-slider");
 	});
 
 	it("renders 2 thumbs with default min/max if no defaultValue or value passed", () => {
 		const { container } = render(<Slider />);
 		// Source code: defaults to [min, max] when neither value nor defaultValue is array
-		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(2);
+		expect(container.querySelectorAll("[data-slot=slider-thumb]")).toHaveLength(
+			2,
+		);
 	});
 });

@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { Dialog } from "@rbuilder/ui/components/dialog";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { useDialogStore } from "@/dialogs/store";
 
 const updateResumeData = vi.hoisted(() => vi.fn());
@@ -24,7 +24,11 @@ beforeAll(() => {
 
 afterEach(() => {
 	updateResumeData.mockReset();
-	useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });
+	useDialogStore.setState({
+		open: false,
+		activeDialog: null,
+		onBeforeClose: null,
+	});
 });
 
 const renderGallery = () =>
@@ -64,7 +68,9 @@ describe("TemplateGalleryDialog", () => {
 		fireEvent.click(button);
 
 		expect(updateResumeData).toHaveBeenCalledTimes(1);
-		const recipe = updateResumeData.mock.calls[0]?.[0] as (draft: { metadata: { template: string } }) => void;
+		const recipe = updateResumeData.mock.calls[0]?.[0] as (draft: {
+			metadata: { template: string };
+		}) => void;
 		const draft = { metadata: { template: "ditto" } };
 		recipe(draft);
 		expect(draft.metadata.template).toBe("onyx");

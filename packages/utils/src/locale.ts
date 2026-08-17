@@ -14,7 +14,14 @@ export function isCJKLocale(_locale?: string): boolean {
 	return false;
 }
 
-export type Script = "hangul" | "kana" | "han-traditional" | "han-simplified" | "arabic" | "hebrew" | "thai";
+export type Script =
+	| "hangul"
+	| "kana"
+	| "han-traditional"
+	| "han-simplified"
+	| "arabic"
+	| "hebrew"
+	| "thai";
 
 export function isCjkScript(_script: Script): boolean {
 	return false;

@@ -1,14 +1,11 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { DialogProps } from "../store";
-import type { ImportType } from "./import.utils";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DownloadSimpleIcon, FileIcon, UploadSimpleIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
-import z from "zod";
+import {
+	DownloadSimpleIcon,
+	FileIcon,
+	UploadSimpleIcon,
+} from "@phosphor-icons/react";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { Button } from "@rbuilder/ui/components/button";
 import {
@@ -18,15 +15,27 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@rbuilder/ui/components/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { Spinner } from "@rbuilder/ui/components/spinner";
 import { generateId, slugify } from "@rbuilder/utils/string";
+import { useStore } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
+import z from "zod";
 import { Combobox } from "@/components/ui/combobox";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { saveResumeToSupabase } from "@/libs/supabase/db";
 import { useAppForm } from "@/libs/tanstack-form";
+import type { DialogProps } from "../store";
 import { useDialogStore } from "../store";
+import type { ImportType } from "./import.utils";
 import { detectJsonImportType } from "./import.utils";
 
 const formSchema = z.discriminatedUnion("type", [
@@ -38,19 +47,25 @@ const formSchema = z.discriminatedUnion("type", [
 		type: z.literal("rbuilder-json"),
 		file: z
 			.instanceof(File)
-			.refine((file) => file.type === "application/json", { message: "File must be a JSON file" }),
+			.refine((file) => file.type === "application/json", {
+				message: "File must be a JSON file",
+			}),
 	}),
 	z.object({
 		type: z.literal("rbuilder-v4-json"),
 		file: z
 			.instanceof(File)
-			.refine((file) => file.type === "application/json", { message: "File must be a JSON file" }),
+			.refine((file) => file.type === "application/json", {
+				message: "File must be a JSON file",
+			}),
 	}),
 	z.object({
 		type: z.literal("json-resume-json"),
 		file: z
 			.instanceof(File)
-			.refine((file) => file.type === "application/json", { message: "File must be a JSON file" }),
+			.refine((file) => file.type === "application/json", {
+				message: "File must be a JSON file",
+			}),
 	}),
 ]);
 
@@ -91,7 +106,9 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 			const toastId = toast.loading(t`Importing your resume...`);
 
 			try {
-				const parsed = JSON.parse(await value.file.text()) as Partial<ResumeData>;
+				const parsed = JSON.parse(
+					await value.file.text(),
+				) as Partial<ResumeData>;
 				const data: ResumeData = { ...defaultResumeData, ...parsed };
 
 				const id = generateId();
@@ -104,11 +121,17 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 					data,
 				});
 
-				toast.success(t`Your resume has been imported successfully.`, { id: toastId, description: null });
+				toast.success(t`Your resume has been imported successfully.`, {
+					id: toastId,
+					description: null,
+				});
 				closeDialog();
 				void navigate({ to: "/builder/$resumeId", params: { resumeId: id } });
 			} catch {
-				toast.error(t`An error occurred while importing your resume.`, { id: toastId, description: null });
+				toast.error(t`An error occurred while importing your resume.`, {
+					id: toastId,
+					description: null,
+				});
 			} finally {
 				setIsImporting(false);
 			}
@@ -143,8 +166,8 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				</DialogTitle>
 				<DialogDescription>
 					<Trans>
-						Continue where you left off by importing a JSON resume exported from rbuilder or a compatible resume
-						builder.
+						Continue where you left off by importing a JSON resume exported from
+						rbuilder or a compatible resume builder.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -159,7 +182,11 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 			>
 				<form.Field name="file">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>File</Trans>
 							</FormLabel>
@@ -198,7 +225,12 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 				{file && (
 					<form.Field name="type">
 						{(field) => (
-							<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormItem
+								hasError={
+									field.state.meta.isTouched &&
+									field.state.meta.errors.length > 0
+								}
+							>
 								<FormLabel>
 									<Trans>Type</Trans>
 								</FormLabel>
@@ -207,26 +239,31 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 										<Combobox
 											showClear={false}
 											value={field.state.value}
-											onValueChange={(value) => field.handleChange(value as ImportType)}
+											onValueChange={(value) =>
+												field.handleChange(value as ImportType)
+											}
 											options={[
 												{
 													value: "rbuilder-json",
 													label: t({
-														comment: "Import source option for current rbuilder JSON format",
+														comment:
+															"Import source option for current rbuilder JSON format",
 														message: "rbuilder (JSON)",
 													}),
 												},
 												{
 													value: "rbuilder-v4-json",
 													label: t({
-														comment: "Import source option for legacy rbuilder v4 JSON format",
+														comment:
+															"Import source option for legacy rbuilder v4 JSON format",
 														message: "rbuilder v4 (JSON)",
 													}),
 												},
 												{
 													value: "json-resume-json",
 													label: t({
-														comment: "Import source option for standard JSON Resume format",
+														comment:
+															"Import source option for standard JSON Resume format",
 														message: "JSON Resume",
 													}),
 												},
@@ -236,7 +273,10 @@ export function ImportResumeDialog(_: DialogProps<"resume.import">) {
 								/>
 								{!field.state.value && (
 									<p className="text-muted-foreground text-xs">
-										<Trans>We couldn't detect the format automatically — please choose it above.</Trans>
+										<Trans>
+											We couldn't detect the format automatically — please
+											choose it above.
+										</Trans>
 									</p>
 								)}
 								<FormMessage errors={field.state.meta.errors} />

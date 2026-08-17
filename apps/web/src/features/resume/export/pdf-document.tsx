@@ -1,21 +1,34 @@
-import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
-import type { Template } from "@rbuilder/schema/templates";
-import { useMemo } from "react";
 import { createResumePdfBlob as createPdfBlob } from "@rbuilder/pdf/browser";
 import { ResumeDocument } from "@rbuilder/pdf/document";
-import { createSectionTitleResolverForLocale, useSectionTitleResolver } from "@/libs/resume/section-title-locale";
+import type { PublicStyleProjection } from "@rbuilder/pdf/public-projection";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type {
+	SemanticStylesheet,
+	StylesheetSource,
+} from "@rbuilder/schema/resume/stylesheet";
+import type { Template } from "@rbuilder/schema/templates";
+import { useMemo } from "react";
+import {
+	createSectionTitleResolverForLocale,
+	useSectionTitleResolver,
+} from "@/libs/resume/section-title-locale";
 
 type ResumePdfRenderOptions = {
 	includeCoverLetterHeader?: boolean;
 };
 
 export type ResumePdfPresentation =
-	| { stylesheet: Pick<SemanticStylesheet, "mode"> & { applied: StylesheetSource } }
+	| {
+			stylesheet: Pick<SemanticStylesheet, "mode"> & {
+				applied: StylesheetSource;
+			};
+	  }
 	| { publicStyleProjection: PublicStyleProjection };
 
-const withAppliedStylesheet = (data: ResumeData, presentation?: ResumePdfPresentation): ResumeData => {
+const withAppliedStylesheet = (
+	data: ResumeData,
+	presentation?: ResumePdfPresentation,
+): ResumeData => {
 	if (!presentation || !("stylesheet" in presentation)) return data;
 	const { mode, applied } = presentation.stylesheet;
 	return {
@@ -27,8 +40,13 @@ const withAppliedStylesheet = (data: ResumeData, presentation?: ResumePdfPresent
 	};
 };
 
-export const useLocalizedResumeDocument = (data?: ResumeData, template?: Template) => {
-	const sectionTitleResolver = useSectionTitleResolver(data?.metadata.page.locale);
+export const useLocalizedResumeDocument = (
+	data?: ResumeData,
+	template?: Template,
+) => {
+	const sectionTitleResolver = useSectionTitleResolver(
+		data?.metadata.page.locale,
+	);
 
 	return useMemo(() => {
 		if (!data || !sectionTitleResolver) return null;
@@ -49,7 +67,9 @@ export const createResumePdfBlob = async (
 	renderOptions?: ResumePdfRenderOptions,
 	presentation?: ResumePdfPresentation,
 ) => {
-	const sectionTitleResolver = await createSectionTitleResolverForLocale(data.metadata.page.locale);
+	const sectionTitleResolver = await createSectionTitleResolverForLocale(
+		data.metadata.page.locale,
+	);
 
 	return createPdfBlob({
 		data: withAppliedStylesheet(data, presentation),

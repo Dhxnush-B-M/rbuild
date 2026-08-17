@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { PROPERTY_REGISTRY_V1 } from "./properties";
 
-const borderShorthands = ["border", "border-top", "border-right", "border-bottom", "border-left"] as const;
+const borderShorthands = [
+	"border",
+	"border-top",
+	"border-right",
+	"border-bottom",
+	"border-left",
+] as const;
 const borderShorthandHints = [
 	"inherit",
 	"initial",
@@ -156,8 +162,12 @@ const textNodes = [
 
 const linkContainerNodes = [...containerNodes, "link"];
 const textAndLinkNodes = [...textNodes, "link"];
-const colorNodes = [...new Set([...containerNodes, ...textNodes, "link", "icon", "level"])];
-const spacingNodes = [...new Set([...containerNodes, ...textNodes, "link", "picture"])];
+const colorNodes = [
+	...new Set([...containerNodes, ...textNodes, "link", "icon", "level"]),
+];
+const spacingNodes = [
+	...new Set([...containerNodes, ...textNodes, "link", "picture"]),
+];
 const structuralNodes = [
 	"page",
 	"region",
@@ -234,15 +244,30 @@ const expectedPropertyGroups = [
 		inheritable: false,
 	},
 	{
-		names: ["width", "height", "min-width", "min-height", "max-width", "max-height"],
+		names: [
+			"width",
+			"height",
+			"min-width",
+			"min-height",
+			"max-width",
+			"max-height",
+		],
 		appliesTo: [...linkContainerNodes, "picture"],
 		inheritable: false,
 	},
 	{ names: ["color"], appliesTo: colorNodes, inheritable: true },
-	{ names: ["background-color"], appliesTo: linkContainerNodes, inheritable: false },
+	{
+		names: ["background-color"],
+		appliesTo: linkContainerNodes,
+		inheritable: false,
+	},
 	{ names: ["opacity"], appliesTo: colorNodes, inheritable: false },
 	{ names: ["direction"], appliesTo: textAndLinkNodes, inheritable: true },
-	{ names: ["font-size"], appliesTo: [...textAndLinkNodes, "icon", "level"], inheritable: true },
+	{
+		names: ["font-size"],
+		appliesTo: [...textAndLinkNodes, "icon", "level"],
+		inheritable: true,
+	},
 	{
 		names: ["font-style", "font-weight", "letter-spacing", "line-height"],
 		appliesTo: textAndLinkNodes,
@@ -251,16 +276,29 @@ const expectedPropertyGroups = [
 	{ names: ["max-lines"], appliesTo: textAndLinkNodes, inheritable: false },
 	{ names: ["text-align"], appliesTo: textAndLinkNodes, inheritable: true },
 	{
-		names: ["text-decoration", "text-decoration-color", "text-decoration-style"],
+		names: [
+			"text-decoration",
+			"text-decoration-color",
+			"text-decoration-style",
+		],
 		appliesTo: textAndLinkNodes,
 		inheritable: false,
 	},
 	{ names: ["text-indent"], appliesTo: textAndLinkNodes, inheritable: true },
 	{ names: ["text-overflow"], appliesTo: textAndLinkNodes, inheritable: false },
 	{ names: ["text-transform"], appliesTo: textAndLinkNodes, inheritable: true },
-	{ names: ["vertical-align"], appliesTo: textAndLinkNodes, inheritable: false },
 	{
-		names: ["object-fit", "object-position", "-resume-shadow-color", "-resume-shadow-width"],
+		names: ["vertical-align"],
+		appliesTo: textAndLinkNodes,
+		inheritable: false,
+	},
+	{
+		names: [
+			"object-fit",
+			"object-position",
+			"-resume-shadow-color",
+			"-resume-shadow-width",
+		],
 		appliesTo: ["picture"],
 		inheritable: false,
 	},
@@ -315,7 +353,11 @@ const expectedPropertyGroups = [
 		appliesTo: [...linkContainerNodes, "picture"],
 		inheritable: false,
 	},
-	{ names: ["transform", "transform-origin"], appliesTo: [...linkContainerNodes, "picture"], inheritable: false },
+	{
+		names: ["transform", "transform-origin"],
+		appliesTo: [...linkContainerNodes, "picture"],
+		inheritable: false,
+	},
 	{
 		names: ["order", "break-before", "break-inside"],
 		appliesTo: structuralNodes,
@@ -338,7 +380,9 @@ const expectedPropertyGroups = [
 describe("property registry", () => {
 	it("covers the normative v1 adapter matrix", () => {
 		expect(Object.keys(PROPERTY_REGISTRY_V1)).toEqual(expectedProperties);
-		expect(expectedPropertyGroups.flatMap(({ names }) => names)).toEqual(expectedProperties);
+		expect(expectedPropertyGroups.flatMap(({ names }) => names)).toEqual(
+			expectedProperties,
+		);
 	});
 
 	it("uses the complete v1 applicability and inheritance matrix", () => {
@@ -352,7 +396,9 @@ describe("property registry", () => {
 
 	it("publishes duplicate-free applicability lists", () => {
 		for (const [property, definition] of Object.entries(PROPERTY_REGISTRY_V1)) {
-			expect(definition?.appliesTo, property).toEqual([...new Set(definition?.appliesTo)]);
+			expect(definition?.appliesTo, property).toEqual([
+				...new Set(definition?.appliesTo),
+			]);
 		}
 	});
 
@@ -383,12 +429,27 @@ describe("property registry", () => {
 			"none",
 			"scale-down",
 		]);
-		expect(PROPERTY_REGISTRY_V1["font-size"]?.values).toEqual(["inherit", "initial", "revert", "unset"]);
-		expect(PROPERTY_REGISTRY_V1.gap?.values).toEqual(["inherit", "initial", "revert", "unset"]);
+		expect(PROPERTY_REGISTRY_V1["font-size"]?.values).toEqual([
+			"inherit",
+			"initial",
+			"revert",
+			"unset",
+		]);
+		expect(PROPERTY_REGISTRY_V1.gap?.values).toEqual([
+			"inherit",
+			"initial",
+			"revert",
+			"unset",
+		]);
 	});
 
-	it.each(borderShorthands)("publishes only complete value hints for the %s shorthand", (property) => {
-		expect(PROPERTY_REGISTRY_V1[property]?.units).toEqual([]);
-		expect(PROPERTY_REGISTRY_V1[property]?.values).toEqual(borderShorthandHints);
-	});
+	it.each(borderShorthands)(
+		"publishes only complete value hints for the %s shorthand",
+		(property) => {
+			expect(PROPERTY_REGISTRY_V1[property]?.units).toEqual([]);
+			expect(PROPERTY_REGISTRY_V1[property]?.values).toEqual(
+				borderShorthandHints,
+			);
+		},
+	);
 });

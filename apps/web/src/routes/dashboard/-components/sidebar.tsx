@@ -2,9 +2,17 @@ import type { MessageDescriptor } from "@lingui/core";
 import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { GlobeIcon, HeadsetIcon, LockSimpleIcon, ReadCvLogoIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
-import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
+import {
+	GlobeIcon,
+	HeadsetIcon,
+	LockSimpleIcon,
+	ReadCvLogoIcon,
+} from "@phosphor-icons/react";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@rbuilder/ui/components/avatar";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import {
 	Sidebar,
@@ -21,6 +29,7 @@ import {
 	SidebarSeparator,
 } from "@rbuilder/ui/components/sidebar";
 import { getInitials } from "@rbuilder/utils/string";
+import { Link } from "@tanstack/react-router";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
 
 type SidebarItem = {
@@ -147,7 +156,9 @@ export function DashboardSidebar() {
 
 										<div className="transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
 											<p className="font-medium">{user.name}</p>
-											<p className="text-muted-foreground text-xs">{user.email}</p>
+											<p className="text-muted-foreground text-xs">
+												{user.email}
+											</p>
 										</div>
 									</SidebarMenuButton>
 								);

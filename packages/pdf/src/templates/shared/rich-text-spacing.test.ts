@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { parse } from "node-html-parser";
+import { describe, expect, it } from "vitest";
 import {
 	createRichTextProseSpacing,
 	getRichTextEdgeTrimStyle,
@@ -24,7 +24,10 @@ describe("createRichTextProseSpacing", () => {
 		expect(spacing.paragraph.marginBottom).toBeCloseTo(3);
 		expect(spacing.listItem.marginTop).toBeCloseTo(3);
 		expect(spacing.listItem.marginBottom).toBeCloseTo(3);
-		expect((spacing.paragraph.marginBottom as number) + (spacing.paragraph.marginTop as number)).toBeCloseTo(6);
+		expect(
+			(spacing.paragraph.marginBottom as number) +
+				(spacing.paragraph.marginTop as number),
+		).toBeCloseTo(6);
 	});
 
 	it("does not invent spacing when no configured body line height is available", () => {
@@ -37,7 +40,9 @@ describe("createRichTextProseSpacing", () => {
 
 describe("resolveRichTextBodyLineHeight", () => {
 	it("derives the configured body line height from body font size and line-height multiplier", () => {
-		expect(resolveRichTextBodyLineHeight({ fontSize: 10, lineHeight: 1.5 })).toBe(15);
+		expect(
+			resolveRichTextBodyLineHeight({ fontSize: 10, lineHeight: 1.5 }),
+		).toBe(15);
 	});
 
 	it("uses the last resolved numeric font size and line height from template styles", () => {
@@ -50,7 +55,9 @@ describe("resolveRichTextBodyLineHeight", () => {
 	});
 
 	it("parses px font-size and line-height strings when styles contain them", () => {
-		expect(resolveRichTextBodyLineHeight({ fontSize: "12px", lineHeight: "18px" })).toBe(18);
+		expect(
+			resolveRichTextBodyLineHeight({ fontSize: "12px", lineHeight: "18px" }),
+		).toBe(18);
 	});
 
 	it("returns undefined when configured body line height cannot be resolved", () => {
@@ -63,39 +70,68 @@ describe("getRichTextEdgeTrimStyle", () => {
 	it("trims both edges for a single paragraph", () => {
 		const [paragraph] = parse("<p>Only paragraph.</p>").querySelectorAll("p");
 
-		expect(getRichTextEdgeTrimStyle(requireElement(paragraph))).toEqual({ marginTop: 0, marginBottom: 0 });
+		expect(getRichTextEdgeTrimStyle(requireElement(paragraph))).toEqual({
+			marginTop: 0,
+			marginBottom: 0,
+		});
 	});
 
 	it("trims only the outer edges for multiple paragraphs", () => {
-		const [firstParagraph, secondParagraph] = parse("<p>First.</p><p>Second.</p>").querySelectorAll("p");
+		const [firstParagraph, secondParagraph] = parse(
+			"<p>First.</p><p>Second.</p>",
+		).querySelectorAll("p");
 
-		expect(getRichTextEdgeTrimStyle(requireElement(firstParagraph))).toEqual({ marginTop: 0 });
-		expect(getRichTextEdgeTrimStyle(requireElement(secondParagraph))).toEqual({ marginBottom: 0 });
+		expect(getRichTextEdgeTrimStyle(requireElement(firstParagraph))).toEqual({
+			marginTop: 0,
+		});
+		expect(getRichTextEdgeTrimStyle(requireElement(secondParagraph))).toEqual({
+			marginBottom: 0,
+		});
 	});
 
 	it("trims only the outer edges for list items", () => {
-		const [firstItem, secondItem] = parse("<ul><li>First.</li><li>Second.</li></ul>").querySelectorAll("li");
+		const [firstItem, secondItem] = parse(
+			"<ul><li>First.</li><li>Second.</li></ul>",
+		).querySelectorAll("li");
 
-		expect(getRichTextEdgeTrimStyle(requireElement(firstItem))).toEqual({ marginTop: 0 });
-		expect(getRichTextEdgeTrimStyle(requireElement(secondItem))).toEqual({ marginBottom: 0 });
+		expect(getRichTextEdgeTrimStyle(requireElement(firstItem))).toEqual({
+			marginTop: 0,
+		});
+		expect(getRichTextEdgeTrimStyle(requireElement(secondItem))).toEqual({
+			marginBottom: 0,
+		});
 	});
 
 	it("trims across mixed paragraph and list content", () => {
-		const root = parse("<p>Intro.</p><ul><li><p>Nested item paragraph.</p></li></ul>");
+		const root = parse(
+			"<p>Intro.</p><ul><li><p>Nested item paragraph.</p></li></ul>",
+		);
 		const introParagraph = root.querySelector("p");
 		const listItem = root.querySelector("li");
 		const nestedParagraph = root.querySelector("li p");
 
-		expect(getRichTextEdgeTrimStyle(requireElement(introParagraph))).toEqual({ marginTop: 0 });
-		expect(getRichTextEdgeTrimStyle(requireElement(listItem))).toEqual({ marginBottom: 0 });
-		expect(getRichTextEdgeTrimStyle(requireElement(nestedParagraph))).toEqual({});
+		expect(getRichTextEdgeTrimStyle(requireElement(introParagraph))).toEqual({
+			marginTop: 0,
+		});
+		expect(getRichTextEdgeTrimStyle(requireElement(listItem))).toEqual({
+			marginBottom: 0,
+		});
+		expect(getRichTextEdgeTrimStyle(requireElement(nestedParagraph))).toEqual(
+			{},
+		);
 	});
 
 	it("normalizes uppercase and mixed-case tags before trimming edges", () => {
-		const [firstParagraph, secondItem] = parse("<P>Intro.</P><UL><LI>Item.</LI></UL>").querySelectorAll("p, li");
+		const [firstParagraph, secondItem] = parse(
+			"<P>Intro.</P><UL><LI>Item.</LI></UL>",
+		).querySelectorAll("p, li");
 
-		expect(getRichTextEdgeTrimStyle(requireElement(firstParagraph))).toEqual({ marginTop: 0 });
-		expect(getRichTextEdgeTrimStyle(requireElement(secondItem))).toEqual({ marginBottom: 0 });
+		expect(getRichTextEdgeTrimStyle(requireElement(firstParagraph))).toEqual({
+			marginTop: 0,
+		});
+		expect(getRichTextEdgeTrimStyle(requireElement(secondItem))).toEqual({
+			marginBottom: 0,
+		});
 	});
 });
 
@@ -119,56 +155,86 @@ describe("stripRichTextVerticalMargins", () => {
 
 describe("isRichTextElementInsideListItem", () => {
 	it("detects paragraphs nested directly inside list items", () => {
-		const paragraph = parse("<ul><li><p>Nested item paragraph.</p></li></ul>").querySelector("p");
+		const paragraph = parse(
+			"<ul><li><p>Nested item paragraph.</p></li></ul>",
+		).querySelector("p");
 
-		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(true);
+		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(
+			true,
+		);
 	});
 
 	it("detects paragraphs nested deeper inside list item content", () => {
-		const paragraph = parse("<ul><li><section><p>Nested item paragraph.</p></section></li></ul>").querySelector("p");
+		const paragraph = parse(
+			"<ul><li><section><p>Nested item paragraph.</p></section></li></ul>",
+		).querySelector("p");
 
-		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(true);
+		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(
+			true,
+		);
 	});
 
 	it("normalizes uppercase and mixed-case tags for list item ancestor detection", () => {
-		const paragraph = parse("<UL><LI><Section><P>Nested item paragraph.</P></Section></LI></UL>").querySelector("p");
+		const paragraph = parse(
+			"<UL><LI><Section><P>Nested item paragraph.</P></Section></LI></UL>",
+		).querySelector("p");
 
-		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(true);
+		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(
+			true,
+		);
 	});
 
 	it("does not treat top-level paragraphs as list item content", () => {
 		const paragraph = parse("<p>Top-level paragraph.</p>").querySelector("p");
 
-		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(false);
+		expect(isRichTextElementInsideListItem(requireElement(paragraph))).toBe(
+			false,
+		);
 	});
 });
 
 describe("isRichTextElementInsideOrderedList", () => {
 	it("normalizes uppercase and mixed-case ordered-list ancestors", () => {
-		const firstItem = parse("<OL><LI>First item.</LI></OL>").querySelector("li");
-		const nestedParagraph = parse("<Ol><Li><Section><P>Nested item paragraph.</P></Section></Li></Ol>").querySelector(
-			"p",
+		const firstItem = parse("<OL><LI>First item.</LI></OL>").querySelector(
+			"li",
 		);
+		const nestedParagraph = parse(
+			"<Ol><Li><Section><P>Nested item paragraph.</P></Section></Li></Ol>",
+		).querySelector("p");
 
-		expect(isRichTextElementInsideOrderedList(requireElement(firstItem))).toBe(true);
-		expect(isRichTextElementInsideOrderedList(requireElement(nestedParagraph))).toBe(true);
+		expect(isRichTextElementInsideOrderedList(requireElement(firstItem))).toBe(
+			true,
+		);
+		expect(
+			isRichTextElementInsideOrderedList(requireElement(nestedParagraph)),
+		).toBe(true);
 	});
 
 	it("does not treat unordered-list ancestors as ordered lists", () => {
 		const item = parse("<UL><LI>First item.</LI></UL>").querySelector("li");
 
-		expect(isRichTextElementInsideOrderedList(requireElement(item))).toBe(false);
+		expect(isRichTextElementInsideOrderedList(requireElement(item))).toBe(
+			false,
+		);
 	});
 
 	it("uses the nearest list ancestor when ordered and unordered lists are nested", () => {
-		const unorderedNestedInOrdered = parse("<ol><li><ul><li>Nested unordered item.</li></ul></li></ol>").querySelector(
-			"ul li",
-		);
-		const orderedNestedInUnordered = parse("<ul><li><ol><li>Nested ordered item.</li></ol></li></ul>").querySelector(
-			"ol li",
-		);
+		const unorderedNestedInOrdered = parse(
+			"<ol><li><ul><li>Nested unordered item.</li></ul></li></ol>",
+		).querySelector("ul li");
+		const orderedNestedInUnordered = parse(
+			"<ul><li><ol><li>Nested ordered item.</li></ol></li></ul>",
+		).querySelector("ol li");
 
-		expect(isRichTextElementInsideOrderedList(requireElement(unorderedNestedInOrdered))).toBe(false);
-		expect(isRichTextElementInsideOrderedList(requireElement(orderedNestedInUnordered))).toBe(true);
+		expect(
+			isRichTextElementInsideOrderedList(
+				requireElement(unorderedNestedInOrdered),
+			),
+		).toBe(false);
+		expect(
+			isRichTextElementInsideOrderedList(
+				requireElement(orderedNestedInUnordered),
+			),
+		).toBe(true);
 	});
 });

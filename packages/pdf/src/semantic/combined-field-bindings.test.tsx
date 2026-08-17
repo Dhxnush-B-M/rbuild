@@ -1,19 +1,19 @@
-import type { Style } from "@react-pdf/types";
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { Template } from "@rbuilder/schema/templates";
-import type { TemplateStyleSlots } from "../templates/shared/types";
-import { describe, expect, it, vi } from "vitest";
 import { createCanvas } from "@napi-rs/canvas";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import type { Template } from "@rbuilder/schema/templates";
 import { pdf } from "@react-pdf/renderer";
+import type { Style } from "@react-pdf/types";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it, vi } from "vitest";
 import { Document, Page } from "#react-pdf-renderer";
 import { RenderProvider } from "../context";
 import { ResumeDocument } from "../document";
 import { TemplateProvider } from "../templates/shared/context";
 import { Text } from "../templates/shared/primitives";
 import { SemanticTextRuns } from "../templates/shared/sections";
+import type { TemplateStyleSlots } from "../templates/shared/types";
 import { createBindingInventory } from "./binding-inventory";
 import { getTemplateSemanticBindingRegistry } from "./template-manifest";
 import { buildSemanticTree } from "./tree";
@@ -29,14 +29,25 @@ const nodeText = (node: HostNode): string =>
 	node.value ?? (node.children ?? []).map((child) => nodeText(child)).join("");
 
 const mergedStyle = (node: HostNode): Record<string, unknown> =>
-	Object.assign({}, ...(Array.isArray(node.style) ? node.style : node.style ? [node.style] : []));
+	Object.assign(
+		{},
+		...(Array.isArray(node.style)
+			? node.style
+			: node.style
+				? [node.style]
+				: []),
+	);
 
 const findTexts = (node: HostNode, text: string): HostNode[] => [
 	...(node.type === "TEXT" && nodeText(node) === text ? [node] : []),
 	...(node.children ?? []).flatMap((child) => findTexts(child, text)),
 ];
 
-const fixture = (mode: "legacy" | "semantic", section: "experience" | "education", rule = ""): ResumeData => {
+const fixture = (
+	mode: "legacy" | "semantic",
+	section: "experience" | "education",
+	rule = "",
+): ResumeData => {
 	const data = structuredClone(defaultResumeData);
 	data.picture.hidden = true;
 	data.basics.name = "Ada Lovelace";
@@ -68,26 +79,44 @@ const fixture = (mode: "legacy" | "semantic", section: "experience" | "education
 			description: "",
 		},
 	];
-	data.metadata.layout.pages = [{ fullWidth: true, main: [section], sidebar: [] }];
+	data.metadata.layout.pages = [
+		{ fullWidth: true, main: [section], sidebar: [] },
+	];
 	if (mode === "semantic") {
 		const stylesheet = { languageVersion: 1, text: `@version 1; ${rule}` };
-		data.metadata.stylesheet = { mode, source: stylesheet, applied: stylesheet };
+		data.metadata.stylesheet = {
+			mode,
+			source: stylesheet,
+			applied: stylesheet,
+		};
 	}
 	return data;
 };
 
-const renderHost = async (template: Template, data: ResumeData): Promise<HostNode> => {
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
+const renderHost = async (
+	template: Template,
+	data: ResumeData,
+): Promise<HostNode> => {
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	return instance.container.document as HostNode;
 };
 
-const renderPdf = async (template: Template, data: ResumeData): Promise<Uint8Array> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<
-		typeof renderer.renderToBuffer
-	>[0];
+const renderPdf = async (
+	template: Template,
+	data: ResumeData,
+): Promise<Uint8Array> => {
+	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>(
+		"@react-pdf/renderer",
+	);
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof renderer.renderToBuffer>[0];
 	return new Uint8Array(await renderer.renderToBuffer(element));
 };
 
@@ -95,7 +124,10 @@ const rasterizeFirstPage = async (bytes: Uint8Array): Promise<Buffer> => {
 	const document = await getDocument({ data: bytes }).promise;
 	const page = await document.getPage(1);
 	const viewport = page.getViewport({ scale: 1.5 });
-	const canvas = createCanvas(Math.ceil(viewport.width), Math.ceil(viewport.height));
+	const canvas = createCanvas(
+		Math.ceil(viewport.width),
+		Math.ceil(viewport.height),
+	);
 	const context = canvas.getContext("2d");
 	await page.render({
 		canvas: canvas as unknown as HTMLCanvasElement,
@@ -119,7 +151,11 @@ type CombinedFieldRasterCase = {
 	style?: Style;
 };
 
-const preSplitCombinedText = ({ runs, separator, style }: CombinedFieldRasterCase) => {
+const preSplitCombinedText = ({
+	runs,
+	separator,
+	style,
+}: CombinedFieldRasterCase) => {
 	const text = runs
 		.filter(({ value }) => value.trim().length > 0)
 		.map(({ value, prefix = "", suffix = "" }) => `${prefix}${value}${suffix}`)
@@ -158,7 +194,11 @@ const CombinedFieldRasterDocument = ({
 					<TemplateProvider
 						pageNodeKey="page-1"
 						styles={rasterFixtureStyles}
-						colors={{ foreground: "#111111", background: "#ffffff", primary: "#111111" }}
+						colors={{
+							foreground: "#111111",
+							background: "#ffffff",
+							primary: "#111111",
+						}}
 					>
 						{preSplit ? (
 							preSplitCombinedText(testCase)
@@ -177,8 +217,13 @@ const CombinedFieldRasterDocument = ({
 	);
 };
 
-const renderCombinedFieldRaster = async (testCase: CombinedFieldRasterCase, preSplit: boolean): Promise<Buffer> => {
-	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>("@react-pdf/renderer");
+const renderCombinedFieldRaster = async (
+	testCase: CombinedFieldRasterCase,
+	preSplit: boolean,
+): Promise<Buffer> => {
+	const renderer = await vi.importActual<typeof import("@react-pdf/renderer")>(
+		"@react-pdf/renderer",
+	);
 	const element = createElement(CombinedFieldRasterDocument, {
 		testCase,
 		preSplit,
@@ -188,7 +233,9 @@ const renderCombinedFieldRaster = async (testCase: CombinedFieldRasterCase, preS
 };
 
 const expectColor = (document: HostNode, text: string, color: string) => {
-	expect(findTexts(document, text).some((node) => mergedStyle(node).color === color)).toBe(true);
+	expect(
+		findTexts(document, text).some((node) => mergedStyle(node).color === color),
+	).toBe(true);
 };
 
 describe("combined PDF field bindings", () => {
@@ -202,18 +249,24 @@ describe("combined PDF field bindings", () => {
 		const onyxTree = buildSemanticTree({
 			data: onyxData,
 			template: "onyx",
-			page: onyxData.metadata.layout.pages[0] as NonNullable<(typeof onyxData.metadata.layout.pages)[number]>,
+			page: onyxData.metadata.layout.pages[0] as NonNullable<
+				(typeof onyxData.metadata.layout.pages)[number]
+			>,
 			pageNumber: 1,
 			showHeader: true,
 		});
 		const meowthTree = buildSemanticTree({
 			data: meowthData,
 			template: "meowth",
-			page: meowthData.metadata.layout.pages[0] as NonNullable<(typeof meowthData.metadata.layout.pages)[number]>,
+			page: meowthData.metadata.layout.pages[0] as NonNullable<
+				(typeof meowthData.metadata.layout.pages)[number]
+			>,
 			pageNumber: 1,
 			showHeader: true,
 		});
-		const combinedNodes = (root: Parameters<typeof createBindingInventory>[0]) => {
+		const combinedNodes = (
+			root: Parameters<typeof createBindingInventory>[0],
+		) => {
 			const matches: (typeof root)[] = [];
 			const visit = (node: typeof root) => {
 				if ((node.kind as string) === "combined-text") matches.push(node);
@@ -227,12 +280,20 @@ describe("combined PDF field bindings", () => {
 			[onyxTree, "onyx"],
 			[meowthTree, "meowth"],
 		] as const) {
-			const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry(template));
+			const inventory = createBindingInventory(
+				tree,
+				getTemplateSemanticBindingRegistry(template),
+			);
 			const combined = combinedNodes(tree);
 			expect(combined).not.toEqual([]);
 			expect(
-				combined.filter(({ key }) => inventory.bindings[key]?.type === "primitive").map(({ key }) => key),
-			).toHaveLength(new Set(combined.map(({ key }) => key)).size - (template === "meowth" ? 1 : 0));
+				combined
+					.filter(({ key }) => inventory.bindings[key]?.type === "primitive")
+					.map(({ key }) => key),
+			).toHaveLength(
+				new Set(combined.map(({ key }) => key)).size -
+					(template === "meowth" ? 1 : 0),
+			);
 			const aliases = combined.flatMap(({ key }) => {
 				const binding = inventory.bindings[key];
 				return binding?.type === "alias" ? [{ key, binding }] : [];
@@ -242,7 +303,10 @@ describe("combined PDF field bindings", () => {
 				expect(aliases[0]?.binding).toEqual({
 					type: "alias",
 					canonicalKind: "template-part",
-					canonicalNodeKey: aliases[0]?.key.replace(/\/combined-text-education-grade-location$/, ""),
+					canonicalNodeKey: aliases[0]?.key.replace(
+						/\/combined-text-education-grade-location$/,
+						"",
+					),
 					token: "combined-text",
 				});
 			} else {
@@ -258,7 +322,12 @@ describe("combined PDF field bindings", () => {
 			const document = await renderHost(template, data);
 			const outer = findTexts(document, text).map(mergedStyle);
 			expect(outer).toContainEqual(
-				expect.objectContaining({ color: "#334455", fontSize: 14, opacity: 0.6, marginLeft: 3 }),
+				expect.objectContaining({
+					color: "#334455",
+					fontSize: 14,
+					opacity: 0.6,
+					marginLeft: 3,
+				}),
 			);
 		}
 	});
@@ -272,9 +341,18 @@ describe("combined PDF field bindings", () => {
 			field[name="grade"] { color: #550000; }
 			field[name="period"] { color: #660000; }
 		`;
-		const experience = await renderHost("meowth", fixture("semantic", "experience", colors));
-		const inlineEducation = await renderHost("meowth", fixture("semantic", "education", colors));
-		const splitEducation = await renderHost("onyx", fixture("semantic", "education", colors));
+		const experience = await renderHost(
+			"meowth",
+			fixture("semantic", "experience", colors),
+		);
+		const inlineEducation = await renderHost(
+			"meowth",
+			fixture("semantic", "education", colors),
+		);
+		const splitEducation = await renderHost(
+			"onyx",
+			fixture("semantic", "education", colors),
+		);
 
 		expect(nodeText(experience)).toContain("Engineer (London)");
 		expectColor(experience, "Engineer", "#110000");
@@ -333,10 +411,18 @@ describe("combined PDF field bindings", () => {
 		const position = findTexts(document, "Engineer");
 		const location = findTexts(document, "(London)");
 
-		expect(combined.some((node) => mergedStyle(node).opacity === 0.6)).toBe(false);
-		expect(combined.some((node) => mergedStyle(node).marginLeft === 3)).toBe(false);
-		expect(position.map(mergedStyle)).toContainEqual(expect.objectContaining({ opacity: 0.6 }));
-		expect(location.map(mergedStyle)).toContainEqual(expect.objectContaining({ marginLeft: 3 }));
+		expect(combined.some((node) => mergedStyle(node).opacity === 0.6)).toBe(
+			false,
+		);
+		expect(combined.some((node) => mergedStyle(node).marginLeft === 3)).toBe(
+			false,
+		);
+		expect(position.map(mergedStyle)).toContainEqual(
+			expect.objectContaining({ opacity: 0.6 }),
+		);
+		expect(location.map(mergedStyle)).toContainEqual(
+			expect.objectContaining({ marginLeft: 3 }),
+		);
 	});
 
 	it("publishes one existing Text binding for every split field key", () => {
@@ -344,18 +430,29 @@ describe("combined PDF field bindings", () => {
 		const tree = buildSemanticTree({
 			data,
 			template: "meowth",
-			page: data.metadata.layout.pages[0] as NonNullable<(typeof data.metadata.layout.pages)[number]>,
+			page: data.metadata.layout.pages[0] as NonNullable<
+				(typeof data.metadata.layout.pages)[number]
+			>,
 			pageNumber: 1,
 			showHeader: true,
 		});
-		const inventory = createBindingInventory(tree, getTemplateSemanticBindingRegistry("meowth"));
+		const inventory = createBindingInventory(
+			tree,
+			getTemplateSemanticBindingRegistry("meowth"),
+		);
 		const fieldBindings = Object.entries(inventory.bindings).filter(([key]) =>
-			["area", "degree", "grade", "location", "period"].some((field) => key.endsWith(`/field-${field}`)),
+			["area", "degree", "grade", "location", "period"].some((field) =>
+				key.endsWith(`/field-${field}`),
+			),
 		);
 
 		expect(fieldBindings).toHaveLength(5);
 		expect(fieldBindings.map(([, binding]) => binding)).toEqual(
-			Array.from({ length: 5 }, () => ({ type: "primitive", primitive: "Text", source: "existing" })),
+			Array.from({ length: 5 }, () => ({
+				type: "primitive",
+				primitive: "Text",
+				source: "existing",
+			})),
 		);
 	});
 
@@ -366,8 +463,12 @@ describe("combined PDF field bindings", () => {
 	] as const)(
 		"keeps the real %s %s section raster-identical between legacy and empty semantic mode",
 		async (template, section) => {
-			const legacy = await rasterizeFirstPage(await renderPdf(template, fixture("legacy", section)));
-			const semantic = await rasterizeFirstPage(await renderPdf(template, fixture("semantic", section)));
+			const legacy = await rasterizeFirstPage(
+				await renderPdf(template, fixture("legacy", section)),
+			);
+			const semantic = await rasterizeFirstPage(
+				await renderPdf(template, fixture("semantic", section)),
+			);
 
 			expect(semantic.equals(legacy)).toBe(true);
 		},

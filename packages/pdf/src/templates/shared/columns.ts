@@ -25,13 +25,21 @@ type SectionItemsLayout = {
 };
 
 const normalizeSectionColumns = (columns: unknown): number => {
-	if (typeof columns !== "number" || !Number.isFinite(columns) || !Number.isInteger(columns))
+	if (
+		typeof columns !== "number" ||
+		!Number.isFinite(columns) ||
+		!Number.isInteger(columns)
+	)
 		return MIN_SECTION_COLUMNS;
 
 	return Math.min(MAX_SECTION_COLUMNS, Math.max(MIN_SECTION_COLUMNS, columns));
 };
 
-export const getSectionItemsLayout = ({ columns, rowGap, columnGap }: SectionItemsLayoutInput): SectionItemsLayout => {
+export const getSectionItemsLayout = ({
+	columns,
+	rowGap,
+	columnGap,
+}: SectionItemsLayoutInput): SectionItemsLayout => {
 	const normalizedColumns = normalizeSectionColumns(columns);
 
 	if (normalizedColumns === 1) {
@@ -74,6 +82,14 @@ export const getSectionItemRows = <T>(items: T[], columns: unknown): T[][] => {
 	return rows;
 };
 
-export const shouldUseSectionTimeline = ({ sectionTimeline, placement, columns }: SectionTimelineInput): boolean => {
-	return sectionTimeline && placement === "main" && normalizeSectionColumns(columns) === 1;
+export const shouldUseSectionTimeline = ({
+	sectionTimeline,
+	placement,
+	columns,
+}: SectionTimelineInput): boolean => {
+	return (
+		sectionTimeline &&
+		placement === "main" &&
+		normalizeSectionColumns(columns) === 1
+	);
 };

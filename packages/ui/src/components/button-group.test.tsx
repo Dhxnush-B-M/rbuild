@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from "./button-group";
+import {
+	ButtonGroup,
+	ButtonGroupSeparator,
+	ButtonGroupText,
+} from "./button-group";
 
 describe("ButtonGroup", () => {
 	it("renders a fieldset with data-slot='button-group'", () => {
@@ -12,12 +16,18 @@ describe("ButtonGroup", () => {
 
 	it("respects horizontal orientation (default)", () => {
 		render(<ButtonGroup data-testid="g" orientation="horizontal" />);
-		expect(screen.getByTestId("g")).toHaveAttribute("data-orientation", "horizontal");
+		expect(screen.getByTestId("g")).toHaveAttribute(
+			"data-orientation",
+			"horizontal",
+		);
 	});
 
 	it("respects vertical orientation", () => {
 		render(<ButtonGroup data-testid="g" orientation="vertical" />);
-		expect(screen.getByTestId("g")).toHaveAttribute("data-orientation", "vertical");
+		expect(screen.getByTestId("g")).toHaveAttribute(
+			"data-orientation",
+			"vertical",
+		);
 	});
 
 	it("merges custom className", () => {
@@ -38,7 +48,11 @@ describe("ButtonGroupText", () => {
 	});
 
 	it("supports custom render function", () => {
-		render(<ButtonGroupText render={(props) => <span {...props} />}>label</ButtonGroupText>);
+		render(
+			<ButtonGroupText render={(props) => <span {...props} />}>
+				label
+			</ButtonGroupText>,
+		);
 		expect(screen.getByText("label").tagName).toBe("SPAN");
 	});
 });
@@ -46,16 +60,25 @@ describe("ButtonGroupText", () => {
 describe("ButtonGroupSeparator", () => {
 	it("defaults to vertical orientation", () => {
 		render(<ButtonGroupSeparator data-testid="sep" />);
-		expect(screen.getByTestId("sep")).toHaveAttribute("data-orientation", "vertical");
+		expect(screen.getByTestId("sep")).toHaveAttribute(
+			"data-orientation",
+			"vertical",
+		);
 	});
 
 	it("supports horizontal orientation", () => {
 		render(<ButtonGroupSeparator data-testid="sep" orientation="horizontal" />);
-		expect(screen.getByTestId("sep")).toHaveAttribute("data-orientation", "horizontal");
+		expect(screen.getByTestId("sep")).toHaveAttribute(
+			"data-orientation",
+			"horizontal",
+		);
 	});
 
 	it("uses data-slot='button-group-separator'", () => {
 		render(<ButtonGroupSeparator data-testid="sep" />);
-		expect(screen.getByTestId("sep")).toHaveAttribute("data-slot", "button-group-separator");
+		expect(screen.getByTestId("sep")).toHaveAttribute(
+			"data-slot",
+			"button-group-separator",
+		);
 	});
 });

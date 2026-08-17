@@ -7,11 +7,11 @@ import {
 	EnvelopeSimpleIcon,
 	HeadsetIcon,
 } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
+import { Separator } from "@rbuilder/ui/components/separator";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@rbuilder/ui/components/button";
-import { Separator } from "@rbuilder/ui/components/separator";
 import { DashboardHeader } from "../-components/header";
 
 export const Route = createFileRoute("/dashboard/support/")({
@@ -46,15 +46,21 @@ function SupportRouteComponent() {
 							<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
 								<ChatCircleDotsIcon size={32} />
 							</div>
-							<h3 className="mt-6 font-bold text-2xl text-foreground tracking-tight">24/7 Live Support</h3>
+							<h3 className="mt-6 font-bold text-2xl text-foreground tracking-tight">
+								24/7 Live Support
+							</h3>
 							<p className="mt-2 text-muted-foreground text-sm leading-relaxed">
-								Chat directly with our support specialists for real-time help with resume editing, templates, and
-								downloads.
+								Chat directly with our support specialists for real-time help
+								with resume editing, templates, and downloads.
 							</p>
 						</div>
 
 						<div className="mt-8 pt-4">
-							<Button size="lg" className="w-full gap-2 font-bold" onClick={handleOpenLiveChat}>
+							<Button
+								size="lg"
+								className="w-full gap-2 font-bold"
+								onClick={handleOpenLiveChat}
+							>
 								<ChatCircleDotsIcon className="size-5" />
 								<span>Start Live Chat</span>
 							</Button>
@@ -67,9 +73,12 @@ function SupportRouteComponent() {
 							<div className="flex size-14 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-400">
 								<EnvelopeSimpleIcon size={32} />
 							</div>
-							<h3 className="mt-6 font-bold text-2xl text-foreground tracking-tight">Email Support</h3>
+							<h3 className="mt-6 font-bold text-2xl text-foreground tracking-tight">
+								Email Support
+							</h3>
 							<p className="mt-2 text-muted-foreground text-sm leading-relaxed">
-								Reach us directly by email. We reply to all inquiries and feedback in under 15 minutes.
+								Reach us directly by email. We reply to all inquiries and
+								feedback in under 15 minutes.
 							</p>
 
 							{/* Interactive Email Bar */}
@@ -82,7 +91,11 @@ function SupportRouteComponent() {
 									support@resume-builder.com
 								</span>
 								<span className="flex shrink-0 items-center gap-1 text-muted-foreground text-xs transition-colors group-hover:text-primary">
-									{copied ? <CheckIcon className="size-4 text-emerald-400" /> : <CopySimpleIcon className="size-4" />}
+									{copied ? (
+										<CheckIcon className="size-4 text-emerald-400" />
+									) : (
+										<CopySimpleIcon className="size-4" />
+									)}
 									<span>{copied ? "Copied" : "Copy"}</span>
 								</span>
 							</button>

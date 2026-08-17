@@ -1,6 +1,6 @@
+import { cn } from "@rbuilder/utils/style";
 import { m } from "motion/react";
 import { useRef, useState } from "react";
-import { cn } from "@rbuilder/utils/style";
 
 const textClassName = cn(
 	"select-none fill-transparent font-extrabold text-5xl leading-none tracking-wider md:text-6xl",
@@ -13,7 +13,12 @@ type TextMaskEffectProps = {
 	"aria-hidden"?: boolean | "true" | "false";
 };
 
-export const TextMaskEffect = ({ text, duration = 16, className, "aria-hidden": ariaHidden }: TextMaskEffectProps) => {
+export const TextMaskEffect = ({
+	text,
+	duration = 16,
+	className,
+	"aria-hidden": ariaHidden,
+}: TextMaskEffectProps) => {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const [hovered, setHovered] = useState(false);
 	const [maskPosition, setMaskPosition] = useState({ cx: "50%", cy: "50%" });
@@ -37,14 +42,22 @@ export const TextMaskEffect = ({ text, duration = 16, className, "aria-hidden": 
 				onMouseMove={(e) => {
 					if (!svgRef.current) return;
 					const svgRect = svgRef.current.getBoundingClientRect();
-					const cxPercentage = ((e.clientX - svgRect.left) / svgRect.width) * 100;
-					const cyPercentage = ((e.clientY - svgRect.top) / svgRect.height) * 100;
+					const cxPercentage =
+						((e.clientX - svgRect.left) / svgRect.width) * 100;
+					const cyPercentage =
+						((e.clientY - svgRect.top) / svgRect.height) * 100;
 
 					setMaskPosition({ cx: `${cxPercentage}%`, cy: `${cyPercentage}%` });
 				}}
 			>
 				<defs>
-					<linearGradient id="textGradient" gradientUnits="userSpaceOnUse" cx="50%" cy="50%" r="35%">
+					<linearGradient
+						id="textGradient"
+						gradientUnits="userSpaceOnUse"
+						cx="50%"
+						cy="50%"
+						r="35%"
+					>
 						<stop offset="0%" stopColor="#38bdf8" />
 						<stop offset="25%" stopColor="#818cf8" />
 						<stop offset="50%" stopColor="#c084fc" />
@@ -65,7 +78,13 @@ export const TextMaskEffect = ({ text, duration = 16, className, "aria-hidden": 
 					</m.radialGradient>
 
 					<mask id="textMask">
-						<rect x="-1000" y="-100" width="3000" height="300" fill="url(#revealMask)" />
+						<rect
+							x="-1000"
+							y="-100"
+							width="3000"
+							height="300"
+							fill="url(#revealMask)"
+						/>
 					</mask>
 				</defs>
 
@@ -88,7 +107,10 @@ export const TextMaskEffect = ({ text, duration = 16, className, "aria-hidden": 
 							textAnchor="middle"
 							dominantBaseline="central"
 							style={{ opacity: hovered ? 0.35 : 0.2 }}
-							className={cn(textClassName, "stroke-foreground transition-opacity duration-300")}
+							className={cn(
+								textClassName,
+								"stroke-foreground transition-opacity duration-300",
+							)}
 						>
 							{text}
 						</text>

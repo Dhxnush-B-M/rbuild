@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleSlots } from "../shared/types";
-import { useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -30,6 +29,7 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type { TemplateColorRoles, TemplateStyleSlots } from "../shared/types";
 
 type BronzorStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -77,16 +77,36 @@ const getBronzorSections = ({
 	return sections;
 };
 
-export const BronzorPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const BronzorPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { styles, colors } = useBronzorTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const sections = getBronzorSections({ mainSections, sidebarSections, fullWidth: page.fullWidth });
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const sections = getBronzorSections({
+		mainSections,
+		sidebarSections,
+		fullWidth: page.fullWidth,
+	});
 
 	return (
 		<Page
@@ -94,10 +114,17 @@ export const BronzorPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showHeader && <Header styles={styles} />}
 
-				<SemanticRegionView region="main" style={composeStyles(styles.sections, { rowGap: metrics.sectionGap })}>
+				<SemanticRegionView
+					region="main"
+					style={composeStyles(styles.sections, { rowGap: metrics.sectionGap })}
+				>
 					{sections.map((section) => (
 						<Section key={section} section={section} placement="main" />
 					))}
@@ -113,7 +140,9 @@ const Header = ({ styles }: BronzorHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 
 			<View style={styles.headerTitle}>
 				<View style={styles.headerIdentity}>
@@ -123,12 +152,28 @@ const Header = ({ styles }: BronzorHeaderProps) => {
 			</View>
 
 			<SemanticContactListView style={styles.headerContactRow}>
-				<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-				<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-				<LocationContactItem location={basics.location} style={styles.headerContactItem} />
-				<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+				<EmailContactItem
+					email={basics.email}
+					style={styles.headerContactItem}
+				/>
+				<PhoneContactItem
+					phone={basics.phone}
+					style={styles.headerContactItem}
+				/>
+				<LocationContactItem
+					location={basics.location}
+					style={styles.headerContactItem}
+				/>
+				<WebsiteContactItem
+					website={basics.website}
+					style={styles.headerContactItem}
+				/>
 				{basics.customFields.map((field) => (
-					<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
+					<CustomFieldContactItem
+						key={field.id}
+						field={field}
+						style={styles.headerContactItem}
+					/>
 				))}
 			</SemanticContactListView>
 		</SemanticHeaderView>
@@ -146,11 +191,21 @@ const useBronzorTemplate = (): BronzorTemplate => {
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
-			heading: { ...base.heading, fontWeight: metadata.typography.heading.fontWeights[0] ?? "500" },
+			heading: {
+				...base.heading,
+				fontWeight: metadata.typography.heading.fontWeights[0] ?? "500",
+			},
 			page: {
 				...base.page,
 				flexDirection: "column",

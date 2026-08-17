@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 
-import { describe, expect, it } from "vitest";
-import { Document } from "docx";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { Document } from "docx";
+import { describe, expect, it } from "vitest";
 import { buildDocument } from "./builder";
 
 describe("buildDocument", () => {

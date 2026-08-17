@@ -1,13 +1,21 @@
-import type { SectionType } from "@rbuilder/schema/resume/data";
-import type { LeftSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { CaretDownIcon } from "@phosphor-icons/react";
+import type { SectionType } from "@rbuilder/schema/resume/data";
 import { getDefaultSectionIconName } from "@rbuilder/schema/resume/section-icons";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@rbuilder/ui/components/accordion";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@rbuilder/ui/components/accordion";
 import { Button } from "@rbuilder/ui/components/button";
 import { cn } from "@rbuilder/utils/style";
 import { IconPicker } from "@/components/input/icon-picker";
-import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
+import type { LeftSidebarSection } from "@/libs/resume/section";
 import { getSectionIcon, getSectionTitle } from "@/libs/resume/section";
 import { useSectionStore } from "../../../-store/section";
 import { SectionDropdownMenu } from "./section-menu";
@@ -34,13 +42,19 @@ export function SectionBase({ type, className, ...props }: Props) {
 
 	const isHidden = "hidden" in section && section.hidden;
 	const hasSectionIcon = !["picture", "basics", "custom"].includes(type);
-	const rawIcon = "icon" in section && typeof section.icon === "string" ? section.icon : "";
-	const fallbackIcon = hasSectionIcon ? getDefaultSectionIconName(type as "summary" | SectionType) : "";
+	const rawIcon =
+		"icon" in section && typeof section.icon === "string" ? section.icon : "";
+	const fallbackIcon = hasSectionIcon
+		? getDefaultSectionIconName(type as "summary" | SectionType)
+		: "";
 	const sectionIcon = rawIcon === "none" ? "" : rawIcon || fallbackIcon;
 
-	const sectionTitle = ("title" in section && section.title) || getSectionTitle(type);
+	const sectionTitle =
+		("title" in section && section.title) || getSectionTitle(type);
 
-	const collapsed = useSectionStore((state) => state.sections[type]?.collapsed ?? false);
+	const collapsed = useSectionStore(
+		(state) => state.sections[type]?.collapsed ?? false,
+	);
 	const toggleCollapsed = useSectionStore((state) => state.toggleCollapsed);
 
 	const onIconChange = (icon: string) => {
@@ -63,7 +77,11 @@ export function SectionBase({ type, className, ...props }: Props) {
 				isHidden && "opacity-50",
 			)}
 		>
-			<Accordion value={collapsed ? [] : [type]} onValueChange={() => toggleCollapsed(type)} className="space-y-3">
+			<Accordion
+				value={collapsed ? [] : [type]}
+				onValueChange={() => toggleCollapsed(type)}
+				className="space-y-3"
+			>
 				<AccordionItem value={type} className="group/accordion-item space-y-3">
 					<div className="flex items-center justify-between">
 						<div className="flex flex-1 items-center gap-x-2.5">
@@ -83,7 +101,12 @@ export function SectionBase({ type, className, ...props }: Props) {
 
 							<div className="flex items-center gap-x-2">
 								{hasSectionIcon ? (
-									<IconPicker value={sectionIcon} onChange={onIconChange} size="icon" variant="ghost" />
+									<IconPicker
+										value={sectionIcon}
+										onChange={onIconChange}
+										size="icon"
+										variant="ghost"
+									/>
 								) : (
 									<div className="text-primary">{getSectionIcon(type)}</div>
 								)}

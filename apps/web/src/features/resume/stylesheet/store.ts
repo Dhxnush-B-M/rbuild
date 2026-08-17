@@ -1,7 +1,22 @@
-import type { SemanticCssDiagnostic, SemanticNode } from "@rbuilder/resume/stylesheet";
+import {
+	buildSemanticTree,
+	getTemplateSemanticManifest,
+	semanticNodeKeys,
+	shouldShowResumeHeader,
+} from "@rbuilder/pdf/semantic-tree";
+import type {
+	SemanticCssDiagnostic,
+	SemanticNode,
+} from "@rbuilder/resume/stylesheet";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { SemanticStylesheet, StylesheetSource } from "@rbuilder/schema/resume/stylesheet";
+import type {
+	SemanticStylesheet,
+	StylesheetSource,
+} from "@rbuilder/schema/resume/stylesheet";
+import { create } from "zustand/react";
 import type { StoreApi } from "zustand/vanilla";
+import { createStore } from "zustand/vanilla";
+import { orpc } from "@/libs/orpc/client";
 import type { SemanticCssColorToken } from "./color-tokens";
 import type {
 	CompileWorkerInput,
@@ -10,16 +25,10 @@ import type {
 	PreflightWorkerResponse,
 	SemanticCssEditorMetadata,
 } from "./protocol";
-import { create } from "zustand/react";
-import { createStore } from "zustand/vanilla";
 import {
-	buildSemanticTree,
-	getTemplateSemanticManifest,
-	semanticNodeKeys,
-	shouldShowResumeHeader,
-} from "@rbuilder/pdf/semantic-tree";
-import { orpc } from "@/libs/orpc/client";
-import { createCompileWorkerClient, createPreflightWorkerClient } from "./worker-client";
+	createCompileWorkerClient,
+	createPreflightWorkerClient,
+} from "./worker-client";
 
 export type StylesheetCanonicalState = {
 	stylesheet: SemanticStylesheet;
@@ -50,13 +59,25 @@ type RestoreMutation = {
 	restore: SemanticStylesheet;
 };
 
-type ActivateMutation = Omit<EditMutation, "transition"> & { transition: "activate" };
-type DeactivateMutation = Omit<EditMutation, "transition" | "source"> & { transition: "deactivate" };
-type StylesheetMutation = EditMutation | RestoreMutation | ActivateMutation | DeactivateMutation;
+type ActivateMutation = Omit<EditMutation, "transition"> & {
+	transition: "activate";
+};
+type DeactivateMutation = Omit<EditMutation, "transition" | "source"> & {
+	transition: "deactivate";
+};
+type StylesheetMutation =
+	| EditMutation
+	| RestoreMutation
+	| ActivateMutation
+	| DeactivateMutation;
 
 type Candidate =
 	| { generation: number; transition: "edit_source"; source: StylesheetSource }
-	| { generation: number; transition: "restore_history"; restore: SemanticStylesheet }
+	| {
+			generation: number;
+			transition: "restore_history";
+			restore: SemanticStylesheet;
+	  }
 	| { generation: number; transition: "activate"; source: StylesheetSource }
 	| { generation: number; transition: "deactivate" };
 
@@ -71,7 +92,13 @@ export type StylesheetStoreState = {
 	diagnostics: readonly SemanticCssDiagnostic[];
 	colorTokens: readonly SemanticCssColorToken[];
 	editorMetadata: SemanticCssEditorMetadata;
-	status: "idle" | "compiling" | "preflighting" | "saving" | "applied" | "error";
+	status:
+		| "idle"
+		| "compiling"
+		| "preflighting"
+		| "saving"
+		| "applied"
+		| "error";
 	restoreLocked: boolean;
 	focused: boolean;
 	canUndo: boolean;
@@ -90,7 +117,10 @@ export type StylesheetStoreState = {
 type RuntimeDependencies = {
 	compile(input: CompileWorkerInput): Promise<CompileWorkerResponse>;
 	preflight(input: PreflightWorkerInput): Promise<PreflightWorkerResponse>;
-	mutate(input: StylesheetMutation, signal: AbortSignal): Promise<StylesheetMutationResult>;
+	mutate(
+		input: StylesheetMutation,
+		signal: AbortSignal,
+	): Promise<StylesheetMutationResult>;
 	destroy?(): void;
 };
 
@@ -102,7 +132,10 @@ type CreateStylesheetStoreRuntimeOptions = RuntimeDependencies & {
 	store?: StoreApi<StylesheetStoreState>;
 };
 
-const emptySource = (): StylesheetSource => ({ languageVersion: 1, text: "@version 1;\n" });
+const emptySource = (): StylesheetSource => ({
+	languageVersion: 1,
+	text: "@version 1;\n",
+});
 const emptySemanticTree = (): SemanticNode => ({
 	key: "resume",
 	kind: "resume",
@@ -133,7 +166,13 @@ const preflightFailureDiagnostic = (
 
 const inactiveState = (): Omit<
 	StylesheetStoreState,
-	"setSourceText" | "setFocused" | "activate" | "deactivate" | "undo" | "redo" | "refreshIntelligence"
+	| "setSourceText"
+	| "setFocused"
+	| "activate"
+	| "deactivate"
+	| "undo"
+	| "redo"
+	| "refreshIntelligence"
 > => ({
 	resumeId: undefined,
 	mode: "legacy",
@@ -154,24 +193,35 @@ const inactiveState = (): Omit<
 	redoStack: [],
 });
 
-const sourceFromText = (source: StylesheetSource, text: string): StylesheetSource => ({ ...source, text });
+const sourceFromText = (
+	source: StylesheetSource,
+	text: string,
+): StylesheetSource => ({ ...source, text });
 const sourcesEqual = (left: StylesheetSource, right: StylesheetSource) =>
 	left.languageVersion === right.languageVersion && left.text === right.text;
 const isEditorFocused = () =>
-	typeof document !== "undefined" && document.activeElement instanceof HTMLElement
+	typeof document !== "undefined" &&
+	document.activeElement instanceof HTMLElement
 		? document.activeElement.closest(".cm-editor") !== null
 		: false;
-const currentStylesheet = (state: StylesheetStoreState): SemanticStylesheet => ({
+const currentStylesheet = (
+	state: StylesheetStoreState,
+): SemanticStylesheet => ({
 	mode: state.mode,
 	source: structuredClone(state.source),
 	applied: structuredClone(state.applied),
 });
-const appendHistory = (stack: SemanticStylesheet[], value: SemanticStylesheet) =>
-	[...stack, value].slice(-MAX_HISTORY_ENTRIES);
+const appendHistory = (
+	stack: SemanticStylesheet[],
+	value: SemanticStylesheet,
+) => [...stack, value].slice(-MAX_HISTORY_ENTRIES);
 
 const pageDimensions = (data: ResumeData) => {
 	const format = data.metadata.page.format;
-	const size = format === "letter" ? { width: 612, height: 792 } : { width: 595.28, height: 841.89 };
+	const size =
+		format === "letter"
+			? { width: 612, height: 792 }
+			: { width: 595.28, height: 841.89 };
 	return data.metadata.layout.pages.map((_page, index) => ({
 		pageKey: semanticNodeKeys.page(index + 1),
 		...size,
@@ -197,7 +247,9 @@ const createEditorMetadata = (data: ResumeData): SemanticCssEditorMetadata => {
 	};
 	return {
 		semanticTree,
-		templateParts: getTemplateSemanticManifest(data.metadata.template).parts.map(({ name }) => name),
+		templateParts: getTemplateSemanticManifest(
+			data.metadata.template,
+		).parts.map(({ name }) => name),
 	};
 };
 
@@ -223,13 +275,22 @@ const compileInput = (
 	};
 };
 
-const conflictState = (error: unknown): StylesheetCanonicalState | undefined => {
+const conflictState = (
+	error: unknown,
+): StylesheetCanonicalState | undefined => {
 	if (!error || typeof error !== "object") return;
-	const value = error as { code?: string; data?: { state?: StylesheetCanonicalState } };
-	return value.code === "STYLESHEET_REVISION_CONFLICT" ? value.data?.state : undefined;
+	const value = error as {
+		code?: string;
+		data?: { state?: StylesheetCanonicalState };
+	};
+	return value.code === "STYLESHEET_REVISION_CONFLICT"
+		? value.data?.state
+		: undefined;
 };
 
-export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRuntimeOptions) {
+export function createStylesheetStoreRuntime(
+	options: CreateStylesheetStoreRuntimeOptions,
+) {
 	let resumeData = structuredClone(options.resumeData);
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	let inFlight: Candidate | undefined;
@@ -260,15 +321,23 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 		}));
 
 	const patch = (next: Partial<StylesheetStoreState>) => store.setState(next);
-	const replaceCanonical = (canonical: StylesheetCanonicalState, preserveSource: boolean) => {
+	const replaceCanonical = (
+		canonical: StylesheetCanonicalState,
+		preserveSource: boolean,
+	) => {
 		const state = store.getState();
 		const next: Partial<StylesheetStoreState> = {
 			revision: Math.max(state.revision, canonical.revision),
-			renderDataVersion: Math.max(state.renderDataVersion, canonical.renderDataVersion),
+			renderDataVersion: Math.max(
+				state.renderDataVersion,
+				canonical.renderDataVersion,
+			),
 		};
 		if (canonical.revision >= state.revision) {
 			next.mode = canonical.stylesheet.mode;
-			const nextSource = preserveSource ? state.source : canonical.stylesheet.source;
+			const nextSource = preserveSource
+				? state.source
+				: canonical.stylesheet.source;
 			next.source = nextSource;
 			next.applied = canonical.stylesheet.applied;
 			if (!sourcesEqual(nextSource, state.source)) {
@@ -297,10 +366,21 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 			editGeneration: candidate.generation,
 		};
 		let input: StylesheetMutation;
-		if (candidate.transition === "edit_source" || candidate.transition === "activate") {
-			input = { ...common, transition: candidate.transition, source: candidate.source };
+		if (
+			candidate.transition === "edit_source" ||
+			candidate.transition === "activate"
+		) {
+			input = {
+				...common,
+				transition: candidate.transition,
+				source: candidate.source,
+			};
 		} else if (candidate.transition === "restore_history") {
-			input = { ...common, transition: "restore_history", restore: candidate.restore };
+			input = {
+				...common,
+				transition: "restore_history",
+				restore: candidate.restore,
+			};
 		} else {
 			input = { ...common, transition: "deactivate" };
 		}
@@ -314,11 +394,17 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 				const staleStylesheet = result.revision < state.revision;
 				patch({
 					revision: Math.max(state.revision, result.revision),
-					renderDataVersion: Math.max(state.renderDataVersion, result.renderDataVersion),
+					renderDataVersion: Math.max(
+						state.renderDataVersion,
+						result.renderDataVersion,
+					),
 				});
 				if (result.editGeneration !== store.getState().editGeneration) return;
 				if (staleStylesheet) return;
-				const sourceChanged = !sourcesEqual(result.stylesheet.source, state.source);
+				const sourceChanged = !sourcesEqual(
+					result.stylesheet.source,
+					state.source,
+				);
 				if (sourceChanged) intelligenceEpoch += 1;
 				patch({
 					mode: result.stylesheet.mode,
@@ -326,10 +412,16 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 					applied: result.stylesheet.applied,
 					diagnostics: result.diagnostics,
 					colorTokens: sourceChanged ? [] : state.colorTokens,
-					status: result.diagnostics.some(({ severity }) => severity === "error") ? "error" : "applied",
+					status: result.diagnostics.some(
+						({ severity }) => severity === "error",
+					)
+						? "error"
+						: "applied",
 				});
-				if (latestCandidate?.generation === result.editGeneration) latestCandidate = undefined;
-				if (deferredCanonical && result.revision >= deferredCanonical.revision) deferredCanonical = undefined;
+				if (latestCandidate?.generation === result.editGeneration)
+					latestCandidate = undefined;
+				if (deferredCanonical && result.revision >= deferredCanonical.revision)
+					deferredCanonical = undefined;
 			})
 			.catch((error: unknown) => {
 				if (destroyed) return;
@@ -354,28 +446,45 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 	};
 
 	const processCandidate = async (candidate: Candidate) => {
-		if (destroyed || candidate.generation !== store.getState().editGeneration) return;
+		if (destroyed || candidate.generation !== store.getState().editGeneration)
+			return;
 		const candidateValidationEpoch = validationEpoch;
 		if (candidate.transition === "deactivate") {
 			queue(candidate);
 			return;
 		}
-		const source = candidate.transition === "restore_history" ? candidate.restore.applied : candidate.source;
+		const source =
+			candidate.transition === "restore_history"
+				? candidate.restore.applied
+				: candidate.source;
 		patch({ status: "compiling" });
 		let compiled: CompileWorkerResponse;
 		try {
 			compiled = await options.compile(
-				compileInput(resumeData, source, candidate.generation, editorMetadata.semanticTree),
+				compileInput(
+					resumeData,
+					source,
+					candidate.generation,
+					editorMetadata.semanticTree,
+				),
 			);
 		} catch {
 			if (candidateValidationEpoch !== validationEpoch) return;
-			if (destroyed || candidate.generation !== store.getState().editGeneration) return;
+			if (destroyed || candidate.generation !== store.getState().editGeneration)
+				return;
 			patch({ status: "error" });
 			return;
 		}
 		if (candidateValidationEpoch !== validationEpoch) return;
-		if (destroyed || compiled.editGeneration !== store.getState().editGeneration) return;
-		patch({ diagnostics: compiled.diagnostics, colorTokens: compiled.colorTokens ?? [] });
+		if (
+			destroyed ||
+			compiled.editGeneration !== store.getState().editGeneration
+		)
+			return;
+		patch({
+			diagnostics: compiled.diagnostics,
+			colorTokens: compiled.colorTokens ?? [],
+		});
 
 		if (!compiled.program) {
 			if (candidate.transition === "edit_source") queue(candidate);
@@ -389,7 +498,11 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 			try {
 				preflight = await options.preflight({
 					editGeneration: candidate.generation,
-					input: { data: resumeData, template: resumeData.metadata.template, stylesheet: source },
+					input: {
+						data: resumeData,
+						template: resumeData.metadata.template,
+						stylesheet: source,
+					},
 					limits: {
 						maxPages: 20,
 						maxBytes: 10_000_000,
@@ -406,7 +519,11 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 				return;
 			}
 			if (candidateValidationEpoch !== validationEpoch) return;
-			if (destroyed || preflight.editGeneration !== store.getState().editGeneration) return;
+			if (
+				destroyed ||
+				preflight.editGeneration !== store.getState().editGeneration
+			)
+				return;
 			if (!preflight.result.ok) {
 				patch({
 					diagnostics: [
@@ -432,7 +549,10 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 		}, debounceMs);
 	};
 
-	const restore = (target: SemanticStylesheet, opposite: "undoStack" | "redoStack") => {
+	const restore = (
+		target: SemanticStylesheet,
+		opposite: "undoStack" | "redoStack",
+	) => {
 		const state = store.getState();
 		const stack = opposite === "undoStack" ? state.undoStack : state.redoStack;
 		const previous = stack.at(-1);
@@ -500,7 +620,8 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 			deferredCanonical = undefined;
 			const candidate = latestCandidate;
 			const hasLocalDraft =
-				candidate !== undefined && store.getState().source.text !== canonical.stylesheet.source.text;
+				candidate !== undefined &&
+				store.getState().source.text !== canonical.stylesheet.source.text;
 			replaceCanonical(canonical, hasLocalDraft);
 			if (hasLocalDraft && candidate) schedule(candidate);
 			else resetHistoryCoalescing();
@@ -549,7 +670,14 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 			const source = structuredClone(state.source);
 			const requestEpoch = ++intelligenceEpoch;
 			void options
-				.compile(compileInput(resumeData, source, generation, editorMetadata.semanticTree))
+				.compile(
+					compileInput(
+						resumeData,
+						source,
+						generation,
+						editorMetadata.semanticTree,
+					),
+				)
 				.then((compiled) => {
 					const current = store.getState();
 					if (
@@ -560,20 +688,30 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 					) {
 						return;
 					}
-					patch({ diagnostics: compiled.diagnostics, colorTokens: compiled.colorTokens ?? [] });
+					patch({
+						diagnostics: compiled.diagnostics,
+						colorTokens: compiled.colorTokens ?? [],
+					});
 				});
 		},
 	});
 
 	return {
 		store,
-		replaceResumeSnapshot(data: ResumeData, canonical: StylesheetCanonicalState) {
+		replaceResumeSnapshot(
+			data: ResumeData,
+			canonical: StylesheetCanonicalState,
+		) {
 			const candidate = latestCandidate;
 			resumeData = structuredClone(data);
 			editorMetadata = createEditorMetadata(resumeData);
 			patch({ editorMetadata });
-			const renderDataChanged = canonical.renderDataVersion > store.getState().renderDataVersion;
-			const preserveSource = store.getState().focused || isEditorFocused() || candidate !== undefined;
+			const renderDataChanged =
+				canonical.renderDataVersion > store.getState().renderDataVersion;
+			const preserveSource =
+				store.getState().focused ||
+				isEditorFocused() ||
+				candidate !== undefined;
 			replaceCanonical(canonical, preserveSource);
 			if (renderDataChanged) {
 				validationEpoch += 1;
@@ -584,10 +722,17 @@ export function createStylesheetStoreRuntime(options: CreateStylesheetStoreRunti
 		rebaseCanonical(canonical: StylesheetCanonicalState) {
 			const candidate = latestCandidate;
 			const hasLocalDraft =
-				candidate !== undefined && store.getState().source.text !== canonical.stylesheet.source.text;
+				candidate !== undefined &&
+				store.getState().source.text !== canonical.stylesheet.source.text;
 			const focused = store.getState().focused || isEditorFocused();
-			const sourceChanged = store.getState().source.text !== canonical.stylesheet.source.text;
-			if (focused && sourceChanged && canonical.revision >= store.getState().revision) deferredCanonical = canonical;
+			const sourceChanged =
+				store.getState().source.text !== canonical.stylesheet.source.text;
+			if (
+				focused &&
+				sourceChanged &&
+				canonical.revision >= store.getState().revision
+			)
+				deferredCanonical = canonical;
 			const preserveSource = (focused && sourceChanged) || hasLocalDraft;
 			replaceCanonical(canonical, preserveSource);
 			if (hasLocalDraft && candidate) schedule(candidate);
@@ -620,18 +765,26 @@ export const useStylesheetStore = create<StylesheetStoreState>(() => ({
 
 let activeRuntime: ReturnType<typeof createStylesheetStoreRuntime> | undefined;
 declare const stylesheetRuntimeTokenBrand: unique symbol;
-export type StylesheetRuntimeToken = Readonly<{ [stylesheetRuntimeTokenBrand]: true }>;
+export type StylesheetRuntimeToken = Readonly<{
+	[stylesheetRuntimeTokenBrand]: true;
+}>;
 let activeRuntimeToken: StylesheetRuntimeToken | undefined;
 
 const compilerClient = () =>
 	createCompileWorkerClient(
 		() =>
-			new Worker(new URL("./stylesheet.worker.ts", import.meta.url), { type: "module", name: "semantic-css-compiler" }),
+			new Worker(new URL("./stylesheet.worker.ts", import.meta.url), {
+				type: "module",
+				name: "semantic-css-compiler",
+			}),
 	);
 const preflightClient = () =>
 	createPreflightWorkerClient(
 		() =>
-			new Worker(new URL("./preflight.worker.ts", import.meta.url), { type: "module", name: "semantic-css-preflight" }),
+			new Worker(new URL("./preflight.worker.ts", import.meta.url), {
+				type: "module",
+				name: "semantic-css-preflight",
+			}),
 		5_000,
 	);
 
@@ -651,7 +804,11 @@ export function initializeStylesheetStore(input: {
 		preflight: preflight.preflight,
 		mutate: (mutation, signal) =>
 			orpc.resume.stylesheet.mutate.call(mutation, { signal }).catch(() => ({
-				stylesheet: { mode: "legacy", source: emptySource(), applied: emptySource() },
+				stylesheet: {
+					mode: "legacy",
+					source: emptySource(),
+					applied: emptySource(),
+				},
 				revision: mutation.expectedRevision + 1,
 				renderDataVersion: mutation.expectedRenderDataVersion,
 				editGeneration: mutation.editGeneration,
@@ -672,7 +829,9 @@ export function initializeStylesheetStore(input: {
 	};
 }
 
-export function lockStylesheetStoreForRestore(resumeId: string): StylesheetRuntimeToken | undefined {
+export function lockStylesheetStoreForRestore(
+	resumeId: string,
+): StylesheetRuntimeToken | undefined {
 	if (!activeRuntime || !activeRuntimeToken) return;
 	const state = activeRuntime.store.getState();
 	if (state.resumeId !== resumeId || state.restoreLocked) return;
@@ -680,7 +839,9 @@ export function lockStylesheetStoreForRestore(resumeId: string): StylesheetRunti
 	return activeRuntimeToken;
 }
 
-export function unlockStylesheetStoreAfterRestore(token: StylesheetRuntimeToken | undefined): boolean {
+export function unlockStylesheetStoreAfterRestore(
+	token: StylesheetRuntimeToken | undefined,
+): boolean {
 	if (!activeRuntime || !token || activeRuntimeToken !== token) return false;
 	activeRuntime.store.setState({ restoreLocked: false });
 	return true;
@@ -705,9 +866,15 @@ export function replaceStylesheetStoreAfterRestore(input: {
 	return true;
 }
 
-export async function refreshStylesheetStore(resumeId: string, resumeData?: ResumeData) {
-	if (!activeRuntime || activeRuntime.store.getState().resumeId !== resumeId) return;
-	const canonical = await orpc.resume.stylesheet.getState.call({ id: resumeId });
+export async function refreshStylesheetStore(
+	resumeId: string,
+	resumeData?: ResumeData,
+) {
+	if (!activeRuntime || activeRuntime.store.getState().resumeId !== resumeId)
+		return;
+	const canonical = await orpc.resume.stylesheet.getState.call({
+		id: resumeId,
+	});
 	if (resumeData) activeRuntime.replaceResumeSnapshot(resumeData, canonical);
 	else activeRuntime.rebaseCanonical(canonical);
 }

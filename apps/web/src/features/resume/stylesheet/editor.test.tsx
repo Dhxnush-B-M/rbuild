@@ -1,12 +1,18 @@
 // @vitest-environment happy-dom
 
-import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { EditorView } from "@codemirror/view";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import type { SemanticCssDiagnostic } from "@rbuilder/resume/stylesheet";
 import { TooltipProvider } from "@rbuilder/ui/components/tooltip";
+import {
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+	within,
+} from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import StylesheetEditorShell, { StylesheetCodeEditor } from "./editor";
 import { LegacyStylesheetBanner } from "./legacy-banner";
 import { StylesheetStatus } from "./status";
@@ -37,44 +43,67 @@ const guideName = /read the applying custom styles guide.*opens in new tab/i;
 
 const expectGuideLink = (root: HTMLElement) => {
 	const link = within(root).getByRole("link", { name: guideName });
-	expect(link).toHaveAttribute("href", "https://docs.rxresu.me/applying-custom-styles");
+	expect(link).toHaveAttribute(
+		"href",
+		"https://docs.rxresu.me/applying-custom-styles",
+	);
 	expect(link).toHaveAttribute("target", "_blank");
 	expect(link).toHaveAttribute("rel", "noopener noreferrer");
 };
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
-	Object.defineProperty(Element.prototype, "getAnimations", { configurable: true, value: () => [] });
+	Object.defineProperty(Element.prototype, "getAnimations", {
+		configurable: true,
+		value: () => [],
+	});
 });
 
-const renderWithI18n = (element: React.ReactNode) => render(<I18nProvider i18n={i18n}>{element}</I18nProvider>);
+const renderWithI18n = (element: React.ReactNode) =>
+	render(<I18nProvider i18n={i18n}>{element}</I18nProvider>);
 
 describe("stylesheet editor status", () => {
 	it("shows that invalid source keeps the last valid preview", () => {
-		renderWithI18n(<StylesheetStatus mode="semantic" status="error" diagnostics={[error]} />);
+		renderWithI18n(
+			<StylesheetStatus mode="semantic" status="error" diagnostics={[error]} />,
+		);
 
-		expect(screen.getByText(/preview and export use the last valid version/i)).toBeInTheDocument();
+		expect(
+			screen.getByText(/preview and export use the last valid version/i),
+		).toBeInTheDocument();
 		expect(screen.getByText("Unknown property")).toBeInTheDocument();
 	});
 
 	it("labels a valid legacy draft as ready to activate", () => {
-		renderWithI18n(<StylesheetStatus mode="legacy" status="idle" diagnostics={[]} />);
+		renderWithI18n(
+			<StylesheetStatus mode="legacy" status="idle" diagnostics={[]} />,
+		);
 
 		expect(screen.getByText("Ready to activate")).toBeInTheDocument();
 		expect(screen.queryByText("Applied")).not.toBeInTheDocument();
 	});
 
 	it("labels legacy warnings without claiming they are applied", () => {
-		renderWithI18n(<StylesheetStatus mode="legacy" status="idle" diagnostics={[{ ...error, severity: "warning" }]} />);
+		renderWithI18n(
+			<StylesheetStatus
+				mode="legacy"
+				status="idle"
+				diagnostics={[{ ...error, severity: "warning" }]}
+			/>,
+		);
 
-		expect(screen.getByText("Ready to activate with warnings")).toBeInTheDocument();
+		expect(
+			screen.getByText("Ready to activate with warnings"),
+		).toBeInTheDocument();
 		expect(screen.queryByText("Applied with warnings")).not.toBeInTheDocument();
 	});
 
 	it("disables activation while the converted draft has errors", () => {
 		renderWithI18n(<LegacyStylesheetBanner disabled onActivate={vi.fn()} />);
 
-		expect(screen.getByRole("button", { name: /activate semantic css/i })).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /activate semantic css/i }),
+		).toBeDisabled();
 	});
 });
 
@@ -97,16 +126,23 @@ describe("StylesheetCodeEditor", () => {
 
 		expect(container.querySelectorAll(".cm-editor")).toHaveLength(1);
 		expect(container.querySelector(".cm-editor")).toHaveAttribute("dir", "ltr");
-		expect(screen.getByRole("textbox", { name: "Semantic CSS stylesheet" })).toHaveAttribute("dir", "ltr");
+		expect(
+			screen.getByRole("textbox", { name: "Semantic CSS stylesheet" }),
+		).toHaveAttribute("dir", "ltr");
 
 		rerender(
 			<div style={{ height: 200 }}>
-				<StylesheetCodeEditor value={"@version 1;\nsection { color: red; }\n"} {...props} />
+				<StylesheetCodeEditor
+					value={"@version 1;\nsection { color: red; }\n"}
+					{...props}
+				/>
 			</div>,
 		);
 
 		expect(onChange).not.toHaveBeenCalled();
-		expect(screen.getByRole("textbox", { name: "Semantic CSS stylesheet" })).toHaveTextContent("color: red");
+		expect(
+			screen.getByRole("textbox", { name: "Semantic CSS stylesheet" }),
+		).toHaveTextContent("color: red");
 
 		rerender(
 			<div style={{ height: 200 }}>
@@ -120,10 +156,9 @@ describe("StylesheetCodeEditor", () => {
 			</div>,
 		);
 
-		expect(screen.getByRole("textbox", { name: "Semantic CSS stylesheet" })).toHaveAttribute(
-			"contenteditable",
-			"false",
-		);
+		expect(
+			screen.getByRole("textbox", { name: "Semantic CSS stylesheet" }),
+		).toHaveAttribute("contenteditable", "false");
 		expect(container.querySelector(".cm-gutter-lint")).toBeInTheDocument();
 
 		unmount();
@@ -149,13 +184,23 @@ describe("StylesheetCodeEditor", () => {
 				onRedo={vi.fn()}
 			/>,
 		);
-		const swatches = container.querySelectorAll<HTMLButtonElement>(".semantic-css-color-swatch");
+		const swatches = container.querySelectorAll<HTMLButtonElement>(
+			".semantic-css-color-swatch",
+		);
 		expect(swatches).toHaveLength(2);
 
 		swatches[0]?.click();
-		await waitFor(() => expect(container.querySelectorAll("[data-semantic-css-color-picker-trigger]")).toHaveLength(1));
+		await waitFor(() =>
+			expect(
+				container.querySelectorAll("[data-semantic-css-color-picker-trigger]"),
+			).toHaveLength(1),
+		);
 		swatches[1]?.click();
-		await waitFor(() => expect(container.querySelectorAll("[data-semantic-css-color-picker-trigger]")).toHaveLength(1));
+		await waitFor(() =>
+			expect(
+				container.querySelectorAll("[data-semantic-css-color-picker-trigger]"),
+			).toHaveLength(1),
+		);
 	});
 });
 
@@ -194,15 +239,24 @@ describe("StylesheetEditorShell", () => {
 			</I18nProvider>,
 		);
 
-		expect(screen.getByRole("textbox", { name: "Semantic CSS stylesheet" })).toHaveAttribute(
-			"contenteditable",
-			"false",
-		);
-		expect(screen.getByRole("button", { name: "Activate Semantic CSS" })).toBeDisabled();
-		expect(screen.getByRole("button", { name: "Undo stylesheet edit" })).toBeDisabled();
-		expect(screen.getByRole("button", { name: "Redo stylesheet edit" })).toBeDisabled();
-		expect(screen.getByRole("button", { name: "Format stylesheet" })).toBeDisabled();
-		expect(screen.getByRole("button", { name: "Reset to applied stylesheet" })).toBeDisabled();
+		expect(
+			screen.getByRole("textbox", { name: "Semantic CSS stylesheet" }),
+		).toHaveAttribute("contenteditable", "false");
+		expect(
+			screen.getByRole("button", { name: "Activate Semantic CSS" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: "Undo stylesheet edit" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: "Redo stylesheet edit" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: "Format stylesheet" }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: "Reset to applied stylesheet" }),
+		).toBeDisabled();
 	});
 
 	it("moves the only visible editor into a titled mobile sheet", async () => {
@@ -228,10 +282,18 @@ describe("StylesheetEditorShell", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Open focus mode" }));
 
 		const sheet = await screen.findByRole("dialog");
-		expect(within(sheet).getByRole("heading", { name: "Semantic CSS stylesheet" })).toBeInTheDocument();
-		expect(within(sheet).getByRole("button", { name: "Activate Semantic CSS" })).toBeInTheDocument();
-		expect(within(sheet).getByRole("toolbar", { name: "Stylesheet editor" })).toBeInTheDocument();
-		expect(within(sheet).getByText("Ready to activate with warnings")).toBeInTheDocument();
+		expect(
+			within(sheet).getByRole("heading", { name: "Semantic CSS stylesheet" }),
+		).toBeInTheDocument();
+		expect(
+			within(sheet).getByRole("button", { name: "Activate Semantic CSS" }),
+		).toBeInTheDocument();
+		expect(
+			within(sheet).getByRole("toolbar", { name: "Stylesheet editor" }),
+		).toBeInTheDocument();
+		expect(
+			within(sheet).getByText("Ready to activate with warnings"),
+		).toBeInTheDocument();
 		expect(within(sheet).getByText("Unknown property")).toBeInTheDocument();
 		expectGuideLink(sheet);
 		expect(document.querySelectorAll(".cm-editor")).toHaveLength(1);

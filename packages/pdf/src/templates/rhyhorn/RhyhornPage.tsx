@@ -1,13 +1,16 @@
+import { rgbaStringToHex } from "@rbuilder/utils/color";
 import type { Style } from "@react-pdf/types";
 import type { ReactNode } from "react";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
-import { rgbaStringToHex } from "@rbuilder/utils/color";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { resolvedPdfFlowProps } from "../../semantic/adapter";
-import { useRenderedSectionIds, useResolvedNode, useSemanticNodeVisible } from "../../semantic/context";
+import {
+	useRenderedSectionIds,
+	useResolvedNode,
+	useSemanticNodeVisible,
+} from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
 import {
@@ -33,6 +36,11 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type RhyhornStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -64,7 +72,12 @@ type RhyhornContactItemProps = {
 	children: ReactNode;
 };
 
-const RhyhornContactItem = ({ nodeKey, last, styles, children }: RhyhornContactItemProps) => {
+const RhyhornContactItem = ({
+	nodeKey,
+	last,
+	styles,
+	children,
+}: RhyhornContactItemProps) => {
 	const resolved = useResolvedNode(nodeKey);
 	const visible = useSemanticNodeVisible(nodeKey);
 	if (!visible) return null;
@@ -72,22 +85,42 @@ const RhyhornContactItem = ({ nodeKey, last, styles, children }: RhyhornContactI
 	return (
 		<View
 			{...resolvedPdfFlowProps(resolved)}
-			style={composeStyles(styles.contactItem, last ? styles.contactItemLast : undefined, resolved.style)}
+			style={composeStyles(
+				styles.contactItem,
+				last ? styles.contactItemLast : undefined,
+				resolved.style,
+			)}
 		>
 			{children}
 		</View>
 	);
 };
 
-export const RhyhornPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const RhyhornPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useRhyhornTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
 
 	return (
 		<Page
@@ -95,10 +128,19 @@ export const RhyhornPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showHeader && <Header styles={styles} />}
 
-				<SemanticRegionView region="main" style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
+				<SemanticRegionView
+					region="main"
+					style={composeStyles(styles.sectionGroup, {
+						rowGap: metrics.sectionGap,
+					})}
+				>
 					{mainSections.map((section) => (
 						<Section key={section} section={section} placement="main" />
 					))}
@@ -107,7 +149,9 @@ export const RhyhornPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 				{!page.fullWidth && (
 					<SemanticRegionView
 						region="sidebar"
-						style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}
+						style={composeStyles(styles.sectionGroup, {
+							rowGap: metrics.sectionGap,
+						})}
 					>
 						{sidebarSections.map((section) => (
 							<Section key={section} section={section} placement="sidebar" />
@@ -123,12 +167,21 @@ const Header = ({ styles }: RhyhornHeaderProps) => {
 	const { basics, picture } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
 	const pageNodeKey = useTemplatePageNodeKey();
-	const headerNodeKey = semanticNodeKeys.header(semanticNodeKeys.region(pageNodeKey, "header"));
-	const contactListNodeKey = headerNodeKey ? semanticNodeKeys.contactList(headerNodeKey) : undefined;
+	const headerNodeKey = semanticNodeKeys.header(
+		semanticNodeKeys.region(pageNodeKey, "header"),
+	);
+	const contactListNodeKey = headerNodeKey
+		? semanticNodeKeys.contactList(headerNodeKey)
+		: undefined;
 	const contactNodeKey = (name: string, id?: string) =>
-		contactListNodeKey ? semanticNodeKeys.contactItem(contactListNodeKey, name, id) : undefined;
+		contactListNodeKey
+			? semanticNodeKeys.contactItem(contactListNodeKey, name, id)
+			: undefined;
 	const contentNodeKey = (name: string, id?: string) =>
-		semanticTemplatePartNodeKey(contactNodeKey(name, id), "contact-item-content");
+		semanticTemplatePartNodeKey(
+			contactNodeKey(name, id),
+			"contact-item-content",
+		);
 	const contactItems: {
 		id: string;
 		nodeKey: string | undefined;
@@ -225,7 +278,9 @@ const Header = ({ styles }: RhyhornHeaderProps) => {
 				</SemanticContactListView>
 			</View>
 
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 		</SemanticHeaderView>
 	);
 };
@@ -242,7 +297,14 @@ const useRhyhornTemplate = (): RhyhornTemplate => {
 		const metrics = getTemplateMetrics(metadata.page);
 		const contactGap = metrics.gapX(0.5);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -316,7 +378,10 @@ const useRhyhornTemplate = (): RhyhornTemplate => {
 			colors,
 			styles: {
 				...baseStyles,
-				sectionHeading: (context) => ({ ...baseStyles.sectionHeading, color: accentFor(context) }),
+				sectionHeading: (context) => ({
+					...baseStyles.sectionHeading,
+					color: accentFor(context),
+				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),
 				icon: (context) => ({

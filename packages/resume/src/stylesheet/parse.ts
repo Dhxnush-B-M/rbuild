@@ -1,9 +1,16 @@
 import type { CssLocation, CssNode } from "css-tree";
-import type { ParsedAtRule, ParsedStylesheet, SemanticCssDiagnostic, SourceRange } from "./types";
 import * as csstree from "css-tree";
 import { createDiagnostic, EMPTY_SOURCE_RANGE } from "./diagnostics";
+import type {
+	ParsedAtRule,
+	ParsedStylesheet,
+	SemanticCssDiagnostic,
+	SourceRange,
+} from "./types";
 
-function rangeFromLocation(location: CssLocation | null | undefined): SourceRange {
+function rangeFromLocation(
+	location: CssLocation | null | undefined,
+): SourceRange {
 	if (!location) return EMPTY_SOURCE_RANGE;
 
 	return {
@@ -13,8 +20,18 @@ function rangeFromLocation(location: CssLocation | null | undefined): SourceRang
 }
 
 function parseErrorRange(error: unknown): SourceRange {
-	if (error && typeof error === "object" && "line" in error && "column" in error && "offset" in error) {
-		const { line, column, offset } = error as { line: number; column: number; offset: number };
+	if (
+		error &&
+		typeof error === "object" &&
+		"line" in error &&
+		"column" in error &&
+		"offset" in error
+	) {
+		const { line, column, offset } = error as {
+			line: number;
+			column: number;
+			offset: number;
+		};
 		return { start: { line, column, offset }, end: { line, column, offset } };
 	}
 
@@ -38,35 +55,64 @@ export function parseStylesheet(source: string): ParsedStylesheet {
 			positions: true,
 			parseCustomProperty: true,
 			onParseError(error: unknown) {
-				diagnostics.push(createDiagnostic("CSS_PARSE_ERROR", "error", errorMessage(error), parseErrorRange(error)));
+				diagnostics.push(
+					createDiagnostic(
+						"CSS_PARSE_ERROR",
+						"error",
+						errorMessage(error),
+						parseErrorRange(error),
+					),
+				);
 			},
 			onComment: () => undefined,
 			onToken: () => undefined,
 		}) as CssNode;
 	} catch (error) {
-		diagnostics.push(createDiagnostic("CSS_PARSE_ERROR", "error", errorMessage(error), parseErrorRange(error)));
+		diagnostics.push(
+			createDiagnostic(
+				"CSS_PARSE_ERROR",
+				"error",
+				errorMessage(error),
+				parseErrorRange(error),
+			),
+		);
 	}
 
 	if (!ast) return { ast: null, atRules: [], rules: [], diagnostics };
 
 	const rawRanges = new Set<number>();
-	csstree.walk(ast, function (this: { declaration?: { property?: string } | null }, node: CssNode) {
-		if (node.type !== "Raw") return;
-		if (this.declaration?.property?.startsWith("--")) return;
+	csstree.walk(
+		ast,
+		function (
+			this: { declaration?: { property?: string } | null },
+			node: CssNode,
+		) {
+			if (node.type !== "Raw") return;
+			if (this.declaration?.property?.startsWith("--")) return;
 
-		const range = rangeFromLocation(node.loc);
-		if (rawRanges.has(range.start.offset)) return;
+			const range = rangeFromLocation(node.loc);
+			if (rawRanges.has(range.start.offset)) return;
 
-		rawRanges.add(range.start.offset);
-		diagnostics.push(createDiagnostic("CSS_RAW_SYNTAX", "error", "Unsupported CSS syntax.", range));
-	});
+			rawRanges.add(range.start.offset);
+			diagnostics.push(
+				createDiagnostic(
+					"CSS_RAW_SYNTAX",
+					"error",
+					"Unsupported CSS syntax.",
+					range,
+				),
+			);
+		},
+	);
 
 	const nodes = topLevelNodes(ast);
 	const atRules: ParsedAtRule[] = nodes.flatMap((node) => {
 		if (node.type !== "Atrule" || !node.name) return [];
 
 		const prelude = node.prelude?.loc
-			? source.slice(node.prelude.loc.start.offset, node.prelude.loc.end.offset).trim()
+			? source
+					.slice(node.prelude.loc.start.offset, node.prelude.loc.end.offset)
+					.trim()
 			: "";
 
 		return [

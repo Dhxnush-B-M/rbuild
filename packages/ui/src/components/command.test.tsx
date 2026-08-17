@@ -29,7 +29,9 @@ describe("Command", () => {
 				<CommandList />
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command]")).toHaveClass("my-cmd");
+		expect(container.querySelector("[data-slot=command]")).toHaveClass(
+			"my-cmd",
+		);
 	});
 });
 
@@ -40,7 +42,9 @@ describe("CommandInput", () => {
 				<CommandInput placeholder="Search..." />
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-input]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-input]"),
+		).toBeInTheDocument();
 	});
 
 	it("wrapper uses data-slot='command-input-wrapper'", () => {
@@ -49,7 +53,9 @@ describe("CommandInput", () => {
 				<CommandInput />
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-input-wrapper]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-input-wrapper]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -60,7 +66,9 @@ describe("CommandList / CommandGroup", () => {
 				<CommandList>x</CommandList>
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-list]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-list]"),
+		).toBeInTheDocument();
 	});
 
 	it("CommandEmpty renders without throwing in tree", () => {
@@ -86,7 +94,9 @@ describe("CommandList / CommandGroup", () => {
 				</CommandList>
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-group]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-group]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -99,7 +109,9 @@ describe("CommandItem", () => {
 				</CommandList>
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-item]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-item]"),
+		).toBeInTheDocument();
 	});
 });
 
@@ -112,14 +124,19 @@ describe("CommandSeparator", () => {
 				</CommandList>
 			</Command>,
 		);
-		expect(container.querySelector("[data-slot=command-separator]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=command-separator]"),
+		).toBeInTheDocument();
 	});
 });
 
 describe("CommandShortcut", () => {
 	it("uses data-slot='command-shortcut'", () => {
 		render(<CommandShortcut>⌘K</CommandShortcut>);
-		expect(screen.getByText("⌘K")).toHaveAttribute("data-slot", "command-shortcut");
+		expect(screen.getByText("⌘K")).toHaveAttribute(
+			"data-slot",
+			"command-shortcut",
+		);
 	});
 
 	it("merges custom className", () => {

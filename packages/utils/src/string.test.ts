@@ -1,10 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { generateId, generateRandomName, getInitials, slugify, stripHtml, toUsername } from "./string";
+import {
+	generateId,
+	generateRandomName,
+	getInitials,
+	slugify,
+	stripHtml,
+	toUsername,
+} from "./string";
 
 describe("generateId", () => {
 	it("returns a UUIDv7 string", () => {
 		const id = generateId();
-		expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+		expect(id).toMatch(
+			/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+		);
 	});
 
 	it("returns unique values across invocations", () => {
@@ -117,7 +126,9 @@ describe("generateRandomName", () => {
 	});
 
 	it("produces varying values", () => {
-		const names = new Set(Array.from({ length: 20 }, () => generateRandomName()));
+		const names = new Set(
+			Array.from({ length: 20 }, () => generateRandomName()),
+		);
 		// Allow rare collisions but expect variety from a 20-sample pool
 		expect(names.size).toBeGreaterThan(5);
 	});
@@ -129,7 +140,9 @@ describe("stripHtml", () => {
 	});
 
 	it("removes nested tags and preserves text", () => {
-		expect(stripHtml("<div><span>Hello</span> <strong>World</strong></div>")).toBe("Hello World");
+		expect(
+			stripHtml("<div><span>Hello</span> <strong>World</strong></div>"),
+		).toBe("Hello World");
 	});
 
 	it("returns empty string for undefined input", () => {
@@ -145,7 +158,9 @@ describe("stripHtml", () => {
 	});
 
 	it("strips attributes within tags", () => {
-		expect(stripHtml('<a href="https://example.com" title="link">Click</a>')).toBe("Click");
+		expect(
+			stripHtml('<a href="https://example.com" title="link">Click</a>'),
+		).toBe("Click");
 	});
 
 	it("preserves text containing angle brackets when not malformed tags", () => {

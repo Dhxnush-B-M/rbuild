@@ -14,7 +14,17 @@ describe("getNextWeights", () => {
 
 	it("returns an array containing exactly known weight strings (subset of 100..900)", () => {
 		const weights = getNextWeights("Source Sans 3");
-		const validWeights = new Set(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
+		const validWeights = new Set([
+			"100",
+			"200",
+			"300",
+			"400",
+			"500",
+			"600",
+			"700",
+			"800",
+			"900",
+		]);
 		for (const w of weights ?? []) {
 			expect(validWeights.has(w)).toBe(true);
 		}

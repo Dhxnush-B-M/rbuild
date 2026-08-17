@@ -29,7 +29,9 @@ export interface RazorpayOptions {
 
 declare global {
 	interface Window {
-		Razorpay?: new (options: RazorpayOptions) => {
+		Razorpay?: new (
+			options: RazorpayOptions,
+		) => {
 			open: () => void;
 			close: () => void;
 			on: (event: string, callback: (response: unknown) => void) => void;
@@ -52,7 +54,9 @@ export function loadRazorpayScript(): Promise<boolean> {
 			return;
 		}
 
-		const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+		const existingScript = document.querySelector(
+			'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+		);
 		if (existingScript) {
 			existingScript.addEventListener("load", () => resolve(true));
 			existingScript.addEventListener("error", () => resolve(false));
@@ -112,7 +116,9 @@ export async function initiateRazorpayPayment(params: {
 }): Promise<void> {
 	const loaded = await loadRazorpayScript();
 	if (!loaded || !window.Razorpay) {
-		params.onError?.("Unable to load payment gateway. Please check your internet connection.");
+		params.onError?.(
+			"Unable to load payment gateway. Please check your internet connection.",
+		);
 		return;
 	}
 
@@ -155,6 +161,8 @@ export async function initiateRazorpayPayment(params: {
 		const rzp = new window.Razorpay(options);
 		rzp.open();
 	} catch (e) {
-		params.onError?.(e instanceof Error ? e.message : "Error initiating checkout.");
+		params.onError?.(
+			e instanceof Error ? e.message : "Error initiating checkout.",
+		);
 	}
 }

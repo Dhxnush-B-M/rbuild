@@ -20,11 +20,13 @@ describe("Spotlight", () => {
 	});
 
 	it("applies the provided width / height / smallWidth to inline styles", () => {
-		const { container } = render(<Spotlight width={500} height={800} smallWidth={120} translateY={-100} />);
-
-		const inlineStyles = Array.from(container.querySelectorAll<HTMLDivElement>("[style]")).map(
-			(el) => el.getAttribute("style") ?? "",
+		const { container } = render(
+			<Spotlight width={500} height={800} smallWidth={120} translateY={-100} />,
 		);
+
+		const inlineStyles = Array.from(
+			container.querySelectorAll<HTMLDivElement>("[style]"),
+		).map((el) => el.getAttribute("style") ?? "");
 		const allStyles = inlineStyles.join("|");
 
 		expect(allStyles).toContain("width: 500px");
@@ -37,8 +39,12 @@ describe("Spotlight", () => {
 		const customFirst = "radial-gradient(red, blue)";
 		const { container } = render(<Spotlight gradientFirst={customFirst} />);
 
-		const matched = Array.from(container.querySelectorAll<HTMLDivElement>("[style]")).filter(
-			(el) => el.style.background.includes("red") && el.style.background.includes("blue"),
+		const matched = Array.from(
+			container.querySelectorAll<HTMLDivElement>("[style]"),
+		).filter(
+			(el) =>
+				el.style.background.includes("red") &&
+				el.style.background.includes("blue"),
 		);
 		expect(matched.length).toBeGreaterThan(0);
 	});

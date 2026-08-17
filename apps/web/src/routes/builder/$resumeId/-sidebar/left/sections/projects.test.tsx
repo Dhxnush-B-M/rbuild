@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import type { Resume } from "@/features/resume/builder/draft";
-import { render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import type { Resume } from "@/features/resume/builder/draft";
 
 const items = vi.hoisted(() => [
 	// Both period and website label present → "2024 • Site"
@@ -52,7 +52,11 @@ type SectionItemProps = {
 vi.mock("@/features/resume/builder/draft", () => ({
 	useCurrentBuilderResumeSelector: (selector: (resume: Resume) => unknown) =>
 		selector({
-			data: { sections: { projects: { title: "Projects", columns: 1, hidden: false, items } } },
+			data: {
+				sections: {
+					projects: { title: "Projects", columns: 1, hidden: false, items },
+				},
+			},
 		} as unknown as Resume),
 	useUpdateResumeData: () => vi.fn(),
 }));
@@ -60,7 +64,9 @@ vi.mock("../shared/section-base", () => ({
 	SectionBase: ({ children }: SectionBaseProps) => <div>{children}</div>,
 }));
 vi.mock("../shared/section-item", () => ({
-	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => <button type="button">{children}</button>,
+	SectionAddItemButton: ({ children }: SectionAddItemButtonProps) => (
+		<button type="button">{children}</button>
+	),
 	SectionItem: ({ title, subtitle }: SectionItemProps) => (
 		<div>
 			<span data-testid="item-title">{title}</span>
@@ -83,7 +89,9 @@ describe("ProjectsSectionBuilder buildSubtitle", () => {
 			</I18nProvider>,
 		);
 
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles[0]).toBe("2024 • Site");
 	});
 
@@ -93,7 +101,9 @@ describe("ProjectsSectionBuilder buildSubtitle", () => {
 				<ProjectsSectionBuilder />
 			</I18nProvider>,
 		);
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		expect(subtitles[1]).toBe("2023");
 	});
 
@@ -103,7 +113,9 @@ describe("ProjectsSectionBuilder buildSubtitle", () => {
 				<ProjectsSectionBuilder />
 			</I18nProvider>,
 		);
-		const subtitles = screen.getAllByTestId("item-subtitle").map((el) => el.textContent);
+		const subtitles = screen
+			.getAllByTestId("item-subtitle")
+			.map((el) => el.textContent);
 		// Mock stub renders the literal string "<undefined>" when subtitle was undefined.
 		expect(subtitles[2]).toBe("<undefined>");
 	});
@@ -114,6 +126,8 @@ describe("ProjectsSectionBuilder buildSubtitle", () => {
 				<ProjectsSectionBuilder />
 			</I18nProvider>,
 		);
-		expect(screen.getByRole("button", { name: "Add a new project" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Add a new project" }),
+		).toBeInTheDocument();
 	});
 });

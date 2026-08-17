@@ -1,8 +1,8 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it, vi } from "vitest";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it, vi } from "vitest";
 import { ResumeDocument } from "../document";
 import { semanticNodeKeys } from "./node-keys";
 import { resolveResumePresentation } from "./resolve";
@@ -23,14 +23,19 @@ type HostNode = {
 const nodeText = (node: HostNode): string =>
 	node.value ?? (node.children ?? []).map((child) => nodeText(child)).join("");
 
-const findSectionView = (node: HostNode, text: string): HostNode | undefined => {
+const findSectionView = (
+	node: HostNode,
+	text: string,
+): HostNode | undefined => {
 	for (const child of node.children ?? []) {
 		const match = findSectionView(child, text);
 		if (match) return match;
 	}
 
 	const props = flowProps(node);
-	return node.type === "VIEW" && nodeText(node) === text && (props.break !== undefined || props.wrap !== undefined)
+	return node.type === "VIEW" &&
+		nodeText(node) === text &&
+		(props.break !== undefined || props.wrap !== undefined)
 		? node
 		: undefined;
 };
@@ -52,7 +57,9 @@ const buildFixture = (value: string): ResumeData => {
 	data.summary.content = "<p>Pagination sentinel</p>";
 	data.summary.keepTogether = true;
 	data.summary.startOnNewPage = true;
-	data.metadata.layout.pages = [{ fullWidth: true, main: ["summary"], sidebar: [] }];
+	data.metadata.layout.pages = [
+		{ fullWidth: true, main: ["summary"], sidebar: [] },
+	];
 	const source = {
 		languageVersion: 1,
 		text: `@version 1; section[type="summary"] { break-before: ${value}; break-inside: ${value}; }`,
@@ -68,26 +75,50 @@ describe("semantic pagination cancellation", () => {
 		["unset", false, true],
 		["inherit", false, true],
 		["revert", true, false],
-	] as const)("maps %s over builder pagination to explicit break=%s and wrap=%s", (value, breakBefore, wrap) => {
-		const data = buildFixture(value);
-		const presentation = resolveResumePresentation({ data, template: "onyx", mode: "semantic" });
-		const sectionKey = semanticNodeKeys.section(semanticNodeKeys.region(semanticNodeKeys.page(1), "main"), "summary");
+	] as const)(
+		"maps %s over builder pagination to explicit break=%s and wrap=%s",
+		(value, breakBefore, wrap) => {
+			const data = buildFixture(value);
+			const presentation = resolveResumePresentation({
+				data,
+				template: "onyx",
+				mode: "semantic",
+			});
+			const sectionKey = semanticNodeKeys.section(
+				semanticNodeKeys.region(semanticNodeKeys.page(1), "main"),
+				"summary",
+			);
 
-		expect(presentation[sectionKey]).toMatchObject({ break: breakBefore, wrap });
-	});
+			expect(presentation[sectionKey]).toMatchObject({
+				break: breakBefore,
+				wrap,
+			});
+		},
+	);
 
 	it.each([
 		["auto", false, true],
 		["initial", false, true],
 		["unset", false, true],
 		["revert", true, false],
-	] as const)("puts the %s cancellation on the final existing section View", async (value, breakBefore, wrap) => {
-		const data = buildFixture(value);
-		const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
-		const instance = pdf(element);
-		await vi.waitFor(() => expect(instance.container.document).not.toBeNull());
-		const section = findSectionView(instance.container.document as HostNode, "Pagination sentinel");
+	] as const)(
+		"puts the %s cancellation on the final existing section View",
+		async (value, breakBefore, wrap) => {
+			const data = buildFixture(value);
+			const element = createElement(ResumeDocument, {
+				data,
+				template: "onyx",
+			}) as unknown as Parameters<typeof pdf>[0];
+			const instance = pdf(element);
+			await vi.waitFor(() =>
+				expect(instance.container.document).not.toBeNull(),
+			);
+			const section = findSectionView(
+				instance.container.document as HostNode,
+				"Pagination sentinel",
+			);
 
-		expect(flowProps(section)).toEqual({ break: breakBefore, wrap });
-	});
+			expect(flowProps(section)).toEqual({ break: breakBefore, wrap });
+		},
+	);
 });

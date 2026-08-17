@@ -1,4 +1,8 @@
-import { createFileRoute, redirect, SearchParamError } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	redirect,
+	SearchParamError,
+} from "@tanstack/react-router";
 import z from "zod";
 import { ResumePasswordPage } from "@/features/auth/pages/resume-password";
 

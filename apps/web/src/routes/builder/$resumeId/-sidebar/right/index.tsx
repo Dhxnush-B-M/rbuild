@@ -1,8 +1,8 @@
-import type { RightSidebarSection } from "@/libs/resume/section";
+import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 import { Fragment, useRef } from "react";
 import { match } from "ts-pattern";
-import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 import { Copyright } from "@/components/ui/copyright";
+import type { RightSidebarSection } from "@/libs/resume/section";
 import { rightSidebarSections } from "@/libs/resume/section";
 import { DesignSectionBuilder } from "./sections/design";
 import { ExportSectionBuilder } from "./sections/export";

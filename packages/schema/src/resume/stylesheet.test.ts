@@ -8,7 +8,10 @@ describe("semanticStylesheetSchema", () => {
 		const result = semanticStylesheetSchema.parse({
 			mode: "semantic",
 			source: { languageVersion: 1, text: "@version 1;\nsection {" },
-			applied: { languageVersion: 1, text: "@version 1;\nsection { color: red; }\n" },
+			applied: {
+				languageVersion: 1,
+				text: "@version 1;\nsection { color: red; }\n",
+			},
 		});
 
 		expect(result.source.text).toContain("section {");
@@ -16,7 +19,9 @@ describe("semanticStylesheetSchema", () => {
 	});
 
 	it("keeps resumes without a stylesheet valid for legacy rendering", () => {
-		expect(resumeDataSchema.parse(defaultResumeData).metadata.stylesheet).toBeUndefined();
+		expect(
+			resumeDataSchema.parse(defaultResumeData).metadata.stylesheet,
+		).toBeUndefined();
 	});
 
 	it("rejects non-positive language versions", () => {
@@ -41,6 +46,12 @@ describe("semanticStylesheetSchema", () => {
 	});
 
 	it("rejects unknown stylesheet source fields", () => {
-		expect(stylesheetSourceSchema.safeParse({ languageVersion: 1, text: "", unknown: true }).success).toBe(false);
+		expect(
+			stylesheetSourceSchema.safeParse({
+				languageVersion: 1,
+				text: "",
+				unknown: true,
+			}).success,
+		).toBe(false);
 	});
 });

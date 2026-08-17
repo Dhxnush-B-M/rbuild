@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { getTemplatePageMinHeightStyle, getTemplatePageSize } from "./page-size";
+import {
+	getTemplatePageMinHeightStyle,
+	getTemplatePageSize,
+} from "./page-size";
 
 describe("getTemplatePageSize", () => {
 	it("returns 'A4' for a4 format", () => {
@@ -26,6 +29,8 @@ describe("getTemplatePageMinHeightStyle", () => {
 	});
 
 	it("returns A4-style minHeight for free-form", () => {
-		expect(getTemplatePageMinHeightStyle("free-form")).toEqual({ minHeight: 841.89 });
+		expect(getTemplatePageMinHeightStyle("free-form")).toEqual({
+			minHeight: 841.89,
+		});
 	});
 });

@@ -1,14 +1,14 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { parseResumeData } from "@rbuilder/schema/resume/data";
 import type { Template } from "@rbuilder/schema/templates";
+import { pdf } from "@react-pdf/renderer";
+import { createElement } from "react";
 import type { ResumeRenderOptions } from "./context";
+import { ResumeDocument } from "./document";
 import type { SectionTitleResolver } from "./section-title";
 import type { ResolvedResumeRuntime, ResumePdfRenderResult } from "./semantic";
-import type { PublicStyleProjection } from "./semantic/public-projection";
-import { createElement } from "react";
-import { parseResumeData } from "@rbuilder/schema/resume/data";
-import { pdf } from "@react-pdf/renderer";
-import { ResumeDocument } from "./document";
 import { hasSemanticErrors, inspectResumePdf } from "./semantic";
+import type { PublicStyleProjection } from "./semantic/public-projection";
 import { resolvePublicStyleProjectionRuntime } from "./semantic/public-projection";
 
 export type {
@@ -71,10 +71,14 @@ export const createResumePdfBlobResult = async ({
 	};
 };
 
-export const createResumePdfBlob = async (options: CreateResumePdfBlobOptions): Promise<Blob> => {
+export const createResumePdfBlob = async (
+	options: CreateResumePdfBlobOptions,
+): Promise<Blob> => {
 	const result = await createResumePdfBlobResult(options);
 	if (!result.ok) {
-		throw new Error("The semantic stylesheet could not be rendered.", { cause: result.diagnostics });
+		throw new Error("The semantic stylesheet could not be rendered.", {
+			cause: result.diagnostics,
+		});
 	}
 	return result.value;
 };

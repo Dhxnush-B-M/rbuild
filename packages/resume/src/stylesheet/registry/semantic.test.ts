@@ -1,8 +1,13 @@
-import { describe, expect, it } from "vitest";
 import { sectionTypeSchema } from "@rbuilder/schema/resume/data";
 import { templateSchema } from "@rbuilder/schema/templates";
+import { describe, expect, it } from "vitest";
 import * as semanticRegistry from "./semantic";
-import { canContainNode, SEMANTIC_NODE_KINDS, SEMANTIC_REGISTRY_V1, TEMPLATE_PART_CHILD_KINDS_V1 } from "./semantic";
+import {
+	canContainNode,
+	SEMANTIC_NODE_KINDS,
+	SEMANTIC_REGISTRY_V1,
+	TEMPLATE_PART_CHILD_KINDS_V1,
+} from "./semantic";
 
 const inlineParents = [
 	"contact-item",
@@ -99,10 +104,14 @@ const expectedTemplatePartChildren = {
 
 describe("semantic registry", () => {
 	it("registers every stable semantic node and parentage contract", () => {
-		expect(Object.keys(SEMANTIC_REGISTRY_V1)).toEqual(Object.keys(expectedParents));
+		expect(Object.keys(SEMANTIC_REGISTRY_V1)).toEqual(
+			Object.keys(expectedParents),
+		);
 
 		for (const [kind, parents] of Object.entries(expectedParents)) {
-			expect(SEMANTIC_REGISTRY_V1[kind as keyof typeof SEMANTIC_REGISTRY_V1].parents).toEqual(parents);
+			expect(
+				SEMANTIC_REGISTRY_V1[kind as keyof typeof SEMANTIC_REGISTRY_V1].parents,
+			).toEqual(parents);
 		}
 	});
 
@@ -119,17 +128,25 @@ describe("semantic registry", () => {
 		expect(canContainNode("level", "icon")).toBe(true);
 		expect(canContainNode("level", "field")).toBe(false);
 		expect(SEMANTIC_REGISTRY_V1.icon.attributes).toEqual(["type"]);
-		expect(SEMANTIC_REGISTRY_V1.icon.roles).toEqual(["decoration", "active", "inactive"]);
+		expect(SEMANTIC_REGISTRY_V1.icon.roles).toEqual([
+			"decoration",
+			"active",
+			"inactive",
+		]);
 		expect(SEMANTIC_REGISTRY_V1.icon.roles).not.toContain("primary-text");
 	});
 
 	it("registers list content direction without broadening unrelated rich-text attributes", () => {
-		expect(SEMANTIC_REGISTRY_V1["list-item-content"].attributes).toEqual(["direction"]);
+		expect(SEMANTIC_REGISTRY_V1["list-item-content"].attributes).toEqual([
+			"direction",
+		]);
 		expect(SEMANTIC_REGISTRY_V1["list-item"].attributes).toEqual([]);
 	});
 
 	it("publishes finite semantic attribute domains", () => {
-		expect(SEMANTIC_REGISTRY_V1.resume.attributeValues?.template).toEqual(templateSchema.options);
+		expect(SEMANTIC_REGISTRY_V1.resume.attributeValues?.template).toEqual(
+			templateSchema.options,
+		);
 		expect(SEMANTIC_REGISTRY_V1.section.attributeValues).toMatchObject({
 			type: sectionTypeSchema.options,
 			placement: ["main", "sidebar"],
@@ -140,40 +157,60 @@ describe("semantic registry", () => {
 	it("permits truthful contact and nested template parts without broadening unrelated parents", () => {
 		expect(canContainNode("contact-item", "template-part")).toBe(true);
 		expect(canContainNode("template-part", "template-part")).toBe(false);
-		expect(canContainNode("template-part", "template-part", "timeline-marker")).toBe(true);
+		expect(
+			canContainNode("template-part", "template-part", "timeline-marker"),
+		).toBe(true);
 		expect(canContainNode("contact-list", "template-part")).toBe(true);
 		expect(canContainNode("rich-text", "template-part")).toBe(false);
 	});
 
 	it("registers contact-list template parts and their child contracts", () => {
-		expect(SEMANTIC_REGISTRY_V1["template-part"].parents).toContain("contact-list");
-		expect(TEMPLATE_PART_CHILD_KINDS_V1["contact-row-primary"]).toEqual(["contact-item"]);
-		expect(TEMPLATE_PART_CHILD_KINDS_V1["contact-row-secondary"]).toEqual(["contact-item"]);
+		expect(SEMANTIC_REGISTRY_V1["template-part"].parents).toContain(
+			"contact-list",
+		);
+		expect(TEMPLATE_PART_CHILD_KINDS_V1["contact-row-primary"]).toEqual([
+			"contact-item",
+		]);
+		expect(TEMPLATE_PART_CHILD_KINDS_V1["contact-row-secondary"]).toEqual([
+			"contact-item",
+		]);
 	});
 
 	it("freezes the exact child-kind allowlist for every existing primitive template part", () => {
 		const registry = semanticRegistry as unknown as {
-			TEMPLATE_PART_CHILD_KINDS_V1?: Readonly<Record<string, readonly string[]>>;
+			TEMPLATE_PART_CHILD_KINDS_V1?: Readonly<
+				Record<string, readonly string[]>
+			>;
 		};
 
-		expect(registry.TEMPLATE_PART_CHILD_KINDS_V1).toEqual(expectedTemplatePartChildren);
+		expect(registry.TEMPLATE_PART_CHILD_KINDS_V1).toEqual(
+			expectedTemplatePartChildren,
+		);
 		expect(Object.isFrozen(registry.TEMPLATE_PART_CHILD_KINDS_V1)).toBe(true);
-		for (const children of Object.values(registry.TEMPLATE_PART_CHILD_KINDS_V1 ?? {})) {
+		for (const children of Object.values(
+			registry.TEMPLATE_PART_CHILD_KINDS_V1 ?? {},
+		)) {
 			expect(Object.isFrozen(children)).toBe(true);
 		}
 	});
 
 	it("allows only each named template part's exact child kinds", () => {
-		for (const [part, allowed] of Object.entries(expectedTemplatePartChildren)) {
+		for (const [part, allowed] of Object.entries(
+			expectedTemplatePartChildren,
+		)) {
 			for (const child of SEMANTIC_NODE_KINDS) {
-				expect(canContainNode("template-part", child, part)).toBe((allowed as readonly string[]).includes(child));
+				expect(canContainNode("template-part", child, part)).toBe(
+					(allowed as readonly string[]).includes(child),
+				);
 			}
 		}
 	});
 
 	it("rejects omitted and unknown template-part names without changing ordinary two-argument containment", () => {
 		expect(canContainNode("template-part", "picture")).toBe(false);
-		expect(canContainNode("template-part", "picture", "unknown-part")).toBe(false);
+		expect(canContainNode("template-part", "picture", "unknown-part")).toBe(
+			false,
+		);
 		expect(canContainNode("header", "picture")).toBe(true);
 		expect(canContainNode("header", "field")).toBe(false);
 	});

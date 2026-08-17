@@ -1,21 +1,31 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { Template } from "@rbuilder/schema/templates";
-import type { DialogProps } from "@/dialogs/store";
-import type { TemplateMetadata } from "./data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { SlideshowIcon } from "@phosphor-icons/react";
-import { toast } from "sonner";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
+import type { Template } from "@rbuilder/schema/templates";
 import { Badge } from "@rbuilder/ui/components/badge";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@rbuilder/ui/components/dialog";
+import {
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@rbuilder/ui/components/dialog";
 import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
 import { cn } from "@rbuilder/utils/style";
+import { toast } from "sonner";
 import { CometCard } from "@/components/animation/comet-card";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
+import type { TemplateMetadata } from "./data";
 import { templates } from "./data";
 
-export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">) {
+export function TemplateGalleryDialog(
+	_: DialogProps<"resume.template.gallery">,
+) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const resume = useCurrentResume();
 	const selectedTemplate = resume.data.metadata.template;
@@ -55,9 +65,10 @@ export function TemplateGalleryDialog(_: DialogProps<"resume.template.gallery">)
 				</DialogTitle>
 				<DialogDescription className="leading-relaxed">
 					<Trans>
-						Here's a range of resume templates for different professions and personalities. Whether you prefer modern or
-						classic, bold or simple, there is a design to match you. Look through the options below and choose a
-						template that fits your style.
+						Here's a range of resume templates for different professions and
+						personalities. Whether you prefer modern or classic, bold or simple,
+						there is a design to match you. Look through the options below and
+						choose a template that fits your style.
 					</Trans>
 				</DialogDescription>
 			</DialogHeader>
@@ -88,7 +99,13 @@ type TemplateCardProps = {
 	onSelect: (template: Template) => void;
 };
 
-function TemplateCard({ id, data: _data, metadata, isActive, onSelect }: TemplateCardProps) {
+function TemplateCard({
+	id,
+	data: _data,
+	metadata,
+	isActive,
+	onSelect,
+}: TemplateCardProps) {
 	return (
 		<CometCard translateDepth={3} rotateDepth={6} glareOpacity={0}>
 			<button
@@ -111,7 +128,9 @@ function TemplateCard({ id, data: _data, metadata, isActive, onSelect }: Templat
 			</button>
 
 			<div className="mt-1 flex items-center justify-center">
-				<span className="font-bold leading-loose tracking-tight">{metadata.name}</span>
+				<span className="font-bold leading-loose tracking-tight">
+					{metadata.name}
+				</span>
 			</div>
 
 			{metadata.tags.length > 0 && (

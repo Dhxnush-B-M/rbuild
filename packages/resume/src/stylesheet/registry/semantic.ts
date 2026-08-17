@@ -1,6 +1,6 @@
-import type { SemanticNodeKind } from "../semantic-types";
 import { sectionTypeSchema } from "@rbuilder/schema/resume/data";
 import { templateSchema } from "@rbuilder/schema/templates";
+import type { SemanticNodeKind } from "../semantic-types";
 
 export type SemanticNodeDefinition = {
 	parents: readonly SemanticNodeKind[];
@@ -9,7 +9,9 @@ export type SemanticNodeDefinition = {
 	attributeValues?: Readonly<Record<string, readonly string[]>>;
 };
 
-export type SemanticRegistry = Readonly<Record<SemanticNodeKind, SemanticNodeDefinition>>;
+export type SemanticRegistry = Readonly<
+	Record<SemanticNodeKind, SemanticNodeDefinition>
+>;
 
 export const SEMANTIC_NODE_KINDS = [
 	"resume",
@@ -105,7 +107,11 @@ export const SEMANTIC_REGISTRY_V1 = {
 			origin: ["main", "sidebar"],
 		},
 	},
-	"section-heading": { parents: ["section"], attributes: [], roles: ["section-title"] },
+	"section-heading": {
+		parents: ["section"],
+		attributes: [],
+		roles: ["section-title"],
+	},
 	"section-items": { parents: ["section"], attributes: [], roles: [] },
 	item: {
 		parents: ["section-items", "item"],
@@ -124,16 +130,32 @@ export const SEMANTIC_REGISTRY_V1 = {
 		roles: ["primary-text", "secondary-text", "structured-link"],
 	},
 	link: {
-		parents: ["item", "item-header", "rich-text", "template-part", ...inlineParents],
+		parents: [
+			"item",
+			"item-header",
+			"rich-text",
+			"template-part",
+			...inlineParents,
+		],
 		attributes: [],
 		roles: ["structured-link"],
 	},
 	icon: {
-		parents: ["contact-item", "section-heading", "item", "item-header", "level"],
+		parents: [
+			"contact-item",
+			"section-heading",
+			"item",
+			"item-header",
+			"level",
+		],
 		attributes: ["type"],
 		roles: ["decoration", "active", "inactive"],
 	},
-	level: { parents: ["item", "item-header"], attributes: [], roles: ["decoration"] },
+	level: {
+		parents: ["item", "item-header"],
+		attributes: [],
+		roles: ["decoration"],
+	},
 	"rich-text": { parents: ["item", "field"], attributes: [], roles: [] },
 	"rich-heading": {
 		parents: ["rich-text"],
@@ -141,9 +163,21 @@ export const SEMANTIC_REGISTRY_V1 = {
 		roles: [],
 		attributeValues: { level: ["1", "2", "3", "4", "5", "6"] },
 	},
-	blockquote: { parents: ["rich-text", "list-item-content"], attributes: [], roles: [] },
-	paragraph: { parents: ["rich-text", "list-item-content"], attributes: [], roles: [] },
-	list: { parents: ["rich-text", "list-item-content"], attributes: [], roles: [] },
+	blockquote: {
+		parents: ["rich-text", "list-item-content"],
+		attributes: [],
+		roles: [],
+	},
+	paragraph: {
+		parents: ["rich-text", "list-item-content"],
+		attributes: [],
+		roles: [],
+	},
+	list: {
+		parents: ["rich-text", "list-item-content"],
+		attributes: [],
+		roles: [],
+	},
 	"list-item": { parents: ["list"], attributes: [], roles: [] },
 	"list-item-content": {
 		parents: ["list-item"],
@@ -151,7 +185,11 @@ export const SEMANTIC_REGISTRY_V1 = {
 		roles: [],
 		attributeValues: { direction: ["ltr", "rtl"] },
 	},
-	"list-marker": { parents: ["list-item"], attributes: [], roles: ["decoration"] },
+	"list-marker": {
+		parents: ["list-item"],
+		attributes: [],
+		roles: ["decoration"],
+	},
 	strong: { parents: inlineParents, attributes: [], roles: [] },
 	emphasis: { parents: inlineParents, attributes: [], roles: [] },
 	underline: { parents: inlineParents, attributes: [], roles: [] },
@@ -160,7 +198,11 @@ export const SEMANTIC_REGISTRY_V1 = {
 	"text-span": { parents: inlineParents, attributes: [], roles: [] },
 	mark: { parents: inlineParents, attributes: [], roles: [] },
 	"hard-break": { parents: inlineParents, attributes: [], roles: [] },
-	"horizontal-rule": { parents: ["rich-text", "list-item-content"], attributes: [], roles: [] },
+	"horizontal-rule": {
+		parents: ["rich-text", "list-item-content"],
+		attributes: [],
+		roles: [],
+	},
 	"template-part": {
 		parents: [
 			"page",
@@ -204,12 +246,20 @@ const templatePartChildKinds = {
 	"contact-row-secondary": ["contact-item"],
 } as const satisfies Readonly<Record<string, readonly SemanticNodeKind[]>>;
 
-for (const childKinds of Object.values(templatePartChildKinds)) Object.freeze(childKinds);
-export const TEMPLATE_PART_CHILD_KINDS_V1 = Object.freeze(templatePartChildKinds);
+for (const childKinds of Object.values(templatePartChildKinds))
+	Object.freeze(childKinds);
+export const TEMPLATE_PART_CHILD_KINDS_V1 = Object.freeze(
+	templatePartChildKinds,
+);
 
-export function canContainNode(parent: SemanticNodeKind, child: SemanticNodeKind, parentPart?: string): boolean {
+export function canContainNode(
+	parent: SemanticNodeKind,
+	child: SemanticNodeKind,
+	parentPart?: string,
+): boolean {
 	if (parent === "template-part") {
-		if (!parentPart || !(parentPart in TEMPLATE_PART_CHILD_KINDS_V1)) return false;
+		if (!parentPart || !(parentPart in TEMPLATE_PART_CHILD_KINDS_V1))
+			return false;
 		return (
 			TEMPLATE_PART_CHILD_KINDS_V1[
 				parentPart as keyof typeof TEMPLATE_PART_CHILD_KINDS_V1
@@ -217,5 +267,7 @@ export function canContainNode(parent: SemanticNodeKind, child: SemanticNodeKind
 		).includes(child);
 	}
 
-	return (SEMANTIC_REGISTRY_V1[child].parents as readonly SemanticNodeKind[]).includes(parent);
+	return (
+		SEMANTIC_REGISTRY_V1[child].parents as readonly SemanticNodeKind[]
+	).includes(parent);
 }

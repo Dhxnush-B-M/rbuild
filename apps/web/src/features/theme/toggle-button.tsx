@@ -2,7 +2,10 @@ import { MoonIcon, SunIcon } from "@phosphor-icons/react";
 import { startTransition, useCallback } from "react";
 import { useTheme } from "./provider";
 
-export function ThemeToggleButton({ className, ...props }: React.ComponentProps<"button">) {
+export function ThemeToggleButton({
+	className,
+	...props
+}: React.ComponentProps<"button">) {
 	const { theme, toggleTheme } = useTheme();
 
 	const onToggleTheme = useCallback(() => {

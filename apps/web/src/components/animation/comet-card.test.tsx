@@ -32,7 +32,9 @@ describe("CometCard", () => {
 				<span>x</span>
 			</CometCard>,
 		);
-		const glare = container.querySelector("[class*='mix-blend-overlay']") as HTMLElement | null;
+		const glare = container.querySelector(
+			"[class*='mix-blend-overlay']",
+		) as HTMLElement | null;
 		expect(glare).not.toBeNull();
 		expect(glare?.className).toContain("pointer-events-none");
 	});
@@ -44,7 +46,9 @@ describe("CometCard", () => {
 			</CometCard>,
 		);
 
-		const tiltable = container.querySelector("[class*='will-change-transform']") as HTMLElement;
+		const tiltable = container.querySelector(
+			"[class*='will-change-transform']",
+		) as HTMLElement;
 		expect(tiltable).toBeTruthy();
 
 		expect(() => {

@@ -1,15 +1,27 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 
 const downloadWithAnchor = vi.hoisted(() => vi.fn());
-const buildDocx = vi.hoisted(() => vi.fn().mockResolvedValue(new Blob(["x"], { type: "application/x-docx" })));
-const createResumePdfBlob = vi.hoisted(() => vi.fn().mockResolvedValue(new Blob(["x"], { type: "application/pdf" })));
+const buildDocx = vi.hoisted(() =>
+	vi.fn().mockResolvedValue(new Blob(["x"], { type: "application/x-docx" })),
+);
+const createResumePdfBlob = vi.hoisted(() =>
+	vi.fn().mockResolvedValue(new Blob(["x"], { type: "application/pdf" })),
+);
 const resumeMock = vi.hoisted(() => ({
 	resume: undefined as
 		| undefined
@@ -23,7 +35,10 @@ const resumeMock = vi.hoisted(() => ({
 		resumeId: "r1" as string | undefined,
 		mode: "semantic" as "legacy" | "semantic",
 		source: { languageVersion: 1, text: "@version 1;\nname {" },
-		applied: { languageVersion: 1, text: "@version 1;\nname { color: #123456; }\n" },
+		applied: {
+			languageVersion: 1,
+			text: "@version 1;\nname { color: #123456; }\n",
+		},
 		revision: 42,
 		renderDataVersion: 7,
 	},
@@ -41,17 +56,23 @@ vi.mock("@rbuilder/utils/file", () => ({
 	generateFilename: (name: string, ext: string) => `${name}.${ext}`,
 }));
 vi.mock("@rbuilder/docx", () => ({ buildDocx }));
-vi.mock("@/features/resume/export/pdf-document", () => ({ createResumePdfBlob }));
+vi.mock("@/features/resume/export/pdf-document", () => ({
+	createResumePdfBlob,
+}));
 // DOCX/Markdown resolve locale-aware section titles; stub the async locale resolver so exports
 // fall back to the built-in English titles without loading real locale catalogs.
 vi.mock("@/libs/resume/section-title-locale", () => ({
-	createSectionTitleResolverForLocale: vi.fn().mockResolvedValue(() => undefined),
+	createSectionTitleResolverForLocale: vi
+		.fn()
+		.mockResolvedValue(() => undefined),
 }));
 vi.mock("@/features/resume/builder/draft", () => ({
 	useResume: () => resumeMock.resume,
 }));
 vi.mock("@/features/resume/stylesheet/store", () => ({
-	useStylesheetStore: (selector: (state: typeof resumeMock.stylesheet) => unknown) => selector(resumeMock.stylesheet),
+	useStylesheetStore: (
+		selector: (state: typeof resumeMock.stylesheet) => unknown,
+	) => selector(resumeMock.stylesheet),
 }));
 
 const { ExportSectionBuilder } = await import("./export");
@@ -61,12 +82,20 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-	resumeMock.resume = { id: "r1", name: "My Resume", slug: "my-resume", data: defaultResumeData };
+	resumeMock.resume = {
+		id: "r1",
+		name: "My Resume",
+		slug: "my-resume",
+		data: defaultResumeData,
+	};
 	resumeMock.stylesheet = {
 		resumeId: "r1",
 		mode: "semantic",
 		source: { languageVersion: 1, text: "@version 1;\nname {" },
-		applied: { languageVersion: 1, text: "@version 1;\nname { color: #123456; }\n" },
+		applied: {
+			languageVersion: 1,
+			text: "@version 1;\nname { color: #123456; }\n",
+		},
 		revision: 42,
 		renderDataVersion: 7,
 	};
@@ -97,10 +126,18 @@ describe("ExportSectionBuilder", () => {
 		renderExport();
 		openDialog();
 
-		expect(screen.getByRole("button", { name: "Download PDF" })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Download DOCX" })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Download Markdown" })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "Download JSON" })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Download PDF" }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Download DOCX" }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Download Markdown" }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Download JSON" }),
+		).toBeInTheDocument();
 	});
 
 	it("downloads a Markdown blob when the Markdown button is clicked", async () => {
@@ -155,18 +192,28 @@ describe("ExportSectionBuilder", () => {
 		await Promise.resolve();
 
 		expect(createResumePdfBlob).toHaveBeenCalledTimes(1);
-		expect(createResumePdfBlob).toHaveBeenCalledWith(defaultResumeData, undefined, undefined, {
-			stylesheet: {
-				mode: "semantic",
-				applied: resumeMock.stylesheet.applied,
+		expect(createResumePdfBlob).toHaveBeenCalledWith(
+			defaultResumeData,
+			undefined,
+			undefined,
+			{
+				stylesheet: {
+					mode: "semantic",
+					applied: resumeMock.stylesheet.applied,
+				},
 			},
-		});
+		);
 		expect(downloadWithAnchor).toHaveBeenCalledTimes(1);
 		expect(downloadWithAnchor.mock.calls[0]?.[1]).toBe("My Resume.pdf");
 	});
 
 	it("exports the cover letter when the scope is switched and a cover letter exists", async () => {
-		resumeMock.resume = { id: "r1", name: "My Resume", slug: "my-resume", data: sampleResumeData };
+		resumeMock.resume = {
+			id: "r1",
+			name: "My Resume",
+			slug: "my-resume",
+			data: sampleResumeData,
+		};
 		renderExport();
 		openDialog();
 
@@ -177,6 +224,8 @@ describe("ExportSectionBuilder", () => {
 		await Promise.resolve();
 
 		expect(createResumePdfBlob).toHaveBeenCalledTimes(1);
-		expect(downloadWithAnchor.mock.calls[0]?.[1]).toBe("My Resume Cover Letter.pdf");
+		expect(downloadWithAnchor.mock.calls[0]?.[1]).toBe(
+			"My Resume Cover Letter.pdf",
+		);
 	});
 });

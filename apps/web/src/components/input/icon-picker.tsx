@@ -1,15 +1,19 @@
-import type { IconName } from "@rbuilder/schema/icons";
-import type { CellComponentProps } from "react-window";
 import { t } from "@lingui/core/macro";
 import { ProhibitIcon } from "@phosphor-icons/react";
-import Fuse from "fuse.js";
-import { useMemo, useState } from "react";
-import { Grid } from "react-window";
+import type { IconName } from "@rbuilder/schema/icons";
 import { icons } from "@rbuilder/schema/icons";
 import { Button } from "@rbuilder/ui/components/button";
 import { Input } from "@rbuilder/ui/components/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@rbuilder/ui/components/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@rbuilder/ui/components/popover";
 import { cn } from "@rbuilder/utils/style";
+import Fuse from "fuse.js";
+import { useMemo, useState } from "react";
+import type { CellComponentProps } from "react-window";
+import { Grid } from "react-window";
 
 const columnCount = 8;
 const columnWidth = 36;
@@ -37,7 +41,10 @@ function IconSearchInput(props: IconSearchInputProps) {
 				message: "Search for an icon",
 			})}
 			onChange={(e) => props.onChange(e.currentTarget.value)}
-			className={cn("rounded-none border-0 focus-visible:ring-0", props.className)}
+			className={cn(
+				"rounded-none border-0 focus-visible:ring-0",
+				props.className,
+			)}
 		/>
 	);
 }
@@ -47,7 +54,13 @@ type IconCellComponentProps = CellComponentProps & {
 	onChange: (icon: IconName) => void;
 };
 
-function IconCellComponent({ columnIndex, rowIndex, style, icons, onChange }: IconCellComponentProps) {
+function IconCellComponent({
+	columnIndex,
+	rowIndex,
+	style,
+	icons,
+	onChange,
+}: IconCellComponentProps) {
 	const index = rowIndex * columnCount + columnIndex;
 	const icon = icons[index];
 
@@ -62,7 +75,11 @@ function IconCellComponent({ columnIndex, rowIndex, style, icons, onChange }: Ic
 			}}
 			className="flex size-full items-center justify-center hover:bg-accent"
 		>
-			{icon ? <i className={cn("ph text-base", `ph-${icon}`)} /> : <ProhibitIcon />}
+			{icon ? (
+				<i className={cn("ph text-base", `ph-${icon}`)} />
+			) : (
+				<ProhibitIcon />
+			)}
 		</button>
 	);
 }
@@ -72,13 +89,21 @@ function searchIcons(query: string): IconName[] {
 	return iconSearch.search(query).map((result) => result.item);
 }
 
-type IconPickerProps = Omit<React.ComponentProps<typeof Button>, "value" | "onChange"> & {
+type IconPickerProps = Omit<
+	React.ComponentProps<typeof Button>,
+	"value" | "onChange"
+> & {
 	value: string;
 	onChange: (icon: string) => void;
 	popoverProps?: React.ComponentProps<typeof Popover>;
 };
 
-export function IconPicker({ value, onChange, popoverProps, ...props }: IconPickerProps) {
+export function IconPicker({
+	value,
+	onChange,
+	popoverProps,
+	...props
+}: IconPickerProps) {
 	const [search, setSearch] = useState("");
 
 	const searchedIcons = useMemo(() => searchIcons(search), [search]);
@@ -88,7 +113,12 @@ export function IconPicker({ value, onChange, popoverProps, ...props }: IconPick
 		<Popover {...popoverProps}>
 			<PopoverTrigger
 				render={
-					<Button size="icon" variant="outline" aria-label={t`Pick an icon`} {...props}>
+					<Button
+						size="icon"
+						variant="outline"
+						aria-label={t`Pick an icon`}
+						{...props}
+					>
 						<i className={cn("ph size-4 text-base", `ph-${value}`)} />
 					</Button>
 				}

@@ -1,13 +1,18 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod";
-import { Button } from "@rbuilder/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import { Input } from "@rbuilder/ui/components/input";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -33,7 +38,8 @@ export function ForgotPasswordPage() {
 				toast.error(
 					error.message ||
 						t({
-							comment: "Fallback toast when requesting password reset email fails without backend message",
+							comment:
+								"Fallback toast when requesting password reset email fails without backend message",
 							message: "Failed to send password reset email. Please try again.",
 						}),
 					{ id: toastId },
@@ -64,7 +70,9 @@ export function ForgotPasswordPage() {
 							nativeButton={false}
 							render={
 								<Link to="/auth/login">
-									<Trans comment="Call-to-action link from forgot-password page to login page">Sign in now</Trans>{" "}
+									<Trans comment="Call-to-action link from forgot-password page to login page">
+										Sign in now
+									</Trans>{" "}
 									<ArrowRightIcon />
 								</Link>
 							}
@@ -83,9 +91,15 @@ export function ForgotPasswordPage() {
 			>
 				<form.Field name="email">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
-								<Trans comment="Label for email input on forgot-password form">Email Address</Trans>
+								<Trans comment="Label for email input on forgot-password form">
+									Email Address
+								</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -93,7 +107,8 @@ export function ForgotPasswordPage() {
 										type="email"
 										autoComplete="email"
 										placeholder={t({
-											comment: "Example email placeholder on forgot-password form",
+											comment:
+												"Example email placeholder on forgot-password form",
 											message: "john.doe@example.com",
 										})}
 										name={field.name}
@@ -109,7 +124,9 @@ export function ForgotPasswordPage() {
 				</form.Field>
 
 				<Button type="submit" className="w-full">
-					<Trans comment="Primary action button label on forgot-password form">Send Password Reset Email</Trans>
+					<Trans comment="Primary action button label on forgot-password form">
+						Send Password Reset Email
+					</Trans>
 				</Button>
 			</form>
 		</>
@@ -132,7 +149,9 @@ function PostForgotPasswordScreen() {
 				nativeButton={false}
 				render={
 					<a href="mailto:">
-						<Trans comment="Button label to open the user's default email app">Open Email Client</Trans>
+						<Trans comment="Button label to open the user's default email app">
+							Open Email Client
+						</Trans>
 					</a>
 				}
 			/>

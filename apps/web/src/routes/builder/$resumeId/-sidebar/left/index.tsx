@@ -1,18 +1,33 @@
-import type { LeftSidebarSection } from "@/libs/resume/section";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { LockSimpleIcon } from "@phosphor-icons/react";
+import {
+	Avatar,
+	AvatarFallback,
+	AvatarImage,
+} from "@rbuilder/ui/components/avatar";
+import { Button } from "@rbuilder/ui/components/button";
+import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from "@rbuilder/ui/components/tooltip";
+import { getInitials } from "@rbuilder/utils/string";
 import { Fragment, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { match } from "ts-pattern";
-import { Avatar, AvatarFallback, AvatarImage } from "@rbuilder/ui/components/avatar";
-import { Button } from "@rbuilder/ui/components/button";
-import { ScrollArea } from "@rbuilder/ui/components/scroll-area";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@rbuilder/ui/components/tooltip";
-import { getInitials } from "@rbuilder/utils/string";
-import { useIsResumeLocked, usePatchResume } from "@/features/resume/builder/draft";
+import {
+	useIsResumeLocked,
+	usePatchResume,
+} from "@/features/resume/builder/draft";
 import { UserDropdownMenu } from "@/features/user/dropdown-menu";
-import { getSectionIcon, getSectionTitle, leftSidebarSections } from "@/libs/resume/section";
+import type { LeftSidebarSection } from "@/libs/resume/section";
+import {
+	getSectionIcon,
+	getSectionTitle,
+	leftSidebarSections,
+} from "@/libs/resume/section";
 import { BuilderSidebarEdge } from "../../-components/edge";
 import { useBuilderSidebar } from "../../-store/sidebar";
 import { AwardsSectionBuilder } from "./sections/awards";
@@ -68,7 +83,10 @@ export function BuilderSidebarLeft() {
 				<div className="space-y-4 p-4">
 					{isLocked && <LockBanner />}
 
-					<fieldset disabled={isLocked} className="m-0 min-w-0 space-y-4 border-0 p-0">
+					<fieldset
+						disabled={isLocked}
+						className="m-0 min-w-0 space-y-4 border-0 p-0"
+					>
 						{leftSidebarSections.map((section) => (
 							<Fragment key={section}>{getSectionComponent(section)}</Fragment>
 						))}
@@ -117,7 +135,11 @@ function SidebarEdge() {
 			// (querying through the ScrollArea ref did not — its ref does not expose the scroll container).
 			document
 				.getElementById(`sidebar-${section}`)
-				?.scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth" });
+				?.scrollIntoView({
+					block: "start",
+					inline: "nearest",
+					behavior: "smooth",
+				});
 		},
 		[toggleSidebar],
 	);
@@ -154,7 +176,9 @@ function SidebarEdge() {
 						<Button size="icon" variant="ghost" aria-label={t`Account menu`}>
 							<Avatar className="size-6">
 								<AvatarImage src={session.user.image ?? undefined} />
-								<AvatarFallback className="text-[0.5rem]">{getInitials(session.user.name)}</AvatarFallback>
+								<AvatarFallback className="text-[0.5rem]">
+									{getInitials(session.user.name)}
+								</AvatarFallback>
 							</Avatar>
 						</Button>
 					)}

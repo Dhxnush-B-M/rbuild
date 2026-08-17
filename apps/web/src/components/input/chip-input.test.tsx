@@ -1,16 +1,18 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { ChipInput } from "./chip-input";
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const renderInput = (props: Partial<React.ComponentProps<typeof ChipInput>> = {}) =>
+const renderInput = (
+	props: Partial<React.ComponentProps<typeof ChipInput>> = {},
+) =>
 	render(
 		<I18nProvider i18n={i18n}>
 			<ChipInput defaultValue={[]} onChange={vi.fn()} {...props} />
@@ -56,7 +58,9 @@ describe("ChipInput", () => {
 		fireEvent.keyDown(input, { key: "Enter" });
 
 		// chips set should remain ["a"]; onChange not invoked with the same array.
-		const callsAddingA = onChange.mock.calls.filter((args) => Array.isArray(args[0]) && args[0].length > 1);
+		const callsAddingA = onChange.mock.calls.filter(
+			(args) => Array.isArray(args[0]) && args[0].length > 1,
+		);
 		expect(callsAddingA.length).toBe(0);
 	});
 
@@ -72,7 +76,10 @@ describe("ChipInput", () => {
 	});
 
 	it("hides the description copy when hideDescription is true", () => {
-		const { container } = renderInput({ defaultValue: ["a"], hideDescription: true });
+		const { container } = renderInput({
+			defaultValue: ["a"],
+			hideDescription: true,
+		});
 		// We don't know the exact translated text, just confirm no <Kbd> hint banner is rendered.
 		expect(container.querySelector("kbd")).toBeNull();
 	});

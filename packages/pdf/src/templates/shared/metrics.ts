@@ -1,6 +1,9 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
 
-type PageMetricsInput = Pick<ResumeData["metadata"]["page"], "gapX" | "gapY" | "marginX" | "marginY">;
+type PageMetricsInput = Pick<
+	ResumeData["metadata"]["page"],
+	"gapX" | "gapY" | "marginX" | "marginY"
+>;
 
 type TemplateMetrics = {
 	page: {
@@ -16,7 +19,12 @@ type TemplateMetrics = {
 	gapY: (factor: number) => number;
 };
 
-export const getTemplateMetrics = ({ gapX, gapY, marginX, marginY }: PageMetricsInput): TemplateMetrics => ({
+export const getTemplateMetrics = ({
+	gapX,
+	gapY,
+	marginX,
+	marginY,
+}: PageMetricsInput): TemplateMetrics => ({
 	page: {
 		paddingHorizontal: marginX,
 		paddingVertical: marginY,

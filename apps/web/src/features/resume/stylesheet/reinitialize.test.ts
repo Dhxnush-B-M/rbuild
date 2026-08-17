@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import type { SemanticStylesheet } from "@rbuilder/schema/resume/stylesheet";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
 
 const mocks = vi.hoisted(() => ({
 	getState: vi.fn(),
@@ -52,7 +52,11 @@ describe("stylesheet store reinitialization", () => {
 		const storeModule = await import("./store");
 		const cleanup = storeModule.initializeStylesheetStore({
 			resumeId: "resume-1",
-			initial: { stylesheet: stylesheet("old"), revision: 3, renderDataVersion: 7 },
+			initial: {
+				stylesheet: stylesheet("old"),
+				revision: 3,
+				renderDataVersion: 7,
+			},
 			resumeData: defaultResumeData,
 		});
 		let finishRestore: (() => void) | undefined;
@@ -65,19 +69,28 @@ describe("stylesheet store reinitialization", () => {
 			return storeModule.replaceStylesheetStoreAfterRestore({
 				resumeId: "resume-1",
 				resumeData: defaultResumeData,
-				initial: { stylesheet: stylesheet("restored"), revision: 9, renderDataVersion: 12 },
+				initial: {
+					stylesheet: stylesheet("restored"),
+					revision: 9,
+					renderDataVersion: 12,
+				},
 				token,
 			});
 		};
 
 		const pendingRestore = restore();
 		expect(storeModule.useStylesheetStore.getState().restoreLocked).toBe(true);
-		const editGeneration = storeModule.useStylesheetStore.getState().editGeneration;
-		storeModule.useStylesheetStore.getState().setSourceText("edit while restoring");
+		const editGeneration =
+			storeModule.useStylesheetStore.getState().editGeneration;
+		storeModule.useStylesheetStore
+			.getState()
+			.setSourceText("edit while restoring");
 		storeModule.useStylesheetStore.getState().deactivate();
 		storeModule.useStylesheetStore.getState().undo();
 		expect(storeModule.useStylesheetStore.getState().source.text).toBe("old");
-		expect(storeModule.useStylesheetStore.getState().editGeneration).toBe(editGeneration);
+		expect(storeModule.useStylesheetStore.getState().editGeneration).toBe(
+			editGeneration,
+		);
 		finishRestore?.();
 		const replaced = await pendingRestore;
 		expect(replaced).toBe(true);
@@ -91,13 +104,19 @@ describe("stylesheet store reinitialization", () => {
 			restoreLocked: false,
 		});
 		storeModule.useStylesheetStore.getState().setSourceText("later edit");
-		expect(storeModule.useStylesheetStore.getState().source.text).toBe("later edit");
+		expect(storeModule.useStylesheetStore.getState().source.text).toBe(
+			"later edit",
+		);
 		expect(mocks.workers).toHaveLength(4);
-		expect(mocks.workers.slice(0, 2).every((worker) => worker.terminated)).toBe(true);
+		expect(mocks.workers.slice(0, 2).every((worker) => worker.terminated)).toBe(
+			true,
+		);
 
 		cleanup();
 
-		expect(mocks.workers.slice(2).every((worker) => worker.terminated)).toBe(true);
+		expect(mocks.workers.slice(2).every((worker) => worker.terminated)).toBe(
+			true,
+		);
 		expect(storeModule.useStylesheetStore.getState().resumeId).toBeUndefined();
 	});
 
@@ -105,7 +124,11 @@ describe("stylesheet store reinitialization", () => {
 		const storeModule = await import("./store");
 		const cleanup = storeModule.initializeStylesheetStore({
 			resumeId: "resume-1",
-			initial: { stylesheet: stylesheet("old"), revision: 3, renderDataVersion: 7 },
+			initial: {
+				stylesheet: stylesheet("old"),
+				revision: 3,
+				renderDataVersion: 7,
+			},
 			resumeData: defaultResumeData,
 		});
 
@@ -114,8 +137,12 @@ describe("stylesheet store reinitialization", () => {
 		expect(storeModule.unlockStylesheetStoreAfterRestore(token)).toBe(true);
 		expect(storeModule.useStylesheetStore.getState().restoreLocked).toBe(false);
 
-		storeModule.useStylesheetStore.getState().setSourceText("edit after failure");
-		expect(storeModule.useStylesheetStore.getState().source.text).toBe("edit after failure");
+		storeModule.useStylesheetStore
+			.getState()
+			.setSourceText("edit after failure");
+		expect(storeModule.useStylesheetStore.getState().source.text).toBe(
+			"edit after failure",
+		);
 
 		cleanup();
 	});
@@ -124,7 +151,11 @@ describe("stylesheet store reinitialization", () => {
 		const storeModule = await import("./store");
 		const cleanupFirst = storeModule.initializeStylesheetStore({
 			resumeId: "resume-1",
-			initial: { stylesheet: stylesheet("first"), revision: 1, renderDataVersion: 1 },
+			initial: {
+				stylesheet: stylesheet("first"),
+				revision: 1,
+				renderDataVersion: 1,
+			},
 			resumeData: defaultResumeData,
 		});
 		const staleToken = storeModule.lockStylesheetStoreForRestore("resume-1");
@@ -132,14 +163,22 @@ describe("stylesheet store reinitialization", () => {
 		cleanupFirst();
 		const cleanupSecond = storeModule.initializeStylesheetStore({
 			resumeId: "resume-1",
-			initial: { stylesheet: stylesheet("second"), revision: 2, renderDataVersion: 2 },
+			initial: {
+				stylesheet: stylesheet("second"),
+				revision: 2,
+				renderDataVersion: 2,
+			},
 			resumeData: defaultResumeData,
 		});
 
 		const replaced = storeModule.replaceStylesheetStoreAfterRestore({
 			resumeId: "resume-1",
 			resumeData: defaultResumeData,
-			initial: { stylesheet: stylesheet("stale restore"), revision: 3, renderDataVersion: 3 },
+			initial: {
+				stylesheet: stylesheet("stale restore"),
+				revision: 3,
+				renderDataVersion: 3,
+			},
 			token: staleToken,
 		});
 

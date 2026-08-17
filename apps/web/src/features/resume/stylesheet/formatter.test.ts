@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
-import { afterEach, describe, expect, it, vi } from "vitest";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { formatEditorDocument, formatSemanticCss } from "./formatter";
 
 const views: EditorView[] = [];
@@ -46,7 +46,9 @@ describe("Semantic CSS formatter", () => {
 		const view = new EditorView({ doc: "section {" });
 		views.push(view);
 
-		await expect(formatEditorDocument(view)).rejects.toThrow(/css|syntax|unexpected/i);
+		await expect(formatEditorDocument(view)).rejects.toThrow(
+			/css|syntax|unexpected/i,
+		);
 		expect(view.state.doc.toString()).toBe("section {");
 		expect(dispatch).not.toHaveBeenCalled();
 		dispatch.mockRestore();

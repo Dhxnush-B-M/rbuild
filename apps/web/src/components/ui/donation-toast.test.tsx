@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import type React from "react";
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import type React from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DonationToast } from "./donation-toast";
 
 type ToastOptions = {
@@ -38,7 +38,9 @@ vi.mock("sonner", () => ({
 }));
 
 const getCustomToast = () =>
-	toastMock.toast.custom.mock.calls[0] as [(toastId: string | number) => React.ReactElement, ToastOptions] | undefined;
+	toastMock.toast.custom.mock.calls[0] as
+		| [(toastId: string | number) => React.ReactElement, ToastOptions]
+		| undefined;
 
 const SHOW_TOAST_DELAY_MS = 5 * 60 * 1000;
 
@@ -46,7 +48,9 @@ const renderCustomToast = () => {
 	const customToast = getCustomToast();
 	if (!customToast) throw new Error("Custom toast was not rendered.");
 
-	return render(<I18nProvider i18n={i18n}>{customToast[0]("donation-toast")}</I18nProvider>);
+	return render(
+		<I18nProvider i18n={i18n}>{customToast[0]("donation-toast")}</I18nProvider>,
+	);
 };
 
 describe("DonationToast", () => {
@@ -113,12 +117,16 @@ describe("DonationToast", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
 
-		expect(cookieMock.set).toHaveBeenCalledWith("donation-toast-dismissed", "true", {
-			path: "/",
-			secure: true,
-			sameSite: "lax",
-			expires: new Date("2026-06-10T12:05:00.000Z"),
-		});
+		expect(cookieMock.set).toHaveBeenCalledWith(
+			"donation-toast-dismissed",
+			"true",
+			{
+				path: "/",
+				secure: true,
+				sameSite: "lax",
+				expires: new Date("2026-06-10T12:05:00.000Z"),
+			},
+		);
 		expect(toastMock.toast.dismiss).toHaveBeenCalledWith("donation-toast");
 	});
 
@@ -132,12 +140,16 @@ describe("DonationToast", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Donate" }));
 
-		expect(cookieMock.set).toHaveBeenCalledWith("donation-toast-dismissed", "true", {
-			path: "/",
-			secure: true,
-			sameSite: "lax",
-			expires: new Date("2026-06-10T12:05:00.000Z"),
-		});
+		expect(cookieMock.set).toHaveBeenCalledWith(
+			"donation-toast-dismissed",
+			"true",
+			{
+				path: "/",
+				secure: true,
+				sameSite: "lax",
+				expires: new Date("2026-06-10T12:05:00.000Z"),
+			},
+		);
 		expect(window.open).toHaveBeenCalledWith(
 			"https://opencollective.com/rbuilder/donate",
 			"_blank",

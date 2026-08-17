@@ -16,7 +16,9 @@ export type TemplateStyleContext = {
 	colors: TemplateColorRoles;
 };
 
-export type TemplateStyleSlot = StyleInput | ((context: TemplateStyleContext) => StyleInput);
+export type TemplateStyleSlot =
+	| StyleInput
+	| ((context: TemplateStyleContext) => StyleInput);
 
 export type TemplateIconProps = Omit<ComponentProps<typeof Icon>, "name">;
 
@@ -84,4 +86,5 @@ export type ItemSection<T> = {
 	items: T[];
 };
 
-export type CustomItemSection<T> = Omit<SchemaCustomSection, "items"> & ItemSection<T>;
+export type CustomItemSection<T> = Omit<SchemaCustomSection, "items"> &
+	ItemSection<T>;

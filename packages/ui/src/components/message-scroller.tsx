@@ -1,25 +1,33 @@
 "use client";
 
-import type * as React from "react";
 import { ArrowDownIcon } from "@phosphor-icons/react";
+import { cn } from "@rbuilder/utils/style";
 import {
 	MessageScroller as MessageScrollerPrimitive,
 	useMessageScroller,
 	useMessageScrollerScrollable,
 	useMessageScrollerVisibility,
 } from "@shadcn/react/message-scroller";
-import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 import { Button } from "./button";
 
-function MessageScrollerProvider(props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>) {
+function MessageScrollerProvider(
+	props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>,
+) {
 	return <MessageScrollerPrimitive.Provider {...props} />;
 }
 
-function MessageScroller({ className, ...props }: React.ComponentProps<typeof MessageScrollerPrimitive.Root>) {
+function MessageScroller({
+	className,
+	...props
+}: React.ComponentProps<typeof MessageScrollerPrimitive.Root>) {
 	return (
 		<MessageScrollerPrimitive.Root
 			data-slot="message-scroller"
-			className={cn("group/message-scroller relative flex size-full min-h-0 flex-col overflow-hidden", className)}
+			className={cn(
+				"group/message-scroller relative flex size-full min-h-0 flex-col overflow-hidden",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -63,7 +71,10 @@ function MessageScrollerItem({
 		<MessageScrollerPrimitive.Item
 			data-slot="message-scroller-item"
 			scrollAnchor={scrollAnchor}
-			className={cn("min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]", className)}
+			className={cn(
+				"min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]",
+				className,
+			)}
 			{...props}
 		/>
 	);
@@ -96,7 +107,9 @@ function MessageScrollerButton({
 			{children ?? (
 				<>
 					<ArrowDownIcon />
-					<span className="sr-only">{direction === "end" ? "Scroll to end" : "Scroll to start"}</span>
+					<span className="sr-only">
+						{direction === "end" ? "Scroll to end" : "Scroll to start"}
+					</span>
 				</>
 			)}
 		</MessageScrollerPrimitive.Button>

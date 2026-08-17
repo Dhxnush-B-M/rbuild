@@ -20,7 +20,10 @@ export const Route = createFileRoute("/_home/")({
 
 function RouteComponent() {
 	return (
-		<main id="main-content" className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
+		<main
+			id="main-content"
+			className="relative min-h-screen overflow-x-hidden bg-background text-foreground"
+		>
 			{/* Ambient Full Page Background with Up-to-Down Light & Floating Resume Cards */}
 			<ResumeBackground />
 

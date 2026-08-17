@@ -1,13 +1,18 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
-import { Button } from "@rbuilder/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import { Input } from "@rbuilder/ui/components/input";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 
@@ -29,13 +34,17 @@ export function ResetPasswordPage({ token }: Props) {
 		onSubmit: async ({ value }) => {
 			const toastId = toast.loading(t`Resetting your password...`);
 
-			const { error } = await authClient.resetPassword({ token, newPassword: value.password });
+			const { error } = await authClient.resetPassword({
+				token,
+				newPassword: value.password,
+			});
 
 			if (error) {
 				toast.error(
 					error.message ||
 						t({
-							comment: "Fallback toast when resetting password fails and no backend message is available",
+							comment:
+								"Fallback toast when resetting password fails and no backend message is available",
 							message: "Failed to reset your password. Please try again.",
 						}),
 					{ id: toastId },
@@ -43,9 +52,12 @@ export function ResetPasswordPage({ token }: Props) {
 				return;
 			}
 
-			toast.success(t`Your password has been reset successfully. You can now sign in with your new password.`, {
-				id: toastId,
-			});
+			toast.success(
+				t`Your password has been reset successfully. You can now sign in with your new password.`,
+				{
+					id: toastId,
+				},
+			);
 
 			void navigate({ to: "/auth/login" });
 		},
@@ -73,9 +85,15 @@ export function ResetPasswordPage({ token }: Props) {
 			>
 				<form.Field name="password">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
-								<Trans comment="Label for new password input on reset-password form">New Password</Trans>
+								<Trans comment="Label for new password input on reset-password form">
+									New Password
+								</Trans>
 							</FormLabel>
 							<div className="flex items-center gap-x-1.5">
 								<FormControl
@@ -88,7 +106,9 @@ export function ResetPasswordPage({ token }: Props) {
 											name={field.name}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
@@ -100,11 +120,13 @@ export function ResetPasswordPage({ token }: Props) {
 									aria-label={
 										showPassword
 											? t({
-													comment: "Accessible label for button that hides password in reset-password form",
+													comment:
+														"Accessible label for button that hides password in reset-password form",
 													message: "Hide password",
 												})
 											: t({
-													comment: "Accessible label for button that reveals password in reset-password form",
+													comment:
+														"Accessible label for button that reveals password in reset-password form",
 													message: "Show password",
 												})
 									}
@@ -118,7 +140,9 @@ export function ResetPasswordPage({ token }: Props) {
 				</form.Field>
 
 				<Button type="submit" className="w-full">
-					<Trans comment="Primary action button label on reset-password form">Reset Password</Trans>
+					<Trans comment="Primary action button label on reset-password form">
+						Reset Password
+					</Trans>
 				</Button>
 			</form>
 		</>

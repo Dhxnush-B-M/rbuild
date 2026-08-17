@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -10,6 +9,7 @@ import {
 	AlertDialogTitle,
 } from "@rbuilder/ui/components/alert-dialog";
 import { cn } from "@rbuilder/utils/style";
+import * as React from "react";
 
 interface ConfirmOptions {
 	description?: string;
@@ -33,7 +33,9 @@ type ConfirmDialogProviderProps = {
 
 const ConfirmContext = React.createContext<ConfirmContextType | null>(null);
 
-export function ConfirmDialogProvider({ children }: ConfirmDialogProviderProps) {
+export function ConfirmDialogProvider({
+	children,
+}: ConfirmDialogProviderProps) {
 	const [state, setState] = React.useState<ConfirmState>({
 		open: false,
 		resolve: null,
@@ -43,18 +45,21 @@ export function ConfirmDialogProvider({ children }: ConfirmDialogProviderProps) 
 		cancelText: undefined,
 	});
 
-	const confirm = React.useCallback((title: string, options?: ConfirmOptions): Promise<boolean> => {
-		return new Promise<boolean>((resolve) => {
-			setState({
-				open: true,
-				resolve,
-				title,
-				description: options?.description,
-				confirmText: options?.confirmText,
-				cancelText: options?.cancelText,
+	const confirm = React.useCallback(
+		(title: string, options?: ConfirmOptions): Promise<boolean> => {
+			return new Promise<boolean>((resolve) => {
+				setState({
+					open: true,
+					resolve,
+					title,
+					description: options?.description,
+					confirmText: options?.confirmText,
+					cancelText: options?.cancelText,
+				});
 			});
-		});
-	}, []);
+		},
+		[],
+	);
 
 	const handleConfirm = React.useCallback(() => {
 		if (state.resolve) state.resolve(true);
@@ -68,24 +73,36 @@ export function ConfirmDialogProvider({ children }: ConfirmDialogProviderProps) 
 		setState((prev) => ({ ...prev, open: false, resolve: null }));
 	}, [state.resolve]);
 
-	const contextValue = React.useMemo<ConfirmContextType>(() => ({ confirm }), [confirm]);
+	const contextValue = React.useMemo<ConfirmContextType>(
+		() => ({ confirm }),
+		[confirm],
+	);
 
 	return (
 		<ConfirmContext.Provider value={contextValue}>
 			{children}
 
-			<AlertDialog open={state.open} onOpenChange={(open) => !open && handleCancel()}>
+			<AlertDialog
+				open={state.open}
+				onOpenChange={(open) => !open && handleCancel()}
+			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>{state.title}</AlertDialogTitle>
-						<AlertDialogDescription className={cn(!state.description && "sr-only")}>
+						<AlertDialogDescription
+							className={cn(!state.description && "sr-only")}
+						>
 							{state.description}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={handleCancel}>{state.cancelText ?? "Cancel"}</AlertDialogCancel>
-						<AlertDialogAction onClick={handleConfirm}>{state.confirmText ?? "Confirm"}</AlertDialogAction>
+						<AlertDialogCancel onClick={handleCancel}>
+							{state.cancelText ?? "Cancel"}
+						</AlertDialogCancel>
+						<AlertDialogAction onClick={handleConfirm}>
+							{state.confirmText ?? "Confirm"}
+						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
@@ -97,7 +114,9 @@ export function useConfirm() {
 	const context = React.use(ConfirmContext);
 
 	if (!context) {
-		throw new Error("useConfirm must be used within a <ConfirmDialogProvider />.");
+		throw new Error(
+			"useConfirm must be used within a <ConfirmDialogProvider />.",
+		);
 	}
 
 	return context.confirm;

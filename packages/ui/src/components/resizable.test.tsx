@@ -1,6 +1,10 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { ResizableGroup, ResizablePanel, ResizableSeparator } from "./resizable";
+import {
+	ResizableGroup,
+	ResizablePanel,
+	ResizableSeparator,
+} from "./resizable";
 
 describe("ResizableGroup", () => {
 	it("renders with data-slot='resizable-panel-group'", () => {
@@ -11,7 +15,9 @@ describe("ResizableGroup", () => {
 				<ResizablePanel>B</ResizablePanel>
 			</ResizableGroup>,
 		);
-		expect(container.querySelector("[data-slot=resizable-panel-group]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=resizable-panel-group]"),
+		).toBeInTheDocument();
 	});
 
 	it("merges custom className", () => {
@@ -20,7 +26,9 @@ describe("ResizableGroup", () => {
 				<ResizablePanel>x</ResizablePanel>
 			</ResizableGroup>,
 		);
-		expect(container.querySelector("[data-slot=resizable-panel-group]")).toHaveClass("my-group");
+		expect(
+			container.querySelector("[data-slot=resizable-panel-group]"),
+		).toHaveClass("my-group");
 	});
 });
 
@@ -31,7 +39,9 @@ describe("ResizablePanel", () => {
 				<ResizablePanel>x</ResizablePanel>
 			</ResizableGroup>,
 		);
-		expect(container.querySelector("[data-slot=resizable-panel]")).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot=resizable-panel]"),
+		).toBeInTheDocument();
 	});
 });
 

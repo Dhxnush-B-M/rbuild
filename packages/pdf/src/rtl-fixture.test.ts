@@ -1,13 +1,18 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it } from "vitest";
 import { templateSchema } from "@rbuilder/schema/templates";
+import { describe, expect, it } from "vitest";
 
 const templatePages = templateSchema.options.map(
 	(template) =>
 		[
 			template,
-			fileURLToPath(new URL(`./templates/${template}/${capitalize(template)}Page.tsx`, import.meta.url)),
+			fileURLToPath(
+				new URL(
+					`./templates/${template}/${capitalize(template)}Page.tsx`,
+					import.meta.url,
+				),
+			),
 		] as const,
 );
 
@@ -16,13 +21,19 @@ function capitalize(template: string): string {
 }
 
 describe("RTL PDF fixture", () => {
-	it.each(templatePages)("%s wires shared RTL helpers and alignEnd slot", (_template, pagePath) => {
-		const source = readFileSync(pagePath, "utf8");
+	it.each(templatePages)(
+		"%s wires shared RTL helpers and alignEnd slot",
+		(_template, pagePath) => {
+			const source = readFileSync(pagePath, "utf8");
 
-		expect(source).toContain("createRtlStyleHelpers");
-		// ponytail: alignEnd moved to createBaseTemplateStyles factory; either direct or factory counts.
-		expect(source.includes("alignEnd") || source.includes("createBaseTemplateStyles")).toBe(true);
-		expect(source).not.toContain("alignRight");
-		expect(source).not.toContain('from "@rbuilder/utils/locale"');
-	});
+			expect(source).toContain("createRtlStyleHelpers");
+			// ponytail: alignEnd moved to createBaseTemplateStyles factory; either direct or factory counts.
+			expect(
+				source.includes("alignEnd") ||
+					source.includes("createBaseTemplateStyles"),
+			).toBe(true);
+			expect(source).not.toContain("alignRight");
+			expect(source).not.toContain('from "@rbuilder/utils/locale"');
+		},
+	);
 });

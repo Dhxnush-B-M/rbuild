@@ -1,9 +1,9 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import type { Template } from "@rbuilder/schema/templates";
-import { describe, expect, it } from "vitest";
 import { pdf } from "@react-pdf/renderer";
 import { createElement } from "react";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { ResumeDocument } from "../document";
 
 type HostNode = {
@@ -25,7 +25,14 @@ const findText = (node: HostNode, text: string): HostNode | undefined => {
 };
 
 const mergedStyle = (node: HostNode | undefined): Record<string, unknown> =>
-	Object.assign({}, ...(Array.isArray(node?.style) ? node.style : node?.style ? [node.style] : []));
+	Object.assign(
+		{},
+		...(Array.isArray(node?.style)
+			? node.style
+			: node?.style
+				? [node.style]
+				: []),
+	);
 
 const buildFixture = (template: Template, rule = ""): ResumeData => {
 	const data = structuredClone(defaultResumeData);
@@ -54,19 +61,28 @@ const buildFixture = (template: Template, rule = ""): ResumeData => {
 			: [{ fullWidth: true, main: ["skills"], sidebar: [] }];
 
 	const stylesheet = { languageVersion: 1, text: `@version 1; ${rule}` };
-	data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
+	data.metadata.stylesheet = {
+		mode: "semantic",
+		source: stylesheet,
+		applied: stylesheet,
+	};
 	return data;
 };
 
 const finalTextStyle = async (template: Template, text: string, rule = "") => {
 	const data = buildFixture(template, rule);
-	const element = createElement(ResumeDocument, { data, template }) as unknown as Parameters<typeof pdf>[0];
+	const element = createElement(ResumeDocument, {
+		data,
+		template,
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
 	return mergedStyle(findText(instance.container.document as HostNode, text));
 };
 
-const finalOnyxCompanyStyle = async (keyword?: "inherit" | "initial" | "revert" | "unset") => {
+const finalOnyxCompanyStyle = async (
+	keyword?: "inherit" | "initial" | "revert" | "unset",
+) => {
 	const data = structuredClone(defaultResumeData);
 	data.picture.hidden = true;
 	data.metadata.typography.body.fontWeights = ["400", "500"];
@@ -83,22 +99,43 @@ const finalOnyxCompanyStyle = async (keyword?: "inherit" | "initial" | "revert" 
 			roles: [],
 		},
 	];
-	data.metadata.layout.pages = [{ fullWidth: true, main: ["experience"], sidebar: [] }];
+	data.metadata.layout.pages = [
+		{ fullWidth: true, main: ["experience"], sidebar: [] },
+	];
 	const text = `@version 1; ${
-		keyword ? `section[type="experience"] field[name="company"] { font-weight: ${keyword}; }` : ""
+		keyword
+			? `section[type="experience"] field[name="company"] { font-weight: ${keyword}; }`
+			: ""
 	}`;
 	const stylesheet = { languageVersion: 1, text };
-	data.metadata.stylesheet = { mode: "semantic", source: stylesheet, applied: stylesheet };
-	const element = createElement(ResumeDocument, { data, template: "onyx" }) as unknown as Parameters<typeof pdf>[0];
+	data.metadata.stylesheet = {
+		mode: "semantic",
+		source: stylesheet,
+		applied: stylesheet,
+	};
+	const element = createElement(ResumeDocument, {
+		data,
+		template: "onyx",
+	}) as unknown as Parameters<typeof pdf>[0];
 	const instance = pdf(element);
 	await expect.poll(() => instance.container.document).not.toBeNull();
-	return mergedStyle(findText(instance.container.document as HostNode, "Analytical Engines"));
+	return mergedStyle(
+		findText(instance.container.document as HostNode, "Analytical Engines"),
+	);
 };
 
 describe("PDF semantic base and reset fidelity", () => {
 	it("keeps Bronzor's first heading weight and lets an explicit last weight override it", async () => {
-		expect(await finalTextStyle("bronzor", "Expertise")).toMatchObject({ fontWeight: "400" });
-		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: 700; }")).toMatchObject({
+		expect(await finalTextStyle("bronzor", "Expertise")).toMatchObject({
+			fontWeight: "400",
+		});
+		expect(
+			await finalTextStyle(
+				"bronzor",
+				"Expertise",
+				"section-heading { font-weight: 700; }",
+			),
+		).toMatchObject({
 			fontWeight: "700",
 		});
 	});
@@ -107,20 +144,38 @@ describe("PDF semantic base and reset fidelity", () => {
 		"resets Bronzor's heading weight with %s against the actual host base",
 		async (keyword) => {
 			expect(
-				await finalTextStyle("bronzor", "Expertise", `section-heading { font-weight: ${keyword}; }`),
+				await finalTextStyle(
+					"bronzor",
+					"Expertise",
+					`section-heading { font-weight: ${keyword}; }`,
+				),
 			).toMatchObject({ fontWeight: "400" });
 		},
 	);
 
 	it("cancels Bronzor's heading weight with the CSS initial value", async () => {
-		expect(await finalTextStyle("bronzor", "Expertise", "section-heading { font-weight: initial; }")).toMatchObject({
+		expect(
+			await finalTextStyle(
+				"bronzor",
+				"Expertise",
+				"section-heading { font-weight: initial; }",
+			),
+		).toMatchObject({
 			fontWeight: undefined,
 		});
 	});
 
 	it("keeps Chikorita's sidebar placement color and lets an explicit body color override it", async () => {
-		expect(await finalTextStyle("chikorita", "TypeScript")).toMatchObject({ color: "#eeeeee" });
-		expect(await finalTextStyle("chikorita", "TypeScript", "field[name='name'] { color: #111111; }")).toMatchObject({
+		expect(await finalTextStyle("chikorita", "TypeScript")).toMatchObject({
+			color: "#eeeeee",
+		});
+		expect(
+			await finalTextStyle(
+				"chikorita",
+				"TypeScript",
+				"field[name='name'] { color: #111111; }",
+			),
+		).toMatchObject({
 			color: "#111111",
 		});
 	});
@@ -129,13 +184,23 @@ describe("PDF semantic base and reset fidelity", () => {
 		"cancels Chikorita's sidebar field color with %s and emits the inherited parent value",
 		async (keyword) => {
 			expect(
-				await finalTextStyle("chikorita", "TypeScript", `field[name='name'] { color: ${keyword}; }`),
+				await finalTextStyle(
+					"chikorita",
+					"TypeScript",
+					`field[name='name'] { color: ${keyword}; }`,
+				),
 			).toMatchObject({ color: "#111111" });
 		},
 	);
 
 	it("restores Chikorita's sidebar field color with revert", async () => {
-		expect(await finalTextStyle("chikorita", "TypeScript", "field[name='name'] { color: revert; }")).toMatchObject({
+		expect(
+			await finalTextStyle(
+				"chikorita",
+				"TypeScript",
+				"field[name='name'] { color: revert; }",
+			),
+		).toMatchObject({
 			color: "#eeeeee",
 		});
 	});
@@ -143,16 +208,22 @@ describe("PDF semantic base and reset fidelity", () => {
 	it.each(["inherit", "unset"] as const)(
 		"cancels Onyx's local company weight with %s and emits the inherited parent value",
 		async (keyword) => {
-			expect(await finalOnyxCompanyStyle(keyword)).toMatchObject({ fontWeight: "400" });
+			expect(await finalOnyxCompanyStyle(keyword)).toMatchObject({
+				fontWeight: "400",
+			});
 		},
 	);
 
 	it("cancels Onyx's local company weight with initial", async () => {
-		expect(await finalOnyxCompanyStyle("initial")).toMatchObject({ fontWeight: undefined });
+		expect(await finalOnyxCompanyStyle("initial")).toMatchObject({
+			fontWeight: undefined,
+		});
 	});
 
 	it("restores Onyx's local company weight with revert", async () => {
 		expect(await finalOnyxCompanyStyle()).toMatchObject({ fontWeight: "500" });
-		expect(await finalOnyxCompanyStyle("revert")).toMatchObject({ fontWeight: "500" });
+		expect(await finalOnyxCompanyStyle("revert")).toMatchObject({
+			fontWeight: "500",
+		});
 	});
 });

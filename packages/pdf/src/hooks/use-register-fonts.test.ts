@@ -1,7 +1,7 @@
-import type { ResumeData, Typography } from "@rbuilder/schema/resume/data";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getWebFontSource } from "@rbuilder/fonts";
+import type { ResumeData, Typography } from "@rbuilder/schema/resume/data";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Font } from "#react-pdf-renderer";
 
 const typography = {
@@ -51,8 +51,14 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "zh-CN");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif SC"]);
-		expect(pdfTypography.heading.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif SC"]);
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif SC",
+		]);
+		expect(pdfTypography.heading.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif SC",
+		]);
 
 		expect(registerSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -78,9 +84,19 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "ko-KR");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif KR", "Noto Serif SC"]);
-		expect(pdfTypography.heading.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif KR", "Noto Serif SC"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif KR" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif KR",
+			"Noto Serif SC",
+		]);
+		expect(pdfTypography.heading.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif KR",
+			"Noto Serif SC",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif KR" }),
+		);
 	});
 
 	it("registers the Japanese Noto fallback for the ja-JP locale", async () => {
@@ -90,8 +106,14 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "ja-JP");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif JP", "Noto Serif SC"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif JP" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif JP",
+			"Noto Serif SC",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif JP" }),
+		);
 	});
 
 	it("registers the Traditional Chinese Noto fallback for the zh-TW locale", async () => {
@@ -101,8 +123,14 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "zh-TW");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif TC", "Noto Serif SC"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif TC" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif TC",
+			"Noto Serif SC",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif TC" }),
+		);
 	});
 
 	it("registers the Korean Noto fallback for Latin locale when content contains Hangul", async () => {
@@ -110,10 +138,21 @@ describe("registerFonts", () => {
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
-		const pdfTypography = registerFonts(typography, "en-US", true, new Set(["hangul"]));
+		const pdfTypography = registerFonts(
+			typography,
+			"en-US",
+			true,
+			new Set(["hangul"]),
+		);
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif KR", "Noto Serif SC"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif KR" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif KR",
+			"Noto Serif SC",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif KR" }),
+		);
 	});
 
 	it("registers the Arabic Noto fallback for the fa-IR (Persian) locale", async () => {
@@ -123,8 +162,13 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "fa-IR");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Naskh Arabic"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Naskh Arabic" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Naskh Arabic",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Naskh Arabic" }),
+		);
 	});
 
 	it("registers the Arabic Noto fallback for Latin locale when content contains Arabic", async () => {
@@ -132,10 +176,20 @@ describe("registerFonts", () => {
 		vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
-		const pdfTypography = registerFonts(typography, "en-US", false, new Set(["arabic"]));
+		const pdfTypography = registerFonts(
+			typography,
+			"en-US",
+			false,
+			new Set(["arabic"]),
+		);
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Naskh Arabic"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Naskh Arabic" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Naskh Arabic",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Naskh Arabic" }),
+		);
 	});
 
 	it("registers the Hebrew Noto fallback for the he-IL locale (no SC safety net)", async () => {
@@ -145,8 +199,13 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "he-IL");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Sans Hebrew"]);
-		expect(registerSpy).not.toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif SC" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Sans Hebrew",
+		]);
+		expect(registerSpy).not.toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif SC" }),
+		);
 	});
 
 	it("registers the Thai Noto fallback for the th-TH locale", async () => {
@@ -156,12 +215,19 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "th-TH");
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Sans Thai"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Sans Thai" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Sans Thai",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Sans Thai" }),
+		);
 	});
 
 	it("does NOT enable CJK per-character line breaking for non-CJK fallback scripts", async () => {
-		const registerHyphenationSpy = vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
+		const registerHyphenationSpy = vi
+			.spyOn(Font, "registerHyphenationCallback")
+			.mockImplementation(() => {});
 		vi.spyOn(Font, "register").mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
@@ -234,7 +300,9 @@ describe("registerFonts", () => {
 
 		expect(pdfTypography.body.fontFamily).toBe("IBM Plex Serif");
 		expect(pdfTypography.heading.fontFamily).toBe("IBM Plex Serif");
-		expect(registerSpy).not.toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif SC" }));
+		expect(registerSpy).not.toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif SC" }),
+		);
 	});
 
 	it("registers CJK PDF fallbacks for Latin locale when resume content contains CJK text", async () => {
@@ -244,19 +312,42 @@ describe("registerFonts", () => {
 
 		const pdfTypography = registerFonts(typography, "en-US", true);
 
-		expect(pdfTypography.body.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif SC"]);
-		expect(pdfTypography.heading.fontFamily).toEqual(["IBM Plex Serif", "Noto Serif SC"]);
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Noto Serif SC" }));
+		expect(pdfTypography.body.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif SC",
+		]);
+		expect(pdfTypography.heading.fontFamily).toEqual([
+			"IBM Plex Serif",
+			"Noto Serif SC",
+		]);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Noto Serif SC" }),
+		);
 	});
 
 	it("uses CJK line breaking for Latin locale when resume content contains CJK text", async () => {
-		const registerHyphenationSpy = vi.spyOn(Font, "registerHyphenationCallback").mockImplementation(() => {});
+		const registerHyphenationSpy = vi
+			.spyOn(Font, "registerHyphenationCallback")
+			.mockImplementation(() => {});
 		const { registerFonts } = await import("./use-register-fonts");
 
 		registerFonts(typography, "en-US", true);
 
 		const hyphenationCallback = registerHyphenationSpy.mock.calls.at(-1)?.[0];
-		expect(hyphenationCallback?.("翠翠红红处处")).toEqual(["翠", "", "翠", "", "红", "", "红", "", "处", "", "处", ""]);
+		expect(hyphenationCallback?.("翠翠红红处处")).toEqual([
+			"翠",
+			"",
+			"翠",
+			"",
+			"红",
+			"",
+			"红",
+			"",
+			"处",
+			"",
+			"处",
+			"",
+		]);
 		// Latin words must stay intact even in CJK mode — no character-level breaking.
 		expect(hyphenationCallback?.("Reactive")).toEqual(["Reactive"]);
 	});
@@ -267,8 +358,16 @@ describe("registerFonts", () => {
 
 		const baseTypography = {
 			...typography,
-			body: { ...typography.body, fontFamily: "Source Sans 3", fontWeights: ["800", "600", "400"] },
-			heading: { ...typography.heading, fontFamily: "Source Sans 3", fontWeights: ["900", "500"] },
+			body: {
+				...typography.body,
+				fontFamily: "Source Sans 3",
+				fontWeights: ["800", "600", "400"],
+			},
+			heading: {
+				...typography.heading,
+				fontFamily: "Source Sans 3",
+				fontWeights: ["900", "500"],
+			},
 		} satisfies Typography;
 
 		const pdfTypography = registerFonts(baseTypography, "en-US");
@@ -284,15 +383,23 @@ describe("registerFonts", () => {
 		const migratedTypography = {
 			...typography,
 			body: { ...typography.body, fontFamily: "Lato", fontWeights: ["400"] },
-			heading: { ...typography.heading, fontFamily: "Lato", fontWeights: ["600"] },
+			heading: {
+				...typography.heading,
+				fontFamily: "Lato",
+				fontWeights: ["600"],
+			},
 		} satisfies Typography;
 
 		const pdfTypography = registerFonts(migratedTypography, "en-US");
 
 		expect(pdfTypography.body.fontWeights).toEqual(["400"]);
 		expect(pdfTypography.heading.fontWeights).toEqual(["400", "700"]);
-		expect(registerSpy).not.toHaveBeenCalledWith(expect.objectContaining({ family: "Lato", fontWeight: 600 }));
-		expect(registerSpy).toHaveBeenCalledWith(expect.objectContaining({ family: "Lato", fontWeight: 700 }));
+		expect(registerSpy).not.toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Lato", fontWeight: 600 }),
+		);
+		expect(registerSpy).toHaveBeenCalledWith(
+			expect.objectContaining({ family: "Lato", fontWeight: 700 }),
+		);
 	});
 });
 
@@ -301,7 +408,10 @@ describe("resumeContentContainsCJK", () => {
 		const { resumeContentContainsCJK } = await import("./use-register-fonts");
 		const data = {
 			...defaultResumeData,
-			summary: { ...defaultResumeData.summary, content: "<p>翠翠红红处处莺莺燕燕</p>" },
+			summary: {
+				...defaultResumeData.summary,
+				content: "<p>翠翠红红处处莺莺燕燕</p>",
+			},
 		} satisfies ResumeData;
 
 		expect(resumeContentContainsCJK(data)).toBe(true);
@@ -326,27 +436,37 @@ describe("resumeContentScripts", () => {
 
 	it("detects Hangul", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect([...resumeContentScripts(withSummary("안녕하세요"))]).toEqual(["hangul"]);
+		expect([...resumeContentScripts(withSummary("안녕하세요"))]).toEqual([
+			"hangul",
+		]);
 	});
 
 	it("detects Kana", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect([...resumeContentScripts(withSummary("こんにちは"))]).toEqual(["kana"]);
+		expect([...resumeContentScripts(withSummary("こんにちは"))]).toEqual([
+			"kana",
+		]);
 	});
 
 	it("detects Han as han-simplified", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect([...resumeContentScripts(withSummary("翠翠红红"))]).toEqual(["han-simplified"]);
+		expect([...resumeContentScripts(withSummary("翠翠红红"))]).toEqual([
+			"han-simplified",
+		]);
 	});
 
 	it("detects Arabic (incl. Persian)", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect([...resumeContentScripts(withSummary("پژوهشگر امنیت"))]).toEqual(["arabic"]);
+		expect([...resumeContentScripts(withSummary("پژوهشگر امنیت"))]).toEqual([
+			"arabic",
+		]);
 	});
 
 	it("detects Hebrew", async () => {
 		const { resumeContentScripts } = await import("./use-register-fonts");
-		expect([...resumeContentScripts(withSummary("שלום עולם"))]).toEqual(["hebrew"]);
+		expect([...resumeContentScripts(withSummary("שלום עולם"))]).toEqual([
+			"hebrew",
+		]);
 	});
 
 	it("detects Thai", async () => {

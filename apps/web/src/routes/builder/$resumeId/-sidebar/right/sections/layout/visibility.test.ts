@@ -1,6 +1,6 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { filterVisibleLayoutSectionIds } from "./visibility";
 
 const createResumeData = (): ResumeData => structuredClone(defaultResumeData);
@@ -12,9 +12,16 @@ describe("filterVisibleLayoutSectionIds", () => {
 			{ hidden: false, company: "rbuilder" },
 			{ hidden: true, company: "Hidden Company" },
 		] as never;
-		data.sections.references.items = [{ hidden: true, name: "Hidden Reference" }] as never;
+		data.sections.references.items = [
+			{ hidden: true, name: "Hidden Reference" },
+		] as never;
 
-		expect(filterVisibleLayoutSectionIds(["experience", "volunteer", "references"], data)).toEqual(["experience"]);
+		expect(
+			filterVisibleLayoutSectionIds(
+				["experience", "volunteer", "references"],
+				data,
+			),
+		).toEqual(["experience"]);
 	});
 
 	it("keeps layout order for non-empty summary and custom sections", () => {
@@ -39,9 +46,11 @@ describe("filterVisibleLayoutSectionIds", () => {
 			},
 		] as never;
 
-		expect(filterVisibleLayoutSectionIds(["custom-empty", "summary", "custom-visible"], data)).toEqual([
-			"summary",
-			"custom-visible",
-		]);
+		expect(
+			filterVisibleLayoutSectionIds(
+				["custom-empty", "summary", "custom-visible"],
+				data,
+			),
+		).toEqual(["summary", "custom-visible"]);
 	});
 });

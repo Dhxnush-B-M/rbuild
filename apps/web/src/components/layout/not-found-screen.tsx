@@ -1,9 +1,17 @@
 import { Trans } from "@lingui/react/macro";
-import { HouseIcon, MagnifyingGlassIcon, WarningIcon } from "@phosphor-icons/react";
-import { Link } from "@tanstack/react-router";
-import { Alert, AlertDescription, AlertTitle } from "@rbuilder/ui/components/alert";
+import {
+	HouseIcon,
+	MagnifyingGlassIcon,
+	WarningIcon,
+} from "@phosphor-icons/react";
+import {
+	Alert,
+	AlertDescription,
+	AlertTitle,
+} from "@rbuilder/ui/components/alert";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { buttonVariants } from "@rbuilder/ui/components/button";
+import { Link } from "@tanstack/react-router";
 
 export function NotFoundScreen() {
 	return (
@@ -16,7 +24,9 @@ export function NotFoundScreen() {
 					<Trans>We couldn't find that page</Trans>
 				</AlertTitle>
 				<AlertDescription>
-					<Trans>The page you're looking for may have been moved or no longer exists.</Trans>
+					<Trans>
+						The page you're looking for may have been moved or no longer exists.
+					</Trans>
 				</AlertDescription>
 			</Alert>
 

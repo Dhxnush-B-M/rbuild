@@ -1,10 +1,16 @@
-import { describe, expect, it } from "vitest";
 import { ORPCError } from "@orpc/client";
-import { getOrpcErrorMessage, getReadableErrorMessage, getResumeErrorMessage } from "./error-message";
+import { describe, expect, it } from "vitest";
+import {
+	getOrpcErrorMessage,
+	getReadableErrorMessage,
+	getResumeErrorMessage,
+} from "./error-message";
 
 describe("getReadableErrorMessage", () => {
 	it("returns the string error directly", () => {
-		expect(getReadableErrorMessage("explicit error", "fallback")).toBe("explicit error");
+		expect(getReadableErrorMessage("explicit error", "fallback")).toBe(
+			"explicit error",
+		);
 	});
 
 	it("returns Error.message", () => {
@@ -12,7 +18,9 @@ describe("getReadableErrorMessage", () => {
 	});
 
 	it("returns fallback for unknown shapes", () => {
-		expect(getReadableErrorMessage({ random: "object" }, "fallback")).toBe("fallback");
+		expect(getReadableErrorMessage({ random: "object" }, "fallback")).toBe(
+			"fallback",
+		);
 		expect(getReadableErrorMessage(null, "fallback")).toBe("fallback");
 		expect(getReadableErrorMessage(undefined, "fallback")).toBe("fallback");
 		expect(getReadableErrorMessage(42, "fallback")).toBe("fallback");
@@ -29,8 +37,12 @@ describe("getReadableErrorMessage", () => {
 
 describe("getOrpcErrorMessage", () => {
 	it("delegates to getReadableErrorMessage for non-ORPCErrors", () => {
-		expect(getOrpcErrorMessage(new Error("boom"), { fallback: "fallback" })).toBe("boom");
-		expect(getOrpcErrorMessage("string error", { fallback: "fallback" })).toBe("string error");
+		expect(
+			getOrpcErrorMessage(new Error("boom"), { fallback: "fallback" }),
+		).toBe("boom");
+		expect(getOrpcErrorMessage("string error", { fallback: "fallback" })).toBe(
+			"string error",
+		);
 	});
 
 	it("uses byCode mapping when present", () => {
@@ -44,7 +56,9 @@ describe("getOrpcErrorMessage", () => {
 	});
 
 	it("returns server message when allowServerMessage and message is set", () => {
-		const error = new ORPCError("OTHER", { message: "Server-provided message" });
+		const error = new ORPCError("OTHER", {
+			message: "Server-provided message",
+		});
 		expect(
 			getOrpcErrorMessage(error, {
 				fallback: "fallback",
@@ -54,8 +68,12 @@ describe("getOrpcErrorMessage", () => {
 	});
 
 	it("falls back when allowServerMessage is false even if message set", () => {
-		const error = new ORPCError("OTHER", { message: "Server-provided message" });
-		expect(getOrpcErrorMessage(error, { fallback: "fallback" })).toBe("fallback");
+		const error = new ORPCError("OTHER", {
+			message: "Server-provided message",
+		});
+		expect(getOrpcErrorMessage(error, { fallback: "fallback" })).toBe(
+			"fallback",
+		);
 	});
 
 	it("byCode takes precedence over allowServerMessage", () => {
@@ -71,24 +89,32 @@ describe("getOrpcErrorMessage", () => {
 
 	it("returns fallback when no mapping or server message", () => {
 		const error = new ORPCError("UNKNOWN_CODE");
-		expect(getOrpcErrorMessage(error, { fallback: "fallback" })).toBe("fallback");
+		expect(getOrpcErrorMessage(error, { fallback: "fallback" })).toBe(
+			"fallback",
+		);
 	});
 });
 
 describe("getResumeErrorMessage", () => {
 	it("returns mapped message for RESUME_SLUG_ALREADY_EXISTS", () => {
 		const error = new ORPCError("RESUME_SLUG_ALREADY_EXISTS");
-		expect(getResumeErrorMessage(error)).toBe("A resume with this slug already exists.");
+		expect(getResumeErrorMessage(error)).toBe(
+			"A resume with this slug already exists.",
+		);
 	});
 
 	it("returns mapped message for RESUME_LOCKED", () => {
 		const error = new ORPCError("RESUME_LOCKED");
-		expect(getResumeErrorMessage(error)).toBe("This resume is locked. Unlock it first to make changes.");
+		expect(getResumeErrorMessage(error)).toBe(
+			"This resume is locked. Unlock it first to make changes.",
+		);
 	});
 
 	it("returns generic fallback for unknown codes", () => {
 		const error = new ORPCError("UNKNOWN");
-		expect(getResumeErrorMessage(error)).toBe("Something went wrong. Please try again.");
+		expect(getResumeErrorMessage(error)).toBe(
+			"Something went wrong. Please try again.",
+		);
 	});
 
 	it("returns fallback for plain Error (delegates to getOrpcErrorMessage)", () => {
@@ -97,6 +123,8 @@ describe("getResumeErrorMessage", () => {
 	});
 
 	it("returns fallback for unknown shape", () => {
-		expect(getResumeErrorMessage(null)).toBe("Something went wrong. Please try again.");
+		expect(getResumeErrorMessage(null)).toBe(
+			"Something went wrong. Please try again.",
+		);
 	});
 });

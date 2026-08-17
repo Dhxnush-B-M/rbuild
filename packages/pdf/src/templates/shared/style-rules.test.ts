@@ -1,9 +1,14 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
-import { getSectionStyleRuleContext, resolveStyleRuleSlot } from "./style-rules";
+import { describe, expect, it } from "vitest";
+import {
+	getSectionStyleRuleContext,
+	resolveStyleRuleSlot,
+} from "./style-rules";
 
-const createResumeData = (styleRules: ResumeData["metadata"]["styleRules"]): ResumeData => ({
+const createResumeData = (
+	styleRules: ResumeData["metadata"]["styleRules"],
+): ResumeData => ({
 	...defaultResumeData,
 	metadata: {
 		...defaultResumeData.metadata,
@@ -111,7 +116,14 @@ describe("resolveStyleRuleSlot", () => {
 				label: "Spacing",
 				enabled: true,
 				target: { scope: "global" },
-				slots: { item: { padding: 1000, marginTop: -1000, rowGap: -12, borderWidth: -5 } },
+				slots: {
+					item: {
+						padding: 1000,
+						marginTop: -1000,
+						rowGap: -12,
+						borderWidth: -5,
+					},
+				},
 			},
 		]);
 

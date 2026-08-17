@@ -1,15 +1,24 @@
-import type { basicsSchema } from "@rbuilder/schema/resume/data";
-import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { DotsSixVerticalIcon, LinkIcon, ListPlusIcon, XIcon } from "@phosphor-icons/react";
-import { Reorder, useDragControls } from "motion/react";
+import {
+	DotsSixVerticalIcon,
+	LinkIcon,
+	ListPlusIcon,
+	XIcon,
+} from "@phosphor-icons/react";
+import type { basicsSchema } from "@rbuilder/schema/resume/data";
 import { Button } from "@rbuilder/ui/components/button";
 import { FormControl, FormItem } from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { Label } from "@rbuilder/ui/components/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@rbuilder/ui/components/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@rbuilder/ui/components/popover";
 import { generateId } from "@rbuilder/utils/string";
+import { Reorder, useDragControls } from "motion/react";
+import type z from "zod";
 import { IconPicker } from "@/components/input/icon-picker";
 import { withForm } from "@/libs/tanstack-form";
 
@@ -39,98 +48,114 @@ export const CustomFieldsSection = withForm({
 							customFieldsField.setValue(fields);
 						}}
 					>
-						{customFieldsField.state.value.map((field: CustomField, index: number) => (
-							<CustomFieldItem key={field.id} field={field}>
-								<form.Field name={`customFields[${index}].icon`}>
-									{(iconField) => (
-										<FormItem className="shrink-0">
-											<FormControl
-												render={
-													<IconPicker
-														name={iconField.name}
-														value={iconField.state.value}
-														className="rounded-r-none! border-e-0!"
-														onChange={(icon) => {
-															iconField.handleChange(icon);
-														}}
-													/>
-												}
-											/>
-										</FormItem>
-									)}
-								</form.Field>
+						{customFieldsField.state.value.map(
+							(field: CustomField, index: number) => (
+								<CustomFieldItem key={field.id} field={field}>
+									<form.Field name={`customFields[${index}].icon`}>
+										{(iconField) => (
+											<FormItem className="shrink-0">
+												<FormControl
+													render={
+														<IconPicker
+															name={iconField.name}
+															value={iconField.state.value}
+															className="rounded-r-none! border-e-0!"
+															onChange={(icon) => {
+																iconField.handleChange(icon);
+															}}
+														/>
+													}
+												/>
+											</FormItem>
+										)}
+									</form.Field>
 
-								<form.Field name={`customFields[${index}].text`}>
-									{(textField) => (
-										<FormItem className="flex-1">
-											<FormControl
-												render={
-													<Input
-														name={textField.name}
-														value={textField.state.value}
-														className="rounded-l-none!"
-														onChange={(e) => {
-															textField.handleChange(e.target.value);
-														}}
-													/>
-												}
-											/>
-										</FormItem>
-									)}
-								</form.Field>
+									<form.Field name={`customFields[${index}].text`}>
+										{(textField) => (
+											<FormItem className="flex-1">
+												<FormControl
+													render={
+														<Input
+															name={textField.name}
+															value={textField.state.value}
+															className="rounded-l-none!"
+															onChange={(e) => {
+																textField.handleChange(e.target.value);
+															}}
+														/>
+													}
+												/>
+											</FormItem>
+										)}
+									</form.Field>
 
-								<form.Field name={`customFields[${index}].link`}>
-									{(linkField) => (
-										<Popover>
-											<PopoverTrigger
-												render={
-													<Button size="icon" variant="ghost" aria-label={t`Add link`} className="ms-1">
-														<LinkIcon />
-													</Button>
-												}
-											/>
+									<form.Field name={`customFields[${index}].link`}>
+										{(linkField) => (
+											<Popover>
+												<PopoverTrigger
+													render={
+														<Button
+															size="icon"
+															variant="ghost"
+															aria-label={t`Add link`}
+															className="ms-1"
+														>
+															<LinkIcon />
+														</Button>
+													}
+												/>
 
-											<PopoverContent align="center">
-												<div className="flex flex-col gap-y-1.5">
-													<Label htmlFor={linkField.name} className="text-muted-foreground text-xs">
-														<Trans>Enter the URL to link to</Trans>
-													</Label>
+												<PopoverContent align="center">
+													<div className="flex flex-col gap-y-1.5">
+														<Label
+															htmlFor={linkField.name}
+															className="text-muted-foreground text-xs"
+														>
+															<Trans>Enter the URL to link to</Trans>
+														</Label>
 
-													<Input
-														type="url"
-														value={linkField.state.value}
-														id={linkField.name}
-														placeholder={t({
-															comment: "Placeholder text for custom link URL field in resume builder",
-															message: "Must start with https://",
-														})}
-														onChange={(e) => {
-															linkField.handleChange(e.target.value);
-														}}
-													/>
-												</div>
-											</PopoverContent>
-										</Popover>
-									)}
-								</form.Field>
+														<Input
+															type="url"
+															value={linkField.state.value}
+															id={linkField.name}
+															placeholder={t({
+																comment:
+																	"Placeholder text for custom link URL field in resume builder",
+																message: "Must start with https://",
+															})}
+															onChange={(e) => {
+																linkField.handleChange(e.target.value);
+															}}
+														/>
+													</div>
+												</PopoverContent>
+											</Popover>
+										)}
+									</form.Field>
 
-								<Button
-									size="icon"
-									variant="ghost"
-									aria-label={t`Remove custom field`}
-									onClick={() => {
-										customFieldsField.removeValue(index);
-									}}
-								>
-									<XIcon />
-								</Button>
-							</CustomFieldItem>
-						))}
+									<Button
+										size="icon"
+										variant="ghost"
+										aria-label={t`Remove custom field`}
+										onClick={() => {
+											customFieldsField.removeValue(index);
+										}}
+									>
+										<XIcon />
+									</Button>
+								</CustomFieldItem>
+							),
+						)}
 
 						<Button
 							variant="ghost"
 							onClick={() => {
-								customFieldsField.pushValue({ id: generateId(), icon: "acorn", text: "", link: "" });
+								customFieldsField.pushValue({
+									id: generateId(),
+									icon: "acorn",
+									text: "",
+									link: "",
+								});
 							}}
 						>
 							<ListPlusIcon />

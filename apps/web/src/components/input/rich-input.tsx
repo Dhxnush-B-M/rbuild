@@ -1,4 +1,3 @@
-import type { Editor, UseEditorOptions } from "@tiptap/react";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
@@ -31,18 +30,13 @@ import {
 	TextStrikethroughIcon,
 	TextUnderlineIcon,
 } from "@phosphor-icons/react";
-import Color from "@tiptap/extension-color";
-import Highlight from "@tiptap/extension-highlight";
-import TextAlign from "@tiptap/extension-text-align";
-import { TextStyle } from "@tiptap/extension-text-style";
-import { EditorContent, EditorContext, useEditor, useEditorState } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { match } from "ts-pattern";
-import z from "zod";
 import { Button } from "@rbuilder/ui/components/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@rbuilder/ui/components/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogTitle,
+} from "@rbuilder/ui/components/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
@@ -50,14 +44,37 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@rbuilder/ui/components/dropdown-menu";
-import { PopoverHeader, PopoverTitle, PopoverTrigger } from "@rbuilder/ui/components/popover";
+import {
+	PopoverHeader,
+	PopoverTitle,
+	PopoverTrigger,
+} from "@rbuilder/ui/components/popover";
 import { Toggle } from "@rbuilder/ui/components/toggle";
 import { isDarkColor } from "@rbuilder/utils/color";
 import { cn } from "@rbuilder/utils/style";
+import Color from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
+import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import type { Editor, UseEditorOptions } from "@tiptap/react";
+import {
+	EditorContent,
+	EditorContext,
+	useEditor,
+	useEditorState,
+} from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { match } from "ts-pattern";
+import z from "zod";
 import { usePrompt } from "@/hooks/use-prompt";
 import { isRTL } from "@/libs/locale";
 import { ColorPicker } from "./color-picker";
-import { defaultHighlightColor, resolveHighlightToolbarState } from "./rich-input.utils";
+import {
+	defaultHighlightColor,
+	resolveHighlightToolbarState,
+} from "./rich-input.utils";
 
 const defaultTextColor = "rgba(0, 0, 0, 1)";
 
@@ -96,7 +113,14 @@ type Props = UseEditorOptions & {
 	editorClassName?: string;
 };
 
-export function RichInput({ value, onChange, style, className, editorClassName, ...options }: Props) {
+export function RichInput({
+	value,
+	onChange,
+	style,
+	className,
+	editorClassName,
+	...options
+}: Props) {
 	const { i18n } = useLingui();
 	const textDirection = isRTL(i18n.locale) ? "rtl" : undefined;
 	const [isFullscreen, setIsFullscreen] = useState(false);
@@ -150,7 +174,11 @@ export function RichInput({ value, onChange, style, className, editorClassName, 
 				title={isFullscreen ? t`Exit Fullscreen` : t`Fullscreen`}
 				onClick={() => setIsFullscreen(!isFullscreen)}
 			>
-				{isFullscreen ? <ArrowsInSimpleIcon className="size-4" /> : <ArrowsOutSimpleIcon className="size-4" />}
+				{isFullscreen ? (
+					<ArrowsInSimpleIcon className="size-4" />
+				) : (
+					<ArrowsOutSimpleIcon className="size-4" />
+				)}
 			</Button>
 		</div>
 	);
@@ -213,7 +241,8 @@ function useEditorToolbarState(editor: Editor) {
 				// Underline
 				isUnderline: ctx.editor.isActive("underline") ?? false,
 				canUnderline: ctx.editor.can().chain().toggleUnderline().run() ?? false,
-				toggleUnderline: () => ctx.editor.chain().focus().toggleUnderline().run(),
+				toggleUnderline: () =>
+					ctx.editor.chain().focus().toggleUnderline().run(),
 
 				// Strike
 				isStrike: ctx.editor.isActive("strike") ?? false,
@@ -222,46 +251,67 @@ function useEditorToolbarState(editor: Editor) {
 
 				// Highlight Color
 				isHighlight: ctx.editor.isActive("highlight") ?? false,
-				highlightColor: (ctx.editor.getAttributes("highlight").color as string | undefined) ?? null,
-				canHighlightColor: ctx.editor.can().chain().toggleHighlight().run() ?? false,
-				setHighlightColor: (color: string) => ctx.editor.chain().focus().toggleHighlight({ color }).run(),
-				unsetHighlightColor: () => ctx.editor.chain().focus().unsetHighlight().run(),
+				highlightColor:
+					(ctx.editor.getAttributes("highlight").color as string | undefined) ??
+					null,
+				canHighlightColor:
+					ctx.editor.can().chain().toggleHighlight().run() ?? false,
+				setHighlightColor: (color: string) =>
+					ctx.editor.chain().focus().toggleHighlight({ color }).run(),
+				unsetHighlightColor: () =>
+					ctx.editor.chain().focus().unsetHighlight().run(),
 
 				// Text Color
-				textColor: (ctx.editor.getAttributes("textStyle").color as string | undefined) ?? null,
-				canTextColor: ctx.editor.can().chain().setColor(defaultTextColor).run() ?? false,
-				setTextColor: (color: string) => ctx.editor.chain().focus().setColor(color).run(),
+				textColor:
+					(ctx.editor.getAttributes("textStyle").color as string | undefined) ??
+					null,
+				canTextColor:
+					ctx.editor.can().chain().setColor(defaultTextColor).run() ?? false,
+				setTextColor: (color: string) =>
+					ctx.editor.chain().focus().setColor(color).run(),
 				unsetTextColor: () => ctx.editor.chain().focus().unsetColor().run(),
 
 				// Heading 1
 				isHeading1: ctx.editor.isActive("heading", { level: 1 }) ?? false,
-				canHeading1: ctx.editor.can().chain().toggleHeading({ level: 1 }).run() ?? false,
-				toggleHeading1: () => ctx.editor.chain().focus().toggleHeading({ level: 1 }).run(),
+				canHeading1:
+					ctx.editor.can().chain().toggleHeading({ level: 1 }).run() ?? false,
+				toggleHeading1: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 1 }).run(),
 
 				// Heading 2
 				isHeading2: ctx.editor.isActive("heading", { level: 2 }) ?? false,
-				canHeading2: ctx.editor.can().chain().toggleHeading({ level: 2 }).run() ?? false,
-				toggleHeading2: () => ctx.editor.chain().focus().toggleHeading({ level: 2 }).run(),
+				canHeading2:
+					ctx.editor.can().chain().toggleHeading({ level: 2 }).run() ?? false,
+				toggleHeading2: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 2 }).run(),
 
 				// Heading 3
 				isHeading3: ctx.editor.isActive("heading", { level: 3 }) ?? false,
-				canHeading3: ctx.editor.can().chain().toggleHeading({ level: 3 }).run() ?? false,
-				toggleHeading3: () => ctx.editor.chain().focus().toggleHeading({ level: 3 }).run(),
+				canHeading3:
+					ctx.editor.can().chain().toggleHeading({ level: 3 }).run() ?? false,
+				toggleHeading3: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 3 }).run(),
 
 				// Heading 4
 				isHeading4: ctx.editor.isActive("heading", { level: 4 }) ?? false,
-				canHeading4: ctx.editor.can().chain().toggleHeading({ level: 4 }).run() ?? false,
-				toggleHeading4: () => ctx.editor.chain().focus().toggleHeading({ level: 4 }).run(),
+				canHeading4:
+					ctx.editor.can().chain().toggleHeading({ level: 4 }).run() ?? false,
+				toggleHeading4: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 4 }).run(),
 
 				// Heading 5
 				isHeading5: ctx.editor.isActive("heading", { level: 5 }) ?? false,
-				canHeading5: ctx.editor.can().chain().toggleHeading({ level: 5 }).run() ?? false,
-				toggleHeading5: () => ctx.editor.chain().focus().toggleHeading({ level: 5 }).run(),
+				canHeading5:
+					ctx.editor.can().chain().toggleHeading({ level: 5 }).run() ?? false,
+				toggleHeading5: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 5 }).run(),
 
 				// Heading 6
 				isHeading6: ctx.editor.isActive("heading", { level: 6 }) ?? false,
-				canHeading6: ctx.editor.can().chain().toggleHeading({ level: 6 }).run() ?? false,
-				toggleHeading6: () => ctx.editor.chain().focus().toggleHeading({ level: 6 }).run(),
+				canHeading6:
+					ctx.editor.can().chain().toggleHeading({ level: 6 }).run() ?? false,
+				toggleHeading6: () =>
+					ctx.editor.chain().focus().toggleHeading({ level: 6 }).run(),
 
 				// Paragraph
 				isParagraph: ctx.editor.isActive("paragraph") ?? false,
@@ -270,48 +320,67 @@ function useEditorToolbarState(editor: Editor) {
 
 				// Left Align
 				isLeftAlign: ctx.editor.isActive({ textAlign: "left" }) ?? false,
-				canLeftAlign: ctx.editor.can().chain().toggleTextAlign("left").run() ?? false,
-				toggleLeftAlign: () => ctx.editor.chain().focus().toggleTextAlign("left").run(),
+				canLeftAlign:
+					ctx.editor.can().chain().toggleTextAlign("left").run() ?? false,
+				toggleLeftAlign: () =>
+					ctx.editor.chain().focus().toggleTextAlign("left").run(),
 
 				// Center Align
 				isCenterAlign: ctx.editor.isActive({ textAlign: "center" }) ?? false,
-				canCenterAlign: ctx.editor.can().chain().toggleTextAlign("center").run() ?? false,
-				toggleCenterAlign: () => ctx.editor.chain().focus().toggleTextAlign("center").run(),
+				canCenterAlign:
+					ctx.editor.can().chain().toggleTextAlign("center").run() ?? false,
+				toggleCenterAlign: () =>
+					ctx.editor.chain().focus().toggleTextAlign("center").run(),
 
 				// Right Align
 				isRightAlign: ctx.editor.isActive({ textAlign: "right" }) ?? false,
-				canRightAlign: ctx.editor.can().chain().toggleTextAlign("right").run() ?? false,
-				toggleRightAlign: () => ctx.editor.chain().focus().toggleTextAlign("right").run(),
+				canRightAlign:
+					ctx.editor.can().chain().toggleTextAlign("right").run() ?? false,
+				toggleRightAlign: () =>
+					ctx.editor.chain().focus().toggleTextAlign("right").run(),
 
 				// Justify Align
 				isJustifyAlign: ctx.editor.isActive({ textAlign: "justify" }) ?? false,
-				canJustifyAlign: ctx.editor.can().chain().toggleTextAlign("justify").run() ?? false,
-				toggleJustifyAlign: () => ctx.editor.chain().focus().toggleTextAlign("justify").run(),
+				canJustifyAlign:
+					ctx.editor.can().chain().toggleTextAlign("justify").run() ?? false,
+				toggleJustifyAlign: () =>
+					ctx.editor.chain().focus().toggleTextAlign("justify").run(),
 
 				// Bullet List
 				isBulletList: ctx.editor.isActive("bulletList") ?? false,
-				canBulletList: ctx.editor.can().chain().toggleBulletList().run() ?? false,
-				toggleBulletList: () => ctx.editor.chain().focus().toggleBulletList().run(),
+				canBulletList:
+					ctx.editor.can().chain().toggleBulletList().run() ?? false,
+				toggleBulletList: () =>
+					ctx.editor.chain().focus().toggleBulletList().run(),
 
 				// Ordered List
 				isOrderedList: ctx.editor.isActive("orderedList") ?? false,
-				canOrderedList: ctx.editor.can().chain().toggleOrderedList().run() ?? false,
-				toggleOrderedList: () => ctx.editor.chain().focus().toggleOrderedList().run(),
+				canOrderedList:
+					ctx.editor.can().chain().toggleOrderedList().run() ?? false,
+				toggleOrderedList: () =>
+					ctx.editor.chain().focus().toggleOrderedList().run(),
 
 				// Outdent List Item
-				canLiftListItem: ctx.editor.can().chain().liftListItem("listItem").run() ?? false,
-				liftListItem: () => ctx.editor.chain().focus().liftListItem("listItem").run(),
+				canLiftListItem:
+					ctx.editor.can().chain().liftListItem("listItem").run() ?? false,
+				liftListItem: () =>
+					ctx.editor.chain().focus().liftListItem("listItem").run(),
 
 				// Indent List Item
-				canSinkListItem: ctx.editor.can().chain().sinkListItem("listItem").run() ?? false,
-				sinkListItem: () => ctx.editor.chain().focus().sinkListItem("listItem").run(),
+				canSinkListItem:
+					ctx.editor.can().chain().sinkListItem("listItem").run() ?? false,
+				sinkListItem: () =>
+					ctx.editor.chain().focus().sinkListItem("listItem").run(),
 
 				// Link
 				isLink: ctx.editor.isActive("link") ?? false,
 				setLink: async () => {
-					const url = await prompt(t`Please enter the URL you want to link to:`, {
-						defaultValue: "https://",
-					});
+					const url = await prompt(
+						t`Please enter the URL you want to link to:`,
+						{
+							defaultValue: "https://",
+						},
+					);
 
 					if (!url || url.trim() === "") {
 						ctx.editor.chain().focus().unsetLink().run();
@@ -325,7 +394,11 @@ function useEditorToolbarState(editor: Editor) {
 						return;
 					}
 
-					ctx.editor.chain().focus().setLink({ href: url, target: "_blank", rel: "noopener nofollow" }).run();
+					ctx.editor
+						.chain()
+						.focus()
+						.setLink({ href: url, target: "_blank", rel: "noopener nofollow" })
+						.run();
 				},
 				unsetLink: () => ctx.editor.chain().focus().unsetLink().run(),
 
@@ -341,7 +414,8 @@ function useEditorToolbarState(editor: Editor) {
 				setHardBreak: () => ctx.editor.chain().focus().setHardBreak().run(),
 
 				// Horizontal Rule
-				setHorizontalRule: () => ctx.editor.chain().focus().setHorizontalRule().run(),
+				setHorizontalRule: () =>
+					ctx.editor.chain().focus().setHorizontalRule().run(),
 			};
 		},
 	});
@@ -363,10 +437,8 @@ function EditorToolbar({ editor, isFullscreen }: EditorToolbarProps) {
 }
 
 function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
-	const { visibleHighlightColor, canClearHighlight } = resolveHighlightToolbarState(
-		state.isHighlight,
-		state.highlightColor,
-	);
+	const { visibleHighlightColor, canClearHighlight } =
+		resolveHighlightToolbarState(state.isHighlight, state.highlightColor);
 
 	return (
 		<div className="flex flex-wrap items-center gap-y-0.5 rounded-md rounded-b-none border border-b-0">
@@ -429,7 +501,10 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 								size={isFullscreen ? "lg" : "sm"}
 								tabIndex={-1}
 								variant="ghost"
-								className={cn("rounded-none px-2", state.isHighlight && "bg-muted text-foreground")}
+								className={cn(
+									"rounded-none px-2",
+									state.isHighlight && "bg-muted text-foreground",
+								)}
 								title={t`Highlight`}
 								disabled={!state.canHighlightColor}
 							>
@@ -437,7 +512,9 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 									<HighlighterCircleIcon className="size-3.5" />
 									<span
 										className="mt-0.5 h-0.5 w-3 rounded-full"
-										style={{ backgroundColor: visibleHighlightColor ?? "currentColor" }}
+										style={{
+											backgroundColor: visibleHighlightColor ?? "currentColor",
+										}}
 									/>
 								</span>
 							</Button>
@@ -449,7 +526,9 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 					<div className="flex items-center gap-2.5">
 						<span
 							className="grid size-9 place-items-center rounded-lg border border-border bg-muted/60 text-sm shadow-xs"
-							style={{ backgroundColor: visibleHighlightColor ?? defaultHighlightColor }}
+							style={{
+								backgroundColor: visibleHighlightColor ?? defaultHighlightColor,
+							}}
 						>
 							<HighlighterCircleIcon className="size-4" />
 						</span>
@@ -489,7 +568,10 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 								size={isFullscreen ? "lg" : "sm"}
 								tabIndex={-1}
 								variant="ghost"
-								className={cn("rounded-none px-2", state.textColor && "bg-muted text-foreground")}
+								className={cn(
+									"rounded-none px-2",
+									state.textColor && "bg-muted text-foreground",
+								)}
 								title={t`Text Color`}
 								disabled={!state.canTextColor}
 							>
@@ -497,7 +579,9 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 									<span className="font-semibold text-xs">A</span>
 									<span
 										className="mt-0.5 h-0.5 w-3 rounded-full"
-										style={{ backgroundColor: state.textColor ?? "currentColor" }}
+										style={{
+											backgroundColor: state.textColor ?? "currentColor",
+										}}
 									/>
 								</span>
 							</Button>
@@ -551,13 +635,27 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							className="rounded-none"
 						>
 							{match(state)
-								.with({ isParagraph: true }, () => <ParagraphIcon className="size-3.5" />)
-								.with({ isHeading1: true }, () => <TextHOneIcon className="size-3.5" />)
-								.with({ isHeading2: true }, () => <TextHTwoIcon className="size-3.5" />)
-								.with({ isHeading3: true }, () => <TextHThreeIcon className="size-3.5" />)
-								.with({ isHeading4: true }, () => <TextHFourIcon className="size-3.5" />)
-								.with({ isHeading5: true }, () => <TextHFiveIcon className="size-3.5" />)
-								.with({ isHeading6: true }, () => <TextHSixIcon className="size-3.5" />)
+								.with({ isParagraph: true }, () => (
+									<ParagraphIcon className="size-3.5" />
+								))
+								.with({ isHeading1: true }, () => (
+									<TextHOneIcon className="size-3.5" />
+								))
+								.with({ isHeading2: true }, () => (
+									<TextHTwoIcon className="size-3.5" />
+								))
+								.with({ isHeading3: true }, () => (
+									<TextHThreeIcon className="size-3.5" />
+								))
+								.with({ isHeading4: true }, () => (
+									<TextHFourIcon className="size-3.5" />
+								))
+								.with({ isHeading5: true }, () => (
+									<TextHFiveIcon className="size-3.5" />
+								))
+								.with({ isHeading6: true }, () => (
+									<TextHSixIcon className="size-3.5" />
+								))
 								.otherwise(() => (
 									<ParagraphIcon className="size-3.5" />
 								))}
@@ -630,10 +728,18 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 							className="rounded-none"
 						>
 							{match(state)
-								.with({ isLeftAlign: true }, () => <TextAlignLeftIcon className="size-3.5" />)
-								.with({ isCenterAlign: true }, () => <TextAlignCenterIcon className="size-3.5" />)
-								.with({ isRightAlign: true }, () => <TextAlignRightIcon className="size-3.5" />)
-								.with({ isJustifyAlign: true }, () => <TextAlignJustifyIcon className="size-3.5" />)
+								.with({ isLeftAlign: true }, () => (
+									<TextAlignLeftIcon className="size-3.5" />
+								))
+								.with({ isCenterAlign: true }, () => (
+									<TextAlignCenterIcon className="size-3.5" />
+								))
+								.with({ isRightAlign: true }, () => (
+									<TextAlignRightIcon className="size-3.5" />
+								))
+								.with({ isJustifyAlign: true }, () => (
+									<TextAlignJustifyIcon className="size-3.5" />
+								))
 								.otherwise(() => (
 									<TextAlignLeftIcon className="size-3.5" />
 								))}
@@ -783,8 +889,13 @@ function renderEditorToolbar(state: EditorToolbarState, isFullscreen: boolean) {
 				<MinusIcon className="size-3.5" />
 			</Button>
 
-			<span className="ml-auto px-2 text-muted-foreground text-xs tabular-nums" aria-live="polite">
-				<Trans comment="Character count readout for the rich-text editor">{state.characterCount} characters</Trans>
+			<span
+				className="ml-auto px-2 text-muted-foreground text-xs tabular-nums"
+				aria-live="polite"
+			>
+				<Trans comment="Character count readout for the rich-text editor">
+					{state.characterCount} characters
+				</Trans>
 			</span>
 		</div>
 	);

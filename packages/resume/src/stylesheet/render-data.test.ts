@@ -1,6 +1,6 @@
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
 import { projectPublicRenderData, projectRenderData } from "./render-data";
 import { computeRenderDataHash } from "./render-hash";
 
@@ -26,8 +26,14 @@ const semanticData: ResumeData = {
 		...legacyData.metadata,
 		stylesheet: {
 			mode: "semantic",
-			source: { languageVersion: 1, text: "@version 1;\nfield { color: red; }" },
-			applied: { languageVersion: 1, text: "@version 1;\nfield { color: blue; }" },
+			source: {
+				languageVersion: 1,
+				text: "@version 1;\nfield { color: red; }",
+			},
+			applied: {
+				languageVersion: 1,
+				text: "@version 1;\nfield { color: blue; }",
+			},
 		},
 	},
 };
@@ -60,8 +66,14 @@ describe("render-data projection", () => {
 			picture: { ...semanticData.picture, unknownPictureField: true },
 		} as ResumeData;
 
-		const privateProjection = projectRenderData(looseData) as Record<string, unknown>;
-		const publicProjection = projectPublicRenderData(looseData) as Record<string, unknown>;
+		const privateProjection = projectRenderData(looseData) as Record<
+			string,
+			unknown
+		>;
+		const publicProjection = projectPublicRenderData(looseData) as Record<
+			string,
+			unknown
+		>;
 
 		for (const projection of [privateProjection, publicProjection]) {
 			expect(projection).not.toHaveProperty("dashboard");
@@ -89,7 +101,9 @@ describe("render-data projection", () => {
 		const mutated = projectPublicRenderData(ownerOnlyMutation);
 
 		expect(mutated).toEqual(baseline);
-		await expect(computeRenderDataHash({ domainVersion: 1, data: mutated })).resolves.toBe(
+		await expect(
+			computeRenderDataHash({ domainVersion: 1, data: mutated }),
+		).resolves.toBe(
 			await computeRenderDataHash({ domainVersion: 1, data: baseline }),
 		);
 	});

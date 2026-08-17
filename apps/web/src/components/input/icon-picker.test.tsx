@@ -1,15 +1,19 @@
 // @vitest-environment happy-dom
 
-import { render } from "@testing-library/react";
-import { beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { render } from "@testing-library/react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 type GridProps = {
 	rowCount: number;
 	columnCount: number;
 	cellComponent: React.ComponentType<
-		{ rowIndex: number; columnIndex: number; style: React.CSSProperties } & Record<string, unknown>
+		{
+			rowIndex: number;
+			columnIndex: number;
+			style: React.CSSProperties;
+		} & Record<string, unknown>
 	>;
 	cellProps: Record<string, unknown>;
 };
@@ -18,11 +22,24 @@ type GridProps = {
 // expects measurable layouts that happy-dom can't provide. Stub it with a simple
 // pass-through that renders the first row of cells via the supplied cellComponent.
 vi.mock("react-window", () => ({
-	Grid: ({ rowCount, columnCount, cellComponent: CellComponent, cellProps }: GridProps) => {
+	Grid: ({
+		rowCount,
+		columnCount,
+		cellComponent: CellComponent,
+		cellProps,
+	}: GridProps) => {
 		const cells: React.ReactNode[] = [];
 		for (let r = 0; r < Math.min(rowCount, 1); r++) {
 			for (let c = 0; c < columnCount; c++) {
-				cells.push(<CellComponent key={`${r}-${c}`} rowIndex={r} columnIndex={c} style={{}} {...cellProps} />);
+				cells.push(
+					<CellComponent
+						key={`${r}-${c}`}
+						rowIndex={r}
+						columnIndex={c}
+						style={{}}
+						{...cellProps}
+					/>,
+				);
 			}
 		}
 		return <div data-testid="grid">{cells}</div>;
@@ -35,7 +52,9 @@ beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const renderPicker = (props: Partial<React.ComponentProps<typeof IconPicker>> = {}) =>
+const renderPicker = (
+	props: Partial<React.ComponentProps<typeof IconPicker>> = {},
+) =>
 	render(
 		<I18nProvider i18n={i18n}>
 			<IconPicker value="globe" onChange={vi.fn()} {...props} />
@@ -66,6 +85,8 @@ describe("IconPicker", () => {
 
 	it("renders the picker button as a single icon-size button", () => {
 		const { container } = renderPicker();
-		expect(container.querySelectorAll("button").length).toBeGreaterThanOrEqual(1);
+		expect(container.querySelectorAll("button").length).toBeGreaterThanOrEqual(
+			1,
+		);
 	});
 });

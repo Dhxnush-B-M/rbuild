@@ -1,15 +1,24 @@
 // @vitest-environment happy-dom
 
-import { beforeAll, describe, expect, it } from "vitest";
 import { i18n } from "@lingui/core";
 import { isValidElement } from "react";
-import { getSectionIcon, getSectionTitle, leftSidebarSections, rightSidebarSections } from "./section";
+import { beforeAll, describe, expect, it } from "vitest";
+import {
+	getSectionIcon,
+	getSectionTitle,
+	leftSidebarSections,
+	rightSidebarSections,
+} from "./section";
 
 beforeAll(() => {
 	i18n.loadAndActivate({ locale: "en", messages: {} });
 });
 
-const ALL_SECTIONS = [...leftSidebarSections, ...rightSidebarSections, "cover-letter"] as const;
+const ALL_SECTIONS = [
+	...leftSidebarSections,
+	...rightSidebarSections,
+	"cover-letter",
+] as const;
 
 describe("getSectionTitle", () => {
 	it("returns a non-empty string for every known sidebar section", () => {
@@ -58,7 +67,9 @@ describe("sidebar section collections", () => {
 	});
 
 	it("do not overlap (every section belongs to exactly one sidebar)", () => {
-		const overlap = leftSidebarSections.filter((s) => (rightSidebarSections as readonly string[]).includes(s));
+		const overlap = leftSidebarSections.filter((s) =>
+			(rightSidebarSections as readonly string[]).includes(s),
+		);
 		expect(overlap).toEqual([]);
 	});
 });

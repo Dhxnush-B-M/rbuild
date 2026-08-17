@@ -1,5 +1,10 @@
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@rbuilder/ui/components/accordion";
 import { m } from "motion/react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@rbuilder/ui/components/accordion";
 
 type FAQItemData = {
 	question: string;
@@ -24,7 +29,8 @@ const faqItems: FAQItemData[] = [
 	},
 	{
 		question: "Is rbuilder available in multiple languages?",
-		answer: "Yes, rbuilder supports English with comprehensive international typography and multi-font rendering.",
+		answer:
+			"Yes, rbuilder supports English with comprehensive international typography and multi-font rendering.",
 	},
 	{
 		question: "What makes rbuilder different from other resume builders?",
@@ -40,7 +46,10 @@ const faqItems: FAQItemData[] = [
 
 export function Faq() {
 	return (
-		<section id="frequently-asked-questions" className="relative overflow-hidden py-16 md:py-24">
+		<section
+			id="frequently-asked-questions"
+			className="relative overflow-hidden py-16 md:py-24"
+		>
 			<div className="mx-auto max-w-3xl space-y-12">
 				{/* Centered Top Section Header */}
 				<m.div
@@ -55,7 +64,8 @@ export function Faq() {
 					</h2>
 
 					<p className="mx-auto max-w-xl text-muted-foreground text-sm leading-relaxed sm:text-base">
-						Everything you need to know about building, exporting, and styling your resume with rbuilder.
+						Everything you need to know about building, exporting, and styling
+						your resume with rbuilder.
 					</p>
 				</m.div>
 

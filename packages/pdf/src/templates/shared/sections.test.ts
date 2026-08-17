@@ -2,25 +2,36 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const source = readFileSync(fileURLToPath(new URL("./sections.tsx", import.meta.url)), "utf8");
+const source = readFileSync(
+	fileURLToPath(new URL("./sections.tsx", import.meta.url)),
+	"utf8",
+);
 
 describe("ExperienceSection", () => {
 	it("does not hide the item position header when role progression is present", () => {
-		expect(source).not.toContain("item.roles.length === 0 && (hasPosition || hasSplitRowText(headerPeriod))");
+		expect(source).not.toContain(
+			"item.roles.length === 0 && (hasPosition || hasSplitRowText(headerPeriod))",
+		);
 	});
 
 	it("does not repeat the summary period after rendering it in a role-progression header", () => {
-		expect(source).not.toContain("item.roles.length > 0 && <Text>{item.period}</Text>");
+		expect(source).not.toContain(
+			"item.roles.length > 0 && <Text>{item.period}</Text>",
+		);
 	});
 });
 
 describe("ItemTitle", () => {
 	it("renders award titles without the bold style", () => {
-		expect(source).toContain("const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps)");
+		expect(source).toContain(
+			"const ItemTitle = ({ children, website, field, bold = true }: ItemTitleProps)",
+		);
 		expect(source).toContain(
 			"const title = bold ? <Bold semanticField={field}>{children}</Bold> : <Text semanticField={field}>{children}</Text>;",
 		);
-		expect(source).toContain('<ItemTitle field="title" website={item.website} bold={false}>');
+		expect(source).toContain(
+			'<ItemTitle field="title" website={item.website} bold={false}>',
+		);
 	});
 });
 
@@ -29,8 +40,12 @@ describe("SectionShell", () => {
 		expect(source).toContain(
 			"const resolvedSectionStyle = composeStyles(sectionStyle, sectionRuleStyle, resolved.style)",
 		);
-		expect(source).toContain("<View style={resolvedSectionStyle} {...flowProps}>");
-		expect(source).toContain("<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>");
+		expect(source).toContain(
+			"<View style={resolvedSectionStyle} {...flowProps}>",
+		);
+		expect(source).toContain(
+			"<Heading style={composeStyles(sectionHeadingStyle, sectionHeadingRuleStyle)}>",
+		);
 	});
 
 	it("wires the section heading container style slot into the icon row", () => {
@@ -43,8 +58,12 @@ describe("SectionShell", () => {
 			/const defaultSectionHeadingContainerStyle = {(?<body>[\s\S]*?)} satisfies Style;/,
 		);
 
-		expect(headingContainerBlock?.groups?.body).toContain('alignItems: "flex-start"');
-		expect(source).toContain("getSectionHeadingTextStyle(sectionHeadingStyle, sectionHeadingRuleStyle)");
+		expect(headingContainerBlock?.groups?.body).toContain(
+			'alignItems: "flex-start"',
+		);
+		expect(source).toContain(
+			"getSectionHeadingTextStyle(sectionHeadingStyle, sectionHeadingRuleStyle)",
+		);
 		expect(source).toContain("width: _width");
 		expect(source).not.toContain('width: "auto"');
 	});

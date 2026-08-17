@@ -10,12 +10,18 @@ describe("Separator", () => {
 
 	it("defaults to horizontal orientation", () => {
 		render(<Separator data-testid="sep" />);
-		expect(screen.getByTestId("sep")).toHaveAttribute("data-orientation", "horizontal");
+		expect(screen.getByTestId("sep")).toHaveAttribute(
+			"data-orientation",
+			"horizontal",
+		);
 	});
 
 	it("supports vertical orientation", () => {
 		render(<Separator data-testid="sep" orientation="vertical" />);
-		expect(screen.getByTestId("sep")).toHaveAttribute("data-orientation", "vertical");
+		expect(screen.getByTestId("sep")).toHaveAttribute(
+			"data-orientation",
+			"vertical",
+		);
 	});
 
 	it("merges custom className", () => {

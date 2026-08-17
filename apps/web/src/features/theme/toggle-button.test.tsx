@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
 import { fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { i18n } from "@lingui/core";
 
 const toggleTheme = vi.hoisted(() => vi.fn());
 

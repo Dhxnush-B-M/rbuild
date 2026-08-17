@@ -1,17 +1,25 @@
-import type z from "zod";
-import type { DialogProps } from "@/dialogs/store";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
-import { useStore } from "@tanstack/react-form";
 import { awardItemSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import { Input } from "@rbuilder/ui/components/input";
 import { Switch } from "@rbuilder/ui/components/switch";
+import { useStore } from "@tanstack/react-form";
+import type z from "zod";
+import type { DialogProps } from "@/dialogs/store";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
-import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
+import {
+	createSectionItem,
+	updateSectionItem,
+} from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
 import { SectionItemDialog } from "./section-item-dialog";
 
@@ -29,7 +37,9 @@ const defaultValues: FormValues = {
 	description: "",
 };
 
-export function CreateAwardDialog({ data }: DialogProps<"resume.sections.awards.create">) {
+export function CreateAwardDialog({
+	data,
+}: DialogProps<"resume.sections.awards.create">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -61,7 +71,9 @@ export function CreateAwardDialog({ data }: DialogProps<"resume.sections.awards.
 	);
 }
 
-export function UpdateAwardDialog({ data }: DialogProps<"resume.sections.awards.update">) {
+export function UpdateAwardDialog({
+	data,
+}: DialogProps<"resume.sections.awards.update">) {
 	const closeDialog = useDialogStore((state) => state.closeDialog);
 	const updateResumeData = useUpdateResumeData();
 
@@ -100,13 +112,21 @@ const AwardForm = withForm({
 
 		return (
 			<>
-				<form.AppField name="title">{(field) => <field.TextField label={<Trans>Title</Trans>} />}</form.AppField>
+				<form.AppField name="title">
+					{(field) => <field.TextField label={<Trans>Title</Trans>} />}
+				</form.AppField>
 
 				<form.Field name="awarder">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
-								<Trans context="(noun) person, organization, or entity that gives an award">Awarder</Trans>
+								<Trans context="(noun) person, organization, or entity that gives an award">
+									Awarder
+								</Trans>
 							</FormLabel>
 							<FormControl
 								render={
@@ -123,10 +143,17 @@ const AwardForm = withForm({
 					)}
 				</form.Field>
 
-				<form.AppField name="date">{(field) => <field.TextField label={<Trans>Date</Trans>} />}</form.AppField>
+				<form.AppField name="date">
+					{(field) => <field.TextField label={<Trans>Date</Trans>} />}
+				</form.AppField>
 
 				<form.AppField name="website">
-					{(field) => <field.WebsiteField label={<Trans>Website</Trans>} hideLabelButton={inlineLink} />}
+					{(field) => (
+						<field.WebsiteField
+							label={<Trans>Website</Trans>}
+							hideLabelButton={inlineLink}
+						/>
+					)}
 				</form.AppField>
 
 				<form.Field name="website.inlineLink">
@@ -150,7 +177,12 @@ const AwardForm = withForm({
 				</form.Field>
 
 				<form.AppField name="description">
-					{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+					{(field) => (
+						<field.RichTextField
+							label={<Trans>Description</Trans>}
+							formItemClassName="sm:col-span-full"
+						/>
+					)}
 				</form.AppField>
 			</>
 		);

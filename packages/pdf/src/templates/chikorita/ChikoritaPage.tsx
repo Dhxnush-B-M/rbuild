@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { Fragment, useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { Fragment, useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -30,7 +29,16 @@ import {
 } from "../shared/primitives";
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
-import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
+import {
+	composeStyles,
+	headerNameLineHeight,
+	resolvePlacementColor,
+} from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type ChikoritaStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -55,16 +63,32 @@ type ChikoritaHeaderProps = {
 	styles: ChikoritaStyles;
 };
 
-export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const ChikoritaPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata, picture } = data;
 	const { colors, styles } = useChikoritaTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
 	const hasPicture = hasTemplatePicture(picture);
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
 
 	return (
 		<Page
@@ -72,12 +96,18 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				<SemanticRegionView
 					region="main"
 					style={composeStyles(styles.mainColumn, {
 						paddingTop: metrics.page.paddingVertical,
-						paddingRight: page.fullWidth ? metrics.page.paddingHorizontal : metrics.columnGap,
+						paddingRight: page.fullWidth
+							? metrics.page.paddingHorizontal
+							: metrics.columnGap,
 						paddingBottom: metrics.page.paddingVertical,
 						paddingLeft: metrics.page.paddingHorizontal,
 						rowGap: metrics.sectionGap,
@@ -97,7 +127,9 @@ export const ChikoritaPage = ({ page, pageSize, pageMinHeightStyle, showHeader, 
 						flexBasis: `${metadata.layout.sidebarWidth}%`,
 						paddingTop:
 							showHeader && hasPicture
-								? metrics.page.paddingVertical + picture.size + metrics.itemGapY * 3
+								? metrics.page.paddingVertical +
+									picture.size +
+									metrics.itemGapY * 3
 								: metrics.page.paddingVertical,
 						paddingRight: metrics.page.paddingHorizontal,
 						paddingBottom: metrics.page.paddingVertical,
@@ -122,7 +154,9 @@ const Header = ({ styles }: ChikoritaHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 
 			<View style={styles.headerTitle}>
 				<View style={styles.headerIdentity}>
@@ -131,16 +165,38 @@ const Header = ({ styles }: ChikoritaHeaderProps) => {
 				</View>
 
 				<SemanticContactListView style={styles.headerContactList}>
-					<SemanticContactRowView partKey="contact-row-primary" style={styles.headerContactRow}>
-						<EmailContactItem email={basics.email} style={styles.headerContactItem} />
-						<PhoneContactItem phone={basics.phone} style={styles.headerContactItem} />
-						<LocationContactItem location={basics.location} style={styles.headerContactItem} />
+					<SemanticContactRowView
+						partKey="contact-row-primary"
+						style={styles.headerContactRow}
+					>
+						<EmailContactItem
+							email={basics.email}
+							style={styles.headerContactItem}
+						/>
+						<PhoneContactItem
+							phone={basics.phone}
+							style={styles.headerContactItem}
+						/>
+						<LocationContactItem
+							location={basics.location}
+							style={styles.headerContactItem}
+						/>
 					</SemanticContactRowView>
 
-					<SemanticContactRowView partKey="contact-row-secondary" style={styles.headerContactRow}>
-						<WebsiteContactItem website={basics.website} style={styles.headerContactItem} />
+					<SemanticContactRowView
+						partKey="contact-row-secondary"
+						style={styles.headerContactRow}
+					>
+						<WebsiteContactItem
+							website={basics.website}
+							style={styles.headerContactItem}
+						/>
 						{basics.customFields.map((field) => (
-							<CustomFieldContactItem key={field.id} field={field} style={styles.headerContactItem} />
+							<CustomFieldContactItem
+								key={field.id}
+								field={field}
+								style={styles.headerContactItem}
+							/>
 						))}
 					</SemanticContactRowView>
 				</SemanticContactListView>
@@ -166,7 +222,14 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 		};
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -251,16 +314,38 @@ const useChikoritaTemplate = (): ChikoritaTemplate => {
 			colors,
 			styles: {
 				...baseStyles,
-				text: (context) => ({ ...baseStyles.text, color: foregroundFor(context) }),
-				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
-				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				richParagraph: (context) => ({ ...baseStyles.richParagraph, color: foregroundFor(context) }),
-				richListItemMarker: (context) => ({ ...baseStyles.richListItemMarker, color: foregroundFor(context) }),
-				richListItemContent: (context) => ({ ...baseStyles.richListItemContent, color: foregroundFor(context) }),
+				text: (context) => ({
+					...baseStyles.text,
+					color: foregroundFor(context),
+				}),
+				heading: (context) => ({
+					...baseStyles.heading,
+					color: foregroundFor(context),
+				}),
+				link: (context) => ({
+					...baseStyles.link,
+					color: foregroundFor(context),
+				}),
+				richParagraph: (context) => ({
+					...baseStyles.richParagraph,
+					color: foregroundFor(context),
+				}),
+				richListItemMarker: (context) => ({
+					...baseStyles.richListItemMarker,
+					color: foregroundFor(context),
+				}),
+				richListItemContent: (context) => ({
+					...baseStyles.richListItemContent,
+					color: foregroundFor(context),
+				}),
 				splitRow: (context) => ({
 					...baseStyles.splitRow,
 					...(context.placement === "sidebar"
-						? { flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start" }
+						? {
+								flexDirection: "column",
+								alignItems: "flex-start",
+								justifyContent: "flex-start",
+							}
 						: {}),
 				}),
 				alignEnd: (context) => ({

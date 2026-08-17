@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateFeatures, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -30,7 +29,17 @@ import {
 } from "../shared/primitives";
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
-import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
+import {
+	composeStyles,
+	headerNameLineHeight,
+	resolvePlacementColor,
+} from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateFeatures,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type PikachuStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -63,17 +72,33 @@ const pikachuFeatures = {
 	stackSidebarItemHeader: true,
 } satisfies TemplateFeatures;
 
-export const PikachuPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const PikachuPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata, picture } = data;
 	const { colors, styles } = usePikachuTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
 	const showSidebar = !page.fullWidth;
 	const hasPicture = hasTemplatePicture(picture);
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
 
 	return (
 		<Page
@@ -81,7 +106,12 @@ export const PikachuPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={pikachuFeatures}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+				features={pikachuFeatures}
+			>
 				<View style={styles.layout}>
 					{showSidebar && (
 						<View
@@ -91,25 +121,42 @@ export const PikachuPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pa
 							})}
 						>
 							{showHeader && showSidebar && hasPicture && (
-								<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+								<SemanticHeaderPicture
+									src={picture.url}
+									style={styles.picture}
+								/>
 							)}
 
 							<SemanticRegionView
 								region="sidebar"
-								style={composeStyles(styles.sidebarContent, { rowGap: metrics.sectionGap })}
+								style={composeStyles(styles.sidebarContent, {
+									rowGap: metrics.sectionGap,
+								})}
 							>
 								{sidebarSections.map((section) => (
-									<Section key={section} section={section} placement="sidebar" />
+									<Section
+										key={section}
+										section={section}
+										placement="sidebar"
+									/>
 								))}
 							</SemanticRegionView>
 						</View>
 					)}
 
-					<SemanticRegionView region="main" style={composeStyles(styles.mainColumn, { rowGap: metrics.sectionGap })}>
+					<SemanticRegionView
+						region="main"
+						style={composeStyles(styles.mainColumn, {
+							rowGap: metrics.sectionGap,
+						})}
+					>
 						{showHeader && (
 							<View style={styles.headerRow}>
 								{showHeader && !showSidebar && hasPicture && (
-									<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+									<SemanticHeaderPicture
+										src={picture.url}
+										style={styles.picture}
+									/>
 								)}
 								<Header styles={styles} colors={colors} />
 							</View>
@@ -132,7 +179,10 @@ const Header = ({ styles, colors }: PikachuHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			<SemanticTemplatePartView partKeys={["header-divider"]} style={styles.headerDivider}>
+			<SemanticTemplatePartView
+				partKeys={["header-divider"]}
+				style={styles.headerDivider}
+			>
 				<View style={styles.headerIdentity}>
 					<Heading style={styles.headerName}>{basics.name}</Heading>
 					<Text style={styles.headerText}>{basics.headline}</Text>
@@ -189,7 +239,14 @@ const usePikachuTemplate = (): PikachuTemplate => {
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -289,9 +346,18 @@ const usePikachuTemplate = (): PikachuTemplate => {
 			styles: {
 				...baseStyles,
 				text: (context) => ({ ...base.text, color: foregroundFor(context) }),
-				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
-				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				sectionHeading: (context) => ({ ...baseStyles.sectionHeading, color: accentFor(context) }),
+				heading: (context) => ({
+					...baseStyles.heading,
+					color: foregroundFor(context),
+				}),
+				link: (context) => ({
+					...baseStyles.link,
+					color: foregroundFor(context),
+				}),
+				sectionHeading: (context) => ({
+					...baseStyles.sectionHeading,
+					color: accentFor(context),
+				}),
 				levelItem: (context) => ({ borderColor: accentFor(context) }),
 				levelItemActive: (context) => ({ backgroundColor: accentFor(context) }),
 				icon: (context) => ({

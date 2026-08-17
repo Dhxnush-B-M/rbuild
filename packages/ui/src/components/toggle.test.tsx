@@ -34,14 +34,17 @@ describe("Toggle", () => {
 		expect(onChange).toHaveBeenCalledWith(true, expect.anything());
 	});
 
-	it.each([["default"], ["outline"]] as const)("renders variant=%s", (variant) => {
-		render(
-			<Toggle data-testid="t" variant={variant}>
-				x
-			</Toggle>,
-		);
-		expect(screen.getByTestId("t")).toBeInTheDocument();
-	});
+	it.each([["default"], ["outline"]] as const)(
+		"renders variant=%s",
+		(variant) => {
+			render(
+				<Toggle data-testid="t" variant={variant}>
+					x
+				</Toggle>,
+			);
+			expect(screen.getByTestId("t")).toBeInTheDocument();
+		},
+	);
 
 	it.each([["default"], ["sm"], ["lg"]] as const)("renders size=%s", (size) => {
 		render(

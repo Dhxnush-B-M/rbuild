@@ -47,15 +47,22 @@ const blockedIpv6Cidrs: Array<[string, number]> = [
 ];
 
 const blockedIpv4s = new BlockList();
-for (const [address, prefix] of blockedIpv4Cidrs) blockedIpv4s.addSubnet(address, prefix, "ipv4");
+for (const [address, prefix] of blockedIpv4Cidrs)
+	blockedIpv4s.addSubnet(address, prefix, "ipv4");
 
 const blockedIpv6s = new BlockList();
-for (const [address, prefix] of blockedIpv6Cidrs) blockedIpv6s.addSubnet(address, prefix, "ipv6");
+for (const [address, prefix] of blockedIpv6Cidrs)
+	blockedIpv6s.addSubnet(address, prefix, "ipv6");
 
 export function isPrivateOrLoopbackHost(hostname: string) {
 	const normalized = stripIpv6Brackets(normalizeHostname(hostname));
 	if (normalized.startsWith("::ffff:")) return true;
-	if (normalized === "localhost" || normalized === "::1" || normalized.endsWith(".localhost")) return true;
+	if (
+		normalized === "localhost" ||
+		normalized === "::1" ||
+		normalized.endsWith(".localhost")
+	)
+		return true;
 
 	const ipVersion = isIP(normalized);
 	if (ipVersion === 4) return blockedIpv4s.check(normalized, "ipv4");
@@ -76,7 +83,11 @@ type OAuthRedirectUriOptions = {
 	allowUnsafe?: boolean;
 };
 
-export function isAllowedOAuthRedirectUri(input: string, trustedOrigins: string[], options?: OAuthRedirectUriOptions) {
+export function isAllowedOAuthRedirectUri(
+	input: string,
+	trustedOrigins: string[],
+	options?: OAuthRedirectUriOptions,
+) {
 	const parsed = parseUrl(input);
 	if (!parsed) return false;
 	if (options?.allowUnsafe) return true;
@@ -86,7 +97,10 @@ export function isAllowedOAuthRedirectUri(input: string, trustedOrigins: string[
 	const origin = parsed.origin.toLowerCase();
 	const hostname = stripIpv6Brackets(normalizeHostname(parsed.hostname));
 
-	if (parsed.protocol === "http:") return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+	if (parsed.protocol === "http:")
+		return (
+			hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
+		);
 	if (parsed.protocol !== "https:") return false;
 	if (isPrivateOrLoopbackHost(hostname)) return false;
 

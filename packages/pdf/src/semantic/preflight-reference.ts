@@ -37,7 +37,8 @@ export const PDF_PREFLIGHT_DIAGNOSTIC_CATALOG = {
 	},
 } as const;
 
-export type PdfPreflightFailureCode = keyof typeof PDF_PREFLIGHT_DIAGNOSTIC_CATALOG;
+export type PdfPreflightFailureCode =
+	keyof typeof PDF_PREFLIGHT_DIAGNOSTIC_CATALOG;
 
 export const STYLESHEET_PREFLIGHT_LIMITS = Object.freeze({
 	timeoutMs: 5_000,

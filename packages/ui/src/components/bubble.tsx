@@ -1,12 +1,18 @@
-import type { VariantProps } from "class-variance-authority";
-import type * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { cva } from "class-variance-authority";
 import { cn } from "@rbuilder/utils/style";
+import type { VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type * as React from "react";
 
 function BubbleGroup({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="bubble-group" className={cn("flex min-w-0 flex-col gap-2", className)} {...props} />;
+	return (
+		<div
+			data-slot="bubble-group"
+			className={cn("flex min-w-0 flex-col gap-2", className)}
+			{...props}
+		/>
+	);
 }
 
 const bubbleVariants = cva(
@@ -18,7 +24,8 @@ const bubbleVariants = cva(
 					"*:data-[slot=bubble-content]:bg-primary *:data-[slot=bubble-content]:text-primary-foreground [&>[data-slot=bubble-content]:is(button,a):hover]:bg-primary/80",
 				secondary:
 					"*:data-[slot=bubble-content]:bg-secondary *:data-[slot=bubble-content]:text-secondary-foreground [&>[data-slot=bubble-content]:is(button,a):hover]:bg-secondary/80",
-				muted: "*:data-[slot=bubble-content]:bg-muted [&>[data-slot=bubble-content]:is(button,a):hover]:bg-muted/80",
+				muted:
+					"*:data-[slot=bubble-content]:bg-muted [&>[data-slot=bubble-content]:is(button,a):hover]:bg-muted/80",
 				tinted:
 					"*:data-[slot=bubble-content]:bg-[oklch(from_var(--primary)_0.93_calc(c*0.4)_h)] *:data-[slot=bubble-content]:text-foreground dark:*:data-[slot=bubble-content]:bg-[oklch(from_var(--primary)_0.3_calc(c*0.4)_h)]",
 				outline:
@@ -55,7 +62,11 @@ function Bubble({
 	);
 }
 
-function BubbleContent({ className, render, ...props }: useRender.ComponentProps<"div">) {
+function BubbleContent({
+	className,
+	render,
+	...props
+}: useRender.ComponentProps<"div">) {
 	return useRender({
 		defaultTagName: "div",
 		props: mergeProps<"div">(

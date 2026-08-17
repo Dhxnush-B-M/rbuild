@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "./popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverDescription,
+	PopoverHeader,
+	PopoverTitle,
+	PopoverTrigger,
+} from "./popover";
 
 describe("Popover", () => {
 	it("trigger element has data-slot='popover-trigger'", () => {
@@ -11,7 +18,10 @@ describe("Popover", () => {
 				<PopoverContent>content</PopoverContent>
 			</Popover>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "popover-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"popover-trigger",
+		);
 	});
 
 	it("opens content on trigger click", async () => {
@@ -51,7 +61,10 @@ describe("Popover", () => {
 describe("PopoverHeader", () => {
 	it("uses data-slot='popover-header'", () => {
 		render(<PopoverHeader data-testid="h">Title</PopoverHeader>);
-		expect(screen.getByTestId("h")).toHaveAttribute("data-slot", "popover-header");
+		expect(screen.getByTestId("h")).toHaveAttribute(
+			"data-slot",
+			"popover-header",
+		);
 	});
 
 	it("merges custom className", () => {
@@ -74,7 +87,10 @@ describe("PopoverTitle", () => {
 				</PopoverContent>
 			</Popover>,
 		);
-		expect(screen.getByText("My title")).toHaveAttribute("data-slot", "popover-title");
+		expect(screen.getByText("My title")).toHaveAttribute(
+			"data-slot",
+			"popover-title",
+		);
 	});
 });
 
@@ -88,7 +104,10 @@ describe("PopoverDescription", () => {
 				</PopoverContent>
 			</Popover>,
 		);
-		expect(screen.getByText("My description")).toHaveAttribute("data-slot", "popover-description");
+		expect(screen.getByText("My description")).toHaveAttribute(
+			"data-slot",
+			"popover-description",
+		);
 	});
 });
 

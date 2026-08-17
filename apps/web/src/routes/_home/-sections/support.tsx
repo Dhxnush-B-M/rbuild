@@ -32,7 +32,14 @@ const flyingLogos = [
 		glow: "shadow-emerald-500/20",
 		delay: "0.5s",
 	},
-	{ id: "3", name: "Local DB", icon: DatabaseIcon, color: "text-blue-400", glow: "shadow-blue-500/20", delay: "1s" },
+	{
+		id: "3",
+		name: "Local DB",
+		icon: DatabaseIcon,
+		color: "text-blue-400",
+		glow: "shadow-blue-500/20",
+		delay: "1s",
+	},
 	{
 		id: "4",
 		name: "Custom Styling",
@@ -41,7 +48,14 @@ const flyingLogos = [
 		glow: "shadow-purple-500/20",
 		delay: "1.5s",
 	},
-	{ id: "5", name: "Global Fonts", icon: GlobeIcon, color: "text-pink-400", glow: "shadow-pink-500/20", delay: "2s" },
+	{
+		id: "5",
+		name: "Global Fonts",
+		icon: GlobeIcon,
+		color: "text-pink-400",
+		glow: "shadow-pink-500/20",
+		delay: "2s",
+	},
 	{
 		id: "6",
 		name: "Fast Render",
@@ -58,8 +72,22 @@ const flyingLogos = [
 		glow: "shadow-teal-500/20",
 		delay: "3s",
 	},
-	{ id: "8", name: "Clean Code", icon: CodeIcon, color: "text-rose-400", glow: "shadow-rose-500/20", delay: "3.5s" },
-	{ id: "9", name: "CLI Tools", icon: TerminalIcon, color: "text-cyan-400", glow: "shadow-cyan-500/20", delay: "4s" },
+	{
+		id: "8",
+		name: "Clean Code",
+		icon: CodeIcon,
+		color: "text-rose-400",
+		glow: "shadow-rose-500/20",
+		delay: "3.5s",
+	},
+	{
+		id: "9",
+		name: "CLI Tools",
+		icon: TerminalIcon,
+		color: "text-cyan-400",
+		glow: "shadow-cyan-500/20",
+		delay: "4s",
+	},
 	{
 		id: "10",
 		name: "Smart Import",
@@ -72,7 +100,10 @@ const flyingLogos = [
 
 export function Support() {
 	return (
-		<section id="support" className="relative overflow-hidden border-border/40 border-b py-20 md:py-28">
+		<section
+			id="support"
+			className="relative overflow-hidden border-border/40 border-b py-20 md:py-28"
+		>
 			<style>{`
 				@keyframes flyBlink {
 					0%, 100% { transform: translateY(0px) scale(1); opacity: 0.8; }
@@ -153,7 +184,10 @@ export function Support() {
 						<div>
 							<div className="flex items-center justify-between">
 								<div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-500 shadow-inner">
-									<PhoneCallIcon weight="fill" className="size-7 animate-pulse" />
+									<PhoneCallIcon
+										weight="fill"
+										className="size-7 animate-pulse"
+									/>
 								</div>
 								<span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-bold text-[11px] text-emerald-500">
 									<span className="size-2 animate-ping rounded-full bg-emerald-500" />
@@ -166,8 +200,9 @@ export function Support() {
 							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-								Direct help available round the clock. Get immediate assistance with template customization, PDF
-								exports, and account management anytime.
+								Direct help available round the clock. Get immediate assistance
+								with template customization, PDF exports, and account management
+								anytime.
 							</p>
 						</div>
 
@@ -194,11 +229,14 @@ export function Support() {
 								</span>
 							</div>
 
-							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">Full Help to Build Resume</h3>
+							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">
+								Full Help to Build Resume
+							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-								Step-by-step guidance to craft job-winning resumes. Our smart tools and expert recommendations help
-								tailor your experience for ATS filters.
+								Step-by-step guidance to craft job-winning resumes. Our smart
+								tools and expert recommendations help tailor your experience for
+								ATS filters.
 							</p>
 						</div>
 
@@ -224,11 +262,14 @@ export function Support() {
 								</span>
 							</div>
 
-							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">Most Multi-Language Support</h3>
+							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">
+								Most Multi-Language Support
+							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-								Create resumes in over 50+ languages with full RTL support, localized date formats, and global
-								typography for international career opportunities.
+								Create resumes in over 50+ languages with full RTL support,
+								localized date formats, and global typography for international
+								career opportunities.
 							</p>
 						</div>
 

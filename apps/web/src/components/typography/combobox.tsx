@@ -1,7 +1,16 @@
-import type { MultiComboboxProps, SingleComboboxProps } from "@/components/ui/combobox";
-import { useCallback, useMemo } from "react";
-import { fontList, getFont, getFontDisplayName, getFontSearchKeywords, sortFontWeights } from "@rbuilder/fonts";
+import {
+	fontList,
+	getFont,
+	getFontDisplayName,
+	getFontSearchKeywords,
+	sortFontWeights,
+} from "@rbuilder/fonts";
 import { cn } from "@rbuilder/utils/style";
+import { useCallback, useMemo } from "react";
+import type {
+	MultiComboboxProps,
+	SingleComboboxProps,
+} from "@/components/ui/combobox";
 import { Combobox } from "@/components/ui/combobox";
 import { FontDisplay } from "./font-display";
 
@@ -22,11 +31,23 @@ const FONT_FAMILY_OPTIONS = fontList.map((font) => ({
 
 type FontFamilyComboboxProps = Omit<SingleComboboxProps, "options">;
 
-export function FontFamilyCombobox({ className, ...props }: FontFamilyComboboxProps) {
-	return <Combobox {...props} options={FONT_FAMILY_OPTIONS} className={cn("w-full", className)} />;
+export function FontFamilyCombobox({
+	className,
+	...props
+}: FontFamilyComboboxProps) {
+	return (
+		<Combobox
+			{...props}
+			options={FONT_FAMILY_OPTIONS}
+			className={cn("w-full", className)}
+		/>
+	);
 }
 
-type FontWeightComboboxProps = Omit<MultiComboboxProps, "options" | "multiple"> & { fontFamily: string };
+type FontWeightComboboxProps = Omit<
+	MultiComboboxProps,
+	"options" | "multiple"
+> & { fontFamily: string };
 
 export function FontWeightCombobox({
 	fontFamily,
@@ -40,7 +61,11 @@ export function FontWeightCombobox({
 
 		let weights: string[] = [];
 
-		if (fontData && Array.isArray(fontData.weights) && fontData.weights.length > 0) {
+		if (
+			fontData &&
+			Array.isArray(fontData.weights) &&
+			fontData.weights.length > 0
+		) {
 			weights = sortFontWeights(fontData.weights);
 		} else {
 			// Fallback to all possible weights
@@ -54,7 +79,10 @@ export function FontWeightCombobox({
 		}));
 	}, [fontFamily]);
 
-	const sortedValue = useMemo(() => (value ? sortFontWeights(value) : value), [value]);
+	const sortedValue = useMemo(
+		() => (value ? sortFontWeights(value) : value),
+		[value],
+	);
 	const sortedDefaultValue = useMemo(
 		() => (defaultValue ? sortFontWeights(defaultValue) : defaultValue),
 		[defaultValue],

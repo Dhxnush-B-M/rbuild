@@ -1,5 +1,5 @@
-import type { SectionTitleResolver } from "@rbuilder/pdf/section-title";
 import { setupI18n } from "@lingui/core";
+import type { SectionTitleResolver } from "@rbuilder/pdf/section-title";
 import { useEffect, useReducer } from "react";
 import { getLocaleMessages, resolveLocale } from "@/libs/locale";
 import { createSectionTitleResolver } from "./section-title";
@@ -12,12 +12,14 @@ export const createSectionTitleResolverForLocale = (localeParam: string) => {
 
 	if (cachedResolver) return cachedResolver;
 
-	const resolver = getLocaleMessages(requestedLocale).then(({ locale, messages }) => {
-		const i18n = setupI18n({ locale });
-		i18n.loadAndActivate({ locale, messages });
+	const resolver = getLocaleMessages(requestedLocale).then(
+		({ locale, messages }) => {
+			const i18n = setupI18n({ locale });
+			i18n.loadAndActivate({ locale, messages });
 
-		return createSectionTitleResolver(i18n);
-	});
+			return createSectionTitleResolver(i18n);
+		},
+	);
 
 	resolverCache.set(requestedLocale, resolver);
 
@@ -26,7 +28,10 @@ export const createSectionTitleResolverForLocale = (localeParam: string) => {
 
 export const useSectionTitleResolver = (locale?: string) => {
 	const [resolver, dispatchResolver] = useReducer(
-		(_state: SectionTitleResolver | null, nextResolver: SectionTitleResolver | null) => nextResolver,
+		(
+			_state: SectionTitleResolver | null,
+			nextResolver: SectionTitleResolver | null,
+		) => nextResolver,
 		null,
 	);
 

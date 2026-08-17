@@ -1,5 +1,5 @@
-import type { CustomSectionType } from "./data";
 import { describe, expect, it } from "vitest";
+import type { CustomSectionType } from "./data";
 import {
 	baseSectionSchema,
 	basicsSchema,
@@ -23,7 +23,13 @@ import { defaultResumeData } from "./default";
 
 const representativeCustomSectionItemByType = {
 	summary: { id: "summary-item", hidden: false, content: "<p>Summary</p>" },
-	profiles: { id: "profile-item", hidden: false, icon: "", network: "GitHub", username: "ada" },
+	profiles: {
+		id: "profile-item",
+		hidden: false,
+		icon: "",
+		network: "GitHub",
+		username: "ada",
+	},
 	experience: {
 		id: "experience-item",
 		hidden: false,
@@ -44,11 +50,35 @@ const representativeCustomSectionItemByType = {
 		period: "1830",
 		description: "",
 	},
-	projects: { id: "project-item", hidden: false, name: "Bernoulli Notes", period: "1843", description: "" },
-	skills: { id: "skill-item", hidden: false, icon: "", name: "Mathematics", proficiency: "Expert" },
-	languages: { id: "language-item", hidden: false, language: "English", fluency: "Native" },
+	projects: {
+		id: "project-item",
+		hidden: false,
+		name: "Bernoulli Notes",
+		period: "1843",
+		description: "",
+	},
+	skills: {
+		id: "skill-item",
+		hidden: false,
+		icon: "",
+		name: "Mathematics",
+		proficiency: "Expert",
+	},
+	languages: {
+		id: "language-item",
+		hidden: false,
+		language: "English",
+		fluency: "Native",
+	},
 	interests: { id: "interest-item", hidden: false, icon: "", name: "Poetry" },
-	awards: { id: "award-item", hidden: false, title: "Medal", awarder: "Society", date: "1843", description: "" },
+	awards: {
+		id: "award-item",
+		hidden: false,
+		title: "Medal",
+		awarder: "Society",
+		date: "1843",
+		description: "",
+	},
 	certifications: {
 		id: "certification-item",
 		hidden: false,
@@ -89,7 +119,10 @@ const representativeCustomSectionItemByType = {
 	},
 } as const satisfies Record<CustomSectionType, Record<string, unknown>>;
 
-const customSectionFixture = (type: CustomSectionType, item: Record<string, unknown>) => ({
+const customSectionFixture = (
+	type: CustomSectionType,
+	item: Record<string, unknown>,
+) => ({
 	id: `custom-${type}`,
 	type,
 	title: "Custom section",
@@ -125,10 +158,20 @@ describe("resumeDataSchema", () => {
 			hidden: false,
 			keepTogether: false,
 			startOnNewPage: false,
-			items: [{ id: "item", hidden: false, recipient: "Ada Lovelace", content: "<p>Hello</p>" }],
+			items: [
+				{
+					id: "item",
+					hidden: false,
+					recipient: "Ada Lovelace",
+					content: "<p>Hello</p>",
+				},
+			],
 		});
 
-		expect(result.items[0]).toMatchObject({ recipient: "Ada Lovelace", content: "<p>Hello</p>" });
+		expect(result.items[0]).toMatchObject({
+			recipient: "Ada Lovelace",
+			content: "<p>Hello</p>",
+		});
 	});
 
 	it("accepts overlapping item fields when the selected renderer requirements are satisfied", () => {
@@ -145,9 +188,14 @@ describe("resumeDataSchema", () => {
 	});
 
 	it("rejects a renderer-unsafe custom section before PDF or DOCX dispatch", () => {
-		const rendererUnsafeSection = customSectionFixture("experience", representativeCustomSectionItemByType.summary);
+		const rendererUnsafeSection = customSectionFixture(
+			"experience",
+			representativeCustomSectionItemByType.summary,
+		);
 
-		expect(customSectionSchema.safeParse(rendererUnsafeSection).success).toBe(false);
+		expect(customSectionSchema.safeParse(rendererUnsafeSection).success).toBe(
+			false,
+		);
 		expect(
 			resumeDataSchema.safeParse({
 				...defaultResumeData,
@@ -180,7 +228,10 @@ describe("customSectionItemDefinitionByType", () => {
 	it("maps every custom section type to its named item schema", () => {
 		expect(
 			Object.fromEntries(
-				sectionTypeSchema.options.map((type) => [type, customSectionItemDefinitionByType[type].schemaName]),
+				sectionTypeSchema.options.map((type) => [
+					type,
+					customSectionItemDefinitionByType[type].schemaName,
+				]),
 			),
 		).toEqual({
 			summary: "summaryItemSchema",
@@ -200,26 +251,38 @@ describe("customSectionItemDefinitionByType", () => {
 		});
 	});
 
-	it.each(sectionTypeSchema.options)("accepts the representative %s item shape", (type) => {
-		const section = customSectionFixture(type, representativeCustomSectionItemByType[type]);
+	it.each(sectionTypeSchema.options)(
+		"accepts the representative %s item shape",
+		(type) => {
+			const section = customSectionFixture(
+				type,
+				representativeCustomSectionItemByType[type],
+			);
 
-		expect(customSectionSchema.safeParse(section).success).toBe(true);
-	});
+			expect(customSectionSchema.safeParse(section).success).toBe(true);
+		},
+	);
 
-	it.each(sectionTypeSchema.options)("rejects an item shape that does not match %s", (type) => {
-		const mismatchedItem =
-			type === "summary"
-				? representativeCustomSectionItemByType.experience
-				: representativeCustomSectionItemByType.summary;
-		const section = customSectionFixture(type, mismatchedItem);
+	it.each(sectionTypeSchema.options)(
+		"rejects an item shape that does not match %s",
+		(type) => {
+			const mismatchedItem =
+				type === "summary"
+					? representativeCustomSectionItemByType.experience
+					: representativeCustomSectionItemByType.summary;
+			const section = customSectionFixture(type, mismatchedItem);
 
-		expect(customSectionSchema.safeParse(section).success).toBe(false);
-	});
+			expect(customSectionSchema.safeParse(section).success).toBe(false);
+		},
+	);
 });
 
 describe("websiteSchema", () => {
 	it("requires url and label fields", () => {
-		expect(websiteSchema.safeParse({ url: "https://example.com", label: "Example" }).success).toBe(true);
+		expect(
+			websiteSchema.safeParse({ url: "https://example.com", label: "Example" })
+				.success,
+		).toBe(true);
 	});
 
 	it("rejects missing url", () => {
@@ -227,7 +290,9 @@ describe("websiteSchema", () => {
 	});
 
 	it("rejects missing label", () => {
-		expect(websiteSchema.safeParse({ url: "https://example.com" }).success).toBe(false);
+		expect(
+			websiteSchema.safeParse({ url: "https://example.com" }).success,
+		).toBe(false);
 	});
 
 	it("allows empty strings (caller decides display)", () => {
@@ -237,7 +302,9 @@ describe("websiteSchema", () => {
 
 describe("pictureSchema", () => {
 	it("accepts the default picture config", () => {
-		expect(pictureSchema.safeParse(defaultResumeData.picture).success).toBe(true);
+		expect(pictureSchema.safeParse(defaultResumeData.picture).success).toBe(
+			true,
+		);
 	});
 
 	it("rejects size below 32", () => {
@@ -295,11 +362,18 @@ describe("customFieldSchema", () => {
 	});
 
 	it("rejects missing id", () => {
-		expect(customFieldSchema.safeParse({ icon: "phone", text: "555-0000", link: "" }).success).toBe(false);
+		expect(
+			customFieldSchema.safeParse({ icon: "phone", text: "555-0000", link: "" })
+				.success,
+		).toBe(false);
 	});
 
 	it("falls back to empty link via .catch when missing", () => {
-		const result = customFieldSchema.safeParse({ id: "1", icon: "phone", text: "x" });
+		const result = customFieldSchema.safeParse({
+			id: "1",
+			icon: "phone",
+			text: "x",
+		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.link).toBe("");
 	});
@@ -418,7 +492,9 @@ describe("skillItemSchema", () => {
 
 describe("layoutSchema", () => {
 	it("validates default layout", () => {
-		expect(layoutSchema.safeParse(defaultResumeData.metadata.layout).success).toBe(true);
+		expect(
+			layoutSchema.safeParse(defaultResumeData.metadata.layout).success,
+		).toBe(true);
 	});
 
 	it("clamps sidebarWidth out-of-range to 35", () => {
@@ -474,14 +550,16 @@ describe("pageSchema", () => {
 	});
 
 	it("defaults hideSectionIcons to true when missing", () => {
-		const { hideSectionIcons: _, ...pageWithout } = defaultResumeData.metadata.page;
+		const { hideSectionIcons: _, ...pageWithout } =
+			defaultResumeData.metadata.page;
 		const result = pageSchema.safeParse(pageWithout);
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.hideSectionIcons).toBe(true);
 	});
 
 	it("defaults hideLinkUnderline to false when missing", () => {
-		const { hideLinkUnderline: _, ...pageWithout } = defaultResumeData.metadata.page;
+		const { hideLinkUnderline: _, ...pageWithout } =
+			defaultResumeData.metadata.page;
 		const result = pageSchema.safeParse(pageWithout);
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.hideLinkUnderline).toBe(false);
@@ -490,19 +568,33 @@ describe("pageSchema", () => {
 
 describe("baseSectionSchema", () => {
 	it("defaults icon to empty string when missing", () => {
-		const result = baseSectionSchema.safeParse({ title: "Test", columns: 1, hidden: false });
+		const result = baseSectionSchema.safeParse({
+			title: "Test",
+			columns: 1,
+			hidden: false,
+		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.icon).toBe("");
 	});
 
 	it("accepts a custom icon value", () => {
-		const result = baseSectionSchema.safeParse({ title: "Test", icon: "rocket", columns: 1, hidden: false });
+		const result = baseSectionSchema.safeParse({
+			title: "Test",
+			icon: "rocket",
+			columns: 1,
+			hidden: false,
+		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.icon).toBe("rocket");
 	});
 
 	it("accepts 'none' as a valid icon value", () => {
-		const result = baseSectionSchema.safeParse({ title: "Test", icon: "none", columns: 1, hidden: false });
+		const result = baseSectionSchema.safeParse({
+			title: "Test",
+			icon: "none",
+			columns: 1,
+			hidden: false,
+		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.icon).toBe("none");
 	});
@@ -510,7 +602,12 @@ describe("baseSectionSchema", () => {
 
 describe("summarySchema", () => {
 	it("defaults icon to empty string when missing", () => {
-		const result = summarySchema.safeParse({ title: "", columns: 1, hidden: false, content: "" });
+		const result = summarySchema.safeParse({
+			title: "",
+			columns: 1,
+			hidden: false,
+			content: "",
+		});
 		expect(result.success).toBe(true);
 		if (result.success) expect(result.data.icon).toBe("");
 	});
@@ -527,7 +624,9 @@ describe("styleRulesSchema", () => {
 
 	it("defaults to an empty rule list on default resume metadata", () => {
 		expect(defaultResumeData.metadata.styleRules).toEqual([]);
-		expect(styleRulesSchema.safeParse(defaultResumeData.metadata.styleRules).success).toBe(true);
+		expect(
+			styleRulesSchema.safeParse(defaultResumeData.metadata.styleRules).success,
+		).toBe(true);
 	});
 
 	it("preserves valid rules when another rule has an invalid style intent", () => {
@@ -628,7 +727,10 @@ describe("styleRulesSchema", () => {
 				id: "custom-section",
 				label: "Custom section",
 				enabled: true,
-				target: { scope: "sectionId", sectionId: "94ddf90f-46ef-4b0a-9a99-2ed118af52dd" },
+				target: {
+					scope: "sectionId",
+					sectionId: "94ddf90f-46ef-4b0a-9a99-2ed118af52dd",
+				},
 				slots: { richList: { rowGap: 6 } },
 			},
 		];
@@ -642,7 +744,11 @@ describe("styleRulesSchema", () => {
 				id: "item-style",
 				label: "Item Style",
 				enabled: true,
-				target: { scope: "sectionItem", sectionId: "experience", itemId: "item-1" },
+				target: {
+					scope: "sectionItem",
+					sectionId: "experience",
+					itemId: "item-1",
+				},
 				slots: { item: { color: "rgba(0, 0, 0, 1)" } },
 			}).success,
 		).toBe(false);

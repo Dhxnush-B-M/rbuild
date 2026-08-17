@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import type {
 	AwardItem,
 	CertificationItem,
@@ -18,9 +19,8 @@ import type {
 	SummaryItem,
 	VolunteerItem,
 } from "@rbuilder/schema/resume/data";
-import type { ReactNode } from "react";
-import { t } from "@lingui/core/macro";
 import { stripHtml } from "@rbuilder/utils/string";
+import type { ReactNode } from "react";
 import { useResumeData } from "@/features/resume/builder/draft";
 import { getSectionTitle } from "@/libs/resume/section";
 
@@ -42,7 +42,12 @@ const SECTION_ORDER: SectionType[] = [
 ];
 
 const joinInline = (...parts: (string | undefined | null | false)[]): string =>
-	parts.filter((part): part is string => typeof part === "string" && part.trim().length > 0).join(" · ");
+	parts
+		.filter(
+			(part): part is string =>
+				typeof part === "string" && part.trim().length > 0,
+		)
+		.join(" · ");
 
 type ItemWebsite = { url?: string; label?: string };
 
@@ -61,12 +66,17 @@ function ItemBody({ primary, details, description, website }: ItemBodyProps) {
 		<>
 			{header ? <p>{header}</p> : null}
 			{description ? <p>{description}</p> : null}
-			{websiteUrl ? <a href={websiteUrl}>{website?.label?.trim() || websiteUrl}</a> : null}
+			{websiteUrl ? (
+				<a href={websiteUrl}>{website?.label?.trim() || websiteUrl}</a>
+			) : null}
 		</>
 	);
 }
 
-function renderItem(type: CustomSectionType, item: CustomSectionItem): ReactNode {
+function renderItem(
+	type: CustomSectionType,
+	item: CustomSectionItem,
+): ReactNode {
 	switch (type) {
 		case "experience": {
 			const it = item as ExperienceItem;
@@ -101,7 +111,13 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem): ReactNode
 			return (
 				<ItemBody
 					primary={it.school}
-					details={joinInline(it.degree, it.area, it.grade, it.location, it.period)}
+					details={joinInline(
+						it.degree,
+						it.area,
+						it.grade,
+						it.location,
+						it.period,
+					)}
 					description={stripHtml(it.description)}
 					website={it.website}
 				/>
@@ -110,12 +126,19 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem): ReactNode
 		case "skills": {
 			const it = item as SkillItem;
 
-			return <ItemBody primary={it.name} details={joinInline(it.proficiency, (it.keywords ?? []).join(", "))} />;
+			return (
+				<ItemBody
+					primary={it.name}
+					details={joinInline(it.proficiency, (it.keywords ?? []).join(", "))}
+				/>
+			);
 		}
 		case "interests": {
 			const it = item as InterestItem;
 
-			return <ItemBody primary={it.name} details={(it.keywords ?? []).join(", ")} />;
+			return (
+				<ItemBody primary={it.name} details={(it.keywords ?? []).join(", ")} />
+			);
 		}
 		case "languages": {
 			const it = item as LanguageItem;
@@ -125,13 +148,23 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem): ReactNode
 		case "profiles": {
 			const it = item as ProfileItem;
 
-			return <ItemBody primary={joinInline(it.network, it.username)} website={it.website} />;
+			return (
+				<ItemBody
+					primary={joinInline(it.network, it.username)}
+					website={it.website}
+				/>
+			);
 		}
 		case "projects": {
 			const it = item as ProjectItem;
 
 			return (
-				<ItemBody primary={it.name} details={it.period} description={stripHtml(it.description)} website={it.website} />
+				<ItemBody
+					primary={it.name}
+					details={it.period}
+					description={stripHtml(it.description)}
+					website={it.website}
+				/>
 			);
 		}
 		case "awards": {
@@ -197,7 +230,14 @@ function renderItem(type: CustomSectionType, item: CustomSectionItem): ReactNode
 		case "cover-letter": {
 			const it = item as CoverLetterItem;
 
-			return <ItemBody description={joinInline(stripHtml(it.recipient), stripHtml(it.content))} />;
+			return (
+				<ItemBody
+					description={joinInline(
+						stripHtml(it.recipient),
+						stripHtml(it.content),
+					)}
+				/>
+			);
 		}
 		case "summary": {
 			const it = item as SummaryItem;
@@ -216,7 +256,12 @@ type AccessibleSectionProps = {
 	items: CustomSectionItem[];
 };
 
-function AccessibleSection({ type, title, hidden, items }: AccessibleSectionProps) {
+function AccessibleSection({
+	type,
+	title,
+	hidden,
+	items,
+}: AccessibleSectionProps) {
 	if (hidden) return null;
 
 	const visibleItems = items.filter((item) => !item.hidden);
@@ -252,17 +297,25 @@ export function ResumeAccessibleText({ data }: ResumeAccessibleTextProps) {
 	if (!resumeData) return null;
 
 	const { basics, summary, sections, customSections } = resumeData;
-	const summaryText = summary && !summary.hidden ? stripHtml(summary.content) : "";
+	const summaryText =
+		summary && !summary.hidden ? stripHtml(summary.content) : "";
 	const website = basics.website;
 
 	const contact: ReactNode[] = [];
-	if (basics.email) contact.push(<a href={`mailto:${basics.email}`}>{basics.email}</a>);
-	if (basics.phone) contact.push(<a href={`tel:${basics.phone}`}>{basics.phone}</a>);
+	if (basics.email)
+		contact.push(<a href={`mailto:${basics.email}`}>{basics.email}</a>);
+	if (basics.phone)
+		contact.push(<a href={`tel:${basics.phone}`}>{basics.phone}</a>);
 	if (basics.location) contact.push(basics.location);
-	if (website?.url?.trim()) contact.push(<a href={website.url}>{website.label?.trim() || website.url}</a>);
+	if (website?.url?.trim())
+		contact.push(
+			<a href={website.url}>{website.label?.trim() || website.url}</a>,
+		);
 	for (const field of basics.customFields ?? []) {
 		if (!field.text?.trim()) continue;
-		contact.push(field.link?.trim() ? <a href={field.link}>{field.text}</a> : field.text);
+		contact.push(
+			field.link?.trim() ? <a href={field.link}>{field.text}</a> : field.text,
+		);
 	}
 
 	return (

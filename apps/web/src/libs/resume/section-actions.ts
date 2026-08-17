@@ -37,6 +37,7 @@ export function updateSectionItem(
 	} else {
 		const items = draft.sections[sectionKey].items as Array<{ id: string }>;
 		const index = items.findIndex((item) => item.id === formData.id);
-		if (index !== -1) (items[index] as unknown as Record<string, unknown>) = formData;
+		if (index !== -1)
+			(items[index] as unknown as Record<string, unknown>) = formData;
 	}
 }

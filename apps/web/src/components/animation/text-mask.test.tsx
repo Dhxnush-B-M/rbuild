@@ -4,7 +4,8 @@ import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { TextMaskEffect } from "./text-mask";
 
-const renderMask = (props: React.ComponentProps<typeof TextMaskEffect>) => render(<TextMaskEffect {...props} />);
+const renderMask = (props: React.ComponentProps<typeof TextMaskEffect>) =>
+	render(<TextMaskEffect {...props} />);
 
 describe("TextMaskEffect", () => {
 	it("renders the supplied text in all visible text layers", () => {

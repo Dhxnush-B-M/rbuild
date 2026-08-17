@@ -1,8 +1,8 @@
-import type { SemanticNode } from "./types";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { compileStylesheet } from "./compile";
 import { compileSelector, getSpecificity, matchesSelector } from "./selector";
+import type { SemanticNode } from "./types";
 
 const experienceId = "229ad766-cb9a-4f16-aaf0-fdd8394a9b95";
 
@@ -21,14 +21,22 @@ const node = (
 	});
 
 const itemFirst = node("item-first", "item", { roles: ["experience-role"] });
-const itemSecond = node("item-second", "item", { roles: ["experience-role", "nested-role"] });
+const itemSecond = node("item-second", "item", {
+	roles: ["experience-role", "nested-role"],
+});
 const itemThird = node("item-third", "item", { roles: ["experience-role"] });
 const experience = node("section-experience", "section", {
 	id: experienceId,
-	attributes: { type: "experience", placement: "main", origin: "custom-import" },
+	attributes: {
+		type: "experience",
+		placement: "main",
+		origin: "custom-import",
+	},
 	children: [
 		node("heading-experience", "section-heading", { roles: ["section-title"] }),
-		node("items-experience", "section-items", { children: [itemFirst, itemSecond, itemThird] }),
+		node("items-experience", "section-items", {
+			children: [itemFirst, itemSecond, itemThird],
+		}),
 	],
 });
 const education = node("section-education", "section", {
@@ -49,7 +57,11 @@ const fixtureTree = node("resume", "resume", {
 					attributes: { placement: "sidebar", region: "body" },
 					children: [
 						node("section-skills-sidebar", "section", {
-							attributes: { type: "skills", placement: "sidebar", origin: "native" },
+							attributes: {
+								type: "skills",
+								placement: "sidebar",
+								origin: "native",
+							},
 						}),
 					],
 				}),
@@ -60,14 +72,24 @@ const fixtureTree = node("resume", "resume", {
 
 function matches(source: string, nodeKey: string): boolean {
 	const result = compileSelector(source);
-	return result.selector ? matchesSelector(result.selector, fixtureTree, nodeKey) : false;
+	return result.selector
+		? matchesSelector(result.selector, fixtureTree, nodeKey)
+		: false;
 }
 
 describe("semantic selector compilation", () => {
 	it.each([
-		['section[type="experience"] > section-heading', "heading-experience", true],
+		[
+			'section[type="experience"] > section-heading',
+			"heading-experience",
+			true,
+		],
 		['region[placement="sidebar"] section', "section-skills-sidebar", true],
-		['section:is([type="experience"], [type="education"])', "section-education", true],
+		[
+			'section:is([type="experience"], [type="education"])',
+			"section-education",
+			true,
+		],
 		["item:nth-child(2)", "item-second", true],
 		["section:hover", "section-experience", false],
 		["section, item:nth-child(2)", "item-second", true],
@@ -83,15 +105,20 @@ describe("semantic selector compilation", () => {
 		["section:only-child", "section-skills-sidebar", true],
 		["item:nth-child(2n + 1)", "item-third", true],
 		["item:nth-of-type(even)", "item-second", true],
-	])("matches %s against the immutable semantic tree", (selector, nodeKey, expected) => {
-		expect(matches(selector, nodeKey)).toBe(expected);
-	});
+	])(
+		"matches %s against the immutable semantic tree",
+		(selector, nodeKey, expected) => {
+			expect(matches(selector, nodeKey)).toBe(expected);
+		},
+	);
 
 	it("reflects IDs, roles, and lowercase registry attributes with case-sensitive values", () => {
 		expect(matches(`#${experienceId}`, "section-experience")).toBe(true);
 		expect(matches(`[id="${experienceId}"]`, "section-experience")).toBe(true);
 		expect(matches("#\\31 abc", "section-education")).toBe(true);
-		expect(matches("sect\\69 on[\\74 ype='experience']", "section-experience")).toBe(true);
+		expect(
+			matches("sect\\69 on[\\74 ype='experience']", "section-experience"),
+		).toBe(true);
 		expect(matches("[role~='nested-role']", "item-second")).toBe(true);
 		expect(matches('[type="Experience"]', "section-experience")).toBe(false);
 		expect(matches('[TYPE="experience"]', "section-experience")).toBe(false);
@@ -111,7 +138,9 @@ describe("semantic selector compilation", () => {
 		expect(getSpecificity(":where(#one) section")).toEqual([0, 0, 1]);
 		expect(getSpecificity(":is(#one, section)")).toEqual([1, 0, 0]);
 		expect(getSpecificity(":not([type]) section")).toEqual([0, 1, 1]);
-		expect(getSpecificity("item:nth-child(2 of #one, section)")).toEqual([1, 1, 1]);
+		expect(getSpecificity("item:nth-child(2 of #one, section)")).toEqual([
+			1, 1, 1,
+		]);
 	});
 
 	it.each([
@@ -135,11 +164,17 @@ describe("semantic selector compilation", () => {
 	});
 
 	it("enforces selector resource limits", () => {
-		expect(compileSelector(new Array(66).fill("section").join(",")).selector).toBeNull();
-		expect(compileSelector(new Array(19).fill("resume").join(" > ")).selector).toBeNull();
+		expect(
+			compileSelector(new Array(66).fill("section").join(",")).selector,
+		).toBeNull();
+		expect(
+			compileSelector(new Array(19).fill("resume").join(" > ")).selector,
+		).toBeNull();
 		expect(compileSelector(`${" ".repeat(2_042)}section`).selector).toBeNull();
 		expect(compileSelector(`${"😀".repeat(2_042)}section`).selector).toBeNull();
-		expect(compileSelector(`${":is(".repeat(17)}section${")".repeat(17)}`).selector).toBeNull();
+		expect(
+			compileSelector(`${":is(".repeat(17)}section${")".repeat(17)}`).selector,
+		).toBeNull();
 	});
 
 	it("keeps compiled selectors cloneable and leaves source order untouched", () => {
@@ -147,7 +182,11 @@ describe("semantic selector compilation", () => {
 		expect(result.selector).not.toBeNull();
 		expect(() => structuredClone(result.selector)).not.toThrow();
 		expect(matches("item:nth-child(2)", "item-second")).toBe(true);
-		expect(experience.children[1]?.children).toEqual([itemFirst, itemSecond, itemThird]);
+		expect(experience.children[1]?.children).toEqual([
+			itemFirst,
+			itemSecond,
+			itemThird,
+		]);
 	});
 
 	it("does not treat the parentless resume root as a structural child", () => {
@@ -157,17 +196,32 @@ describe("semantic selector compilation", () => {
 	});
 
 	it("validates selectors while compiling a stylesheet", () => {
-		const fixture = readFileSync(new URL("./__fixtures__/v1/selectors.css", import.meta.url), "utf8");
-		expect(compileStylesheet({ languageVersion: 1, text: fixture }).program).not.toBeNull();
+		const fixture = readFileSync(
+			new URL("./__fixtures__/v1/selectors.css", import.meta.url),
+			"utf8",
+		);
+		expect(
+			compileStylesheet({ languageVersion: 1, text: fixture }).program,
+		).not.toBeNull();
 
-		const invalid = compileStylesheet({ languageVersion: 1, text: "@version 1;\nsection:hover { color: red; }" });
+		const invalid = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 1;\nsection:hover { color: red; }",
+		});
 		expect(invalid.program).toBeNull();
-		expect(invalid.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_SELECTOR" }));
+		expect(invalid.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "INVALID_SELECTOR" }),
+		);
 	});
 
 	it("rejects uppercase pseudo names while compiling a stylesheet", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 1;\n:ROOT { color: red; }" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 1;\n:ROOT { color: red; }",
+		});
 		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_SELECTOR" }));
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "INVALID_SELECTOR" }),
+		);
 	});
 });

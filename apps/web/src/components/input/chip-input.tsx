@@ -8,18 +8,23 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { rectSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
+import {
+	rectSortingStrategy,
+	SortableContext,
+	sortableKeyboardCoordinates,
+	useSortable,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { PencilSimpleIcon, XIcon } from "@phosphor-icons/react";
-import { AnimatePresence, m } from "motion/react";
-import * as React from "react";
-import { createPortal } from "react-dom";
 import { Badge } from "@rbuilder/ui/components/badge";
 import { Input } from "@rbuilder/ui/components/input";
 import { Kbd } from "@rbuilder/ui/components/kbd";
 import { cn } from "@rbuilder/utils/style";
+import { AnimatePresence, m } from "motion/react";
+import * as React from "react";
+import { createPortal } from "react-dom";
 import { useControlledState } from "@/hooks/use-controlled-state";
 
 const RETURN_KEY = "Enter";
@@ -56,7 +61,9 @@ type ChipDragOverlayProps = {
 
 function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
 	const overlay = (
-		<DragOverlay dropAnimation={null}>{activeChip ? <ChipDragPreview chip={activeChip} /> : null}</DragOverlay>
+		<DragOverlay dropAnimation={null}>
+			{activeChip ? <ChipDragPreview chip={activeChip} /> : null}
+		</DragOverlay>
 	);
 
 	if (typeof document === "undefined") return overlay;
@@ -64,8 +71,22 @@ function ChipDragOverlay({ activeChip }: ChipDragOverlayProps) {
 	return createPortal(overlay, document.body);
 }
 
-function ChipItem({ id, chip, index, isEditing, onEdit, onRemove }: ChipItemProps) {
-	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+function ChipItem({
+	id,
+	chip,
+	index,
+	isEditing,
+	onEdit,
+	onRemove,
+}: ChipItemProps) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef,
+		transform,
+		transition,
+		isDragging,
+	} = useSortable({ id });
 
 	const style = {
 		transition,
@@ -194,7 +215,9 @@ export function ChipInput({
 			const trimmed = newValue.trim();
 			if (!trimmed || index < 0 || index >= chips.length) return;
 
-			const existingIndex = chips.findIndex((c, i) => c === trimmed && i !== index);
+			const existingIndex = chips.findIndex(
+				(c, i) => c === trimmed && i !== index,
+			);
 			if (existingIndex !== -1) return;
 
 			const newChips = [...chips];
@@ -214,7 +237,9 @@ export function ChipInput({
 				setEditingIndex(null);
 				setInput("");
 			} else if (editingIndex !== null && editingIndex > index) {
-				setEditingIndex((current) => (current !== null && current > index ? current - 1 : current));
+				setEditingIndex((current) =>
+					current !== null && current > index ? current - 1 : current,
+				);
 			}
 		},
 		[chips, setChips, editingIndex],
@@ -344,7 +369,10 @@ export function ChipInput({
 				>
 					<div className="flex flex-col">
 						<div
-							className={cn("max-h-24 overflow-y-auto px-2 py-1.5", hasChips ? "border-border/70 border-b" : "hidden")}
+							className={cn(
+								"max-h-24 overflow-y-auto px-2 py-1.5",
+								hasChips ? "border-border/70 border-b" : "hidden",
+							)}
 						>
 							<SortableContext items={chips} strategy={rectSortingStrategy}>
 								<m.div layout className="flex flex-wrap gap-1">
@@ -364,14 +392,21 @@ export function ChipInput({
 								</m.div>
 							</SortableContext>
 						</div>
-						<div className={cn("flex items-center gap-1.5 px-2", hasChips ? "py-1.5" : "py-0")}>
+						<div
+							className={cn(
+								"flex items-center gap-1.5 px-2",
+								hasChips ? "py-1.5" : "py-0",
+							)}
+						>
 							<Input
 								ref={inputRef}
 								type="text"
 								value={input}
 								autoComplete="off"
 								aria-label={isEditingKeyword ? t`Edit keyword` : t`Add keyword`}
-								placeholder={isEditingKeyword ? t`Editing keyword...` : t`Add a keyword...`}
+								placeholder={
+									isEditingKeyword ? t`Editing keyword...` : t`Add a keyword...`
+								}
 								onKeyDown={handleKeyDown}
 								onChange={handleInputChange}
 								className="h-9 flex-1 border-none p-0 focus-visible:border-none focus-visible:ring-0 dark:bg-transparent"
@@ -407,7 +442,8 @@ export function ChipInput({
 			{!hideDescription && (
 				<p className="text-muted-foreground text-xs">
 					<Trans>
-						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or save the current keyword.
+						Press <Kbd>{RETURN_KEY}</Kbd> or <Kbd>{COMMA_KEY}</Kbd> to add or
+						save the current keyword.
 					</Trans>
 				</p>
 			)}

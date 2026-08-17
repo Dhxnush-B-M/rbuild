@@ -40,7 +40,10 @@ describe("templates metadata", () => {
 	it("uses a recognized sidebar position for every template", () => {
 		const validPositions = new Set(["left", "right", "none"]);
 		for (const [id, meta] of entries) {
-			expect(validPositions.has(meta.sidebarPosition), `${id}: ${meta.sidebarPosition}`).toBe(true);
+			expect(
+				validPositions.has(meta.sidebarPosition),
+				`${id}: ${meta.sidebarPosition}`,
+			).toBe(true);
 		}
 	});
 

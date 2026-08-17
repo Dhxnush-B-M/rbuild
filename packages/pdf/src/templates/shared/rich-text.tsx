@@ -4,7 +4,10 @@ import { cloneElement, isValidElement } from "react";
 import { Html } from "react-pdf-html";
 import { Link as PdfLink, Text as PdfText, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
-import { resolvedPdfFlowProps, resolvedPdfTextProps } from "../../semantic/adapter";
+import {
+	resolvedPdfFlowProps,
+	resolvedPdfTextProps,
+} from "../../semantic/adapter";
 import {
 	projectRenderedChildren,
 	useResolvedNode,
@@ -21,7 +24,10 @@ import {
 	richTextMarkClassName,
 	richTextSemanticNodeKeyAttribute,
 } from "./rich-text-html";
-import { renderRichTextParagraph, toRichTextStyleArray } from "./rich-text-renderers";
+import {
+	renderRichTextParagraph,
+	toRichTextStyleArray,
+} from "./rich-text-renderers";
 import {
 	createRichTextProseSpacing,
 	getRichTextEdgeTrimStyle,
@@ -77,15 +83,22 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 	const { metadata, rtl } = useRender();
 	const parentNodeKey = useSemanticNodeKey();
 	const fieldNodeKey =
-		parentNodeKey && semanticField ? semanticNodeKeys.field(parentNodeKey, semanticField) : undefined;
+		parentNodeKey && semanticField
+			? semanticNodeKeys.field(parentNodeKey, semanticField)
+			: undefined;
 	const richTextNodeKey =
-		fieldNodeKey && semanticField ? semanticNodeKeys.richText(fieldNodeKey, semanticField) : undefined;
+		fieldNodeKey && semanticField
+			? semanticNodeKeys.richText(fieldNodeKey, semanticField)
+			: undefined;
 	const fieldResolved = useResolvedNode(fieldNodeKey);
 	const fieldVisible = useSemanticNodeVisible(fieldNodeKey);
 	const richTextResolved = useResolvedNode(richTextNodeKey);
 	const richTextVisible = useSemanticNodeVisible(richTextNodeKey);
-	const { resolveNode, isNodeVisible, renderedChildKeysFor } = useSemanticNodeBindings();
-	const rtlTextWrapStyle: Style | undefined = rtl ? { direction: "rtl", textAlign: "right" } : undefined;
+	const { resolveNode, isNodeVisible, renderedChildKeysFor } =
+		useSemanticNodeBindings();
+	const rtlTextWrapStyle: Style | undefined = rtl
+		? { direction: "rtl", textAlign: "right" }
+		: undefined;
 
 	const boldStyle = useTemplateStyle("bold");
 	const linkStyle = useTemplateStyle("link");
@@ -96,7 +109,9 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 	const richParagraphRuleStyle = useSectionStyleRule("richParagraph");
 	const richListRuleStyle = useSectionStyleRule("richList");
 	const richListItemRowRuleStyle = useSectionStyleRule("richListItemRow");
-	const richListItemContentRuleStyle = useSectionStyleRule("richListItemContent");
+	const richListItemContentRuleStyle = useSectionStyleRule(
+		"richListItemContent",
+	);
 	const richLinkRuleStyle = useSectionStyleRule("richLink");
 	const richBoldRuleStyle = useSectionStyleRule("richBold");
 	const richMarkRuleStyle = useSectionStyleRule("richMark");
@@ -108,17 +123,31 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 	);
 	const proseSpacing = createRichTextProseSpacing(bodyLineHeight);
 
-	const normalizedHtml = normalizeRichTextHtml(children, { direction: rtl ? "rtl" : "ltr" });
+	const normalizedHtml = normalizeRichTextHtml(children, {
+		direction: rtl ? "rtl" : "ltr",
+	});
 	const html = richTextNodeKey
-		? projectNormalizedRichTextHtml(normalizedHtml, richTextNodeKey, renderedChildKeysFor)
+		? projectNormalizedRichTextHtml(
+				normalizedHtml,
+				richTextNodeKey,
+				renderedChildKeysFor,
+			)
 		: normalizedHtml;
 
 	if (!html || !fieldVisible || !richTextVisible) return null;
 
 	const keyFor = (element: Parameters<typeof getRichTextSemanticNodeKey>[1]) =>
 		element.getAttribute(richTextSemanticNodeKeyAttribute) ??
-		(richTextNodeKey ? getRichTextSemanticNodeKey(richTextNodeKey, element, richTextMarkClassName) : undefined);
-	const resolvedFor = (element: Parameters<typeof getRichTextSemanticNodeKey>[1]) => resolveNode(keyFor(element));
+		(richTextNodeKey
+			? getRichTextSemanticNodeKey(
+					richTextNodeKey,
+					element,
+					richTextMarkClassName,
+				)
+			: undefined);
+	const resolvedFor = (
+		element: Parameters<typeof getRichTextSemanticNodeKey>[1],
+	) => resolveNode(keyFor(element));
 	const renderText = ({
 		element,
 		style,
@@ -133,7 +162,10 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 		const visible = isNodeVisible(nodeKey);
 		if (!visible) return null;
 		return (
-			<PdfText {...resolvedPdfTextProps(resolved)} style={composeStyles(style, resolved.style, safeTextStyle)}>
+			<PdfText
+				{...resolvedPdfTextProps(resolved)}
+				style={composeStyles(style, resolved.style, safeTextStyle)}
+			>
 				{textChildren}
 			</PdfText>
 		);
@@ -152,7 +184,10 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 		const visible = isNodeVisible(nodeKey);
 		if (!visible) return null;
 		return (
-			<View {...resolvedPdfFlowProps(resolved)} style={composeStyles(style, resolved.style)}>
+			<View
+				{...resolvedPdfFlowProps(resolved)}
+				style={composeStyles(style, resolved.style)}
+			>
 				{viewChildren}
 			</View>
 		);
@@ -213,7 +248,12 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 					const nodeKey = keyFor(element);
 					const resolved = resolvedFor(element);
 					if (!isNodeVisible(nodeKey)) return null;
-					return <View {...resolvedPdfFlowProps(resolved)} style={composeStyles(style, resolved.style)} />;
+					return (
+						<View
+							{...resolvedPdfFlowProps(resolved)}
+							style={composeStyles(style, resolved.style)}
+						/>
+					);
 				},
 				p: (props) => {
 					const resolved = resolvedFor(props.element);
@@ -234,7 +274,9 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 					const itemResolved = resolvedFor(element);
 					if (!isNodeVisible(nodeKey)) return null;
 					const itemNodeKey = nodeKey;
-					const markerNodeKey = itemNodeKey ? semanticNodeKeys.richTextNode(itemNodeKey, "list-marker", 0) : undefined;
+					const markerNodeKey = itemNodeKey
+						? semanticNodeKeys.richTextNode(itemNodeKey, "list-marker", 0)
+						: undefined;
 					const contentNodeKey = itemNodeKey
 						? semanticNodeKeys.richTextNode(itemNodeKey, "list-item-content", 0)
 						: undefined;
@@ -243,16 +285,23 @@ export const RichText = ({ children, semanticField }: RichTextProps) => {
 					const isOrderedList = isRichTextElementInsideOrderedList(element);
 					const marker = isOrderedList ? `${element.indexOfType + 1}.` : "•";
 					const itemStyles = toRichTextStyleArray(style);
-					const contentItemStyles = itemStyles.map(stripRichTextVerticalMargins);
+					const contentItemStyles = itemStyles.map(
+						stripRichTextVerticalMargins,
+					);
 
 					const markerNode = (
 						<PdfText
 							key="marker"
 							{...resolvedPdfTextProps(markerResolved)}
 							minPresenceAhead={
-								markerResolved.minPresenceAhead ?? bodyLineHeight ?? metadata.typography.body.lineHeight
+								markerResolved.minPresenceAhead ??
+								bodyLineHeight ??
+								metadata.typography.body.lineHeight
 							}
-							style={composeStyles(richListItemMarkerStyle, markerResolved.style)}
+							style={composeStyles(
+								richListItemMarkerStyle,
+								markerResolved.style,
+							)}
 						>
 							{marker}
 						</PdfText>

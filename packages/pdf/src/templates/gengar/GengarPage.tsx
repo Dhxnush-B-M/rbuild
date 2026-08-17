@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { Fragment, useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { Fragment, useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -32,7 +31,16 @@ import {
 } from "../shared/primitives";
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
-import { composeStyles, headerNameLineHeight, resolvePlacementColor } from "../shared/styles";
+import {
+	composeStyles,
+	headerNameLineHeight,
+	resolvePlacementColor,
+} from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type GengarStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -61,20 +69,37 @@ type GengarHeaderProps = {
 	colors: TemplateColorRoles;
 };
 
-export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const GengarPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useGengarTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
 	const showSidebar = !page.fullWidth || showHeader;
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const { featuredSummarySection, regularSections: regularMainSections } = getFeaturedSummaryLayout({
-		sections: mainSections,
-		canFeatureSummary: showHeader,
-	});
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const { featuredSummarySection, regularSections: regularMainSections } =
+		getFeaturedSummaryLayout({
+			sections: mainSections,
+			canFeatureSummary: showHeader,
+		});
 	const regularSidebarSections = featuredSummarySection
 		? sidebarSections.filter((section) => section !== "summary")
 		: sidebarSections;
@@ -85,7 +110,11 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+			>
 				{showSidebar && (
 					<View
 						style={composeStyles(styles.sidebarColumn, {
@@ -95,7 +124,10 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 						{showHeader && <Header styles={styles} colors={colors} />}
 
 						{!page.fullWidth && (
-							<SemanticRegionView region="sidebar" style={styles.sidebarContent}>
+							<SemanticRegionView
+								region="sidebar"
+								style={styles.sidebarContent}
+							>
 								{regularSidebarSections.map((section) => (
 									<Fragment key={section}>
 										<Section section={section} placement="sidebar" />
@@ -113,11 +145,20 @@ export const GengarPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 							partKeys={["featured-summary"]}
 							style={styles.specialContainer}
 						>
-							<Section section={featuredSummarySection} placement="main" showHeading={false} />
+							<Section
+								section={featuredSummarySection}
+								placement="main"
+								showHeading={false}
+							/>
 						</SemanticRegionTemplatePartView>
 					)}
 
-					<SemanticRegionView region="main" style={composeStyles(styles.mainContent, { rowGap: metrics.sectionGap })}>
+					<SemanticRegionView
+						region="main"
+						style={composeStyles(styles.mainContent, {
+							rowGap: metrics.sectionGap,
+						})}
+					>
 						{regularMainSections.map((section) => (
 							<Section key={section} section={section} placement="main" />
 						))}
@@ -134,7 +175,9 @@ const Header = ({ styles, colors }: GengarHeaderProps) => {
 
 	return (
 		<SemanticHeaderView style={styles.header}>
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 
 			<View style={styles.headerTitle}>
 				<View style={styles.headerIdentity}>
@@ -200,7 +243,14 @@ const useGengarTemplate = (): GengarTemplate => {
 		};
 		const metrics = getTemplateMetrics(metadata.page);
 
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,
@@ -297,16 +347,38 @@ const useGengarTemplate = (): GengarTemplate => {
 			colors,
 			styles: {
 				...baseStyles,
-				text: (context) => ({ ...baseStyles.text, color: foregroundFor(context) }),
-				heading: (context) => ({ ...baseStyles.heading, color: foregroundFor(context) }),
-				link: (context) => ({ ...baseStyles.link, color: foregroundFor(context) }),
-				richParagraph: (context) => ({ ...baseStyles.richParagraph, color: foregroundFor(context) }),
-				richListItemMarker: (context) => ({ ...baseStyles.richListItemMarker, color: foregroundFor(context) }),
-				richListItemContent: (context) => ({ ...baseStyles.richListItemContent, color: foregroundFor(context) }),
+				text: (context) => ({
+					...baseStyles.text,
+					color: foregroundFor(context),
+				}),
+				heading: (context) => ({
+					...baseStyles.heading,
+					color: foregroundFor(context),
+				}),
+				link: (context) => ({
+					...baseStyles.link,
+					color: foregroundFor(context),
+				}),
+				richParagraph: (context) => ({
+					...baseStyles.richParagraph,
+					color: foregroundFor(context),
+				}),
+				richListItemMarker: (context) => ({
+					...baseStyles.richListItemMarker,
+					color: foregroundFor(context),
+				}),
+				richListItemContent: (context) => ({
+					...baseStyles.richListItemContent,
+					color: foregroundFor(context),
+				}),
 				splitRow: (context) => ({
 					...baseStyles.splitRow,
 					...(context.placement === "sidebar"
-						? { flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start" }
+						? {
+								flexDirection: "column",
+								alignItems: "flex-start",
+								justifyContent: "flex-start",
+							}
 						: {}),
 				}),
 				alignEnd: (context) => ({

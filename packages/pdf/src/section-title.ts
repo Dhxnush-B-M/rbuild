@@ -50,7 +50,11 @@ type RenderData = ResumeData & {
 	resolveSectionTitle?: SectionTitleResolver | undefined;
 };
 
-export const getResumeSectionTitle = (data: RenderData, sectionId: string, legacyFallback?: string) => {
+export const getResumeSectionTitle = (
+	data: RenderData,
+	sectionId: string,
+	legacyFallback?: string,
+) => {
 	const locale = data.metadata.page.locale;
 
 	if (sectionId === "summary") {
@@ -76,24 +80,38 @@ export const getResumeSectionTitle = (data: RenderData, sectionId: string, legac
 		);
 	}
 
-	const customSection = data.customSections.find((section) => section.id === sectionId);
+	const customSection = data.customSections.find(
+		(section) => section.id === sectionId,
+	);
 
 	if (customSection) {
 		const defaultEnglishTitle =
 			customSection.type in data.sections
 				? defaultEnglishSectionTitles[customSection.type as SectionType]
-				: (defaultEnglishCustomSectionTitles[customSection.type] ?? customSection.type);
+				: (defaultEnglishCustomSectionTitles[customSection.type] ??
+					customSection.type);
 
 		return resolveSectionTitle(
 			customSection.title,
-			{ sectionId, locale, sectionKind: "custom", customSectionType: customSection.type, defaultEnglishTitle },
+			{
+				sectionId,
+				locale,
+				sectionKind: "custom",
+				customSectionType: customSection.type,
+				defaultEnglishTitle,
+			},
 			data.resolveSectionTitle,
 			legacyFallback,
 		);
 	}
 
 	return (
-		data.resolveSectionTitle?.({ sectionId, locale, sectionKind: "custom", defaultEnglishTitle: sectionId }) ??
+		data.resolveSectionTitle?.({
+			sectionId,
+			locale,
+			sectionKind: "custom",
+			defaultEnglishTitle: sectionId,
+		}) ??
 		legacyFallback ??
 		sectionId
 	);

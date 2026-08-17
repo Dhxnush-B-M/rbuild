@@ -1,9 +1,13 @@
 import type { Icon } from "@phosphor-icons/react";
-import { EnvelopeSimpleIcon, LinkedinLogoIcon, XLogoIcon } from "@phosphor-icons/react";
-import { m } from "motion/react";
-import { useState } from "react";
+import {
+	EnvelopeSimpleIcon,
+	LinkedinLogoIcon,
+	XLogoIcon,
+} from "@phosphor-icons/react";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { Button } from "@rbuilder/ui/components/button";
+import { m } from "motion/react";
+import { useState } from "react";
 
 type FooterLinkItem = {
 	url: string;
@@ -17,7 +21,11 @@ type SocialLink = {
 };
 
 const socialLinks: SocialLink[] = [
-	{ url: "mailto:karthikdhanush686@gmail.com", label: "Gmail / Email Support", icon: EnvelopeSimpleIcon },
+	{
+		url: "mailto:karthikdhanush686@gmail.com",
+		label: "Gmail / Email Support",
+		icon: EnvelopeSimpleIcon,
+	},
 	{ url: "https://linkedin.com", label: "LinkedIn", icon: LinkedinLogoIcon },
 	{ url: "https://x.com", label: "X (Twitter)", icon: XLogoIcon },
 ];
@@ -39,8 +47,8 @@ export function Footer() {
 					<div className="space-y-2">
 						<h2 className="font-semibold text-lg tracking-tight">rbuilder</h2>
 						<p className="max-w-xs text-muted-foreground text-sm leading-relaxed">
-							A modern resume builder designed to empower your career growth with intuitive tools, high impact designs,
-							and privacy.
+							A modern resume builder designed to empower your career growth
+							with intuitive tools, high impact designs, and privacy.
 						</p>
 					</div>
 
@@ -77,7 +85,10 @@ export function Footer() {
 				<FooterLinkGroup
 					title="Support"
 					links={[
-						{ url: "mailto:karthikdhanush686@gmail.com", label: "24/7 Email Support" },
+						{
+							url: "mailto:karthikdhanush686@gmail.com",
+							label: "24/7 Email Support",
+						},
 						{ url: "#frequently-asked-questions", label: "FAQ" },
 					]}
 				/>
@@ -91,10 +102,18 @@ export function Footer() {
 	);
 }
 
-function FooterLinkGroup({ title, links }: { title: string; links: FooterLinkItem[] }) {
+function FooterLinkGroup({
+	title,
+	links,
+}: {
+	title: string;
+	links: FooterLinkItem[];
+}) {
 	return (
 		<div className="space-y-4">
-			<h2 className="font-medium text-muted-foreground text-sm tracking-tight">{title}</h2>
+			<h2 className="font-medium text-muted-foreground text-sm tracking-tight">
+				{title}
+			</h2>
 			<ul className="space-y-3">
 				{links.map((link) => (
 					<FooterLink key={link.label} url={link.url} label={link.label} />
@@ -119,7 +138,9 @@ function FooterLink({ url, label }: FooterLinkItem) {
 				<m.div
 					aria-hidden="true"
 					initial={{ width: 0, opacity: 0 }}
-					animate={isHovered ? { width: "100%", opacity: 1 } : { width: 0, opacity: 0 }}
+					animate={
+						isHovered ? { width: "100%", opacity: 1 } : { width: 0, opacity: 0 }
+					}
 					transition={{ duration: 0.2, ease: "easeOut" }}
 					className="pointer-events-none absolute inset-s-0 -bottom-0.5 h-px rounded-md bg-primary will-change-[width,opacity]"
 				/>

@@ -1,7 +1,7 @@
 import { isAbsolute, join } from "node:path";
+import { findWorkspaceRoot } from "@rbuilder/utils/monorepo.node";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
-import { findWorkspaceRoot } from "@rbuilder/utils/monorepo.node";
 
 const workspaceRoot = findWorkspaceRoot();
 
@@ -11,7 +11,8 @@ if (workspaceRoot) {
 		process.loadEnvFile(join(workspaceRoot, ".env"));
 	} catch (error) {
 		// A missing .env is expected (e.g. production with injected env); anything else is a real problem.
-		if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+		if (!(error instanceof Error && "code" in error && error.code === "ENOENT"))
+			throw error;
 	}
 }
 
@@ -68,7 +69,11 @@ export const env = createEnv({
 		SMTP_SECURE: z.stringbool().default(false),
 
 		// Storage (Optional)
-		LOCAL_STORAGE_PATH: z.string().min(1).refine(isAbsolute, "LOCAL_STORAGE_PATH must be an absolute path").optional(),
+		LOCAL_STORAGE_PATH: z
+			.string()
+			.min(1)
+			.refine(isAbsolute, "LOCAL_STORAGE_PATH must be an absolute path")
+			.optional(),
 		S3_ACCESS_KEY_ID: z.string().min(1).optional(),
 		S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
 		S3_REGION: z.string().default("us-east-1"),
@@ -78,7 +83,10 @@ export const env = createEnv({
 
 		// AI Agent Workspace (optional until the agent feature is used)
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
-		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
+		ENCRYPTION_SECRET: z
+			.string()
+			.min(32, "ENCRYPTION_SECRET must be at least 32 characters")
+			.optional(),
 
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),

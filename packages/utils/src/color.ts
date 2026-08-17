@@ -4,7 +4,8 @@ type ParsedColor = { r: number; g: number; b: number; a: number };
 
 export function rgbaStringToHex(rgba: string): string {
 	const color = parseColorString(rgba);
-	if (color) return `#${toHexComponent(color.r)}${toHexComponent(color.g)}${toHexComponent(color.b)}`;
+	if (color)
+		return `#${toHexComponent(color.r)}${toHexComponent(color.g)}${toHexComponent(color.b)}`;
 	// Fallback: the local parser is integer-only, so percentage-notation rgb() (e.g. "rgb(100%,0%,0%)")
 	// reaches here — @uiw converts it. Everything @uiw can't parse (named colors, hsl, transparent)
 	// yields black, same as it always has. Custom style-rule colors are arbitrary strings, so keep this.
@@ -19,7 +20,9 @@ export function parseColorString(value: string): ParsedColor | null {
 	const trimmed = value.trim();
 
 	// Parse rgb/rgba colors
-	const rgbMatch = trimmed.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/);
+	const rgbMatch = trimmed.match(
+		/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/,
+	);
 
 	if (rgbMatch) {
 		return {
@@ -32,7 +35,9 @@ export function parseColorString(value: string): ParsedColor | null {
 
 	// Parse hex colors (convert to RGB)
 	if (trimmed.startsWith("#")) {
-		const hexMatch = trimmed.match(/^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/i);
+		const hexMatch = trimmed.match(
+			/^#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})$/i,
+		);
 		if (hexMatch) {
 			return {
 				r: Number.parseInt(hexMatch[1] ?? "0", 16),
@@ -43,7 +48,9 @@ export function parseColorString(value: string): ParsedColor | null {
 		}
 
 		// Support 3-digit hex
-		const hexMatch3 = trimmed.match(/^#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/i);
+		const hexMatch3 = trimmed.match(
+			/^#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])$/i,
+		);
 		if (hexMatch3) {
 			return {
 				r: Number.parseInt((hexMatch3[1] ?? "0") + (hexMatch3[1] ?? "0"), 16),

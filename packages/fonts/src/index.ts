@@ -6,8 +6,22 @@ const unique = <T>(items: T[]): T[] => [...new Set(items)];
 
 import webFontListJSON from "./webfontlist.json";
 
-type FontCategory = "display" | "handwriting" | "monospace" | "serif" | "sans-serif";
-export type FontWeight = "100" | "200" | "300" | "400" | "500" | "600" | "700" | "800" | "900";
+type FontCategory =
+	| "display"
+	| "handwriting"
+	| "monospace"
+	| "serif"
+	| "sans-serif";
+export type FontWeight =
+	| "100"
+	| "200"
+	| "300"
+	| "400"
+	| "500"
+	| "600"
+	| "700"
+	| "800"
+	| "900";
 type FontFileWeight = FontWeight | `${FontWeight}italic`;
 
 type StandardFont = {
@@ -44,9 +58,24 @@ const preferredChineseFontFamilies = [
 ] as const;
 
 const standardPdfFontList = [
-	{ type: "standard", category: "sans-serif", family: "Helvetica", weights: ["400", "700"] },
-	{ type: "standard", category: "monospace", family: "Courier", weights: ["400", "700"] },
-	{ type: "standard", category: "serif", family: "Times-Roman", weights: ["400", "700"] },
+	{
+		type: "standard",
+		category: "sans-serif",
+		family: "Helvetica",
+		weights: ["400", "700"],
+	},
+	{
+		type: "standard",
+		category: "monospace",
+		family: "Courier",
+		weights: ["400", "700"],
+	},
+	{
+		type: "standard",
+		category: "serif",
+		family: "Times-Roman",
+		weights: ["400", "700"],
+	},
 ] satisfies StandardFont[];
 
 const fontDisplayNames: Partial<Record<string, string>> = {
@@ -85,8 +114,12 @@ const scriptFonts: Record<Script, { serif: string; sansSerif: string }> = {
 };
 
 export const webFontList = webFontListJSON as WebFont[];
-export const webFontMap = new Map<string, WebFont>(webFontList.map((font) => [font.family, font]));
-export const standardFontList = standardPdfFontList.filter((font) => !webFontMap.has(font.family));
+export const webFontMap = new Map<string, WebFont>(
+	webFontList.map((font) => [font.family, font]),
+);
+export const standardFontList = standardPdfFontList.filter(
+	(font) => !webFontMap.has(font.family),
+);
 
 const fontMap = new Map<string, FontRecord>();
 const chinesePrioritySet = new Set<string>(preferredChineseFontFamilies);
@@ -129,9 +162,11 @@ export function getFontDisplayName(family: string) {
 
 export function getFontSearchKeywords(family: string) {
 	return unique(
-		[family, fontDisplayNames[family], chinesePrioritySet.has(family) ? "中文" : undefined].filter(
-			(keyword): keyword is string => Boolean(keyword),
-		),
+		[
+			family,
+			fontDisplayNames[family],
+			chinesePrioritySet.has(family) ? "中文" : undefined,
+		].filter((keyword): keyword is string => Boolean(keyword)),
 	);
 }
 
@@ -148,12 +183,20 @@ export function getWebFont(family: string) {
 	return webFontMap.get(family);
 }
 
-export function getWebFontSource(family: string, weight: FontWeight = "400", italic = false) {
+export function getWebFontSource(
+	family: string,
+	weight: FontWeight = "400",
+	italic = false,
+) {
 	const webFont = getWebFont(family);
 	if (!webFont) return null;
 
 	const key = `${weight}${italic ? "italic" : ""}` as FontFileWeight;
-	return webFont.files[key] ?? (italic ? webFont.files[weight] : undefined) ?? webFont.preview;
+	return (
+		webFont.files[key] ??
+		(italic ? webFont.files[weight] : undefined) ??
+		webFont.preview
+	);
 }
 
 export function sortFontWeights<T extends string>(fontWeights: T[]): T[] {
@@ -175,7 +218,10 @@ export function sortFontWeights<T extends string>(fontWeights: T[]): T[] {
  */
 export function getPdfFallbackFontFamilies(
 	family: string,
-	options: { locale?: Locale | string | undefined; scripts?: Iterable<Script> | undefined } = {},
+	options: {
+		locale?: Locale | string | undefined;
+		scripts?: Iterable<Script> | undefined;
+	} = {},
 ): string[] {
 	const category = getFont(family)?.category ?? null;
 

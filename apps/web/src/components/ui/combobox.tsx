@@ -1,7 +1,6 @@
 import type { ComboboxTriggerState } from "@base-ui/react/combobox";
 import type { UseRenderRenderProp } from "@base-ui/react/use-render";
 import { t } from "@lingui/core/macro";
-import React from "react";
 import { Button } from "@rbuilder/ui/components/button";
 import {
 	ComboboxClear,
@@ -20,6 +19,7 @@ import {
 } from "@rbuilder/ui/components/combobox";
 import { Input } from "@rbuilder/ui/components/input";
 import { cn } from "@rbuilder/utils/style";
+import React from "react";
 import { useControlledState } from "@/hooks/use-controlled-state";
 
 type ComboboxOption<TValue extends string | number = string> = {
@@ -38,10 +38,11 @@ type ComboboxOptionGroup = {
 	label: React.ReactNode;
 };
 
-type GroupedComboboxOption<TValue extends string | number = string> = ComboboxOptionGroup & {
-	key: string;
-	items: ComboboxOption<TValue>[];
-};
+type GroupedComboboxOption<TValue extends string | number = string> =
+	ComboboxOptionGroup & {
+		key: string;
+		items: ComboboxOption<TValue>[];
+	};
 
 type SingleComboboxProps<TValue extends string | number = string> = {
 	options: ComboboxOption<TValue>[];
@@ -77,22 +78,32 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 	render?: UseRenderRenderProp<ComboboxTriggerState>;
 };
 
-type ComboboxProps<TValue extends string | number = string> = SingleComboboxProps<TValue> | MultiComboboxProps<TValue>;
+type ComboboxProps<TValue extends string | number = string> =
+	| SingleComboboxProps<TValue>
+	| MultiComboboxProps<TValue>;
 
-const listContent = <TValue extends string | number>(item: ComboboxOption<TValue>) => (
+const listContent = <TValue extends string | number>(
+	item: ComboboxOption<TValue>,
+) => (
 	<ComboboxItem key={String(item.value)} value={item} disabled={item.disabled}>
 		{item.label}
 	</ComboboxItem>
 );
 
-const groupedListContent = <TValue extends string | number>(group: GroupedComboboxOption<TValue>) => (
+const groupedListContent = <TValue extends string | number>(
+	group: GroupedComboboxOption<TValue>,
+) => (
 	<ComboboxGroup key={group.key} items={group.items}>
-		{group.label !== null && group.label !== undefined ? <ComboboxLabel>{group.label}</ComboboxLabel> : null}
+		{group.label !== null && group.label !== undefined ? (
+			<ComboboxLabel>{group.label}</ComboboxLabel>
+		) : null}
 		<ComboboxCollection>{listContent}</ComboboxCollection>
 	</ComboboxGroup>
 );
 
-function Combobox<TValue extends string | number = string>(props: ComboboxProps<TValue>) {
+function Combobox<TValue extends string | number = string>(
+	props: ComboboxProps<TValue>,
+) {
 	const {
 		options,
 		multiple = false,
@@ -109,7 +120,10 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const { contains } = useFilter();
 
-	const optionMap = React.useMemo(() => new Map(options.map((opt) => [String(opt.value), opt])), [options]);
+	const optionMap = React.useMemo(
+		() => new Map(options.map((opt) => [String(opt.value), opt])),
+		[options],
+	);
 
 	const optionGroups = React.useMemo(() => {
 		const groups: GroupedComboboxOption<TValue>[] = [];
@@ -120,7 +134,12 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 		for (const option of options) {
 			if (option.group === undefined) {
 				if (!ungroupedGroup) {
-					ungroupedGroup = { key: "ungrouped", value: "", label: null, items: [] };
+					ungroupedGroup = {
+						key: "ungrouped",
+						value: "",
+						label: null,
+						items: [],
+					};
 					groups.push(ungroupedGroup);
 				}
 
@@ -130,7 +149,10 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 			hasGroupedOptions = true;
 
-			const group = typeof option.group === "string" ? { value: option.group, label: option.group } : option.group;
+			const group =
+				typeof option.group === "string"
+					? { value: option.group, label: option.group }
+					: option.group;
 			let optionGroup = groupMap.get(group.value);
 
 			if (!optionGroup) {
@@ -163,12 +185,18 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 	type OptionValue = ComboboxOption<TValue>[] | ComboboxOption<TValue> | null;
 
 	const resolvedValue = React.useMemo(
-		() => (props.value !== undefined ? (findOption(props.value) as OptionValue) : undefined),
+		() =>
+			props.value !== undefined
+				? (findOption(props.value) as OptionValue)
+				: undefined,
 		[props.value, findOption],
 	);
 
 	const resolvedDefaultValue = React.useMemo(
-		() => (props.defaultValue !== undefined ? (findOption(props.defaultValue) as OptionValue) : undefined),
+		() =>
+			props.defaultValue !== undefined
+				? (findOption(props.defaultValue) as OptionValue)
+				: undefined,
 		[props.defaultValue, findOption],
 	);
 
@@ -176,10 +204,17 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 		(option: ComboboxOption<TValue>[] | ComboboxOption<TValue> | null) => {
 			if (multiple) {
 				const arrOpt = Array.isArray(option) ? option : option ? [option] : [];
-				(props as MultiComboboxProps<TValue>).onValueChange?.(arrOpt.length > 0 ? arrOpt.map((opt) => opt.value) : []);
+				(props as MultiComboboxProps<TValue>).onValueChange?.(
+					arrOpt.length > 0 ? arrOpt.map((opt) => opt.value) : [],
+				);
 			} else {
-				const value = option && !Array.isArray(option) ? (option as ComboboxOption<TValue>).value : null;
-				const cb = props.onValueChange as ((value: TValue | null) => void) | undefined;
+				const value =
+					option && !Array.isArray(option)
+						? (option as ComboboxOption<TValue>).value
+						: null;
+				const cb = props.onValueChange as
+					| ((value: TValue | null) => void)
+					| undefined;
 				cb?.(value ?? null);
 			}
 		},
@@ -194,18 +229,23 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const itemToStringLabel = React.useCallback(
 		(item: ComboboxOption<TValue>) =>
-			item.textValue ?? (typeof item.label === "string" ? item.label : String(item.value)),
+			item.textValue ??
+			(typeof item.label === "string" ? item.label : String(item.value)),
 		[],
 	);
 
 	const isItemEqualToValue = React.useCallback(
-		(a: ComboboxOption<TValue>, b: ComboboxOption<TValue>) => String(a.value) === String(b.value),
+		(a: ComboboxOption<TValue>, b: ComboboxOption<TValue>) =>
+			String(a.value) === String(b.value),
 		[],
 	);
 
 	const filter = React.useCallback(
 		(item: ComboboxOption<TValue>, query: string) => {
-			const labelStr = typeof item.label === "string" ? item.label : (item.textValue ?? String(item.value));
+			const labelStr =
+				typeof item.label === "string"
+					? item.label
+					: (item.textValue ?? String(item.value));
 			if (contains(labelStr, query)) return true;
 			return item.keywords?.some((kw) => contains(kw, query)) ?? false;
 		},
@@ -224,12 +264,20 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				render ?? (
 					<Button
 						variant="outline"
-						className={cn("justify-start text-left font-normal hover:bg-muted/20", className)}
+						className={cn(
+							"justify-start text-left font-normal hover:bg-muted/20",
+							className,
+						)}
 					/>
 				)
 			}
 		>
-			<span className={cn("min-w-0 flex-1 truncate text-left", showClear && hasSelectedValue && "pe-7")}>
+			<span
+				className={cn(
+					"min-w-0 flex-1 truncate text-left",
+					showClear && hasSelectedValue && "pe-7",
+				)}
+			>
 				<ComboboxValue placeholder={placeholder ?? t`Select...`} />
 			</span>
 		</ComboboxTrigger>
@@ -242,7 +290,11 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 			filter={filter}
 			disabled={disabled}
 			value={selectedValue as ComboboxOption<TValue>[] & ComboboxOption<TValue>}
-			onValueChange={setSelectedValue as (value: ComboboxOption<TValue>[] | ComboboxOption<TValue> | null) => void}
+			onValueChange={
+				setSelectedValue as (
+					value: ComboboxOption<TValue>[] | ComboboxOption<TValue> | null,
+				) => void
+			}
 			itemToStringLabel={itemToStringLabel}
 			isItemEqualToValue={isItemEqualToValue}
 			{...(multiple ? { multiple: true } : {})}
@@ -266,13 +318,25 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 				<ComboboxInput
 					showTrigger={false}
 					placeholder={searchPlaceholder ?? placeholder ?? t`Search...`}
-					render={<Input disabled={disabled} className="border-none focus-visible:border-none focus-visible:ring-0" />}
+					render={
+						<Input
+							disabled={disabled}
+							className="border-none focus-visible:border-none focus-visible:ring-0"
+						/>
+					}
 				/>
 				<ComboboxEmpty>{emptyMessage ?? t`No results found.`}</ComboboxEmpty>
-				<ComboboxList>{optionGroups ? groupedListContent : listContent}</ComboboxList>
+				<ComboboxList>
+					{optionGroups ? groupedListContent : listContent}
+				</ComboboxList>
 			</ComboboxContent>
 		</ComboboxRoot>
 	);
 }
 
-export { Combobox, type ComboboxOption, type MultiComboboxProps, type SingleComboboxProps };
+export {
+	Combobox,
+	type ComboboxOption,
+	type MultiComboboxProps,
+	type SingleComboboxProps,
+};

@@ -1,7 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "./accordion";
 
 describe("Accordion", () => {
 	it("renders with data-slot='accordion'", () => {
@@ -76,7 +81,10 @@ describe("AccordionItem", () => {
 				</AccordionItem>
 			</Accordion>,
 		);
-		expect(screen.getByTestId("item")).toHaveAttribute("data-slot", "accordion-item");
+		expect(screen.getByTestId("item")).toHaveAttribute(
+			"data-slot",
+			"accordion-item",
+		);
 	});
 });
 
@@ -90,7 +98,10 @@ describe("AccordionTrigger", () => {
 				</AccordionItem>
 			</Accordion>,
 		);
-		expect(screen.getByTestId("trigger")).toHaveAttribute("data-slot", "accordion-trigger");
+		expect(screen.getByTestId("trigger")).toHaveAttribute(
+			"data-slot",
+			"accordion-trigger",
+		);
 	});
 
 	it("renders down/up caret icons", () => {
@@ -102,6 +113,8 @@ describe("AccordionTrigger", () => {
 				</AccordionItem>
 			</Accordion>,
 		);
-		expect(container.querySelectorAll("[data-slot=accordion-trigger-icon]")).toHaveLength(2);
+		expect(
+			container.querySelectorAll("[data-slot=accordion-trigger-icon]"),
+		).toHaveLength(2);
 	});
 });

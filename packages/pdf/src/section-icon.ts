@@ -5,7 +5,10 @@ type RenderData = ResumeData & {
 	resolveSectionTitle?: unknown;
 };
 
-export const getResumeSectionIcon = (data: RenderData, sectionId: string): string => {
+export const getResumeSectionIcon = (
+	data: RenderData,
+	sectionId: string,
+): string => {
 	if (sectionId === "summary") {
 		const icon = data.summary.icon;
 		if (icon === "none") return "";
@@ -19,7 +22,9 @@ export const getResumeSectionIcon = (data: RenderData, sectionId: string): strin
 		return icon || getDefaultSectionIconName(sectionType);
 	}
 
-	const customSection = data.customSections.find((section) => section.id === sectionId);
+	const customSection = data.customSections.find(
+		(section) => section.id === sectionId,
+	);
 	if (!customSection) return "";
 
 	const icon = customSection.icon;

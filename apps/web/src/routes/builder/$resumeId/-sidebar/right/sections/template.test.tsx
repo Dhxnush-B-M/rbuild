@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
 import { readFileSync } from "node:fs";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { useDialogStore } from "@/dialogs/store";
 
 type SectionBaseProps = {
@@ -27,7 +27,11 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-	useDialogStore.setState({ open: false, activeDialog: null, onBeforeClose: null });
+	useDialogStore.setState({
+		open: false,
+		activeDialog: null,
+		onBeforeClose: null,
+	});
 });
 
 const renderTemplate = () =>
@@ -52,7 +56,9 @@ describe("TemplateSectionBuilder", () => {
 	it("opens the template gallery dialog when the preview is clicked", () => {
 		renderTemplate();
 
-		const preview = screen.getAllByAltText("Ditto")[0].closest("button") as HTMLButtonElement;
+		const preview = screen
+			.getAllByAltText("Ditto")[0]
+			.closest("button") as HTMLButtonElement;
 		fireEvent.click(preview);
 
 		const state = useDialogStore.getState();
@@ -67,7 +73,10 @@ describe("TemplateSectionBuilder", () => {
 	});
 
 	it("keeps the template preview inline instead of mounting a hover card", () => {
-		const source = readFileSync("src/routes/builder/$resumeId/-sidebar/right/sections/template.tsx", "utf8");
+		const source = readFileSync(
+			"src/routes/builder/$resumeId/-sidebar/right/sections/template.tsx",
+			"utf8",
+		);
 
 		expect(source).not.toContain("@rbuilder/ui/components/hover-card");
 		expect(source).not.toContain("HoverCardContent");

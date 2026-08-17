@@ -15,7 +15,11 @@ export const pikachuSemanticManifest = {
 			key: "header-divider",
 			owner: { kind: "header", key: "header" },
 			binding: { type: "primitive", primitive: "View", source: "existing" },
-			route: { parent: "owner", at: "start", take: [{ kind: "name" }, { kind: "headline" }] },
+			route: {
+				parent: "owner",
+				at: "start",
+				take: [{ kind: "name" }, { kind: "headline" }],
+			},
 		},
 	],
 } as const satisfies TemplateSemanticManifest;

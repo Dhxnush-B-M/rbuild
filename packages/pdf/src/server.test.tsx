@@ -1,8 +1,8 @@
-import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { SectionTitleResolver } from "./section-title";
 import { Buffer } from "node:buffer";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { ResumeData } from "@rbuilder/schema/resume/data";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { SectionTitleResolver } from "./section-title";
 
 const rendererMock = vi.hoisted(() => ({
 	renderToBuffer: vi.fn(async () => Buffer.from("%PDF")),
@@ -20,7 +20,13 @@ const createRendererUnsafeResumeData = (): ResumeData => {
 			hidden: false,
 			keepTogether: false,
 			startOnNewPage: false,
-			items: [{ id: "summary-shaped-item", hidden: false, content: "<p>Missing company</p>" }],
+			items: [
+				{
+					id: "summary-shaped-item",
+					hidden: false,
+					content: "<p>Missing company</p>",
+				},
+			],
 		} as never,
 	];
 	return data;
@@ -70,7 +76,8 @@ describe("createResumePdfFile", () => {
 	});
 
 	it("renders ResumeDocument with data, filename, template, and section title resolver", async () => {
-		const resolveSectionTitle: SectionTitleResolver = (input) => input.defaultEnglishTitle ?? input.sectionId;
+		const resolveSectionTitle: SectionTitleResolver = (input) =>
+			input.defaultEnglishTitle ?? input.sectionId;
 		const { createResumePdfFile } = await import("./server");
 		const data = createLegacyRendererSafeResumeData();
 
@@ -110,11 +117,21 @@ describe("createResumePdfFile", () => {
 
 	it("returns semantic diagnostics without rendering an invalid applied source", async () => {
 		const data = structuredClone(sampleResumeData);
-		const invalid = { languageVersion: 1, text: "@version 1; section { color: ; }" };
-		data.metadata.stylesheet = { mode: "semantic", source: invalid, applied: invalid };
+		const invalid = {
+			languageVersion: 1,
+			text: "@version 1; section { color: ; }",
+		};
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: invalid,
+			applied: invalid,
+		};
 		const { createResumePdfFileResult } = await import("./server");
 
-		const result = await createResumePdfFileResult({ data, filename: "resume.pdf" });
+		const result = await createResumePdfFileResult({
+			data,
+			filename: "resume.pdf",
+		});
 
 		expect(result).toMatchObject({
 			ok: false,
@@ -125,11 +142,20 @@ describe("createResumePdfFile", () => {
 
 	it("rejects unchecked rendering instead of producing an unstyled PDF for semantic errors", async () => {
 		const data = structuredClone(sampleResumeData);
-		const invalid = { languageVersion: 1, text: "@version 1; section { color: ; }" };
-		data.metadata.stylesheet = { mode: "semantic", source: invalid, applied: invalid };
+		const invalid = {
+			languageVersion: 1,
+			text: "@version 1; section { color: ; }",
+		};
+		data.metadata.stylesheet = {
+			mode: "semantic",
+			source: invalid,
+			applied: invalid,
+		};
 		const { createResumePdfFile } = await import("./server");
 
-		await expect(createResumePdfFile({ data, filename: "resume.pdf" })).rejects.toMatchObject({
+		await expect(
+			createResumePdfFile({ data, filename: "resume.pdf" }),
+		).rejects.toMatchObject({
 			cause: [expect.objectContaining({ severity: "error" })],
 		});
 		expect(rendererMock.renderToBuffer).not.toHaveBeenCalled();
@@ -143,7 +169,13 @@ describe("createResumePdfFile", () => {
 			filename: "resume.pdf",
 		}).catch((caught: unknown) => caught);
 
-		expect(error).toHaveProperty("issues.0.path", ["customSections", 0, "items", 0, "company"]);
+		expect(error).toHaveProperty("issues.0.path", [
+			"customSections",
+			0,
+			"items",
+			0,
+			"company",
+		]);
 		expect(rendererMock.renderToBuffer).not.toHaveBeenCalled();
 	});
 });

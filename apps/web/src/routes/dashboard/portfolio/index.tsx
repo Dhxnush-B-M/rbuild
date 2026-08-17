@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { GlobeIcon, LockSimpleIcon } from "@phosphor-icons/react";
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@rbuilder/ui/components/button";
 import { Separator } from "@rbuilder/ui/components/separator";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardHeader } from "../-components/header";
 
 export const Route = createFileRoute("/dashboard/portfolio/")({
@@ -26,11 +26,15 @@ function RouteComponent() {
 				</h3>
 
 				<p className="mt-2 max-w-md text-muted-foreground text-sm leading-relaxed">
-					This feature is currently locked. Build and download your resumes directly using the resume editor.
+					This feature is currently locked. Build and download your resumes
+					directly using the resume editor.
 				</p>
 
 				<div className="mt-6">
-					<Button nativeButton={false} render={<Link to="/dashboard/resumes" />}>
+					<Button
+						nativeButton={false}
+						render={<Link to="/dashboard/resumes" />}
+					>
 						<span>Back to Resumes</span>
 					</Button>
 				</div>

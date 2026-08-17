@@ -1,11 +1,11 @@
 // @vitest-environment happy-dom
 
+import { i18n } from "@lingui/core";
 import type { ResumeData } from "@rbuilder/schema/resume/data";
-import type { Resume } from "./draft";
+import { defaultResumeData } from "@rbuilder/schema/resume/default";
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { i18n } from "@lingui/core";
-import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import type { Resume } from "./draft";
 import {
 	isEditableElementFocused,
 	useBuilderResumeUpdateSubscription,
@@ -203,8 +203,14 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
-		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({ id: initial.id, data: first.data });
-		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({ id: initial.id, data: latest.data });
+		expect(orpcMocks.updateResume.mock.calls[0]?.[0]).toEqual({
+			id: initial.id,
+			data: first.data,
+		});
+		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
+			id: initial.id,
+			data: latest.data,
+		});
 		expect(orpcMocks.patchResume).not.toHaveBeenCalled();
 	});
 
@@ -241,7 +247,10 @@ describe("builder resume autosave", () => {
 		await flushMicrotasks();
 
 		expect(orpcMocks.updateResume).toHaveBeenCalledTimes(2);
-		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({ id: initial.id, data: latest.data });
+		expect(orpcMocks.updateResume.mock.calls[1]?.[0]).toEqual({
+			id: initial.id,
+			data: latest.data,
+		});
 	});
 
 	it("keeps the latest draft data and shows a persistent toast when saving fails", async () => {
@@ -256,7 +265,9 @@ describe("builder resume autosave", () => {
 		vi.advanceTimersByTime(500);
 		await flushMicrotasks();
 
-		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Unsaved Name");
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe(
+			"Unsaved Name",
+		);
 		expect(toastMocks.error).toHaveBeenCalledWith(
 			"Your latest changes could not be saved.",
 			expect.objectContaining({ duration: Number.POSITIVE_INFINITY }),
@@ -285,8 +296,9 @@ describe("builder resume undo/redo", () => {
 		vi.useFakeTimers();
 		orpcMocks.updateResume.mockReset();
 		// Echo the submitted data back so the autosave completion doesn't count as an external rebase.
-		orpcMocks.updateResume.mockImplementation((input: { id: string; data: ResumeData }) =>
-			Promise.resolve({ ...makeResume(input.id), data: input.data }),
+		orpcMocks.updateResume.mockImplementation(
+			(input: { id: string; data: ResumeData }) =>
+				Promise.resolve({ ...makeResume(input.id), data: input.data }),
 		);
 		routerParamsMock.value = {};
 		i18n.loadAndActivate({ locale: "en-US", messages: {} });
@@ -316,7 +328,9 @@ describe("builder resume undo/redo", () => {
 		expect(store().resume?.data.basics.name).toBe("Second");
 
 		store().undo();
-		expect(store().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
+		expect(store().resume?.data.basics.name).toBe(
+			defaultResumeData.basics.name,
+		);
 		expect(store().canUndo).toBe(false);
 		expect(store().canRedo).toBe(true);
 
@@ -347,7 +361,9 @@ describe("builder resume undo/redo", () => {
 		expect(store().resume?.data.basics.name).toBe("A");
 
 		store().undo();
-		expect(store().resume?.data.basics.name).toBe(defaultResumeData.basics.name);
+		expect(store().resume?.data.basics.name).toBe(
+			defaultResumeData.basics.name,
+		);
 	});
 
 	it("clears the redo branch when a new edit follows an undo", () => {
@@ -395,7 +411,10 @@ describe("builder resume undo/redo", () => {
 		const current = store().resume;
 		if (!current) throw new Error("expected a current resume");
 		// Autosave echo: the server returns data identical to what's already in the store.
-		store().replaceResumeFromServer({ ...current, data: cloneResumeData(current.data) });
+		store().replaceResumeFromServer({
+			...current,
+			data: cloneResumeData(current.data),
+		});
 
 		expect(store().undoStack.length).toBe(1);
 		expect(store().canUndo).toBe(true);
@@ -450,8 +469,12 @@ describe("resume update stream subscription", () => {
 			}),
 		);
 
-		expect(orpcMocks.streamSubscribe).toHaveBeenCalledWith({ id: "resume-stream" });
-		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as { onEvent: () => Promise<void> } | undefined;
+		expect(orpcMocks.streamSubscribe).toHaveBeenCalledWith({
+			id: "resume-stream",
+		});
+		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as
+			| { onEvent: () => Promise<void> }
+			| undefined;
 		expect(handlers).toBeDefined();
 
 		await act(async () => {
@@ -474,14 +497,21 @@ describe("resume update stream subscription", () => {
 		useResumeStore.getState().initialize(initial);
 
 		renderHook(() => useBuilderResumeUpdateSubscription());
-		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as { onEvent: () => Promise<void> } | undefined;
+		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as
+			| { onEvent: () => Promise<void> }
+			| undefined;
 
 		await act(async () => {
 			await handlers?.onEvent();
 		});
 
-		expect(queryClientMock.setQueryData).toHaveBeenCalledWith(["resume", "getById", initial.id], remote);
-		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Remote Name");
+		expect(queryClientMock.setQueryData).toHaveBeenCalledWith(
+			["resume", "getById", initial.id],
+			remote,
+		);
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe(
+			"Remote Name",
+		);
 	});
 
 	it("does not overwrite pending local builder edits when a remote update arrives", async () => {
@@ -497,19 +527,28 @@ describe("resume update stream subscription", () => {
 		});
 
 		renderHook(() => useBuilderResumeUpdateSubscription());
-		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as { onEvent: () => Promise<void> } | undefined;
+		const handlers = consumeEventIteratorMock.mock.calls[0]?.[1] as
+			| { onEvent: () => Promise<void> }
+			| undefined;
 
 		await act(async () => {
 			await handlers?.onEvent();
 		});
 
-		expect(queryClientMock.setQueryData).toHaveBeenCalledWith(["resume", "getById", initial.id], remote);
-		expect(useResumeStore.getState().resume?.data.basics.name).toBe("Local Name");
+		expect(queryClientMock.setQueryData).toHaveBeenCalledWith(
+			["resume", "getById", initial.id],
+			remote,
+		);
+		expect(useResumeStore.getState().resume?.data.basics.name).toBe(
+			"Local Name",
+		);
 	});
 
 	it("refetches canonical stylesheet state for stylesheet SSE events", async () => {
 		const initial = makeResume("resume-stylesheet");
-		consumeEventIteratorMock.mockReturnValue(vi.fn().mockResolvedValue(undefined));
+		consumeEventIteratorMock.mockReturnValue(
+			vi.fn().mockResolvedValue(undefined),
+		);
 		routerParamsMock.value = { resumeId: initial.id };
 		useResumeStore.getState().initialize(initial);
 
@@ -526,7 +565,9 @@ describe("resume update stream subscription", () => {
 	it("refreshes the render-data version after content SSE events", async () => {
 		const initial = makeResume("resume-content");
 		const remote = withBasicsName(initial, "Remote");
-		consumeEventIteratorMock.mockReturnValue(vi.fn().mockResolvedValue(undefined));
+		consumeEventIteratorMock.mockReturnValue(
+			vi.fn().mockResolvedValue(undefined),
+		);
 		orpcMocks.getResumeById.mockResolvedValue(remote);
 		routerParamsMock.value = { resumeId: initial.id };
 		useResumeStore.getState().initialize(initial);
@@ -537,6 +578,9 @@ describe("resume update stream subscription", () => {
 		};
 		await act(async () => handlers.onEvent({ mutation: "update" }));
 
-		expect(stylesheetMocks.refresh).toHaveBeenCalledWith(initial.id, remote.data);
+		expect(stylesheetMocks.refresh).toHaveBeenCalledWith(
+			initial.id,
+			remote.data,
+		);
 	});
 });

@@ -1,7 +1,7 @@
-import type { PropsWithChildren } from "react";
-import type { Theme } from "@/libs/theme";
 import { useRouter } from "@tanstack/react-router";
+import type { PropsWithChildren } from "react";
 import { createContext, use, useEffect } from "react";
+import type { Theme } from "@/libs/theme";
 import { setThemeCookie } from "@/libs/theme";
 
 type ThemeContextValue = {
@@ -31,7 +31,8 @@ export function ThemeProvider({ children, theme }: Props) {
 		if (!playSound) return;
 
 		try {
-			const soundClip = value === "dark" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
+			const soundClip =
+				value === "dark" ? "/sounds/switch-off.mp3" : "/sounds/switch-on.mp3";
 			const audio = new Audio(soundClip);
 			await audio.play().catch(() => playSynthClick(value === "dark"));
 		} catch {
@@ -43,7 +44,11 @@ export function ThemeProvider({ children, theme }: Props) {
 		void setTheme(theme === "dark" ? "light" : "dark", options);
 	}
 
-	return <ThemeContext value={{ theme, setTheme, toggleTheme }}>{children}</ThemeContext>;
+	return (
+		<ThemeContext value={{ theme, setTheme, toggleTheme }}>
+			{children}
+		</ThemeContext>
+	);
 }
 
 export function useTheme() {
@@ -57,14 +62,19 @@ export function useTheme() {
 function playSynthClick(isDark: boolean) {
 	try {
 		const AudioCtx =
-			window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+			window.AudioContext ||
+			(window as unknown as { webkitAudioContext: typeof AudioContext })
+				.webkitAudioContext;
 		if (!AudioCtx) return;
 		const ctx = new AudioCtx();
 		const osc = ctx.createOscillator();
 		const gain = ctx.createGain();
 		osc.type = "sine";
 		osc.frequency.setValueAtTime(isDark ? 320 : 640, ctx.currentTime);
-		osc.frequency.exponentialRampToValueAtTime(isDark ? 120 : 880, ctx.currentTime + 0.08);
+		osc.frequency.exponentialRampToValueAtTime(
+			isDark ? 120 : 880,
+			ctx.currentTime + 0.08,
+		);
 		gain.gain.setValueAtTime(0.25, ctx.currentTime);
 		gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
 		osc.connect(gain);

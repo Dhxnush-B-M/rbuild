@@ -1,12 +1,16 @@
-import type { ColorResult } from "@uiw/color-convert";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@rbuilder/ui/components/popover";
+import { Separator } from "@rbuilder/ui/components/separator";
+import { cn } from "@rbuilder/utils/style";
+import type { ColorResult } from "@uiw/color-convert";
 import { hsvaToRgbaString, rgbaStringToHsva } from "@uiw/color-convert";
 import ReactColorColorful from "@uiw/react-color-colorful";
 import { useMemo } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@rbuilder/ui/components/popover";
-import { Separator } from "@rbuilder/ui/components/separator";
-import { cn } from "@rbuilder/utils/style";
 import { useControlledState } from "@/hooks/use-controlled-state";
 
 const presetColors = [
@@ -36,7 +40,13 @@ type ColorPickerProps = {
 	children?: React.ReactNode;
 };
 
-export function ColorPicker({ value, defaultValue, onChange, trigger, children }: ColorPickerProps) {
+export function ColorPicker({
+	value,
+	defaultValue,
+	onChange,
+	trigger,
+	children,
+}: ColorPickerProps) {
 	const [currentValue, setCurrentValue] = useControlledState<string>({
 		value,
 		defaultValue,

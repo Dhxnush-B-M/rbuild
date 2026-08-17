@@ -1,8 +1,8 @@
 import { t } from "@lingui/core/macro";
 import { ReadCvLogoIcon } from "@phosphor-icons/react";
+import { Separator } from "@rbuilder/ui/components/separator";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Separator } from "@rbuilder/ui/components/separator";
 import { getResumesFromSupabase } from "@/libs/supabase/db";
 import { DashboardHeader } from "../-components/header";
 import { GridView } from "./-components/grid-view";
@@ -24,7 +24,9 @@ function RouteComponent() {
 			<Separator />
 
 			<GridView
-				resumes={resumes as unknown as Parameters<typeof GridView>[0]["resumes"]}
+				resumes={
+					resumes as unknown as Parameters<typeof GridView>[0]["resumes"]
+				}
 				hasResumes={resumes.length > 0}
 			/>
 		</div>

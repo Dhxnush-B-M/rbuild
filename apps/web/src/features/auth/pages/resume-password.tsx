@@ -1,13 +1,18 @@
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { EyeIcon, EyeSlashIcon, LockOpenIcon } from "@phosphor-icons/react";
+import { Button } from "@rbuilder/ui/components/button";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
+import { Input } from "@rbuilder/ui/components/input";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
-import { Button } from "@rbuilder/ui/components/button";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
-import { Input } from "@rbuilder/ui/components/input";
 import { useAppForm } from "@/libs/tanstack-form";
 
 const formSchema = z.object({
@@ -38,11 +43,16 @@ export function ResumePasswordPage({ redirectPath }: Props) {
 		<>
 			<div className="space-y-4 text-center">
 				<h1 className="font-semibold text-2xl tracking-tight">
-					<Trans>The resume you are trying to access is password protected</Trans>
+					<Trans>
+						The resume you are trying to access is password protected
+					</Trans>
 				</h1>
 
 				<div className="text-muted-foreground leading-relaxed">
-					<Trans>Please enter the password shared with you by the owner of the resume to continue.</Trans>
+					<Trans>
+						Please enter the password shared with you by the owner of the resume
+						to continue.
+					</Trans>
 				</div>
 			</div>
 
@@ -56,7 +66,11 @@ export function ResumePasswordPage({ redirectPath }: Props) {
 			>
 				<form.Field name="password">
 					{(field) => (
-						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+						<FormItem
+							hasError={
+								field.state.meta.isTouched && field.state.meta.errors.length > 0
+							}
+						>
 							<FormLabel>
 								<Trans>Password</Trans>
 							</FormLabel>
@@ -68,12 +82,18 @@ export function ResumePasswordPage({ redirectPath }: Props) {
 											type={showPassword ? "text" : "password"}
 											value={field.state.value}
 											onBlur={field.handleBlur}
-											onChange={(event) => field.handleChange(event.target.value)}
+											onChange={(event) =>
+												field.handleChange(event.target.value)
+											}
 										/>
 									}
 								/>
 
-								<Button size="icon" variant="ghost" onClick={toggleShowPassword}>
+								<Button
+									size="icon"
+									variant="ghost"
+									onClick={toggleShowPassword}
+								>
 									{showPassword ? <EyeSlashIcon /> : <EyeIcon />}
 								</Button>
 							</div>

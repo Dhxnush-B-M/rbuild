@@ -1,7 +1,11 @@
-import type z from "zod";
 import { Trans } from "@lingui/react/macro";
 import { metadataSchema } from "@rbuilder/schema/resume/data";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@rbuilder/ui/components/form";
+import {
+	FormControl,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@rbuilder/ui/components/form";
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -9,7 +13,11 @@ import {
 	InputGroupText,
 } from "@rbuilder/ui/components/input-group";
 import { Slider } from "@rbuilder/ui/components/slider";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import type z from "zod";
+import {
+	useCurrentResume,
+	useUpdateResumeData,
+} from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SectionBase } from "../../shared/section-base";
@@ -63,7 +71,11 @@ function LayoutSectionForm() {
 		>
 			<form.Field name="sidebarWidth">
 				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormItem
+						hasError={
+							field.state.meta.isTouched && field.state.meta.errors.length > 0
+						}
+					>
 						<FormLabel>
 							<Trans>Sidebar Width</Trans>
 						</FormLabel>
@@ -76,7 +88,9 @@ function LayoutSectionForm() {
 										step={0.01}
 										value={[field.state.value]}
 										onValueChange={(value) => {
-											field.handleChange(Array.isArray(value) ? value[0] : value);
+											field.handleChange(
+												Array.isArray(value) ? value[0] : value,
+											);
 											handleAutoSave();
 										}}
 									/>
@@ -96,7 +110,8 @@ function LayoutSectionForm() {
 											onBlur={field.handleBlur}
 											onChange={(e) => {
 												const value = e.target.value;
-												if (value === "") field.handleChange("" as unknown as number);
+												if (value === "")
+													field.handleChange("" as unknown as number);
 												else field.handleChange(Number(value));
 												handleAutoSave();
 											}}

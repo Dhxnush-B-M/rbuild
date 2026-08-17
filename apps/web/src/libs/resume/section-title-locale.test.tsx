@@ -24,17 +24,25 @@ afterEach(() => {
 
 describe("createSectionTitleResolverForLocale", () => {
 	it("returns a resolver function that produces section titles", async () => {
-		const { createSectionTitleResolverForLocale } = await import("./section-title-locale");
+		const { createSectionTitleResolverForLocale } = await import(
+			"./section-title-locale"
+		);
 
 		const resolver = await createSectionTitleResolverForLocale("en-US");
-		const title = resolver({ sectionId: "experience", locale: "en-US", sectionKind: "builtin" });
+		const title = resolver({
+			sectionId: "experience",
+			locale: "en-US",
+			sectionKind: "builtin",
+		});
 
 		expect(typeof title).toBe("string");
 		expect(title.length).toBeGreaterThan(0);
 	});
 
 	it("caches resolvers per requested locale", async () => {
-		const { createSectionTitleResolverForLocale } = await import("./section-title-locale");
+		const { createSectionTitleResolverForLocale } = await import(
+			"./section-title-locale"
+		);
 
 		const [a, b] = await Promise.all([
 			createSectionTitleResolverForLocale("en-US"),
@@ -45,10 +53,16 @@ describe("createSectionTitleResolverForLocale", () => {
 	});
 
 	it("falls back to en-US for an unknown locale", async () => {
-		const { createSectionTitleResolverForLocale } = await import("./section-title-locale");
+		const { createSectionTitleResolverForLocale } = await import(
+			"./section-title-locale"
+		);
 
 		const resolver = await createSectionTitleResolverForLocale("xx-YY");
-		const title = resolver({ sectionId: "skills", locale: "en-US", sectionKind: "builtin" });
+		const title = resolver({
+			sectionId: "skills",
+			locale: "en-US",
+			sectionKind: "builtin",
+		});
 
 		expect(typeof title).toBe("string");
 		expect(title.length).toBeGreaterThan(0);
@@ -67,7 +81,8 @@ describe("useSectionTitleResolver", () => {
 		const { useSectionTitleResolver } = await import("./section-title-locale");
 
 		const { result, rerender } = renderHook(
-			({ locale }: { locale: string | undefined }) => useSectionTitleResolver(locale),
+			({ locale }: { locale: string | undefined }) =>
+				useSectionTitleResolver(locale),
 			{
 				initialProps: { locale: "en-US" as string | undefined },
 			},

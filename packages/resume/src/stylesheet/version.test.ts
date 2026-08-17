@@ -13,56 +13,94 @@ describe("compileStylesheet", () => {
 	});
 
 	it("warns when version-one source omits the directive", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "section { color: red; }" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "section { color: red; }",
+		});
 
 		expect(result.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "MISSING_VERSION_DIRECTIVE", severity: "warning" }),
+			expect.objectContaining({
+				code: "MISSING_VERSION_DIRECTIVE",
+				severity: "warning",
+			}),
 		);
 	});
 
 	it("rejects a directive that disagrees with persisted metadata", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 2;" });
-
-		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "VERSION_MISMATCH", severity: "error" }));
-	});
-
-	it("rejects duplicate directives", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 1;\n@version 1;" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 2;",
+		});
 
 		expect(result.program).toBeNull();
 		expect(result.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "DUPLICATE_VERSION_DIRECTIVE", severity: "error" }),
+			expect.objectContaining({ code: "VERSION_MISMATCH", severity: "error" }),
+		);
+	});
+
+	it("rejects duplicate directives", () => {
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 1;\n@version 1;",
+		});
+
+		expect(result.program).toBeNull();
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({
+				code: "DUPLICATE_VERSION_DIRECTIVE",
+				severity: "error",
+			}),
 		);
 	});
 
 	it("rejects malformed directives", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version one;" });
-
-		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_VERSION", severity: "error" }));
-	});
-
-	it("rejects non-positive directives", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 0;" });
-
-		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "INVALID_VERSION", severity: "error" }));
-	});
-
-	it("rejects unsupported persisted language versions", () => {
-		const result = compileStylesheet({ languageVersion: 2, text: "@version 2;" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version one;",
+		});
 
 		expect(result.program).toBeNull();
 		expect(result.diagnostics).toContainEqual(
-			expect.objectContaining({ code: "UNSUPPORTED_VERSION", severity: "error" }),
+			expect.objectContaining({ code: "INVALID_VERSION", severity: "error" }),
+		);
+	});
+
+	it("rejects non-positive directives", () => {
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 0;",
+		});
+
+		expect(result.program).toBeNull();
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "INVALID_VERSION", severity: "error" }),
+		);
+	});
+
+	it("rejects unsupported persisted language versions", () => {
+		const result = compileStylesheet({
+			languageVersion: 2,
+			text: "@version 2;",
+		});
+
+		expect(result.program).toBeNull();
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({
+				code: "UNSUPPORTED_VERSION",
+				severity: "error",
+			}),
 		);
 	});
 
 	it("does not compile a recovered CSS error", () => {
-		const result = compileStylesheet({ languageVersion: 1, text: "@version 1;\nsection { color red; }" });
+		const result = compileStylesheet({
+			languageVersion: 1,
+			text: "@version 1;\nsection { color red; }",
+		});
 
 		expect(result.program).toBeNull();
-		expect(result.diagnostics).toContainEqual(expect.objectContaining({ code: "CSS_PARSE_ERROR", severity: "error" }));
+		expect(result.diagnostics).toContainEqual(
+			expect.objectContaining({ code: "CSS_PARSE_ERROR", severity: "error" }),
+		);
 	});
 });

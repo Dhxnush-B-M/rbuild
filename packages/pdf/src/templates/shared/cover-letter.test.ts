@@ -1,12 +1,15 @@
-import { describe, expect, it } from "vitest";
 import { sampleResumeData } from "@rbuilder/schema/resume/sample";
+import { describe, expect, it } from "vitest";
 import { shouldShowResumeHeader } from "./cover-letter";
 
 const createCoverLetterOnlyData = () => {
 	const data = structuredClone(sampleResumeData);
-	const coverLetter = data.customSections.find((section) => section.type === "cover-letter");
+	const coverLetter = data.customSections.find(
+		(section) => section.type === "cover-letter",
+	);
 
-	if (!coverLetter) throw new Error("sample resume must include a cover letter");
+	if (!coverLetter)
+		throw new Error("sample resume must include a cover letter");
 
 	return {
 		...data,
@@ -27,7 +30,10 @@ describe("shouldShowResumeHeader", () => {
 	});
 
 	it("can keep the first-page header for cover letter documents", () => {
-		const data = { ...createCoverLetterOnlyData(), renderOptions: { includeCoverLetterHeader: true } };
+		const data = {
+			...createCoverLetterOnlyData(),
+			renderOptions: { includeCoverLetterHeader: true },
+		};
 
 		expect(shouldShowResumeHeader(data, 0)).toBe(true);
 		expect(shouldShowResumeHeader(data, 1)).toBe(false);

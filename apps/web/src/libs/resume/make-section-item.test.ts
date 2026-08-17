@@ -42,7 +42,10 @@ describe("makeSectionItem", () => {
 
 	it("preserves all other fields when duplicating", () => {
 		const item = { id: "x", a: 1, b: { c: 2 }, d: [3] };
-		const result = makeSectionItem({ id: "default", a: 0, b: { c: 0 }, d: [] }, item);
+		const result = makeSectionItem(
+			{ id: "default", a: 0, b: { c: 0 }, d: [] },
+			item,
+		);
 		expect(result.a).toBe(1);
 		expect(result.b).toEqual({ c: 2 });
 		expect(result.d).toEqual([3]);

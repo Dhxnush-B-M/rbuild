@@ -1,11 +1,11 @@
-import type { Icon } from "@phosphor-icons/react";
-import type { ReactNode } from "react";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import type { Icon } from "@phosphor-icons/react";
 import { EyeIcon, NotePencilIcon, PaletteIcon } from "@phosphor-icons/react";
-import { Outlet } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { cn } from "@rbuilder/utils/style";
+import { Outlet } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { usePreviewPausedStore } from "@/features/resume/builder/draft";
 import { BuilderSidebarLeft } from "../-sidebar/left";
 import { BuilderSidebarRight } from "../-sidebar/right";
@@ -38,8 +38,15 @@ type MobileBuilderTabBarProps = {
 	onTabChange: (tab: MobileBuilderTab) => void;
 };
 
-function MobileBuilderTabBar({ activeTab, onTabChange }: MobileBuilderTabBarProps) {
-	const labels: Record<MobileBuilderTab, string> = { edit: t`Edit`, preview: t`Preview`, design: t`Design` };
+function MobileBuilderTabBar({
+	activeTab,
+	onTabChange,
+}: MobileBuilderTabBarProps) {
+	const labels: Record<MobileBuilderTab, string> = {
+		edit: t`Edit`,
+		preview: t`Preview`,
+		design: t`Design`,
+	};
 
 	return (
 		<nav className="fixed inset-x-0 bottom-0 z-50 flex border-t bg-popover pb-[env(safe-area-inset-bottom)]">
@@ -54,7 +61,9 @@ function MobileBuilderTabBar({ activeTab, onTabChange }: MobileBuilderTabBarProp
 						onClick={() => onTabChange(value)}
 						className={cn(
 							"flex min-h-16 flex-1 flex-col items-center justify-center gap-1 text-xs transition-colors",
-							isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
+							isActive
+								? "text-primary"
+								: "text-muted-foreground hover:text-foreground",
 						)}
 					>
 						<Icon className="size-5" weight={isActive ? "fill" : "regular"} />

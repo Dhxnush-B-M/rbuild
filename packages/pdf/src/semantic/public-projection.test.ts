@@ -1,6 +1,6 @@
-import type { PublicStyleProjection } from "./public-projection";
-import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@rbuilder/schema/resume/default";
+import { describe, expect, it } from "vitest";
+import type { PublicStyleProjection } from "./public-projection";
 import {
 	createPublicStyleProjection,
 	PUBLIC_STYLE_PROJECTION_FORMAT_VERSION,
@@ -37,7 +37,9 @@ describe("public semantic style projection", () => {
 			style: { color: "#123456" },
 		});
 		expect(serialized).not.toContain("@version");
-		expect(serialized).not.toMatch(/source|comment|diagnostic|selector|variable|range/i);
+		expect(serialized).not.toMatch(
+			/source|comment|diagnostic|selector|variable|range/i,
+		);
 		expect(serialized).not.toContain("undefined");
 	});
 
@@ -57,11 +59,23 @@ describe("public semantic style projection", () => {
 
 		const projection = await createPublicStyleProjection({ data });
 
-		expect(projection.nodes["page-1/region-header/header/contact-list/contact-location"]).toMatchObject({
+		expect(
+			projection.nodes[
+				"page-1/region-header/header/contact-list/contact-location"
+			],
+		).toMatchObject({
 			hidden: true,
 		});
-		expect(projection.nodes["page-1/region-header/header/contact-list/contact-phone"]).toMatchObject({ order: 0 });
-		expect(projection.nodes["page-1/region-header/header/contact-list/contact-email"]).toMatchObject({ order: 1 });
+		expect(
+			projection.nodes[
+				"page-1/region-header/header/contact-list/contact-phone"
+			],
+		).toMatchObject({ order: 0 });
+		expect(
+			projection.nodes[
+				"page-1/region-header/header/contact-list/contact-email"
+			],
+		).toMatchObject({ order: 1 });
 	});
 
 	it("rejects changed nodes and every version or fingerprint mismatch", async () => {
@@ -84,9 +98,12 @@ describe("public semantic style projection", () => {
 		];
 
 		for (const projection of cases) {
-			await expect(validatePublicStyleProjection(data, projection as unknown as PublicStyleProjection)).resolves.toBe(
-				false,
-			);
+			await expect(
+				validatePublicStyleProjection(
+					data,
+					projection as unknown as PublicStyleProjection,
+				),
+			).resolves.toBe(false);
 		}
 	});
 
@@ -96,7 +113,9 @@ describe("public semantic style projection", () => {
 		const changed = structuredClone(data);
 		changed.basics.name = "Grace Hopper";
 
-		await expect(validatePublicStyleProjection(changed, projection)).resolves.toBe(false);
+		await expect(
+			validatePublicStyleProjection(changed, projection),
+		).resolves.toBe(false);
 	});
 
 	it("changes the projection hash when only the applied presentation changes", async () => {
@@ -106,7 +125,11 @@ describe("public semantic style projection", () => {
 			languageVersion: 1,
 			text: "@version 1;\nname { color: #654321; }\n",
 		};
-		blue.metadata.stylesheet = { mode: "semantic", source: blueApplied, applied: blueApplied };
+		blue.metadata.stylesheet = {
+			mode: "semantic",
+			source: blueApplied,
+			applied: blueApplied,
+		};
 
 		const redProjection = await createPublicStyleProjection({ data: red });
 		const blueProjection = await createPublicStyleProjection({ data: blue });
@@ -114,7 +137,9 @@ describe("public semantic style projection", () => {
 		expect(redProjection.nodes["page-1/region-header/header/name"]).not.toEqual(
 			blueProjection.nodes["page-1/region-header/header/name"],
 		);
-		expect(redProjection.renderDataHash).not.toBe(blueProjection.renderDataHash);
+		expect(redProjection.renderDataHash).not.toBe(
+			blueProjection.renderDataHash,
+		);
 	});
 
 	it("rejects extra or non-JSON node fields instead of exposing compiler internals", async () => {
@@ -127,7 +152,10 @@ describe("public semantic style projection", () => {
 				...projection,
 				nodes: {
 					...projection.nodes,
-					"page-1/region-header/header/name": { ...node, diagnostics: [{ message: "private" }] },
+					"page-1/region-header/header/name": {
+						...node,
+						diagnostics: [{ message: "private" }],
+					},
 				},
 			} as unknown as PublicStyleProjection),
 		).resolves.toBe(false);

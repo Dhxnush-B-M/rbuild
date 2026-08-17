@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT, getNextBuilderPreviewPageLayout } from "./page-layout";
+import {
+	DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT,
+	getNextBuilderPreviewPageLayout,
+} from "./page-layout";
 
 describe("DEFAULT_BUILDER_PREVIEW_PAGE_LAYOUT", () => {
 	it("defaults to horizontal", () => {
@@ -18,7 +21,9 @@ describe("getNextBuilderPreviewPageLayout", () => {
 
 	it("is its own inverse", () => {
 		const start: "horizontal" | "vertical" = "horizontal";
-		const back = getNextBuilderPreviewPageLayout(getNextBuilderPreviewPageLayout(start));
+		const back = getNextBuilderPreviewPageLayout(
+			getNextBuilderPreviewPageLayout(start),
+		);
 		expect(back).toBe(start);
 	});
 });

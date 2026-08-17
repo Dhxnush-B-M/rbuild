@@ -1,9 +1,18 @@
 // @vitest-environment happy-dom
 
-import type { CustomSection, ResumeData, SectionType } from "@rbuilder/schema/resume/data";
-import { describe, expect, it } from "vitest";
+import type {
+	CustomSection,
+	ResumeData,
+	SectionType,
+} from "@rbuilder/schema/resume/data";
 import { getDefaultSectionIconName } from "@rbuilder/schema/resume/section-icons";
-import { renderBuiltInSection, renderCustomSection, renderSummary, setRenderConfig } from "./section-renderers";
+import { describe, expect, it } from "vitest";
+import {
+	renderBuiltInSection,
+	renderCustomSection,
+	renderSummary,
+	setRenderConfig,
+} from "./section-renderers";
 
 const baseConfig = {
 	headingFont: "Inter",
@@ -75,7 +84,9 @@ describe("renderSummary", () => {
 	});
 });
 
-const emptySection = <T extends SectionType>(type: T): ResumeData["sections"][T] =>
+const emptySection = <T extends SectionType>(
+	type: T,
+): ResumeData["sections"][T] =>
 	({
 		title: "Section",
 		icon: getDefaultSectionIconName(type),
@@ -88,7 +99,9 @@ const emptySection = <T extends SectionType>(type: T): ResumeData["sections"][T]
 
 describe("renderBuiltInSection", () => {
 	it("returns [] when the section has no items", () => {
-		expect(renderBuiltInSection("experience", emptySection("experience"), HEX)).toEqual([]);
+		expect(
+			renderBuiltInSection("experience", emptySection("experience"), HEX),
+		).toEqual([]);
 	});
 
 	it("returns [] when section.hidden is true", () => {
@@ -97,7 +110,13 @@ describe("renderBuiltInSection", () => {
 	});
 
 	it("returns [] for an unknown section type", () => {
-		expect(renderBuiltInSection("not-a-section" as never, emptySection("experience"), HEX)).toEqual([]);
+		expect(
+			renderBuiltInSection(
+				"not-a-section" as never,
+				emptySection("experience"),
+				HEX,
+			),
+		).toEqual([]);
 	});
 });
 
@@ -115,7 +134,9 @@ describe("renderCustomSection", () => {
 	};
 
 	it("returns [] when the custom section is hidden", () => {
-		expect(renderCustomSection({ ...baseCustom, hidden: true }, HEX)).toEqual([]);
+		expect(renderCustomSection({ ...baseCustom, hidden: true }, HEX)).toEqual(
+			[],
+		);
 	});
 
 	it("returns [] when all items are hidden or empty", () => {
@@ -167,7 +188,13 @@ describe("renderCustomSection", () => {
 
 describe("setRenderConfig", () => {
 	it("can be called repeatedly with a different config (no throw)", () => {
-		expect(() => setRenderConfig({ ...baseConfig, headingFont: "Roboto", primaryColorHex: "ff0000" })).not.toThrow();
+		expect(() =>
+			setRenderConfig({
+				...baseConfig,
+				headingFont: "Roboto",
+				primaryColorHex: "ff0000",
+			}),
+		).not.toThrow();
 
 		// Restore for any later tests in the file
 		setRenderConfig(baseConfig);

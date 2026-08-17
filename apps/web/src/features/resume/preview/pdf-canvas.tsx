@@ -1,17 +1,28 @@
-import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from "pdfjs-dist/legacy/build/pdf.mjs";
-import type { ReactNode } from "react";
-import type { PreviewPageSize } from "./preview.shared.utils";
+import { cn } from "@rbuilder/utils/style";
+import type {
+	PDFDocumentLoadingTask,
+	PDFDocumentProxy,
+	RenderTask,
+} from "pdfjs-dist/legacy/build/pdf.mjs";
 import {
 	AnnotationMode,
 	GlobalWorkerOptions,
 	getDocument,
 	RenderingCancelledException,
 } from "pdfjs-dist/legacy/build/pdf.mjs";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@rbuilder/utils/style";
-import { DEFAULT_PDF_PAGE_SIZE, getPreviewCanvasScale, getScaledPreviewPageSize } from "./preview.shared.utils";
+import type { PreviewPageSize } from "./preview.shared.utils";
+import {
+	DEFAULT_PDF_PAGE_SIZE,
+	getPreviewCanvasScale,
+	getScaledPreviewPageSize,
+} from "./preview.shared.utils";
 
-GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+GlobalWorkerOptions.workerSrc = new URL(
+	"pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+	import.meta.url,
+).toString();
 
 type PdfCanvasDocumentProps = {
 	children: (document: PDFDocumentProxy) => ReactNode;
@@ -33,9 +44,16 @@ type PdfCanvasPageProps = {
 
 const isRenderingCancelledError = (error: unknown) =>
 	error instanceof RenderingCancelledException ||
-	(typeof error === "object" && error !== null && "name" in error && error.name === "RenderingCancelledException");
+	(typeof error === "object" &&
+		error !== null &&
+		"name" in error &&
+		error.name === "RenderingCancelledException");
 
-export function PdfCanvasDocument({ children, file, onLoadSuccess }: PdfCanvasDocumentProps) {
+export function PdfCanvasDocument({
+	children,
+	file,
+	onLoadSuccess,
+}: PdfCanvasDocumentProps) {
 	const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
 	const onLoadSuccessRef = useRef(onLoadSuccess);
 
@@ -121,7 +139,10 @@ export function PdfCanvasPage({
 				}
 
 				const baseViewport = page.getViewport({ scale: 1 });
-				const pageSize = { height: baseViewport.height, width: baseViewport.width };
+				const pageSize = {
+					height: baseViewport.height,
+					width: baseViewport.width,
+				};
 
 				onLoadSuccessRef.current(pageNumber, pageSize);
 
@@ -183,8 +204,14 @@ export function PdfCanvasPage({
 				</figcaption>
 			) : null}
 
-			<div style={scaledPageSize} className={cn("aspect-page overflow-hidden rounded-md", className)}>
-				<canvas ref={canvasRef} aria-label={`Resume page ${pageNumber} of ${totalPages}`} />
+			<div
+				style={scaledPageSize}
+				className={cn("aspect-page overflow-hidden rounded-md", className)}
+			>
+				<canvas
+					ref={canvasRef}
+					aria-label={`Resume page ${pageNumber} of ${totalPages}`}
+				/>
 			</div>
 		</figure>
 	);

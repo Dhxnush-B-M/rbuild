@@ -32,7 +32,12 @@ export const Spotlight = ({
 		>
 			<m.div
 				animate={{ x: [0, xOffset, 0] }}
-				transition={{ duration, repeat: Number.POSITIVE_INFINITY, repeatType: "reverse", ease: "easeInOut" }}
+				transition={{
+					duration,
+					repeat: Number.POSITIVE_INFINITY,
+					repeatType: "reverse",
+					ease: "easeInOut",
+				}}
 				className="pointer-events-none absolute inset-s-0 top-0 z-40 h-svh w-svw will-change-transform"
 			>
 				<div
@@ -68,7 +73,12 @@ export const Spotlight = ({
 
 			<m.div
 				animate={{ x: [0, -xOffset, 0] }}
-				transition={{ duration, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", repeatType: "reverse" }}
+				transition={{
+					duration,
+					repeat: Number.POSITIVE_INFINITY,
+					ease: "easeInOut",
+					repeatType: "reverse",
+				}}
 				className="pointer-events-none absolute inset-e-0 top-0 z-40 h-svh w-svw will-change-transform"
 			>
 				<div

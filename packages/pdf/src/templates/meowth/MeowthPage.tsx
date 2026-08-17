@@ -1,10 +1,9 @@
-import type { Style } from "@react-pdf/types";
-import type { TemplatePageProps } from "../../document";
-import type { TemplateColorRoles, TemplateFeatures, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
-import { useMemo } from "react";
 import { rgbaStringToHex } from "@rbuilder/utils/color";
+import type { Style } from "@react-pdf/types";
+import { useMemo } from "react";
 import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
+import type { TemplatePageProps } from "../../document";
 import { useRenderedSectionIds, useResolvedNode } from "../../semantic/context";
 import { semanticNodeKeys } from "../../semantic/node-keys";
 import { createBaseTemplateStyles } from "../shared/base-template-styles";
@@ -30,6 +29,12 @@ import {
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
+import type {
+	TemplateColorRoles,
+	TemplateFeatures,
+	TemplateStyleContext,
+	TemplateStyleSlots,
+} from "../shared/types";
 
 type MeowthStyles = Omit<TemplateStyleSlots, "page"> & {
 	page: Style;
@@ -57,15 +62,31 @@ const meowthFeatures = {
 	inlineItemHeader: true,
 } satisfies TemplateFeatures;
 
-export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
+export const MeowthPage = ({
+	page,
+	pageSize,
+	pageMinHeightStyle,
+	showHeader,
+	pageNumber,
+}: TemplatePageProps) => {
 	const data = useRender();
 	const pageNodeKey = semanticNodeKeys.page(pageNumber);
-	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
+	const {
+		style: semanticPageStyle,
+		size: semanticPageSize,
+		...semanticPageProps
+	} = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useMeowthTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
-	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
+	const mainSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.main, data),
+	);
+	const sidebarSections = useRenderedSectionIds(
+		pageNodeKey,
+		filterSections(page.sidebar, data),
+	);
 
 	return (
 		<Page
@@ -73,10 +94,20 @@ export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 			size={semanticPageSize ?? pageSize}
 			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
 		>
-			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors} features={meowthFeatures}>
+			<TemplateProvider
+				pageNodeKey={pageNodeKey}
+				styles={styles}
+				colors={colors}
+				features={meowthFeatures}
+			>
 				{showHeader && <Header styles={styles} />}
 
-				<SemanticRegionView region="main" style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
+				<SemanticRegionView
+					region="main"
+					style={composeStyles(styles.sectionGroup, {
+						rowGap: metrics.sectionGap,
+					})}
+				>
 					{mainSections.map((section) => (
 						<Section key={section} section={section} placement="main" />
 					))}
@@ -85,7 +116,9 @@ export const MeowthPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pag
 				{!page.fullWidth && (
 					<SemanticRegionView
 						region="sidebar"
-						style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}
+						style={composeStyles(styles.sectionGroup, {
+							rowGap: metrics.sectionGap,
+						})}
 					>
 						{sidebarSections.map((section) => (
 							<Section key={section} section={section} placement="sidebar" />
@@ -112,15 +145,27 @@ const Header = ({ styles }: MeowthHeaderProps) => {
 				<SemanticContactListView style={styles.contactList}>
 					<EmailContactItem email={basics.email} style={styles.contactItem} />
 					<PhoneContactItem phone={basics.phone} style={styles.contactItem} />
-					<LocationContactItem location={basics.location} style={styles.contactItem} />
-					<WebsiteContactItem website={basics.website} style={styles.contactItem} />
+					<LocationContactItem
+						location={basics.location}
+						style={styles.contactItem}
+					/>
+					<WebsiteContactItem
+						website={basics.website}
+						style={styles.contactItem}
+					/>
 					{basics.customFields.map((field) => (
-						<CustomFieldContactItem key={field.id} field={field} style={styles.contactItem} />
+						<CustomFieldContactItem
+							key={field.id}
+							field={field}
+							style={styles.contactItem}
+						/>
 					))}
 				</SemanticContactListView>
 			</View>
 
-			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+			{hasPicture && (
+				<SemanticHeaderPicture src={picture.url} style={styles.picture} />
+			)}
 		</SemanticHeaderView>
 	);
 };
@@ -135,7 +180,14 @@ const useMeowthTemplate = (): MeowthTemplate => {
 		const primary = rgbaStringToHex(metadata.design.colors.primary);
 		const colors: TemplateColorRoles = { foreground, background, primary };
 		const metrics = getTemplateMetrics(metadata.page);
-		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
+		const base = createBaseTemplateStyles({
+			metadata,
+			foreground,
+			background,
+			r,
+			metrics,
+			picture,
+		});
 
 		const baseStyles = StyleSheet.create({
 			...base,

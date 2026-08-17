@@ -1,8 +1,8 @@
-import type * as React from "react";
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "@phosphor-icons/react";
 import { Button } from "@rbuilder/ui/components/button";
 import { cn } from "@rbuilder/utils/style";
+import type * as React from "react";
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
 	return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -59,7 +59,13 @@ function SheetContent({
 				{showCloseButton && (
 					<SheetPrimitive.Close
 						data-slot="sheet-close"
-						render={<Button variant="ghost" className="absolute inset-e-3 top-3" size="icon-sm" />}
+						render={
+							<Button
+								variant="ghost"
+								className="absolute inset-e-3 top-3"
+								size="icon-sm"
+							/>
+						}
 					>
 						<XIcon />
 						<span className="sr-only">Close</span>
@@ -71,24 +77,42 @@ function SheetContent({
 }
 
 function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-header" className={cn("flex flex-col gap-0.5 p-4", className)} {...props} />;
+	return (
+		<div
+			data-slot="sheet-header"
+			className={cn("flex flex-col gap-0.5 p-4", className)}
+			{...props}
+		/>
+	);
 }
 
 function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-	return <div data-slot="sheet-footer" className={cn("mt-auto flex flex-col gap-2 p-4", className)} {...props} />;
+	return (
+		<div
+			data-slot="sheet-footer"
+			className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+			{...props}
+		/>
+	);
 }
 
 function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
 	return (
 		<SheetPrimitive.Title
 			data-slot="sheet-title"
-			className={cn("font-heading font-medium text-base text-foreground", className)}
+			className={cn(
+				"font-heading font-medium text-base text-foreground",
+				className,
+			)}
 			{...props}
 		/>
 	);
 }
 
-function SheetDescription({ className, ...props }: SheetPrimitive.Description.Props) {
+function SheetDescription({
+	className,
+	...props
+}: SheetPrimitive.Description.Props) {
 	return (
 		<SheetPrimitive.Description
 			data-slot="sheet-description"
@@ -98,4 +122,13 @@ function SheetDescription({ className, ...props }: SheetPrimitive.Description.Pr
 	);
 }
 
-export { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger };
+export {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetDescription,
+	SheetFooter,
+	SheetHeader,
+	SheetTitle,
+	SheetTrigger,
+};
