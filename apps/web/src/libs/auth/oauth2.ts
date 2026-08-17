@@ -13,39 +13,33 @@ export interface GoogleOAuthUser {
 }
 
 /**
- * Initiates standard Supabase Google OAuth 2.0 flow
+ * Initiates direct Google OAuth 2.0 flow so Google displays "to continue to rbuilder"
  */
 export async function initiateGoogleOAuth2(options?: { redirectTo?: string }): Promise<boolean> {
+	const clientId =
+		(import.meta.env.VITE_GOOGLE_CLIENT_ID as string) ||
+		(import.meta.env.GOOGLE_CLIENT_ID as string) ||
+		"925681943886-8fj6t1r9enai6mt8ikg5msg4lup7999c.apps.googleusercontent.com";
+
 	const redirectUri =
 		options?.redirectTo ||
 		(typeof window !== "undefined" ? `${window.location.origin}/auth/callback` : "https://rbuilder.space/auth/callback");
 
-	try {
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: "google",
-			options: {
-				redirectTo: redirectUri,
-				queryParams: {
-					access_type: "offline",
-					prompt: "select_account",
-				},
-			},
-		});
+	const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
 
-		if (error) {
-			console.error("Supabase signInWithOAuth Error:", error);
-			return false;
-		}
+	const params = new URLSearchParams({
+		client_id: clientId,
+		redirect_uri: redirectUri,
+		response_type: "token id_token",
+		scope: "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+		include_granted_scopes: "true",
+		state: "rbuilder_auth",
+		nonce: Math.random().toString(36).substring(2),
+		prompt: "select_account",
+	});
 
-		if (data?.url) {
-			window.location.href = data.url;
-			return true;
-		}
-		return true;
-	} catch (e) {
-		console.error("Failed to initiate Google OAuth via Supabase:", e);
-		return false;
-	}
+	window.location.href = `${rootUrl}?${params.toString()}`;
+	return true;
 }
 
 /**
