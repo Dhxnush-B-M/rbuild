@@ -20,7 +20,7 @@ export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?:
 		(import.meta.env.VITE_GOOGLE_CLIENT_ID as string) ||
 		(import.meta.env.GOOGLE_CLIENT_ID as string);
 
-	const redirectUri = options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
+	const redirectUri = options?.redirectTo || `${window.location.origin}/auth/callback`;
 
 	if (!clientId) {
 		return false;
@@ -34,7 +34,7 @@ export function initiateGoogleOAuth2(options?: { redirectTo?: string; clientId?:
 		response_type: "token id_token",
 		scope: "openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
 		include_granted_scopes: "true",
-		state: JSON.stringify({ provider: "google_oauth2", timestamp: Date.now() }),
+		state: "rbuilder_google_auth",
 		nonce: Math.random().toString(36).substring(2),
 		prompt: "select_account",
 	});
@@ -115,6 +115,10 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 				};
 
 				localStorage.setItem("rbuilder_google_user", JSON.stringify(googleUser));
+				// Clean URL hash to eliminate lingering tokens
+				try {
+					window.history.replaceState(null, "", window.location.pathname);
+				} catch {}
 			} catch (e) {
 				console.warn("Failed to parse OAuth2 id_token:", e);
 			}

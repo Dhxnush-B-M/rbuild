@@ -8,9 +8,9 @@ type FAQItemData = {
 
 const faqItems: FAQItemData[] = [
 	{
-		question: "Is rbuilder really free?",
+		question: "How does rbuilder pricing work?",
 		answer:
-			"Yes! rbuilder is completely free to use, with no hidden costs, premium tiers, or subscription fees. It's open-source and will always remain free.",
+			"You can start creating, customizing, and previewing resumes for free. We also provide affordable Pro access (₹11 for 1 Month or ₹20 for 3 Months) for unlimited high-resolution PDF exports and premium features.",
 	},
 	{
 		question: "How is my data protected?",

@@ -16,6 +16,7 @@ import { Route as OnboardingRouteImport } from "./routes/onboarding";
 import { Route as UsernameSlugRouteImport } from "./routes/$username/$slug";
 import { Route as HomeIndexRouteImport } from "./routes/_home/index";
 import { Route as AuthIndexRouteImport } from "./routes/auth/index";
+import { Route as AuthCallbackRouteImport } from "./routes/auth/callback";
 import { Route as AuthForgotPasswordRouteImport } from "./routes/auth/forgot-password";
 import { Route as AuthLoginRouteImport } from "./routes/auth/login";
 import { Route as AuthRegisterRouteImport } from "./routes/auth/register";
@@ -65,6 +66,11 @@ const HomeIndexRoute = HomeIndexRouteImport.update({
 const AuthIndexRoute = AuthIndexRouteImport.update({
   id: "/",
   path: "/",
+  getParentRoute: () => AuthRouteRoute,
+} as any);
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: "/callback",
+  path: "/callback",
   getParentRoute: () => AuthRouteRoute,
 } as any);
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   "/onboarding": typeof OnboardingRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
+  "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
   "/auth/register": typeof AuthRegisterRoute;
@@ -176,6 +183,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   "/onboarding": typeof OnboardingRoute;
   "/$username/$slug": typeof UsernameSlugRoute;
+  "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
   "/auth/register": typeof AuthRegisterRoute;
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   "/onboarding": typeof OnboardingRoute;
   "/builder/$resumeId": typeof BuilderResumeIdRouteRouteWithChildren;
   "/$username/$slug": typeof UsernameSlugRoute;
+  "/auth/callback": typeof AuthCallbackRoute;
   "/auth/forgot-password": typeof AuthForgotPasswordRoute;
   "/auth/login": typeof AuthLoginRoute;
   "/auth/register": typeof AuthRegisterRoute;
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | "/onboarding"
     | "/builder/$resumeId"
     | "/$username/$slug"
+    | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
     | "/auth/register"
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
   to:
     | "/onboarding"
     | "/$username/$slug"
+    | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
     | "/auth/register"
@@ -274,6 +285,7 @@ export interface FileRouteTypes {
     | "/onboarding"
     | "/builder/$resumeId"
     | "/$username/$slug"
+    | "/auth/callback"
     | "/auth/forgot-password"
     | "/auth/login"
     | "/auth/register"
@@ -353,6 +365,13 @@ declare module "@tanstack/react-router" {
       path: "/";
       fullPath: "/auth/";
       preLoaderRoute: typeof AuthIndexRouteImport;
+      parentRoute: typeof AuthRouteRoute;
+    };
+    "/auth/callback": {
+      id: "/auth/callback";
+      path: "/callback";
+      fullPath: "/auth/callback";
+      preLoaderRoute: typeof AuthCallbackRouteImport;
       parentRoute: typeof AuthRouteRoute;
     };
     "/auth/forgot-password": {
@@ -483,6 +502,7 @@ const HomeRouteRouteWithChildren = HomeRouteRoute._addFileChildren(
 );
 
 interface AuthRouteRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute;
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute;
   AuthLoginRoute: typeof AuthLoginRoute;
   AuthRegisterRoute: typeof AuthRegisterRoute;
@@ -494,6 +514,7 @@ interface AuthRouteRouteChildren {
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
