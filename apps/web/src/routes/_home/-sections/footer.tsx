@@ -1,9 +1,5 @@
 import type { Icon } from "@phosphor-icons/react";
-import {
-	EnvelopeSimpleIcon,
-	LinkedinLogoIcon,
-	XLogoIcon,
-} from "@phosphor-icons/react";
+import { EnvelopeSimpleIcon } from "@phosphor-icons/react";
 import { BrandIcon } from "@rbuilder/ui/components/brand-icon";
 import { Button } from "@rbuilder/ui/components/button";
 import { m } from "motion/react";
@@ -26,8 +22,6 @@ const socialLinks: SocialLink[] = [
 		label: "Gmail / Email Support",
 		icon: EnvelopeSimpleIcon,
 	},
-	{ url: "https://linkedin.com", label: "LinkedIn", icon: LinkedinLogoIcon },
-	{ url: "https://x.com", label: "X (Twitter)", icon: XLogoIcon },
 ];
 
 export function Footer() {

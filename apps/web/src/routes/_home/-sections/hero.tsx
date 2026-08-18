@@ -59,9 +59,6 @@ export function Hero() {
 					<h1 className="bg-gradient-to-r from-foreground via-primary to-indigo-500 bg-clip-text font-extrabold text-4xl text-transparent leading-[1.1] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
 						Build Job-Winning Resumes in Minutes
 					</h1>
-					<p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide md:text-sm">
-						Free • Multilingual • ATS-Friendly • Privacy-Focused
-					</p>
 				</m.div>
 
 				{/* Description */}
