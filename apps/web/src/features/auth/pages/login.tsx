@@ -7,7 +7,8 @@ import { m } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { BrandLogoSvg } from "@rbuilder/ui/components/brand-icon";
-import { initiateGoogleOAuth2 } from "@/libs/auth/oauth2";
+import { initiateGoogleOAuth2, parseOAuth2CallbackAndCheckSubscription } from "@/libs/auth/oauth2";
+import { supabase } from "@/libs/supabase/client";
 
 function GoogleColorIcon({ className }: { className?: string }) {
 	return (
@@ -34,6 +35,70 @@ function GoogleColorIcon({ className }: { className?: string }) {
 
 export function LoginPage() {
 	const [loading, setLoading] = useState(false);
+
+	useEffect(() => {
+		let timer: ReturnType<typeof setInterval> | null = null;
+
+		function setupGoogleButton() {
+			if (typeof window !== "undefined" && window.google?.accounts?.id) {
+				const container = document.getElementById("google-signin-btn");
+				if (container) {
+					try {
+						window.google.accounts.id.initialize({
+							client_id:
+								"925681943886-8fj6t1r9enai6mt8ikg5msg4lup7999c.apps.googleusercontent.com",
+							callback: async (response: { credential?: string }) => {
+								if (!response.credential) return;
+								setLoading(true);
+								toast.loading("Signing into your rbuilder account...");
+								try {
+									const { data, error } = await supabase.auth.signInWithIdToken({
+										provider: "google",
+										token: response.credential,
+									});
+									if (!error && data?.user) {
+										const res = await parseOAuth2CallbackAndCheckSubscription();
+										window.location.href = res.redirectTo || "/onboarding";
+									} else {
+										toast.error("Google sign-in failed. Retrying...");
+										await initiateGoogleOAuth2();
+									}
+								} catch (err) {
+									console.error(err);
+									toast.error("Authentication error");
+								} finally {
+									setLoading(false);
+								}
+							},
+						});
+
+						window.google.accounts.id.renderButton(container, {
+							theme: "outline",
+							size: "large",
+							type: "standard",
+							shape: "pill",
+							text: "continue_with",
+							logo_alignment: "left",
+							width: 320,
+						});
+
+						const customBtn = document.getElementById("custom-google-login");
+						if (customBtn) customBtn.style.display = "none";
+					} catch (e) {
+						console.warn("GSI button render error:", e);
+					}
+				}
+				if (timer) clearInterval(timer);
+			}
+		}
+
+		setupGoogleButton();
+		timer = setInterval(setupGoogleButton, 500);
+
+		return () => {
+			if (timer) clearInterval(timer);
+		};
+	}, []);
 
 	const handleGoogleLogin = async () => {
 		setLoading(true);
@@ -181,16 +246,21 @@ export function LoginPage() {
 					</span>
 				</div>
 
-				{/* Google Sign-In Button */}
-				<div>
+				{/* Google Sign-In Container */}
+				<div className="flex flex-col items-center justify-center">
+					<div
+						id="google-signin-btn"
+						className="flex min-h-[48px] w-full items-center justify-center overflow-hidden rounded-2xl"
+					/>
 					<button
 						type="button"
+						id="custom-google-login"
 						onClick={handleGoogleLogin}
 						disabled={loading}
-						className="group relative flex h-13 w-full items-center justify-center gap-3 rounded-2xl border border-neutral-200 bg-white px-5 font-bold text-neutral-800 text-sm shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-neutral-50/90 hover:shadow-md active:scale-[0.98] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+						className="group relative mt-2 flex h-12 w-full items-center justify-center gap-3 rounded-2xl border border-neutral-200 bg-white px-5 font-bold text-neutral-800 text-sm shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-neutral-50/90 hover:shadow-md active:scale-[0.98] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
 					>
 						<GoogleColorIcon className="size-5 transition-transform duration-200 group-hover:scale-110" />
-						<span>{loading ? "Redirecting..." : "Continue with Google"}</span>
+						<span>{loading ? "Connecting..." : "Continue with Google Account"}</span>
 					</button>
 				</div>
 
