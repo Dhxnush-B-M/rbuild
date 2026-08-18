@@ -32,7 +32,7 @@ export const Route = createFileRoute("/onboarding")({
 
 function OnboardingPage() {
 	const navigate = useNavigate();
-	const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+	const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 	const [fullName, setFullName] = useState("");
 	const [phone, setPhone] = useState("");
 	const [countryCode] = useState("+91");
@@ -100,8 +100,11 @@ function OnboardingPage() {
 			username: userName.toLowerCase().replace(/\s+/g, "-"),
 			email: userEmail,
 			phone: userPhone,
+			subscription_status: "active" as const,
 			subscription_plan: planToPay.id,
 			subscription_amount: planToPay.amountInRupees,
+			payment_id: `rzp_${Date.now()}`,
+			onboarding_completed: true,
 		};
 
 		try {
@@ -120,50 +123,7 @@ function OnboardingPage() {
 		}
 
 		setIsLoading(false);
-		setCurrentStep(4);
-	};
-
-	const handleConfirmPaymentSuccess = async () => {
-		setIsLoading(true);
-		const userEmail = email.trim().toLowerCase() || "user@rbuilder.app";
-		const userName = fullName.trim() || "Resume Creator";
-		const userPhone = phone.trim() ? `${countryCode} ${phone.trim()}` : "";
-
-		const activeProfile = {
-			name: userName,
-			username: userName.toLowerCase().replace(/\s+/g, "-"),
-			email: userEmail,
-			phone: userPhone,
-			subscription_status: "active" as const,
-			subscription_plan: selectedPlan.id,
-			subscription_amount: selectedPlan.amountInRupees,
-			payment_id: `rzp_${Date.now()}`,
-			onboarding_completed: true,
-		};
-
-		await saveUserToSupabase(activeProfile);
-		setIsLoading(false);
-		toast.success("🎉 Payment confirmed! Welcome to rbuilder Pro.");
-		void navigate({ to: "/dashboard/resumes", replace: true });
-	};
-
-	const handleFreeAccess = async () => {
-		setIsLoading(true);
-		const userEmail = email.trim().toLowerCase() || "user@rbuilder.app";
-		const userName = fullName.trim() || "Resume Creator";
-
-		const profile = {
-			name: userName,
-			username: userName.toLowerCase().replace(/\s+/g, "-"),
-			email: userEmail,
-			phone: phone ? `${countryCode} ${phone.trim()}` : "",
-			subscription_status: "active" as const,
-			onboarding_completed: true,
-		};
-
-		await saveUserToSupabase(profile);
-
-		toast.success("Welcome to your workspace!");
+		toast.success("Welcome to rbuilder Pro!");
 		void navigate({ to: "/dashboard/resumes", replace: true });
 	};
 
@@ -475,77 +435,6 @@ function OnboardingPage() {
 										<ArrowLeftIcon className="size-3" />
 										<span>Back</span>
 									</button>
-						</m.div>
-					)}
-
-					{/* STEP 4: Payment Verification & Waiting UI */}
-					{currentStep === 4 && (
-						<m.div
-							key="step4"
-							initial={{ opacity: 0, scale: 0.95 }}
-							animate={{ opacity: 1, scale: 1 }}
-							exit={{ opacity: 0, scale: 0.95 }}
-							transition={{ duration: 0.25 }}
-							className="flex flex-col items-center text-center"
-						>
-							<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-emerald-100/90 dark:bg-emerald-950/50">
-								<SparkleIcon className="size-10 text-emerald-600 animate-pulse" weight="fill" />
-							</div>
-
-							<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
-								Complete Your Payment
-							</h2>
-							<p className="mt-1 text-muted-foreground text-xs">
-								We opened the official Razorpay checkout for <strong className="text-foreground">₹{selectedPlan.amountInRupees} ({selectedPlan.name})</strong>
-							</p>
-
-							{/* Plan Info Card */}
-							<div className="mt-5 w-full rounded-2xl border border-neutral-200 bg-neutral-50/60 p-4 text-left dark:border-white/10 dark:bg-white/5">
-								<div className="flex items-center justify-between">
-									<div className="flex items-center gap-2">
-										<CheckCircleIcon className="size-4 text-emerald-500" weight="fill" />
-										<span className="font-bold text-xs text-foreground">{selectedPlan.name}</span>
-									</div>
-									<span className="font-extrabold text-sm text-purple-600 dark:text-purple-400">
-										₹{selectedPlan.amountInRupees}
-									</span>
-								</div>
-								<p className="mt-2 text-muted-foreground text-[11px]">
-									1. Complete payment via UPI, Cards, or NetBanking on Razorpay.<br />
-									2. Once finished, click the button below to open your resume workspace.
-								</p>
-							</div>
-
-							{/* Reopen Payment Link */}
-							<a
-								href={selectedPlan.paymentLink}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-purple-600/30 bg-purple-50 font-bold text-xs text-purple-700 hover:bg-purple-100 dark:bg-purple-950/40 dark:text-purple-300"
-							>
-								<span>Re-open Razorpay Payment Page</span>
-								<ArrowRightIcon className="size-3.5" />
-							</a>
-
-							{/* Confirm Paid Button */}
-							<button
-								type="button"
-								disabled={isLoading}
-								onClick={() => void handleConfirmPaymentSuccess()}
-								className="mt-3 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 font-bold text-sm text-white shadow-md shadow-emerald-600/25 transition-all hover:bg-emerald-700 active:scale-[0.98]"
-							>
-								<CheckCircleIcon className="size-4" weight="fill" />
-								<span>{isLoading ? "Activating Pro Access..." : "I Have Completed Payment — Open Dashboard"}</span>
-							</button>
-
-							<button
-								type="button"
-								onClick={() => setCurrentStep(3)}
-								className="mt-3 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
-							>
-								<ArrowLeftIcon className="size-3" />
-								<span>Change Plan</span>
-							</button>
 						</m.div>
 					)}
 				</AnimatePresence>
