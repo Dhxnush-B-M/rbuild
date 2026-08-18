@@ -57,9 +57,9 @@ export default defineConfig({
 				"linkedom",
 			],
 			output: {
-				entryFileNames: "static/[name]-[hash].js",
-				chunkFileNames: "static/[name]-[hash].js",
-				assetFileNames: "static/[name]-[hash].[ext]",
+				entryFileNames: "[name]-[hash].js",
+				chunkFileNames: "[name]-[hash].js",
+				assetFileNames: "[name]-[hash].[ext]",
 			},
 		},
 	},
