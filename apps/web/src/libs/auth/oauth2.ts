@@ -15,10 +15,96 @@ export interface GoogleOAuthUser {
 	subscription_status?: string;
 }
 
+const GOOGLE_CLIENT_ID =
+	import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+	"925681943886-8fj6t1r9enai6mt8ikg5msg4lup7999c.apps.googleusercontent.com";
+
+declare global {
+	interface Window {
+		google?: {
+			accounts: {
+				id: {
+					initialize: (config: any) => void;
+					prompt: (callback?: (notification: any) => void) => void;
+					renderButton: (parent: HTMLElement, options: any) => void;
+				};
+				oauth2: {
+					initTokenClient: (config: any) => any;
+				};
+			};
+		};
+	}
+}
+
 /**
- * Initiates Supabase Google OAuth flow with rbuilder callback
+ * Initiates direct Google authentication on rbuilder.space.
+ * Uses Google Identity Services ID Token to sign in to Supabase directly,
+ * preventing Google from showing the 'auxppvofumzpvpzvgfdw.supabase.co' redirect URL screen.
  */
 export async function initiateGoogleOAuth2(options?: {
+	redirectTo?: string;
+}): Promise<boolean> {
+	// If Google GSI library is loaded, initiate Google popup directly on rbuilder.space
+	if (typeof window !== "undefined" && window.google?.accounts?.id) {
+		return new Promise<boolean>((resolve) => {
+			try {
+				window.google!.accounts.id.initialize({
+					client_id: GOOGLE_CLIENT_ID,
+					callback: async (response: { credential?: string }) => {
+						if (!response.credential) {
+							resolve(false);
+							return;
+						}
+						try {
+							const { data, error } = await supabase.auth.signInWithIdToken({
+								provider: "google",
+								token: response.credential,
+							});
+
+							if (error || !data.user) {
+								console.error("Supabase signInWithIdToken error:", error);
+								// Fallback to standard Supabase OAuth if ID token exchange fails
+								const fallbackRes = await initiateSupabaseOAuthFallback(options);
+								resolve(fallbackRes);
+								return;
+							}
+
+							// Successfully authenticated into Supabase! Process user & redirect
+							const res = await parseOAuth2CallbackAndCheckSubscription();
+							if (typeof window !== "undefined") {
+								window.location.href = res.redirectTo || "/onboarding";
+							}
+							resolve(true);
+						} catch (err) {
+							console.error("Error during Google ID token processing:", err);
+							resolve(false);
+						}
+					},
+					auto_select: false,
+					cancel_on_tap_outside: true,
+				});
+
+				// Trigger Google prompt directly on current domain (rbuilder.space)
+				window.google!.accounts.id.prompt((notification: any) => {
+					if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+						// If one-tap popup was dismissed or blocked, trigger OAuth redirect fallback
+						initiateSupabaseOAuthFallback(options).then(resolve);
+					}
+				});
+			} catch (e) {
+				console.warn("Direct Google sign-in failed, using fallback:", e);
+				initiateSupabaseOAuthFallback(options).then(resolve);
+			}
+		});
+	}
+
+	return initiateSupabaseOAuthFallback(options);
+}
+
+/**
+ * Fallback to Supabase OAuth flow
+ */
+async function initiateSupabaseOAuthFallback(options?: {
 	redirectTo?: string;
 }): Promise<boolean> {
 	const redirectUri =
