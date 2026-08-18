@@ -78,6 +78,7 @@ export interface SubscriptionPlanOption {
 	durationText: string;
 	amountInRupees: number;
 	amountInPaise: number;
+	paymentLink: string;
 	popular?: boolean;
 	badge?: string;
 }
@@ -89,13 +90,15 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 		durationText: "1 Month Access",
 		amountInRupees: 11,
 		amountInPaise: 1100,
+		paymentLink: "https://rzp.io/rzp/p19j1zk",
 	},
 	{
 		id: "3_months",
 		name: "3 Months Pro Plan",
 		durationText: "3 Months Access",
-		amountInRupees: 20,
-		amountInPaise: 2000,
+		amountInRupees: 21,
+		amountInPaise: 2100,
+		paymentLink: "https://rzp.io/rzp/2lKAJoA",
 		popular: true,
 		badge: "Best Value",
 	},

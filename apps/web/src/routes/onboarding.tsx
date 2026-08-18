@@ -87,25 +87,39 @@ function OnboardingPage() {
 		const userPhone = phone.trim() ? `${countryCode} ${phone.trim()}` : "";
 
 		setIsLoading(true);
+
+		const profile = {
+			name: userName,
+			username: userName.toLowerCase().replace(/\s+/g, "-"),
+			email: userEmail,
+			phone: userPhone,
+			subscription_status: "active" as const,
+			subscription_plan: planToPay.id,
+			subscription_amount: planToPay.amountInRupees,
+			onboarding_completed: true,
+		};
+
+		localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
+		try {
+			await saveUserToSupabase(profile);
+		} catch (e) {
+			console.warn("Could not save to Supabase before redirect:", e);
+		}
+
+		// Direct redirect to the verified Razorpay payment link (100% real money, zero domain blocks)
+		if (planToPay.paymentLink) {
+			window.location.href = planToPay.paymentLink;
+			return;
+		}
+
 		await initiateRazorpayPayment({
 			plan: planToPay,
 			userEmail,
 			userName,
+			userPhone,
 			onSuccess: async (paymentId) => {
 				toast.success("Payment successful! Pro Plan activated.");
-
-				const profile = {
-					name: userName,
-					username: userName.toLowerCase().replace(/\s+/g, "-"),
-					email: userEmail,
-					phone: userPhone,
-					subscription_status: "active" as const,
-					subscription_plan: planToPay.id,
-					payment_id: paymentId,
-					subscription_amount: planToPay.amountInRupees,
-					onboarding_completed: true,
-				};
-
+				profile.subscription_status = "active";
 				localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
 				await saveUserToSupabase(profile);
 
@@ -410,7 +424,7 @@ function OnboardingPage() {
 													/ {plan.durationText}
 												</span>
 												<span className="text-[11px] text-neutral-400 line-through">
-													₹{plan.id === "3_months" ? "60" : "22"}
+													₹{plan.id === "3_months" ? "63" : "22"}
 												</span>
 											</div>
 
