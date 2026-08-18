@@ -54,17 +54,17 @@ export function UserDropdownMenu({ children }: Props) {
 					onSuccess: async () => {
 						toast.dismiss(toastId);
 						await router.invalidate();
-						await router.navigate({ to: "/auth/login" });
+						await router.navigate({ to: "/" });
 					},
 					onError: (_error: unknown) => {
 						toast.dismiss(toastId);
-						void router.navigate({ to: "/auth/login" });
+						void router.navigate({ to: "/" });
 					},
 				},
 			});
 		} catch {
 			toast.dismiss(toastId);
-			void router.navigate({ to: "/auth/login" });
+			void router.navigate({ to: "/" });
 		}
 	};
 
