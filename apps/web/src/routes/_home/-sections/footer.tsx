@@ -69,14 +69,6 @@ export function Footer() {
 				</div>
 
 				<FooterLinkGroup
-					title="Resources"
-					links={[
-						{ url: "/dashboard/resumes", label: "Builder Application" },
-						{ url: "#templates", label: "Resume Templates" },
-					]}
-				/>
-
-				<FooterLinkGroup
 					title="Support"
 					links={[
 						{

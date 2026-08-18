@@ -457,36 +457,20 @@ function OnboardingPage() {
 										})}
 									</div>
 
-									{/* Social proof note */}
-									<div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-										<StudentIcon className="size-4 text-purple-600" weight="fill" />
-										<span>Trusted by 10,000+ job seekers</span>
-									</div>
-
 									<button
 										type="button"
 										disabled={isLoading}
 										onClick={() => void handleInitiatePayment()}
-										className="mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
+										className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
 									>
 										<WalletIcon className="size-4" weight="fill" />
 										<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} & Start Building`}</span>
 									</button>
 
-									{/* Free Access Skip */}
-									<button
-										type="button"
-										disabled={isLoading}
-										onClick={handleFreeAccess}
-										className="mt-2.5 font-medium text-muted-foreground text-xs hover:text-foreground"
-									>
-										Continue with Basic Access (Skip)
-									</button>
-
 									<button
 										type="button"
 										onClick={handlePrevStep}
-										className="mt-3 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
+										className="mt-4 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
 									>
 										<ArrowLeftIcon className="size-3" />
 										<span>Back</span>
