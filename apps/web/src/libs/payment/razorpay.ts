@@ -90,7 +90,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 		durationText: "1 Month Access",
 		amountInRupees: 11,
 		amountInPaise: 1100,
-		paymentLink: "https://rzp.io/rzp/p19j1zk",
+		paymentLink: "https://rzp.io/rzp/2lKAJoA",
 	},
 	{
 		id: "3_months",
@@ -98,7 +98,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 		durationText: "3 Months Access",
 		amountInRupees: 21,
 		amountInPaise: 2100,
-		paymentLink: "https://rzp.io/rzp/2lKAJoA",
+		paymentLink: "https://rzp.io/rzp/p19j1zk",
 		popular: true,
 		badge: "Best Value",
 	},
