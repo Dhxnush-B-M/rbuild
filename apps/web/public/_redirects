@@ -1,8 +1,0 @@
-# Pass through static assets and files directly
-/assets/*  /assets/:splat  200
-/logo/*    /logo/:splat    200
-/icon/*    /icon/:splat    200
-
-# SPA fallback for all pages and routes
-/*         /index.html     200
-
