@@ -98,35 +98,36 @@ function OnboardingPage() {
 
 		setIsLoading(true);
 
-		const pendingProfile = {
-			name: userName,
-			username: userName.toLowerCase().replace(/\s+/g, "-"),
-			email: userEmail,
-			phone: userPhone,
-			subscription_status: "pending" as const,
-			subscription_plan: planToPay.id,
-			subscription_amount: planToPay.amountInRupees,
-			onboarding_completed: false,
-		};
-
-		try {
-			await saveUserToSupabase(pendingProfile);
-		} catch (e) {
-			console.warn("Could not save to Supabase before payment:", e);
-		}
-
-		// Open secure Razorpay payment link
-		if (typeof window !== "undefined") {
-			const paymentUrl = planToPay.paymentLink;
-			const win = window.open(paymentUrl, "_blank", "noopener,noreferrer");
-			if (!win) {
-				window.location.href = paymentUrl;
-			}
-		}
-
-		setIsLoading(false);
-		setHasInitiatedPayment(true);
-		toast.info("Please complete payment on Razorpay, then enter your Payment ID below.");
+		await initiateRazorpayPayment({
+			plan: planToPay,
+			userEmail,
+			userName,
+			userPhone,
+			onSuccess: async (paymentId) => {
+				setIsLoading(false);
+				toast.success("🎉 Payment successful! Pro Plan activated.");
+				const activeProfile = {
+					name: userName,
+					username: userName.toLowerCase().replace(/\s+/g, "-"),
+					email: userEmail,
+					phone: userPhone,
+					subscription_status: "active" as const,
+					subscription_plan: planToPay.id,
+					subscription_amount: planToPay.amountInRupees,
+					payment_id: paymentId,
+					onboarding_completed: true,
+				};
+				await saveUserToSupabase(activeProfile);
+				void navigate({ to: "/dashboard/resumes", replace: true });
+			},
+			onError: (error) => {
+				setIsLoading(false);
+				toast.error(error || "Payment was cancelled or failed.");
+			},
+			onDismiss: () => {
+				setIsLoading(false);
+			},
+		});
 	};
 
 	const handleVerifyPayment = async () => {

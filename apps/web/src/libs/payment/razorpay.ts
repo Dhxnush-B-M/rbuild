@@ -120,7 +120,7 @@ export async function initiateRazorpayPayment(params: {
 	const key =
 		params.customKeyId ||
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"";
+		"rzp_live_TRIg5Ldvfs8ouy";
 
 	// If no custom API key configured, seamlessly open the live hosted Razorpay payment link
 	if (!key) {
