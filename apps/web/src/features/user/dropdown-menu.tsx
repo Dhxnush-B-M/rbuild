@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useTheme } from "@/features/theme/provider";
 import { authClient } from "@/libs/auth/client";
 import type { AuthSession } from "@/libs/auth/session";
+import { supabase } from "@/libs/supabase/client";
 import { isTheme } from "@/libs/theme";
 
 type Props = {
@@ -43,11 +44,7 @@ export function UserDropdownMenu({ children }: Props) {
 		const toastId = toast.loading(t`Signing out...`);
 
 		try {
-			if (typeof window !== "undefined") {
-				localStorage.removeItem("rbuilder_user_profile");
-				localStorage.removeItem("rbuilder_google_user");
-			}
-
+			await supabase.auth.signOut();
 			await authClient.signOut({
 				fetchOptions: {
 					onSuccess: async () => {

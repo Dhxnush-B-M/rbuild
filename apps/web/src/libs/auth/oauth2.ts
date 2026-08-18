@@ -70,9 +70,7 @@ export function initiateGuestSession(options?: { redirectTo?: string }) {
 	};
 
 	if (typeof window !== "undefined") {
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(guestUser));
-		localStorage.setItem("rbuilder_google_user", JSON.stringify(guestUser));
-		saveUserToSupabase({
+		void saveUserToSupabase({
 			id: guestUser.id,
 			email: guestUser.email,
 			name: guestUser.name,
@@ -80,8 +78,9 @@ export function initiateGuestSession(options?: { redirectTo?: string }) {
 			provider: "local",
 			subscription_status: "active",
 			onboarding_completed: true,
+		}).then(() => {
+			window.location.href = redirectUri;
 		});
-		window.location.href = redirectUri;
 	}
 }
 
@@ -228,20 +227,9 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 		window.history.replaceState(null, "", window.location.pathname);
 	} catch {}
 
-	if (!googleUser) {
-		const stored = localStorage.getItem("rbuilder_google_user");
-		if (stored) {
-			try {
-				googleUser = JSON.parse(stored);
-			} catch {}
-		}
-	}
-
 	if (!googleUser?.email) {
 		return { user: null, redirectTo: "/auth/login" };
 	}
-
-	localStorage.setItem("rbuilder_google_user", JSON.stringify(googleUser));
 
 	const userEmail = googleUser.email.toLowerCase().trim();
 
@@ -253,10 +241,7 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 		existingProfile.avatar_url =
 			googleUser.picture || existingProfile.avatar_url;
 		existingProfile.name = googleUser.name || existingProfile.name;
-		localStorage.setItem(
-			"rbuilder_user_profile",
-			JSON.stringify(existingProfile),
-		);
+		await saveUserToSupabase(existingProfile);
 
 		// Check if already paid & onboarded
 		if (
@@ -269,7 +254,7 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 					onboarding_completed: true,
 					subscription_status: "active",
 				},
-				redirectTo: "/dashboard/resumes", // Directly open dashboard on any device!
+				redirectTo: "/dashboard/resumes", // Directly open dashboard!
 			};
 		}
 	} else {

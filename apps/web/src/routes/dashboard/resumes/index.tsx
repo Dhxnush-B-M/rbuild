@@ -42,7 +42,6 @@ function RouteComponent() {
 					onboarding_completed: true,
 					payment_id: paymentId || profile?.payment_id || undefined,
 				};
-				localStorage.setItem("rbuilder_user_profile", JSON.stringify(updated));
 				void saveUserToSupabase(updated);
 			});
 

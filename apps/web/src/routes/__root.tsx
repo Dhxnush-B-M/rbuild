@@ -85,40 +85,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		const theme = getTheme();
 		const locale = getLocale();
 		const flags = defaultFeatureFlags;
-
-		let session: AuthSession | null = null;
-		if (typeof window !== "undefined") {
-			try {
-				const cached =
-					localStorage.getItem("rbuilder_user_profile") ||
-					localStorage.getItem("rbuilder_google_user");
-				if (cached) {
-					const profile = JSON.parse(cached);
-					if (profile?.email) {
-						session = {
-							user: {
-								id: profile.id || "user",
-								name: profile.name || "User",
-								email: profile.email,
-								image: profile.avatar_url || profile.picture || null,
-								emailVerified: true,
-								createdAt: new Date(),
-								updatedAt: new Date(),
-								username: profile.username || profile.email.split("@")[0],
-							},
-							session: {
-								id: "session-token",
-								userId: profile.id || "user",
-								token: "token",
-								expiresAt: new Date(Date.now() + 30 * 86400000),
-								createdAt: new Date(),
-								updatedAt: new Date(),
-							},
-						};
-					}
-				}
-			} catch {}
-		}
+		const session: AuthSession | null = null;
 
 		return { theme, locale, session, flags };
 	},

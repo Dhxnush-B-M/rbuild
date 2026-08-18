@@ -24,70 +24,7 @@ export type AuthSession = {
 };
 
 export const getSession = async (): Promise<AuthSession | null> => {
-	// 1. Check local Google OAuth / Supabase user profile
-	if (typeof window !== "undefined") {
-		try {
-			const cached = localStorage.getItem("rbuilder_user_profile");
-			if (cached) {
-				const profile = JSON.parse(cached);
-				if (profile?.email) {
-					return {
-						user: {
-							id: profile.id || "google_user",
-							name: profile.name || profile.email.split("@")[0] || "User",
-							email: profile.email,
-							image:
-								profile.avatar_url ||
-								`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.email)}`,
-							emailVerified: true,
-							createdAt: new Date(profile.created_at || Date.now()),
-							updatedAt: new Date(profile.updated_at || Date.now()),
-							username: profile.username || profile.email.split("@")[0],
-						},
-						session: {
-							id: "oauth2-session-token",
-							userId: profile.id || "google_user",
-							token: "oauth2-token",
-							expiresAt: new Date(Date.now() + 30 * 86400000),
-							createdAt: new Date(),
-							updatedAt: new Date(),
-						},
-					};
-				}
-			}
-
-			const googleUser = localStorage.getItem("rbuilder_google_user");
-			if (googleUser) {
-				const parsed = JSON.parse(googleUser);
-				if (parsed?.email) {
-					return {
-						user: {
-							id: parsed.id || "google_user",
-							name: parsed.name || parsed.email.split("@")[0] || "Google User",
-							email: parsed.email,
-							image:
-								parsed.picture ||
-								`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(parsed.email)}`,
-							emailVerified: true,
-							createdAt: new Date(),
-							updatedAt: new Date(),
-							username: parsed.email.split("@")[0],
-						},
-						session: {
-							id: "oauth2-session-token",
-							userId: parsed.id || "google_user",
-							token: "oauth2-token",
-							expiresAt: new Date(Date.now() + 30 * 86400000),
-							createdAt: new Date(),
-							updatedAt: new Date(),
-						},
-					};
-				}
-			}
-		} catch {
-			// ignore
-		}
-	}
+	// Query Supabase auth session and database profile directly
 
 	// 2. Check Supabase auth session
 	try {

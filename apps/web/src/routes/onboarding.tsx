@@ -106,7 +106,6 @@ function OnboardingPage() {
 			onboarding_completed: true,
 		};
 
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
 		try {
 			await saveUserToSupabase(profile);
 		} catch (e) {
@@ -127,7 +126,6 @@ function OnboardingPage() {
 					subscription_status: "active" as const,
 					onboarding_completed: true,
 				};
-				localStorage.setItem("rbuilder_user_profile", JSON.stringify(activeProfile));
 				await saveUserToSupabase(activeProfile);
 
 				void navigate({ to: "/dashboard/resumes", replace: true });
@@ -156,7 +154,6 @@ function OnboardingPage() {
 			onboarding_completed: true,
 		};
 
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
 		await saveUserToSupabase(profile);
 
 		toast.success("Welcome to your workspace!");

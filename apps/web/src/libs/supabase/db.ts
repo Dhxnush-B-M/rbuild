@@ -52,44 +52,6 @@ export interface SupabaseFeedbackRecord {
 	created_at: string;
 }
 
-function getDeletedResumeIds(): Set<string> {
-	if (typeof window === "undefined") return new Set();
-	try {
-		const raw = localStorage.getItem("rbuilder_deleted_ids");
-		return new Set(raw ? JSON.parse(raw) : []);
-	} catch {
-		return new Set();
-	}
-}
-
-function removeDeletedResumeId(id: string) {
-	if (typeof window === "undefined") return;
-	try {
-		const set = getDeletedResumeIds();
-		set.delete(id);
-		localStorage.setItem(
-			"rbuilder_deleted_ids",
-			JSON.stringify(Array.from(set)),
-		);
-	} catch {
-		// ignore
-	}
-}
-
-function addDeletedResumeId(id: string) {
-	if (typeof window === "undefined") return;
-	try {
-		const set = getDeletedResumeIds();
-		set.add(id);
-		localStorage.setItem(
-			"rbuilder_deleted_ids",
-			JSON.stringify(Array.from(set)),
-		);
-	} catch {
-		// ignore
-	}
-}
-
 /**
  * Fetch profile by email from Supabase (to verify subscription status across any device)
  */
@@ -107,11 +69,7 @@ export async function getProfileByEmailFromSupabase(
 			.maybeSingle();
 
 		if (!error && data) {
-			const profile = data as SupabaseUserProfile;
-			if (typeof window !== "undefined") {
-				localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
-			}
-			return profile;
+			return data as SupabaseUserProfile;
 		}
 	} catch (e) {
 		console.warn("Error fetching profile by email:", e);
@@ -120,21 +78,9 @@ export async function getProfileByEmailFromSupabase(
 }
 
 /**
- * Fetch current authenticated user profile from Supabase or local cache
+ * Fetch current authenticated user profile strictly from Supabase
  */
 export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | null> {
-	if (typeof window !== "undefined") {
-		try {
-			const cached = localStorage.getItem("rbuilder_user_profile");
-			if (cached) {
-				const parsed = JSON.parse(cached);
-				if (parsed?.email) return parsed;
-			}
-		} catch {
-			// ignore
-		}
-	}
-
 	try {
 		const {
 			data: { session },
@@ -142,16 +88,18 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 		if (!session?.user) return null;
 
 		const user = session.user;
-		const userEmail = (user.email || "").toLowerCase();
+		const userEmail = (user.email || "").toLowerCase().trim();
 		const userName =
 			(user.user_metadata?.full_name as string) ||
 			(user.user_metadata?.name as string) ||
+			userEmail.split("@")[0] ||
 			"User";
 		const userAvatar =
 			(user.user_metadata?.avatar_url as string) ||
+			(user.user_metadata?.picture as string) ||
 			`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`;
 
-		// First try fetching full profile from DB
+		// Query profile from Supabase Database
 		const dbProfile = await getProfileByEmailFromSupabase(userEmail);
 		if (dbProfile) return dbProfile;
 
@@ -171,10 +119,6 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 			created_at: user.created_at,
 		};
 
-		if (typeof window !== "undefined") {
-			localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
-		}
-
 		return profile;
 	} catch {
 		return null;
@@ -182,7 +126,7 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 }
 
 /**
- * Save / Update user profile directly in Supabase Database ('profiles' table) and local storage
+ * Save / Update user profile directly in Supabase Database ('profiles' table)
  */
 export async function saveUserToSupabase(
 	user: Partial<SupabaseUserProfile> & { email: string },
@@ -216,17 +160,6 @@ export async function saveUserToSupabase(
 		updated_at: new Date().toISOString(),
 	};
 
-	if (typeof window !== "undefined") {
-		try {
-			localStorage.setItem(
-				"rbuilder_user_profile",
-				JSON.stringify(profileData),
-			);
-		} catch {
-			// ignore
-		}
-	}
-
 	try {
 		await supabase
 			.from("profiles")
@@ -239,7 +172,7 @@ export async function saveUserToSupabase(
 }
 
 /**
- * Save resume document state directly to Supabase Database ('resumes' table) and localStorage cache
+ * Save resume document state directly to Supabase Database ('resumes' table)
  */
 export async function saveResumeToSupabase(resume: {
 	id: string;
@@ -251,8 +184,6 @@ export async function saveResumeToSupabase(resume: {
 	isLocked?: boolean;
 	hasPassword?: boolean;
 }): Promise<SupabaseResumeRecord> {
-	removeDeletedResumeId(resume.id);
-
 	const profile = await getCurrentSupabaseUser();
 	const userId = profile?.id || "guest-user";
 
@@ -269,19 +200,7 @@ export async function saveResumeToSupabase(resume: {
 		updated_at: new Date().toISOString(),
 	};
 
-	// Save immediately to local cache
-	if (typeof window !== "undefined") {
-		try {
-			localStorage.setItem(
-				`rbuilder_resume_${resume.id}`,
-				JSON.stringify(record),
-			);
-		} catch {
-			// ignore quota errors
-		}
-	}
-
-	// Persist to Supabase Database
+	// Persist directly to Supabase Database
 	try {
 		const { data, error } = await supabase
 			.from("resumes")
@@ -300,13 +219,11 @@ export async function saveResumeToSupabase(resume: {
 }
 
 /**
- * Fetch resumes from Supabase Database ('resumes' table) with local cache fallback
+ * Fetch resumes directly from Supabase Database ('resumes' table)
  */
 export async function getResumesFromSupabase(): Promise<
 	SupabaseResumeRecord[]
 > {
-	const deletedIds = getDeletedResumeIds();
-
 	try {
 		const profile = await getCurrentSupabaseUser();
 		const userId = profile?.id;
@@ -321,65 +238,21 @@ export async function getResumesFromSupabase(): Promise<
 
 		const { data, error } = await query;
 		if (!error && data && data.length > 0) {
-			const rows = (data as Record<string, unknown>[])
-				.map(mapResumeRow)
-				.filter((r) => !deletedIds.has(r.id));
-
-			// Update local cache
-			if (typeof window !== "undefined") {
-				for (const r of rows) {
-					localStorage.setItem(`rbuilder_resume_${r.id}`, JSON.stringify(r));
-				}
-			}
-			return rows;
+			return (data as Record<string, unknown>[]).map(mapResumeRow);
 		}
-	} catch {
-		// fallback to local cache
-	}
-
-	// Fallback: Read from local cache
-	if (typeof window !== "undefined") {
-		const cachedRows: SupabaseResumeRecord[] = [];
-		for (let i = 0; i < localStorage.length; i++) {
-			const key = localStorage.key(i);
-			if (key?.startsWith("rbuilder_resume_")) {
-				try {
-					const item = JSON.parse(localStorage.getItem(key) || "{}");
-					if (item?.id && !deletedIds.has(item.id)) {
-						cachedRows.push(mapResumeRow(item));
-					}
-				} catch {
-					// ignore
-				}
-			}
-		}
-		if (cachedRows.length > 0) return cachedRows;
+	} catch (e) {
+		console.warn("Error fetching resumes from Supabase:", e);
 	}
 
 	return [];
 }
 
 /**
- * Fetch a single resume by ID from local cache or Supabase
+ * Fetch a single resume by ID directly from Supabase
  */
 export async function getResumeByIdFromSupabase(
 	id: string,
 ): Promise<SupabaseResumeRecord | null> {
-	if (getDeletedResumeIds().has(id)) return null;
-
-	// Check fast local cache first for instant opening
-	if (typeof window !== "undefined") {
-		try {
-			const cached = localStorage.getItem(`rbuilder_resume_${id}`);
-			if (cached) {
-				const parsed = JSON.parse(cached);
-				if (parsed?.id) return mapResumeRow(parsed);
-			}
-		} catch {
-			// ignore
-		}
-	}
-
 	try {
 		const { data, error } = await supabase
 			.from("resumes")
@@ -388,14 +261,10 @@ export async function getResumeByIdFromSupabase(
 			.maybeSingle();
 
 		if (!error && data) {
-			const mapped = mapResumeRow(data as Record<string, unknown>);
-			if (typeof window !== "undefined") {
-				localStorage.setItem(`rbuilder_resume_${id}`, JSON.stringify(mapped));
-			}
-			return mapped;
+			return mapResumeRow(data as Record<string, unknown>);
 		}
-	} catch {
-		// ignore
+	} catch (e) {
+		console.warn("Error fetching resume by id:", e);
 	}
 
 	return null;
@@ -424,19 +293,13 @@ export async function getResumeBySlugFromSupabase(
 }
 
 /**
- * Delete a resume by ID from Supabase and local cache
+ * Delete a resume by ID directly from Supabase
  */
 export async function deleteResumeFromSupabase(id: string): Promise<boolean> {
-	addDeletedResumeId(id);
-
-	if (typeof window !== "undefined") {
-		localStorage.removeItem(`rbuilder_resume_${id}`);
-	}
-
 	try {
 		await supabase.from("resumes").delete().eq("id", id);
-	} catch {
-		// ignore
+	} catch (e) {
+		console.warn("Supabase resume delete error:", e);
 	}
 
 	return true;
