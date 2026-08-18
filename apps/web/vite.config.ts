@@ -55,6 +55,11 @@ export default defineConfig({
 				"ioredis",
 				"linkedom",
 			],
+			output: {
+				entryFileNames: `assets/[name]-v${Date.now()}-[hash].js`,
+				chunkFileNames: `assets/[name]-v${Date.now()}-[hash].js`,
+				assetFileNames: `assets/[name]-v${Date.now()}-[hash].[ext]`,
+			},
 		},
 	},
 
