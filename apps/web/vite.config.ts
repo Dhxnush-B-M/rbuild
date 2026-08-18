@@ -56,9 +56,9 @@ export default defineConfig({
 				"linkedom",
 			],
 			output: {
-				entryFileNames: `assets/[name]-v${Date.now()}-[hash].js`,
-				chunkFileNames: `assets/[name]-v${Date.now()}-[hash].js`,
-				assetFileNames: `assets/[name]-v${Date.now()}-[hash].[ext]`,
+				entryFileNames: "assets/[name]-[hash].js",
+				chunkFileNames: "assets/[name]-[hash].js",
+				assetFileNames: "assets/[name]-[hash].[ext]",
 			},
 		},
 	},
