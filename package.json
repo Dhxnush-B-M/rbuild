@@ -41,6 +41,7 @@
 		"knip": "^6.31.0",
 		"lefthook": "^2.1.10",
 		"markdownlint-cli2": "0.23.2",
+		"sharp": "^0.35.3",
 		"turbo": "^2.10.8",
 		"typescript": "^7.0.2",
 		"vitest": "^4.1.10"
