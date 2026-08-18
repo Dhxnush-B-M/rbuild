@@ -47,6 +47,13 @@ function OnboardingPage() {
 		let isMounted = true;
 		void getCurrentSupabaseUser().then((profile) => {
 			if (!isMounted) return;
+			if (
+				profile?.onboarding_completed &&
+				profile?.subscription_status === "active"
+			) {
+				void navigate({ to: "/dashboard/resumes", replace: true });
+				return;
+			}
 			if (profile?.name) setFullName(profile.name);
 			if (profile?.email) setEmail(profile.email);
 			if (profile?.phone) setPhone(profile.phone);
@@ -54,7 +61,7 @@ function OnboardingPage() {
 		return () => {
 			isMounted = false;
 		};
-	}, []);
+	}, [navigate]);
 
 	const handleNextStep = () => {
 		if (currentStep === 1) {
