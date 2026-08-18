@@ -16,8 +16,7 @@ export interface GoogleOAuthUser {
 }
 
 const GOOGLE_CLIENT_ID =
-	import.meta.env.VITE_GOOGLE_CLIENT_ID ||
-	"925681943886-8fj6t1r9enai6mt8ikg5msg4lup7999c.apps.googleusercontent.com";
+	(import.meta.env.VITE_GOOGLE_CLIENT_ID as string) || "";
 
 /**
  * Initiates direct Google OAuth 2.0 flow from rbuilder.space

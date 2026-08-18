@@ -125,7 +125,14 @@ export async function initiateRazorpayPayment(params: {
 	const key =
 		params.customKeyId ||
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_T20ve5q4iAJVwx";
+		"";
+
+	if (!key) {
+		params.onError?.(
+			"Razorpay Key ID is missing. Please configure VITE_RAZORPAY_KEY_ID in your environment variables.",
+		);
+		return;
+	}
 
 	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
 
