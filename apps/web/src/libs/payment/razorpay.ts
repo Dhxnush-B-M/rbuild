@@ -105,7 +105,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 ];
 
 /**
- * Initiates Razorpay Live Checkout payment modal
+ * Initiates Razorpay Live Checkout payment modal or hosted checkout link
  */
 export async function initiateRazorpayPayment(params: {
 	plan: SubscriptionPlanOption;
@@ -117,23 +117,28 @@ export async function initiateRazorpayPayment(params: {
 	onError?: (error: string) => void;
 	onDismiss?: () => void;
 }): Promise<void> {
-	const loaded = await loadRazorpayScript();
-	if (!loaded || !window.Razorpay) {
-		params.onError?.(
-			"Unable to load payment gateway. Please check your internet connection.",
-		);
-		return;
-	}
-
 	const key =
 		params.customKeyId ||
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
 		"";
 
+	// If no custom API key configured, seamlessly open the live hosted Razorpay payment link
 	if (!key) {
-		params.onError?.(
-			"Razorpay Key ID is missing. Please configure VITE_RAZORPAY_KEY_ID in your environment variables.",
-		);
+		if (typeof window !== "undefined") {
+			const paymentUrl = params.plan.paymentLink;
+			const win = window.open(paymentUrl, "_blank", "noopener,noreferrer");
+			if (!win) {
+				window.location.href = paymentUrl;
+			}
+		}
+		return;
+	}
+
+	const loaded = await loadRazorpayScript();
+	if (!loaded || !window.Razorpay) {
+		if (typeof window !== "undefined") {
+			window.open(params.plan.paymentLink, "_blank", "noopener,noreferrer");
+		}
 		return;
 	}
 
@@ -179,8 +184,8 @@ export async function initiateRazorpayPayment(params: {
 		});
 		rzp.open();
 	} catch (e) {
-		params.onError?.(
-			e instanceof Error ? e.message : "Error initiating checkout.",
-		);
+		if (typeof window !== "undefined") {
+			window.open(params.plan.paymentLink, "_blank", "noopener,noreferrer");
+		}
 	}
 }
