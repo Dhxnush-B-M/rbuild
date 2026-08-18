@@ -70,24 +70,25 @@ function OnboardingPage() {
 			}
 			setCurrentStep(3);
 		} else if (currentStep === 3) {
-			setCurrentStep(4);
+			void handleCompletePayment();
 		}
 	};
 
 	const handlePrevStep = () => {
 		if (currentStep > 1) {
-			setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3 | 4);
+			setCurrentStep((prev) => (prev - 1) as 1 | 2 | 3);
 		}
 	};
 
-	const handleCompletePayment = async () => {
+	const handleCompletePayment = async (planOverride?: typeof selectedPlan) => {
+		const planToPay = planOverride || selectedPlan;
 		const userEmail = email.trim().toLowerCase() || "user@rbuilder.app";
 		const userName = fullName.trim() || "Resume Creator";
-		const userPhone = `${countryCode} ${phone.trim()}`;
+		const userPhone = phone.trim() ? `${countryCode} ${phone.trim()}` : "";
 
 		setIsLoading(true);
 		await initiateRazorpayPayment({
-			plan: selectedPlan,
+			plan: planToPay,
 			userEmail,
 			userName,
 			onSuccess: async (paymentId) => {
@@ -99,9 +100,9 @@ function OnboardingPage() {
 					email: userEmail,
 					phone: userPhone,
 					subscription_status: "active" as const,
-					subscription_plan: selectedPlan.id,
+					subscription_plan: planToPay.id,
 					payment_id: paymentId,
-					subscription_amount: selectedPlan.amountInRupees,
+					subscription_amount: planToPay.amountInRupees,
 					onboarding_completed: true,
 				};
 
@@ -147,7 +148,6 @@ function OnboardingPage() {
 		{ num: 1, label: "Name" },
 		{ num: 2, label: "Phone" },
 		{ num: 3, label: "Plan" },
-		{ num: 4, label: "Payment" },
 	];
 
 	return (
@@ -174,7 +174,7 @@ function OnboardingPage() {
 						<span className="font-extrabold text-foreground text-lg tracking-tight">rbuilder</span>
 					</div>
 					<p className="font-semibold text-[13px] text-muted-foreground">
-						Step {currentStep} of 4
+						Step {currentStep} of 3
 					</p>
 
 					{/* Stepper Progress Bar */}
@@ -442,141 +442,12 @@ function OnboardingPage() {
 
 							<button
 								type="button"
-								onClick={handleNextStep}
+								disabled={isLoading}
+								onClick={() => void handleCompletePayment()}
 								className="mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
 							>
-								<span>Next</span>
-								<ArrowRightIcon className="size-4" />
-							</button>
-
-							<button
-								type="button"
-								onClick={handlePrevStep}
-								className="mt-3 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
-							>
-								<ArrowLeftIcon className="size-3" />
-								<span>Back</span>
-							</button>
-						</m.div>
-					)}
-
-					{/* STEP 4: Payment Summary (Image 1 Step 4 UI/UX) */}
-					{currentStep === 4 && (
-						<m.div
-							key="step4"
-							initial={{ opacity: 0, x: 20 }}
-							animate={{ opacity: 1, x: 0 }}
-							exit={{ opacity: 0, x: -20 }}
-							transition={{ duration: 0.25 }}
-							className="flex flex-col items-center text-center"
-						>
-							{/* Wallet Icon Badge */}
-							<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-purple-100/90 dark:bg-purple-950/50">
-								<WalletIcon className="size-10 text-purple-600" weight="fill" />
-								<div className="absolute top-0 right-0 flex size-6 items-center justify-center rounded-full bg-amber-400 text-neutral-900 shadow-sm">
-									<CurrencyInrIcon className="size-3.5" weight="bold" />
-								</div>
-							</div>
-
-							<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
-								Complete your payment
-							</h2>
-							<p className="mt-1 text-muted-foreground text-xs">
-								Review your order and unlock your workspace
-							</p>
-
-							{/* Order Summary Box */}
-							<div className="mt-5 w-full rounded-2xl border border-purple-100 bg-purple-50/40 p-4 text-left dark:border-white/10 dark:bg-white/5">
-								<div className="font-bold text-purple-700 text-xs dark:text-purple-300">
-									Order Summary
-								</div>
-								<div className="mt-3 space-y-2 text-xs">
-									<div className="flex justify-between text-muted-foreground">
-										<span>Plan</span>
-										<span className="font-semibold text-foreground">
-											{selectedPlan.id === "3_months" ? "Resume Pro (3 Months)" : "Resume Starter (1 Month)"}
-										</span>
-									</div>
-									<div className="flex justify-between text-muted-foreground">
-										<span>Amount</span>
-										<span>₹{selectedPlan.id === "3_months" ? "60" : "22"}</span>
-									</div>
-									<div className="flex justify-between font-medium text-emerald-600">
-										<span>Discount</span>
-										<span>- ₹{selectedPlan.id === "3_months" ? "40" : "11"}</span>
-									</div>
-									<div className="border-border/60 border-t pt-2">
-										<div className="flex justify-between font-extrabold text-foreground text-sm">
-											<span>Total Amount</span>
-											<span className="text-purple-600 dark:text-purple-400">
-												₹{selectedPlan.amountInRupees}
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							{/* Payment Method Selector */}
-							<div className="mt-4 w-full text-left">
-								<label className="font-semibold text-foreground text-xs">
-									Select Payment Method
-								</label>
-								<div className="mt-2 space-y-2">
-									<button
-										type="button"
-										onClick={() => setPaymentMethod("upi")}
-										className={`flex w-full items-center justify-between rounded-xl border p-3 text-xs transition-all ${
-											paymentMethod === "upi"
-												? "border-purple-600 bg-purple-50/60 font-bold dark:border-purple-400 dark:bg-purple-950/30"
-												: "border-neutral-200 bg-neutral-50/40 dark:border-white/10 dark:bg-white/5"
-										}`}
-									>
-										<div className="flex items-center gap-2.5">
-											<div
-												className={`size-3.5 rounded-full border-2 ${
-													paymentMethod === "upi"
-														? "border-purple-600 bg-purple-600"
-														: "border-muted-foreground"
-												}`}
-											/>
-											<span>UPI (GPay / PhonePe / Paytm)</span>
-										</div>
-										<span className="font-bold text-[10px] text-purple-600 uppercase">Instant</span>
-									</button>
-
-									<button
-										type="button"
-										onClick={() => setPaymentMethod("card")}
-										className={`flex w-full items-center justify-between rounded-xl border p-3 text-xs transition-all ${
-											paymentMethod === "card"
-												? "border-purple-600 bg-purple-50/60 font-bold dark:border-purple-400 dark:bg-purple-950/30"
-												: "border-neutral-200 bg-neutral-50/40 dark:border-white/10 dark:bg-white/5"
-										}`}
-									>
-										<div className="flex items-center gap-2.5">
-											<div
-												className={`size-3.5 rounded-full border-2 ${
-													paymentMethod === "card"
-														? "border-purple-600 bg-purple-600"
-														: "border-muted-foreground"
-												}`}
-											/>
-											<span>Credit / Debit Card (Visa / Mastercard)</span>
-										</div>
-										<CreditCardIcon className="size-4 text-muted-foreground" />
-									</button>
-								</div>
-							</div>
-
-							{/* Pay Button */}
-							<button
-								type="button"
-								disabled={isLoading}
-								onClick={handleCompletePayment}
-								className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
-							>
-								<span>{isLoading ? "Opening Payment..." : `Pay ₹${selectedPlan.amountInRupees}`}</span>
-								<LockIcon className="size-4" weight="bold" />
+								<WalletIcon className="size-4" weight="fill" />
+								<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} & Start Building`}</span>
 							</button>
 
 							{/* Free Access Skip */}
