@@ -33,18 +33,12 @@ function RouteComponent() {
 	const router = useRouter();
 	const navigate = useNavigate();
 	const { sidebarState } = Route.useLoaderData();
-	const [access, setAccess] = useState<"checking" | "allowed">(() =>
-		checkAuthAndOnboardingAccess() === "allowed" ? "allowed" : "checking",
-	);
+	const [access, setAccess] = useState<"checking" | "allowed">("checking");
 
 	useEffect(() => {
-		const syncStatus = checkAuthAndOnboardingAccess();
-		if (syncStatus === "allowed") {
-			setAccess("allowed");
-			return;
-		}
-
+		let isMounted = true;
 		void verifyUserSubscriptionAcrossDevices().then((status) => {
+			if (!isMounted) return;
 			if (status === "unauthenticated") {
 				void navigate({ to: "/auth/login", replace: true });
 			} else if (status === "needs_onboarding") {
@@ -53,6 +47,10 @@ function RouteComponent() {
 				setAccess("allowed");
 			}
 		});
+
+		return () => {
+			isMounted = false;
+		};
 	}, [navigate]);
 
 	const handleSidebarOpenChange = (open: boolean) => {

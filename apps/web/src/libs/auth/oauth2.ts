@@ -55,36 +55,6 @@ export function initiateGoogleOAuth2(options?: {
 }
 
 /**
- * Initiates transparent guest / local workspace access
- */
-export function initiateGuestSession(options?: { redirectTo?: string }) {
-	const redirectUri =
-		options?.redirectTo || `${window.location.origin}/dashboard/resumes`;
-	const guestUser: GoogleOAuthUser = {
-		id: `user_${Date.now()}`,
-		email: "user@rbuilder.app",
-		name: "Resume Creator",
-		picture: "https://api.dicebear.com/7.x/avataaars/svg?seed=rbuilder",
-		onboarding_completed: true,
-		subscription_status: "active",
-	};
-
-	if (typeof window !== "undefined") {
-		void saveUserToSupabase({
-			id: guestUser.id,
-			email: guestUser.email,
-			name: guestUser.name,
-			avatar_url: guestUser.picture,
-			provider: "local",
-			subscription_status: "active",
-			onboarding_completed: true,
-		}).then(() => {
-			window.location.href = redirectUri;
-		});
-	}
-}
-
-/**
  * Parse Google OAuth 2.0 callback / session on return.
  * Checks Supabase to see if this user already has an active subscription.
  * If yes -> navigates to /dashboard/resumes.
@@ -232,6 +202,10 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	}
 
 	const userEmail = googleUser.email.toLowerCase().trim();
+	if (typeof window !== "undefined") {
+		sessionStorage.setItem("rbuilder_auth_email", userEmail);
+		localStorage.setItem("rbuilder_auth_email", userEmail);
+	}
 
 	// Look up this user in Supabase database to check existing subscription
 	const existingProfile = await getProfileByEmailFromSupabase(userEmail);

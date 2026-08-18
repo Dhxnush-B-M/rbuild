@@ -1,4 +1,5 @@
 import { supabase } from "@/libs/supabase/client";
+import { getProfileByEmailFromSupabase } from "@/libs/supabase/db";
 
 export type AuthUser = {
 	id: string;
@@ -24,41 +25,43 @@ export type AuthSession = {
 };
 
 export const getSession = async (): Promise<AuthSession | null> => {
-	// Query Supabase auth session and database profile directly
-
-	// 2. Check Supabase auth session
 	try {
+		// 1. Check Supabase auth session
 		const {
 			data: { session },
 		} = await supabase.auth.getSession();
 
 		if (session?.user) {
 			const user = session.user;
-			const email = user.email || "user@example.com";
+			const email = (user.email || "").toLowerCase().trim();
+			const dbProfile = await getProfileByEmailFromSupabase(email);
+
 			const name =
+				dbProfile?.name ||
 				(user.user_metadata?.name as string) ||
 				(user.user_metadata?.full_name as string) ||
 				email.split("@")[0] ||
 				"User";
 			const image =
+				dbProfile?.avatar_url ||
 				(user.user_metadata?.avatar_url as string) ||
 				(user.user_metadata?.picture as string) ||
-				`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email)}`;
+				`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(email || "user")}`;
 
 			return {
 				user: {
-					id: user.id,
+					id: dbProfile?.id || user.id,
 					name,
 					email,
 					image,
 					emailVerified: true,
 					createdAt: new Date(user.created_at),
 					updatedAt: new Date(user.updated_at || user.created_at),
-					username: email.split("@")[0],
+					username: dbProfile?.username || email.split("@")[0],
 				},
 				session: {
 					id: session.access_token,
-					userId: user.id,
+					userId: dbProfile?.id || user.id,
 					token: session.access_token,
 					expiresAt: new Date(
 						session.expires_at
@@ -70,29 +73,44 @@ export const getSession = async (): Promise<AuthSession | null> => {
 				},
 			};
 		}
-	} catch {
-		// fallback below
+
+		// 2. Check if user is authenticated via direct Google OAuth
+		if (typeof window !== "undefined") {
+			const storedEmail =
+				sessionStorage.getItem("rbuilder_auth_email") ||
+				localStorage.getItem("rbuilder_auth_email");
+
+			if (storedEmail) {
+				const dbProfile = await getProfileByEmailFromSupabase(storedEmail);
+				if (dbProfile) {
+					return {
+						user: {
+							id: dbProfile.id,
+							name: dbProfile.name || dbProfile.email.split("@")[0] || "User",
+							email: dbProfile.email,
+							image:
+								dbProfile.avatar_url ||
+								`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dbProfile.email)}`,
+							emailVerified: true,
+							createdAt: new Date(dbProfile.created_at || Date.now()),
+							updatedAt: new Date(dbProfile.updated_at || Date.now()),
+							username: dbProfile.username || dbProfile.email.split("@")[0],
+						},
+						session: {
+							id: `auth_${dbProfile.id}`,
+							userId: dbProfile.id,
+							token: `token_${dbProfile.id}`,
+							expiresAt: new Date(Date.now() + 86400000),
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						},
+					};
+				}
+			}
+		}
+	} catch (e) {
+		console.warn("getSession error:", e);
 	}
 
-	// Fallback Guest Session
-	return {
-		user: {
-			id: "guest-user",
-			name: "Guest User",
-			email: "guest@gmail.com",
-			image: "https://api.dicebear.com/7.x/avataaars/svg?seed=GuestUser",
-			emailVerified: true,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			username: "guest",
-		},
-		session: {
-			id: "guest-session-token",
-			userId: "guest-user",
-			token: "guest-token",
-			expiresAt: new Date(Date.now() + 365 * 86400000),
-			createdAt: new Date(),
-			updatedAt: new Date(),
-		},
-	};
+	return null;
 };

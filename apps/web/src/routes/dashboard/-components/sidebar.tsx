@@ -140,25 +140,29 @@ export function DashboardSidebar() {
 					<SidebarMenuItem>
 						<UserDropdownMenu>
 							{({ session }) => {
-								const user = session?.user ?? {
-									name: "Builder User",
-									email: "user@example.com",
-									image: "https://api.dicebear.com/7.x/avataaars/svg?seed=user",
-								};
+								const user = session?.user;
+								const displayName = user?.name || "User";
+								const displayEmail = user?.email || "";
+								const displayImage =
+									user?.image ||
+									`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayEmail || "user")}`;
+
 								return (
 									<SidebarMenuButton className="h-auto gap-x-3 group-data-[collapsible=icon]:p-1!">
 										<Avatar className="size-8 shrink-0 transition-all group-data-[collapsible=icon]:size-6">
-											<AvatarImage src={user.image ?? undefined} />
+											<AvatarImage src={displayImage} />
 											<AvatarFallback className="group-data-[collapsible=icon]:text-[0.5rem]">
-												{getInitials(user.name)}
+												{getInitials(displayName)}
 											</AvatarFallback>
 										</Avatar>
 
 										<div className="transition-[margin,opacity] duration-200 ease-in-out group-data-[collapsible=icon]:-ms-8 group-data-[collapsible=icon]:opacity-0">
-											<p className="font-medium">{user.name}</p>
-											<p className="text-muted-foreground text-xs">
-												{user.email}
-											</p>
+											<p className="font-medium truncate max-w-[140px]">{displayName}</p>
+											{displayEmail && (
+												<p className="text-muted-foreground text-xs truncate max-w-[140px]" title={displayEmail}>
+													{displayEmail}
+												</p>
+											)}
 										</div>
 									</SidebarMenuButton>
 								);

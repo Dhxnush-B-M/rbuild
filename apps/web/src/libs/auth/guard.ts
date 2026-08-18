@@ -34,19 +34,15 @@ export function isAllowedRedirect(path: string): boolean {
 }
 
 /**
- * Synchronous check for fast local rendering
+ * Synchronous check for fast rendering
  */
 export function checkAuthAndOnboardingAccess(): AccessStatus {
 	if (typeof window === "undefined") return "allowed";
-	// Clean any lingering URL hash for security
-	if (window.location.hash) {
-		try {
-			window.history.replaceState(
-				null,
-				"",
-				window.location.pathname + window.location.search,
-			);
-		} catch {}
+	const storedEmail =
+		sessionStorage.getItem("rbuilder_auth_email") ||
+		localStorage.getItem("rbuilder_auth_email");
+	if (!storedEmail) {
+		return "unauthenticated";
 	}
 	return "allowed";
 }
@@ -59,11 +55,18 @@ export async function verifyUserSubscriptionAcrossDevices(): Promise<AccessStatu
 
 	try {
 		const currentProfile = await getCurrentSupabaseUser();
-		if (currentProfile?.email) {
-			return "allowed";
+		if (!currentProfile?.email) {
+			return "unauthenticated";
 		}
 
-		return "unauthenticated";
+		if (
+			!currentProfile.onboarding_completed ||
+			currentProfile.subscription_status !== "active"
+		) {
+			return "needs_onboarding";
+		}
+
+		return "allowed";
 	} catch {
 		return "unauthenticated";
 	}

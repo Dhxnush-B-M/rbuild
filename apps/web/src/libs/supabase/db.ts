@@ -82,44 +82,61 @@ export async function getProfileByEmailFromSupabase(
  */
 export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | null> {
 	try {
+		// 1. Try Supabase Auth Session
 		const {
 			data: { session },
 		} = await supabase.auth.getSession();
-		if (!session?.user) return null;
 
-		const user = session.user;
-		const userEmail = (user.email || "").toLowerCase().trim();
-		const userName =
-			(user.user_metadata?.full_name as string) ||
-			(user.user_metadata?.name as string) ||
-			userEmail.split("@")[0] ||
-			"User";
-		const userAvatar =
-			(user.user_metadata?.avatar_url as string) ||
-			(user.user_metadata?.picture as string) ||
-			`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`;
+		if (session?.user?.email) {
+			const user = session.user;
+			const userEmail = (user.email || "").toLowerCase().trim();
+			if (typeof window !== "undefined") {
+				sessionStorage.setItem("rbuilder_auth_email", userEmail);
+				localStorage.setItem("rbuilder_auth_email", userEmail);
+			}
 
-		// Query profile from Supabase Database
-		const dbProfile = await getProfileByEmailFromSupabase(userEmail);
-		if (dbProfile) return dbProfile;
+			const dbProfile = await getProfileByEmailFromSupabase(userEmail);
+			if (dbProfile) return dbProfile;
 
-		const profile: SupabaseUserProfile = {
-			id: user.id,
-			email: userEmail,
-			name: userName,
-			avatar_url: userAvatar,
-			username:
-				(user.user_metadata?.user_name as string) || userEmail.split("@")[0],
-			phone: (user.user_metadata?.phone as string) || "",
-			provider: user.app_metadata?.provider || "google_oauth2",
-			subscription_status:
-				(user.user_metadata?.subscription_status as "active" | "inactive") ||
-				"inactive",
-			onboarding_completed: Boolean(user.user_metadata?.onboarding_completed),
-			created_at: user.created_at,
-		};
+			const profile: SupabaseUserProfile = {
+				id: user.id,
+				email: userEmail,
+				name:
+					(user.user_metadata?.full_name as string) ||
+					(user.user_metadata?.name as string) ||
+					userEmail.split("@")[0] ||
+					"User",
+				avatar_url:
+					(user.user_metadata?.avatar_url as string) ||
+					(user.user_metadata?.picture as string) ||
+					`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+				username:
+					(user.user_metadata?.user_name as string) || userEmail.split("@")[0],
+				phone: (user.user_metadata?.phone as string) || "",
+				provider: user.app_metadata?.provider || "google_oauth2",
+				subscription_status:
+					(user.user_metadata?.subscription_status as "active" | "inactive") ||
+					"inactive",
+				onboarding_completed: Boolean(user.user_metadata?.onboarding_completed),
+				created_at: user.created_at,
+			};
 
-		return profile;
+			return profile;
+		}
+
+		// 2. Check direct Google OAuth email in storage
+		if (typeof window !== "undefined") {
+			const storedEmail =
+				sessionStorage.getItem("rbuilder_auth_email") ||
+				localStorage.getItem("rbuilder_auth_email");
+
+			if (storedEmail) {
+				const dbProfile = await getProfileByEmailFromSupabase(storedEmail);
+				if (dbProfile) return dbProfile;
+			}
+		}
+
+		return null;
 	} catch {
 		return null;
 	}
@@ -185,7 +202,7 @@ export async function saveResumeToSupabase(resume: {
 	hasPassword?: boolean;
 }): Promise<SupabaseResumeRecord> {
 	const profile = await getCurrentSupabaseUser();
-	const userId = profile?.id || "guest-user";
+	const userId = profile?.id || "";
 
 	const record = {
 		id: resume.id,
@@ -424,7 +441,7 @@ function fileToDataUrl(file: File): Promise<string> {
 function mapResumeRow(row: Record<string, unknown>): SupabaseResumeRecord {
 	return {
 		id: (row.id as string) || "",
-		user_id: (row.user_id as string) || "guest-user",
+		user_id: (row.user_id as string) || "",
 		name: (row.name as string) || "Untitled",
 		slug: (row.slug as string) || "",
 		tags: (row.tags as string[]) || [],
@@ -438,7 +455,7 @@ function mapResumeRow(row: Record<string, unknown>): SupabaseResumeRecord {
 		isPublic: (row.is_public as boolean) ?? true,
 		isLocked: (row.is_locked as boolean) ?? false,
 		hasPassword: (row.has_password as boolean) ?? false,
-		userId: (row.user_id as string) || "guest-user",
+		userId: (row.user_id as string) || "",
 		createdAt: (row.created_at as string) || new Date().toISOString(),
 		updatedAt: (row.updated_at as string) || new Date().toISOString(),
 	};

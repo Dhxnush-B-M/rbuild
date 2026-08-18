@@ -44,23 +44,27 @@ export function UserDropdownMenu({ children }: Props) {
 		const toastId = toast.loading(t`Signing out...`);
 
 		try {
+			if (typeof window !== "undefined") {
+				sessionStorage.removeItem("rbuilder_auth_email");
+				localStorage.removeItem("rbuilder_auth_email");
+			}
 			await supabase.auth.signOut();
 			await authClient.signOut({
 				fetchOptions: {
 					onSuccess: async () => {
 						toast.dismiss(toastId);
 						await router.invalidate();
-						await router.navigate({ to: "/" });
+						await router.navigate({ to: "/auth/login" });
 					},
 					onError: (_error: unknown) => {
 						toast.dismiss(toastId);
-						void router.navigate({ to: "/" });
+						void router.navigate({ to: "/auth/login" });
 					},
 				},
 			});
 		} catch {
 			toast.dismiss(toastId);
-			void router.navigate({ to: "/" });
+			void router.navigate({ to: "/auth/login" });
 		}
 	};
 
@@ -68,18 +72,18 @@ export function UserDropdownMenu({ children }: Props) {
 		? session
 		: {
 				user: {
-					id: "logged_in_user",
+					id: "",
 					name: "User",
-					email: "user@gmail.com",
-					image: "https://api.dicebear.com/7.x/avataaars/svg?seed=user",
-					emailVerified: true,
+					email: "",
+					image: `https://api.dicebear.com/7.x/avataaars/svg?seed=user`,
+					emailVerified: false,
 					createdAt: new Date(),
 					updatedAt: new Date(),
 					username: "user",
 				},
 				session: {
 					id: "auth-session",
-					userId: "logged_in_user",
+					userId: "",
 					token: "",
 					expiresAt: new Date(),
 					createdAt: new Date(),

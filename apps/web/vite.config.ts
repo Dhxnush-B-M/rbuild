@@ -35,6 +35,7 @@ const serverProxy = serverPaths.reduce(
 );
 
 export default defineConfig({
+	base: "/",
 	envDir: workspaceRoot,
 
 	resolve: {
@@ -48,7 +49,7 @@ export default defineConfig({
 	build: {
 		chunkSizeWarningLimit: 10 * 1024, // 10 MB
 		assetsDir: "static",
-		rolldownOptions: {
+		rollupOptions: {
 			external: [
 				"bcrypt",
 				"sharp",
@@ -57,9 +58,9 @@ export default defineConfig({
 				"linkedom",
 			],
 			output: {
-				entryFileNames: "[name]-[hash].js",
-				chunkFileNames: "[name]-[hash].js",
-				assetFileNames: "[name]-[hash].[ext]",
+				entryFileNames: "static/[name]-[hash].js",
+				chunkFileNames: "static/[name]-[hash].js",
+				assetFileNames: "static/[name]-[hash].[ext]",
 			},
 		},
 	},
