@@ -242,33 +242,32 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 	}
 
 	// 3. Fallback: Parse URL hash if implicit tokens were passed
-	const hash = window.location.hash;
+	const hash = typeof window !== "undefined" ? window.location.hash : "";
 	if (!googleUser && hash?.includes("access_token")) {
 		const params = new URLSearchParams(hash.replace(/^#/, ""));
 		const idToken = params.get("id_token");
 
 		if (idToken) {
 			try {
-				const base64Url = idToken.split(".")[1] || "";
-				const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-				const jsonPayload = decodeURIComponent(
-					atob(base64)
-						.split("")
-						.map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-						.join(""),
-				);
+				const parts = idToken.split(".");
+				if (parts.length >= 2) {
+					const base64Url = parts[1] || "";
+					const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+					const padLength = (4 - (base64.length % 4)) % 4;
+					const padded = base64 + "=".repeat(padLength);
+					const raw = atob(padded);
+					const payload = JSON.parse(raw);
+					const userEmail = (payload.email || "").toLowerCase().trim();
 
-				const payload = JSON.parse(jsonPayload);
-				const userEmail = (payload.email || "").toLowerCase().trim();
-
-				googleUser = {
-					id: payload.sub || `google_${Date.now()}`,
-					email: userEmail,
-					name: payload.name || userEmail.split("@")[0] || "Google User",
-					picture:
-						payload.picture ||
-						`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
-				};
+					googleUser = {
+						id: payload.sub || `google_${Date.now()}`,
+						email: userEmail,
+						name: payload.name || userEmail.split("@")[0] || "Google User",
+						picture:
+							payload.picture ||
+							`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+					};
+				}
 			} catch (e) {
 				console.warn("Failed to parse OAuth2 id_token:", e);
 			}
