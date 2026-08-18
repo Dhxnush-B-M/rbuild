@@ -47,6 +47,7 @@ export default defineConfig({
 
 	build: {
 		chunkSizeWarningLimit: 10 * 1024, // 10 MB
+		assetsDir: "static",
 		rolldownOptions: {
 			external: [
 				"bcrypt",
@@ -56,9 +57,9 @@ export default defineConfig({
 				"linkedom",
 			],
 			output: {
-				entryFileNames: "assets/[name]-[hash].js",
-				chunkFileNames: "assets/[name]-[hash].js",
-				assetFileNames: "assets/[name]-[hash].[ext]",
+				entryFileNames: "static/[name]-[hash].js",
+				chunkFileNames: "static/[name]-[hash].js",
+				assetFileNames: "static/[name]-[hash].[ext]",
 			},
 		},
 	},
