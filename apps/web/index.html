@@ -24,6 +24,23 @@
 		<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="128x128" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="256x256 any" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" type="image/png" sizes="180x180 any" />
+		<script>
+			// Auto-cleanup stale service workers and bad cached bundles on rbuilder.space
+			if ('serviceWorker' in navigator) {
+				navigator.serviceWorker.getRegistrations().then(function(registrations) {
+					for (var i = 0; i < registrations.length; i++) {
+						registrations[i].unregister();
+					}
+				});
+			}
+			if ('caches' in window) {
+				caches.keys().then(function(names) {
+					for (var i = 0; i < names.length; i++) {
+						caches.delete(names[i]);
+					}
+				});
+			}
+		</script>
 		<script src="https://accounts.google.com/gsi/client" async defer></script>
 		<title>rbuilder — Professional Resume Builder</title>
 	</head>
