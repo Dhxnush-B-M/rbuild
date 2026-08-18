@@ -127,20 +127,22 @@ export async function initiateRazorpayPayment(params: {
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
 		"rzp_live_T20ve5q4iAJVwx";
 
+	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
+
 	const options: RazorpayOptions = {
 		key,
 		amount: params.plan.amountInPaise,
 		currency: "INR",
 		name: "rbuilder",
 		description: `Payment for ${params.plan.name}`,
-		image: `${window.location.origin}/favicon.ico`,
+		image: "https://rbuilder.space/apple-touch-icon-180x180.png",
 		prefill: {
-			name: params.userName,
-			email: params.userEmail,
-			contact: params.userPhone || "",
+			name: params.userName || undefined,
+			email: params.userEmail || undefined,
+			contact: cleanPhone || undefined,
 		},
 		theme: {
-			color: "#4f46e5",
+			color: "#9333ea",
 		},
 		modal: {
 			ondismiss: () => {
