@@ -42,7 +42,6 @@ function OnboardingPage() {
 	);
 	const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "netbanking">("upi");
 	const [isLoading, setIsLoading] = useState(false);
-	const [isPaymentWaiting, setIsPaymentWaiting] = useState(false);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -111,17 +110,7 @@ function OnboardingPage() {
 		try {
 			await saveUserToSupabase(profile);
 		} catch (e) {
-			console.warn("Could not save to Supabase before redirect:", e);
-		}
-
-		if (planToPay.paymentLink) {
-			setIsLoading(false);
-			setIsPaymentWaiting(true);
-			const win = window.open(planToPay.paymentLink, "_blank");
-			if (!win) {
-				window.location.href = planToPay.paymentLink;
-			}
-			return;
+			console.warn("Could not save to Supabase before payment:", e);
 		}
 
 		await initiateRazorpayPayment({
@@ -130,14 +119,18 @@ function OnboardingPage() {
 			userName,
 			userPhone,
 			onSuccess: async (paymentId) => {
-				toast.success("Payment successful! Pro Plan activated.");
-				profile.subscription_status = "active";
-				localStorage.setItem("rbuilder_user_profile", JSON.stringify(profile));
-				await saveUserToSupabase(profile);
+				setIsLoading(false);
+				toast.success("🎉 Payment successful! Pro Plan activated.");
+				const activeProfile = {
+					...profile,
+					payment_id: paymentId,
+					subscription_status: "active" as const,
+					onboarding_completed: true,
+				};
+				localStorage.setItem("rbuilder_user_profile", JSON.stringify(activeProfile));
+				await saveUserToSupabase(activeProfile);
 
-				setTimeout(() => {
-					void navigate({ to: "/dashboard/resumes", replace: true });
-				}, 1000);
+				void navigate({ to: "/dashboard/resumes", replace: true });
 			},
 			onError: (error) => {
 				setIsLoading(false);
@@ -370,7 +363,7 @@ function OnboardingPage() {
 						</m.div>
 					)}
 
-					{/* STEP 3: Plan Selection & Payment Completion */}
+					{/* STEP 3: Plan Selection (Image 2 Dark Slate Pricing UI) */}
 					{currentStep === 3 && (
 						<m.div
 							key="step3"
@@ -380,72 +373,20 @@ function OnboardingPage() {
 							transition={{ duration: 0.25 }}
 							className="flex flex-col items-center text-center"
 						>
-							{isPaymentWaiting ? (
-								<div className="flex w-full flex-col items-center text-center">
-									{/* Success Glowing Icon */}
-									<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 ring-8 ring-emerald-500/5">
-										<CheckCircleIcon className="size-10 text-emerald-500" weight="fill" />
-									</div>
+							{/* Graduation Cap / Pro Badge */}
+							<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-purple-100/90 dark:bg-purple-950/50">
+								<GraduationCapIcon className="size-10 text-purple-600" weight="fill" />
+							</div>
 
-									<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
-										Complete Your Payment
-									</h2>
-									<p className="mt-1 text-muted-foreground text-xs">
-										We opened the Razorpay payment window for ₹{selectedPlan.amountInRupees}. Once paid, tap below!
-									</p>
+							<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
+								Choose your plan
+							</h2>
+							<p className="mt-1 text-muted-foreground text-xs">
+								Select the plan to unlock premium templates & ATS export
+							</p>
 
-									<div className="mt-6 w-full space-y-3">
-										<button
-											type="button"
-											onClick={() => {
-												toast.success("🎉 Payment verified! Welcome to rbuilder Pro.");
-												void navigate({ to: "/dashboard/resumes", replace: true });
-											}}
-											className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 font-bold text-sm text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-[0.98]"
-										>
-											<CheckCircleIcon className="size-5" weight="fill" />
-											<span>I Have Paid ➔ Go to Dashboard</span>
-										</button>
-
-										<button
-											type="button"
-											onClick={() => {
-												if (selectedPlan.paymentLink) {
-													window.open(selectedPlan.paymentLink, "_blank");
-												}
-											}}
-											className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-secondary/50 font-semibold text-xs text-foreground transition-all hover:bg-secondary"
-										>
-											<WalletIcon className="size-4 text-purple-400" weight="fill" />
-											<span>Re-open Razorpay Payment Page</span>
-										</button>
-
-										<button
-											type="button"
-											onClick={() => setIsPaymentWaiting(false)}
-											className="mt-2 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
-										>
-											<ArrowLeftIcon className="size-3" />
-											<span>Change Plan / Go Back</span>
-										</button>
-									</div>
-								</div>
-							) : (
-								<>
-									{/* Graduation Cap / Pro Badge */}
-									<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-purple-100/90 dark:bg-purple-950/50">
-										<GraduationCapIcon className="size-10 text-purple-600" weight="fill" />
-									</div>
-
-									<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
-										Choose your plan
-									</h2>
-									<p className="mt-1 text-muted-foreground text-xs">
-										Select the plan to unlock premium templates & ATS export
-									</p>
-
-									{/* Plan Cards */}
-									<div className="mt-5 w-full space-y-3 text-left">
+							{/* Plan Cards */}
+							<div className="mt-5 w-full space-y-3 text-left">
 										{SUBSCRIPTION_PLANS.map((plan) => {
 											const isSelected = selectedPlan.id === plan.id;
 											return (
@@ -546,8 +487,6 @@ function OnboardingPage() {
 										<ArrowLeftIcon className="size-3" />
 										<span>Back</span>
 									</button>
-								</>
-							)}
 						</m.div>
 					)}
 				</AnimatePresence>

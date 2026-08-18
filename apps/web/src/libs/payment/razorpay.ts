@@ -171,6 +171,12 @@ export async function initiateRazorpayPayment(params: {
 
 	try {
 		const rzp = new window.Razorpay(options);
+		rzp.on("payment.failed", (response: unknown) => {
+			const err = response as { error?: { description?: string } };
+			params.onError?.(
+				err?.error?.description || "Payment was not completed.",
+			);
+		});
 		rzp.open();
 	} catch (e) {
 		params.onError?.(
