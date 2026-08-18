@@ -34,7 +34,7 @@ export function Footer() {
 			viewport={{ once: true }}
 			transition={{ duration: 0.45 }}
 		>
-			<div className="grid grid-cols-1 gap-8 pb-8 sm:grid-cols-2 lg:grid-cols-3">
+			<div className="grid grid-cols-1 gap-8 pb-8 sm:grid-cols-2">
 				<div className="space-y-4">
 					<BrandIcon variant="logo" className="h-9" />
 
