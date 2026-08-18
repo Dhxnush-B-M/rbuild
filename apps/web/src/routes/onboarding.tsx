@@ -42,6 +42,7 @@ function OnboardingPage() {
 	);
 	const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "netbanking">("upi");
 	const [isLoading, setIsLoading] = useState(false);
+	const [isPaymentWaiting, setIsPaymentWaiting] = useState(false);
 
 	useEffect(() => {
 		let isMounted = true;
@@ -113,9 +114,13 @@ function OnboardingPage() {
 			console.warn("Could not save to Supabase before redirect:", e);
 		}
 
-		// Direct redirect to the verified Razorpay payment link (100% real money, zero domain blocks)
 		if (planToPay.paymentLink) {
-			window.location.href = planToPay.paymentLink;
+			setIsLoading(false);
+			setIsPaymentWaiting(true);
+			const win = window.open(planToPay.paymentLink, "_blank");
+			if (!win) {
+				window.location.href = planToPay.paymentLink;
+			}
 			return;
 		}
 
@@ -365,7 +370,7 @@ function OnboardingPage() {
 						</m.div>
 					)}
 
-					{/* STEP 3: Plan Selection (Image 2 Dark Slate Pricing UI) */}
+					{/* STEP 3: Plan Selection & Payment Completion */}
 					{currentStep === 3 && (
 						<m.div
 							key="step3"
@@ -375,120 +380,174 @@ function OnboardingPage() {
 							transition={{ duration: 0.25 }}
 							className="flex flex-col items-center text-center"
 						>
-							{/* Graduation Cap / Pro Badge */}
-							<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-purple-100/90 dark:bg-purple-950/50">
-								<GraduationCapIcon className="size-10 text-purple-600" weight="fill" />
-							</div>
+							{isPaymentWaiting ? (
+								<div className="flex w-full flex-col items-center text-center">
+									{/* Success Glowing Icon */}
+									<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 ring-8 ring-emerald-500/5">
+										<CheckCircleIcon className="size-10 text-emerald-500" weight="fill" />
+									</div>
 
-							<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
-								Choose your plan
-							</h2>
-							<p className="mt-1 text-muted-foreground text-xs">
-								Select the plan to unlock premium templates & ATS export
-							</p>
+									<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
+										Complete Your Payment
+									</h2>
+									<p className="mt-1 text-muted-foreground text-xs">
+										We opened the Razorpay payment window for ₹{selectedPlan.amountInRupees}. Once paid, tap below!
+									</p>
 
-							{/* Plan Cards */}
-							<div className="mt-5 w-full space-y-3 text-left">
-								{SUBSCRIPTION_PLANS.map((plan) => {
-									const isSelected = selectedPlan.id === plan.id;
-									return (
-										<div
-											key={plan.id}
-											onClick={() => setSelectedPlan(plan)}
-											className={`relative cursor-pointer rounded-2xl p-4 transition-all duration-200 ${
-												isSelected
-													? "border-2 border-yellow-400 bg-[#171B26] text-white shadow-xl dark:bg-[#121520]"
-													: "border border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100/80 dark:border-white/10 dark:bg-white/5"
-											}`}
+									<div className="mt-6 w-full space-y-3">
+										<button
+											type="button"
+											onClick={() => {
+												toast.success("🎉 Payment verified! Welcome to rbuilder Pro.");
+												void navigate({ to: "/dashboard/resumes", replace: true });
+											}}
+											className="flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 font-bold text-sm text-white shadow-lg shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-[0.98]"
 										>
-											{/* Top Badges */}
-											<div className="flex items-center justify-between">
-												<div className="flex items-center gap-2">
-													<div
-														className={`size-4 rounded-full border-2 ${
-															isSelected
-																? "border-yellow-400 bg-yellow-400"
-																: "border-muted-foreground"
-														}`}
-													/>
-													<span className="font-bold text-sm">
-														{plan.id === "3_months" ? "Resume Pro" : "Resume Starter"}
-													</span>
+											<CheckCircleIcon className="size-5" weight="fill" />
+											<span>I Have Paid ➔ Go to Dashboard</span>
+										</button>
+
+										<button
+											type="button"
+											onClick={() => {
+												if (selectedPlan.paymentLink) {
+													window.open(selectedPlan.paymentLink, "_blank");
+												}
+											}}
+											className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-secondary/50 font-semibold text-xs text-foreground transition-all hover:bg-secondary"
+										>
+											<WalletIcon className="size-4 text-purple-400" weight="fill" />
+											<span>Re-open Razorpay Payment Page</span>
+										</button>
+
+										<button
+											type="button"
+											onClick={() => setIsPaymentWaiting(false)}
+											className="mt-2 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
+										>
+											<ArrowLeftIcon className="size-3" />
+											<span>Change Plan / Go Back</span>
+										</button>
+									</div>
+								</div>
+							) : (
+								<>
+									{/* Graduation Cap / Pro Badge */}
+									<div className="relative mb-4 flex size-20 items-center justify-center rounded-full bg-purple-100/90 dark:bg-purple-950/50">
+										<GraduationCapIcon className="size-10 text-purple-600" weight="fill" />
+									</div>
+
+									<h2 className="font-extrabold text-2xl text-foreground tracking-tight">
+										Choose your plan
+									</h2>
+									<p className="mt-1 text-muted-foreground text-xs">
+										Select the plan to unlock premium templates & ATS export
+									</p>
+
+									{/* Plan Cards */}
+									<div className="mt-5 w-full space-y-3 text-left">
+										{SUBSCRIPTION_PLANS.map((plan) => {
+											const isSelected = selectedPlan.id === plan.id;
+											return (
+												<div
+													key={plan.id}
+													onClick={() => setSelectedPlan(plan)}
+													className={`relative cursor-pointer rounded-2xl p-4 transition-all duration-200 ${
+														isSelected
+															? "border-2 border-yellow-400 bg-[#171B26] text-white shadow-xl dark:bg-[#121520]"
+															: "border border-neutral-200 bg-neutral-50/60 hover:bg-neutral-100/80 dark:border-white/10 dark:bg-white/5"
+													}`}
+												>
+													{/* Top Badges */}
+													<div className="flex items-center justify-between">
+														<div className="flex items-center gap-2">
+															<div
+																className={`size-4 rounded-full border-2 ${
+																	isSelected
+																		? "border-yellow-400 bg-yellow-400"
+																		: "border-muted-foreground"
+																}`}
+															/>
+															<span className="font-bold text-sm">
+																{plan.id === "3_months" ? "Resume Pro" : "Resume Starter"}
+															</span>
+														</div>
+														{plan.badge && (
+															<span className="rounded-full bg-yellow-400 px-2.5 py-0.5 font-extrabold text-[10px] text-neutral-900">
+																{plan.badge}
+															</span>
+														)}
+													</div>
+
+													{/* Price Row */}
+													<div className="mt-2 flex items-baseline gap-2">
+														<span className="font-extrabold text-2xl text-yellow-400">
+															₹{plan.amountInRupees}
+														</span>
+														<span className="text-[11px] text-neutral-400">
+															/ {plan.durationText}
+														</span>
+														<span className="text-[11px] text-neutral-400 line-through">
+															₹{plan.id === "3_months" ? "63" : "22"}
+														</span>
+													</div>
+
+													{/* Features List */}
+													<div className="mt-3 space-y-1.5 border-neutral-700/50 border-t pt-3">
+														<div className="flex items-center gap-2 text-[11px]">
+															<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
+															<span>Unlimited High-Res PDF & DOCX Downloads</span>
+														</div>
+														<div className="flex items-center gap-2 text-[11px]">
+															<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
+															<span>All 15+ ATS-Optimized Templates</span>
+														</div>
+														<div className="flex items-center gap-2 text-[11px]">
+															<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
+															<span>Permanent Cloud Sync & Direct Share Link</span>
+														</div>
+													</div>
 												</div>
-												{plan.badge && (
-													<span className="rounded-full bg-yellow-400 px-2.5 py-0.5 font-extrabold text-[10px] text-neutral-900">
-														{plan.badge}
-													</span>
-												)}
-											</div>
+											);
+										})}
+									</div>
 
-											{/* Price Row */}
-											<div className="mt-2 flex items-baseline gap-2">
-												<span className="font-extrabold text-2xl text-yellow-400">
-													₹{plan.amountInRupees}
-												</span>
-												<span className="text-[11px] text-neutral-400">
-													/ {plan.durationText}
-												</span>
-												<span className="text-[11px] text-neutral-400 line-through">
-													₹{plan.id === "3_months" ? "63" : "22"}
-												</span>
-											</div>
+									{/* Social proof note */}
+									<div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+										<StudentIcon className="size-4 text-purple-600" weight="fill" />
+										<span>Trusted by 10,000+ job seekers</span>
+									</div>
 
-											{/* Features List */}
-											<div className="mt-3 space-y-1.5 border-neutral-700/50 border-t pt-3">
-												<div className="flex items-center gap-2 text-[11px]">
-													<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
-													<span>Unlimited High-Res PDF & DOCX Downloads</span>
-												</div>
-												<div className="flex items-center gap-2 text-[11px]">
-													<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
-													<span>All 15+ ATS-Optimized Templates</span>
-												</div>
-												<div className="flex items-center gap-2 text-[11px]">
-													<CheckCircleIcon className="size-3.5 text-emerald-400" weight="fill" />
-													<span>Permanent Cloud Sync & Direct Share Link</span>
-												</div>
-											</div>
-										</div>
-									);
-								})}
-							</div>
+									<button
+										type="button"
+										disabled={isLoading}
+										onClick={() => void handleCompletePayment()}
+										className="mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
+									>
+										<WalletIcon className="size-4" weight="fill" />
+										<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} & Start Building`}</span>
+									</button>
 
-							{/* Social proof note */}
-							<div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-								<StudentIcon className="size-4 text-purple-600" weight="fill" />
-								<span>Trusted by 10,000+ job seekers</span>
-							</div>
+									{/* Free Access Skip */}
+									<button
+										type="button"
+										disabled={isLoading}
+										onClick={handleFreeAccess}
+										className="mt-2.5 font-medium text-muted-foreground text-xs hover:text-foreground"
+									>
+										Continue with Basic Access (Skip)
+									</button>
 
-							<button
-								type="button"
-								disabled={isLoading}
-								onClick={() => void handleCompletePayment()}
-								className="mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
-							>
-								<WalletIcon className="size-4" weight="fill" />
-								<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} & Start Building`}</span>
-							</button>
-
-							{/* Free Access Skip */}
-							<button
-								type="button"
-								disabled={isLoading}
-								onClick={handleFreeAccess}
-								className="mt-2.5 font-medium text-muted-foreground text-xs hover:text-foreground"
-							>
-								Continue with Basic Access (Skip)
-							</button>
-
-							<button
-								type="button"
-								onClick={handlePrevStep}
-								className="mt-3 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
-							>
-								<ArrowLeftIcon className="size-3" />
-								<span>Back</span>
-							</button>
+									<button
+										type="button"
+										onClick={handlePrevStep}
+										className="mt-3 flex items-center justify-center gap-1 font-semibold text-muted-foreground text-xs hover:text-foreground"
+									>
+										<ArrowLeftIcon className="size-3" />
+										<span>Back</span>
+									</button>
+								</>
+							)}
 						</m.div>
 					)}
 				</AnimatePresence>
