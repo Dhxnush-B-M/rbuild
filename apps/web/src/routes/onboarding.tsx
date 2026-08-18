@@ -38,7 +38,7 @@ function OnboardingPage() {
 	const [countryCode] = useState("+91");
 	const [email, setEmail] = useState("");
 	const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlanOption>(
-		SUBSCRIPTION_PLANS[1] || SUBSCRIPTION_PLANS[0]!,
+		SUBSCRIPTION_PLANS[0]!,
 	);
 	const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "netbanking">("upi");
 	const [isLoading, setIsLoading] = useState(false);
