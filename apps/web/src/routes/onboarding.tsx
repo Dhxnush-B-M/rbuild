@@ -42,6 +42,8 @@ function OnboardingPage() {
 	);
 	const [paymentMethod, setPaymentMethod] = useState<"upi" | "card" | "netbanking">("upi");
 	const [isLoading, setIsLoading] = useState(false);
+	const [hasInitiatedPayment, setHasInitiatedPayment] = useState(false);
+	const [paymentIdInput, setPaymentIdInput] = useState("");
 
 	useEffect(() => {
 		let isMounted = true;
@@ -57,6 +59,7 @@ function OnboardingPage() {
 			if (profile?.name) setFullName(profile.name);
 			if (profile?.email) setEmail(profile.email);
 			if (profile?.phone) setPhone(profile.phone);
+			if (profile?.payment_id) setPaymentIdInput(profile.payment_id);
 		});
 		return () => {
 			isMounted = false;
@@ -95,20 +98,19 @@ function OnboardingPage() {
 
 		setIsLoading(true);
 
-		const profile = {
+		const pendingProfile = {
 			name: userName,
 			username: userName.toLowerCase().replace(/\s+/g, "-"),
 			email: userEmail,
 			phone: userPhone,
-			subscription_status: "active" as const,
+			subscription_status: "pending" as const,
 			subscription_plan: planToPay.id,
 			subscription_amount: planToPay.amountInRupees,
-			payment_id: `rzp_${Date.now()}`,
-			onboarding_completed: true,
+			onboarding_completed: false,
 		};
 
 		try {
-			await saveUserToSupabase(profile);
+			await saveUserToSupabase(pendingProfile);
 		} catch (e) {
 			console.warn("Could not save to Supabase before payment:", e);
 		}
@@ -123,7 +125,37 @@ function OnboardingPage() {
 		}
 
 		setIsLoading(false);
-		toast.success("Welcome to rbuilder Pro!");
+		setHasInitiatedPayment(true);
+		toast.info("Please complete payment on Razorpay, then enter your Payment ID below.");
+	};
+
+	const handleVerifyPayment = async () => {
+		const cleanRef = paymentIdInput.trim();
+		if (!cleanRef || cleanRef.length < 5) {
+			toast.error("Please enter a valid Razorpay Payment ID (e.g. pay_...) or UPI Reference Number.");
+			return;
+		}
+
+		setIsLoading(true);
+		const userEmail = email.trim().toLowerCase() || "user@rbuilder.app";
+		const userName = fullName.trim() || "Resume Creator";
+		const userPhone = phone.trim() ? `${countryCode} ${phone.trim()}` : "";
+
+		const activeProfile = {
+			name: userName,
+			username: userName.toLowerCase().replace(/\s+/g, "-"),
+			email: userEmail,
+			phone: userPhone,
+			subscription_status: "active" as const,
+			subscription_plan: selectedPlan.id,
+			subscription_amount: selectedPlan.amountInRupees,
+			payment_id: cleanRef,
+			onboarding_completed: true,
+		};
+
+		await saveUserToSupabase(activeProfile);
+		setIsLoading(false);
+		toast.success("🎉 Payment verified! Pro access activated.");
 		void navigate({ to: "/dashboard/resumes", replace: true });
 	};
 
@@ -424,8 +456,35 @@ function OnboardingPage() {
 										className="mt-6 flex h-13 w-full items-center justify-center gap-2 rounded-2xl bg-purple-600 font-bold text-sm text-white shadow-md shadow-purple-600/25 transition-all hover:bg-purple-700 active:scale-[0.98]"
 									>
 										<WalletIcon className="size-4" weight="fill" />
-										<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} & Start Building`}</span>
+										<span>{isLoading ? "Opening Razorpay..." : `Pay ₹${selectedPlan.amountInRupees} with Razorpay`}</span>
 									</button>
+
+									{/* Verification Section */}
+									<div className="mt-5 w-full rounded-2xl border border-purple-200/80 bg-purple-50/50 p-4 text-left dark:border-purple-500/20 dark:bg-purple-950/20">
+										<div className="flex items-center gap-2">
+											<CheckCircleIcon className="size-4 text-purple-600 dark:text-purple-400" weight="fill" />
+											<span className="font-bold text-xs text-foreground">Payment Verification</span>
+										</div>
+										<p className="mt-1 text-muted-foreground text-[11px]">
+											After completing payment on Razorpay, enter your <strong>Razorpay Payment ID (e.g. pay_...)</strong> or <strong>UPI Reference / UTR Number</strong> below:
+										</p>
+										<input
+											type="text"
+											placeholder="e.g. pay_TRExsTqAfyzGiO or 12-digit UPI UTR"
+											value={paymentIdInput}
+											onChange={(e) => setPaymentIdInput(e.target.value)}
+											className="mt-2.5 w-full rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-mono text-foreground placeholder:text-muted-foreground/60 focus:border-purple-500 focus:outline-none dark:border-white/10 dark:bg-neutral-900"
+										/>
+										<button
+											type="button"
+											disabled={isLoading}
+											onClick={() => void handleVerifyPayment()}
+											className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 font-bold text-xs text-white shadow-md shadow-emerald-600/20 transition-all hover:bg-emerald-700 active:scale-[0.98]"
+										>
+											<CheckCircleIcon className="size-4" weight="fill" />
+											<span>{isLoading ? "Verifying..." : "Verify Payment & Unlock Dashboard"}</span>
+										</button>
+									</div>
 
 									<button
 										type="button"

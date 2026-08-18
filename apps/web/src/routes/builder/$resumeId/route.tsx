@@ -51,18 +51,15 @@ function RouteComponent() {
 		let isMounted = true;
 
 		async function checkAndInit() {
-			const syncStatus = checkAuthAndOnboardingAccess();
-			if (syncStatus !== "allowed") {
-				const asyncStatus = await verifyUserSubscriptionAcrossDevices();
-				if (!isMounted) return;
-				if (asyncStatus === "unauthenticated") {
-					void navigate({ to: "/auth/login", replace: true });
-					return;
-				}
-				if (asyncStatus === "needs_onboarding") {
-					void navigate({ to: "/onboarding", replace: true });
-					return;
-				}
+			const asyncStatus = await verifyUserSubscriptionAcrossDevices();
+			if (!isMounted) return;
+			if (asyncStatus === "unauthenticated") {
+				void navigate({ to: "/auth/login", replace: true });
+				return;
+			}
+			if (asyncStatus === "needs_onboarding") {
+				void navigate({ to: "/onboarding", replace: true });
+				return;
 			}
 
 			const existing = await getResumeByIdFromSupabase(resumeId);
