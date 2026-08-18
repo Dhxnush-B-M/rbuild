@@ -473,48 +473,6 @@ function OnboardingPage() {
 				</AnimatePresence>
 			</m.div>
 
-			{/* Bottom 4 Trust Badges (Image 1 Bottom Row) */}
-			<div className="relative z-10 mx-auto mt-8 grid w-full max-w-4xl grid-cols-2 gap-4 px-2 sm:grid-cols-4">
-				<div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 shadow-xs backdrop-blur-xl dark:border-white/5 dark:bg-white/5">
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">
-						<ShieldCheckIcon className="size-5" weight="duotone" />
-					</div>
-					<div className="flex flex-col">
-						<span className="font-bold text-foreground text-xs">Secure & Safe</span>
-						<span className="text-[10px] text-muted-foreground">Your data is protected</span>
-					</div>
-				</div>
-
-				<div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 shadow-xs backdrop-blur-xl dark:border-white/5 dark:bg-white/5">
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
-						<HeadsetIcon className="size-5" weight="duotone" />
-					</div>
-					<div className="flex flex-col">
-						<span className="font-bold text-foreground text-xs">24/7 Support</span>
-						<span className="text-[10px] text-muted-foreground">We're here to help</span>
-					</div>
-				</div>
-
-				<div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 shadow-xs backdrop-blur-xl dark:border-white/5 dark:bg-white/5">
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">
-						<SparkleIcon className="size-5" weight="duotone" />
-					</div>
-					<div className="flex flex-col">
-						<span className="font-bold text-foreground text-xs">ATS Ready</span>
-						<span className="text-[10px] text-muted-foreground">Tested with top recruiters</span>
-					</div>
-				</div>
-
-				<div className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/70 p-3 shadow-xs backdrop-blur-xl dark:border-white/5 dark:bg-white/5">
-					<div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-700 dark:bg-pink-950/60 dark:text-pink-300">
-						<StudentIcon className="size-5" weight="duotone" />
-					</div>
-					<div className="flex flex-col">
-						<span className="font-bold text-foreground text-xs">10,000+ Users</span>
-						<span className="text-[10px] text-muted-foreground">Growing community</span>
-					</div>
-				</div>
-			</div>
 		</div>
 	);
 }
