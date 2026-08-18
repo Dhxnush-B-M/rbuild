@@ -19,125 +19,39 @@ const GOOGLE_CLIENT_ID =
 	import.meta.env.VITE_GOOGLE_CLIENT_ID ||
 	"925681943886-8fj6t1r9enai6mt8ikg5msg4lup7999c.apps.googleusercontent.com";
 
-declare global {
-	interface Window {
-		google?: {
-			accounts: {
-				id: {
-					initialize: (config: any) => void;
-					prompt: (callback?: (notification: any) => void) => void;
-					renderButton: (parent: HTMLElement, options: any) => void;
-				};
-				oauth2: {
-					initTokenClient: (config: any) => any;
-				};
-			};
-		};
-	}
-}
-
 /**
- * Initiates direct Google authentication on rbuilder.space.
- * Uses Google Identity Services ID Token to sign in to Supabase directly,
- * preventing Google from showing the 'auxppvofumzpvpzvgfdw.supabase.co' redirect URL screen.
+ * Initiates direct Google OAuth 2.0 flow from rbuilder.space
+ * Directly redirects to accounts.google.com so Google displays "rbuilder.space"
  */
-export async function initiateGoogleOAuth2(options?: {
+export function initiateGoogleOAuth2(options?: {
 	redirectTo?: string;
 }): Promise<boolean> {
-	// If Google GSI library is loaded, initiate Google popup directly on rbuilder.space
-	if (typeof window !== "undefined" && window.google?.accounts?.id) {
-		return new Promise<boolean>((resolve) => {
-			try {
-				window.google!.accounts.id.initialize({
-					client_id: GOOGLE_CLIENT_ID,
-					callback: async (response: { credential?: string }) => {
-						if (!response.credential) {
-							resolve(false);
-							return;
-						}
-						try {
-							const { data, error } = await supabase.auth.signInWithIdToken({
-								provider: "google",
-								token: response.credential,
-							});
-
-							if (error || !data.user) {
-								console.error("Supabase signInWithIdToken error:", error);
-								// Fallback to standard Supabase OAuth if ID token exchange fails
-								const fallbackRes = await initiateSupabaseOAuthFallback(options);
-								resolve(fallbackRes);
-								return;
-							}
-
-							// Successfully authenticated into Supabase! Process user & redirect
-							const res = await parseOAuth2CallbackAndCheckSubscription();
-							if (typeof window !== "undefined") {
-								window.location.href = res.redirectTo || "/onboarding";
-							}
-							resolve(true);
-						} catch (err) {
-							console.error("Error during Google ID token processing:", err);
-							resolve(false);
-						}
-					},
-					auto_select: false,
-					cancel_on_tap_outside: true,
-				});
-
-				// Trigger Google prompt directly on current domain (rbuilder.space)
-				window.google!.accounts.id.prompt((notification: any) => {
-					if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-						// If one-tap popup was dismissed or blocked, trigger OAuth redirect fallback
-						initiateSupabaseOAuthFallback(options).then(resolve);
-					}
-				});
-			} catch (e) {
-				console.warn("Direct Google sign-in failed, using fallback:", e);
-				initiateSupabaseOAuthFallback(options).then(resolve);
-			}
-		});
-	}
-
-	return initiateSupabaseOAuthFallback(options);
-}
-
-/**
- * Fallback to Supabase OAuth flow
- */
-async function initiateSupabaseOAuthFallback(options?: {
-	redirectTo?: string;
-}): Promise<boolean> {
-	const redirectUri =
-		options?.redirectTo ||
-		(typeof window !== "undefined"
-			? `${window.location.origin}/auth/callback`
-			: "https://rbuilder.space/auth/callback");
+	if (typeof window === "undefined") return Promise.resolve(false);
 
 	try {
-		const { data, error } = await supabase.auth.signInWithOAuth({
-			provider: "google",
-			options: {
-				redirectTo: redirectUri,
-				queryParams: {
-					access_type: "offline",
-					prompt: "select_account",
-				},
-			},
+		// Generate cryptographically random nonce and store in sessionStorage
+		const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+			.map((b) => b.toString(16).padStart(2, "0"))
+			.join("");
+		sessionStorage.setItem("rbuilder_oauth_nonce", nonce);
+
+		const redirectUri =
+			options?.redirectTo || `${window.location.origin}/auth/callback`;
+
+		const params = new URLSearchParams({
+			client_id: GOOGLE_CLIENT_ID,
+			redirect_uri: redirectUri,
+			response_type: "id_token token",
+			scope: "openid email profile",
+			nonce: nonce,
+			prompt: "select_account",
 		});
 
-		if (error) {
-			console.error("Supabase OAuth error:", error);
-			return false;
-		}
-
-		if (data?.url) {
-			window.location.href = data.url;
-			return true;
-		}
-		return true;
+		window.location.href = `https://accounts.google.com/o/oauth2/auth?${params.toString()}`;
+		return Promise.resolve(true);
 	} catch (e) {
-		console.error("Failed to start Supabase Google OAuth:", e);
-		return false;
+		console.error("Failed to start Google OAuth:", e);
+		return Promise.resolve(false);
 	}
 }
 
@@ -243,33 +157,69 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 
 	// 3. Fallback: Parse URL hash if implicit tokens were passed
 	const hash = typeof window !== "undefined" ? window.location.hash : "";
-	if (!googleUser && hash?.includes("access_token")) {
+	if (!googleUser && (hash?.includes("access_token") || hash?.includes("id_token"))) {
 		const params = new URLSearchParams(hash.replace(/^#/, ""));
 		const idToken = params.get("id_token");
 
 		if (idToken) {
-			try {
-				const parts = idToken.split(".");
-				if (parts.length >= 2) {
-					const base64Url = parts[1] || "";
-					const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-					const padLength = (4 - (base64.length % 4)) % 4;
-					const padded = base64 + "=".repeat(padLength);
-					const raw = atob(padded);
-					const payload = JSON.parse(raw);
-					const userEmail = (payload.email || "").toLowerCase().trim();
+			const nonce =
+				typeof window !== "undefined"
+					? sessionStorage.getItem("rbuilder_oauth_nonce") || undefined
+					: undefined;
 
+			try {
+				const { data: sessionData, error: sessionError } =
+					await supabase.auth.signInWithIdToken({
+						provider: "google",
+						token: idToken,
+						nonce: nonce,
+					});
+
+				if (!sessionError && sessionData?.user) {
+					const u = sessionData.user;
+					const userEmail = (u.email || "").toLowerCase().trim();
 					googleUser = {
-						id: payload.sub || `google_${Date.now()}`,
+						id: u.id,
 						email: userEmail,
-						name: payload.name || userEmail.split("@")[0] || "Google User",
+						name:
+							(u.user_metadata?.full_name as string) ||
+							(u.user_metadata?.name as string) ||
+							userEmail.split("@")[0] ||
+							"User",
 						picture:
-							payload.picture ||
+							(u.user_metadata?.avatar_url as string) ||
 							`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
 					};
 				}
 			} catch (e) {
-				console.warn("Failed to parse OAuth2 id_token:", e);
+				console.warn("Supabase signInWithIdToken error:", e);
+			}
+
+			// If supabase signInWithIdToken didn't set googleUser, decode JWT directly
+			if (!googleUser) {
+				try {
+					const parts = idToken.split(".");
+					if (parts.length >= 2) {
+						const base64Url = parts[1] || "";
+						const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+						const padLength = (4 - (base64.length % 4)) % 4;
+						const padded = base64 + "=".repeat(padLength);
+						const raw = atob(padded);
+						const payload = JSON.parse(raw);
+						const userEmail = (payload.email || "").toLowerCase().trim();
+
+						googleUser = {
+							id: payload.sub || `google_${Date.now()}`,
+							email: userEmail,
+							name: payload.name || userEmail.split("@")[0] || "Google User",
+							picture:
+								payload.picture ||
+								`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail || "user")}`,
+						};
+					}
+				} catch (e) {
+					console.warn("Failed to parse OAuth2 id_token:", e);
+				}
 			}
 		}
 	}
