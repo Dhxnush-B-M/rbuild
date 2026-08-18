@@ -245,38 +245,8 @@ export async function parseOAuth2CallbackAndCheckSubscription(): Promise<{
 
 	const userEmail = googleUser.email.toLowerCase().trim();
 
-	// Check VIP / Admin auto-activation for karthikdhanush686@gmail.com & karthikdhanush676@gmail.com
-	if (
-		userEmail === "karthikdhanush686@gmail.com" ||
-		userEmail === "karthikdhanush676@gmail.com" ||
-		userEmail.startsWith("karthikdhanush")
-	) {
-		const vipProfile = {
-			id: googleUser.id || `user_${userEmail.replace(/[^a-zA-Z0-9]/g, "_")}`,
-			email: userEmail,
-			name: googleUser.name || "Karthik Dhanush",
-			avatar_url:
-				googleUser.picture ||
-				`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userEmail)}`,
-			subscription_plan: "3_months" as const,
-			subscription_status: "active" as const,
-			subscription_amount: 0,
-			onboarding_completed: true,
-		};
-		localStorage.setItem("rbuilder_user_profile", JSON.stringify(vipProfile));
-		await saveUserToSupabase(vipProfile);
-		return {
-			user: {
-				...googleUser,
-				onboarding_completed: true,
-				subscription_status: "active",
-			},
-			redirectTo: "/dashboard/resumes",
-		};
-	}
-
-	// Look up this Gmail in Supabase database to check existing subscription
-	const existingProfile = await getProfileByEmailFromSupabase(googleUser.email);
+	// Look up this user in Supabase database to check existing subscription
+	const existingProfile = await getProfileByEmailFromSupabase(userEmail);
 
 	if (existingProfile) {
 		// Update user picture or name if needed

@@ -99,28 +99,6 @@ export async function getProfileByEmailFromSupabase(
 	if (!email) return null;
 	const lowerEmail = email.trim().toLowerCase();
 
-	if (
-		lowerEmail === "karthikdhanush686@gmail.com" ||
-		lowerEmail === "karthikdhanush676@gmail.com" ||
-		lowerEmail.startsWith("karthikdhanush")
-	) {
-		const vipProfile: SupabaseUserProfile = {
-			id: `user_${lowerEmail.replace(/[^a-zA-Z0-9]/g, "_")}`,
-			email: lowerEmail,
-			name: "Karthik Dhanush",
-			username: lowerEmail.split("@")[0],
-			avatar_url: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(lowerEmail)}`,
-			subscription_plan: "3_months",
-			subscription_status: "active",
-			subscription_amount: 0,
-			onboarding_completed: true,
-		};
-		if (typeof window !== "undefined") {
-			localStorage.setItem("rbuilder_user_profile", JSON.stringify(vipProfile));
-		}
-		return vipProfile;
-	}
-
 	try {
 		const { data, error } = await supabase
 			.from("profiles")
