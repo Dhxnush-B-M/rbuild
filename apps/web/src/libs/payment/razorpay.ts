@@ -107,7 +107,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 ];
 
 /**
- * Creates an authentic Razorpay Order via API
+ * Creates an authentic Razorpay Order via backend serverless endpoint
  */
 export async function createDirectRazorpayOrder(params: {
 	plan: SubscriptionPlanOption;
@@ -115,27 +115,17 @@ export async function createDirectRazorpayOrder(params: {
 	userName: string;
 	userPhone?: string;
 }): Promise<string | null> {
-	const key =
-		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_TRXEpVGtuAA9yX";
-	const secret = "1nfd1EuEwzsuS1cYJtn5su6q";
-
 	try {
-		const res = await fetch("https://api.razorpay.com/v1/orders", {
+		const res = await fetch("/api/create-order", {
 			method: "POST",
 			headers: {
-				Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				amount: params.plan.amountInPaise,
-				currency: "INR",
-				receipt: `rcpt_${Date.now()}`,
-				notes: {
-					userEmail: params.userEmail,
-					userName: params.userName,
-					planId: params.plan.id,
-				},
+				planId: params.plan.id,
+				userEmail: params.userEmail,
+				userName: params.userName,
+				userPhone: params.userPhone,
 			}),
 		});
 
@@ -158,28 +148,17 @@ export async function createDynamicPaymentLink(params: {
 	userName: string;
 	userPhone?: string;
 }): Promise<string | null> {
-	const key =
-		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_TRXEpVGtuAA9yX";
-	const secret = "1nfd1EuEwzsuS1cYJtn5su6q";
-
 	try {
-		const res = await fetch("https://api.razorpay.com/v1/payment_links", {
+		const res = await fetch("/api/create-link", {
 			method: "POST",
 			headers: {
-				Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				amount: params.plan.amountInPaise,
-				currency: "INR",
-				accept_partial: false,
-				description: params.plan.name,
-				customer: {
-					name: params.userName || "Customer",
-					email: params.userEmail || "user@rbuilder.space",
-				},
-				notify: { email: false, sms: false },
+				planId: params.plan.id,
+				userEmail: params.userEmail,
+				userName: params.userName,
+				userPhone: params.userPhone,
 			}),
 		});
 
