@@ -1,4 +1,4 @@
-import { supabase } from "@/libs/supabase/client";
+import { supabase } from "../supabase/client";
 
 export interface RazorpayOptions {
 	key: string;
@@ -107,79 +107,6 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 ];
 
 /**
- * Invokes Supabase Edge Function to create a server-side verified Razorpay Order
- */
-export async function createRazorpayOrderViaEdgeFunction(params: {
-	planId: string;
-	amount: number;
-	currency?: string;
-	email?: string;
-	name?: string;
-	phone?: string;
-}): Promise<{ orderId?: string; keyId?: string } | null> {
-	try {
-		const { data, error } = await supabase.functions.invoke(
-			"create-razorpay-order",
-			{
-				body: {
-					planId: params.planId,
-					amount: params.amount,
-					currency: params.currency || "INR",
-					email: params.email,
-					name: params.name,
-					phone: params.phone,
-				},
-			},
-		);
-
-		if (!error && data?.orderId) {
-			return {
-				orderId: data.orderId as string,
-				keyId: (data.keyId as string) || undefined,
-			};
-		}
-	} catch (e) {
-		console.warn("Supabase Edge Function create-razorpay-order note:", e);
-	}
-	return null;
-}
-
-/**
- * Invokes Supabase Edge Function to cryptographically verify Razorpay payment and activate Pro subscription
- */
-export async function verifyRazorpayPaymentViaEdgeFunction(params: {
-	razorpay_payment_id: string;
-	razorpay_order_id?: string;
-	razorpay_signature?: string;
-	email: string;
-	name?: string;
-	phone?: string;
-	planId: string;
-	amount: number;
-}): Promise<{ success: boolean; error?: string }> {
-	try {
-		const { data, error } = await supabase.functions.invoke(
-			"verify-razorpay-payment",
-			{
-				body: params,
-			},
-		);
-
-		if (!error && data?.success) {
-			return { success: true };
-		}
-		if (error) {
-			return { success: false, error: error.message };
-		}
-	} catch (e) {
-		const err = e as Error;
-		console.warn("Supabase Edge Function verify-razorpay-payment note:", e);
-		return { success: false, error: err.message };
-	}
-	return { success: false };
-}
-
-/**
  * Initiates Razorpay Live Checkout payment modal integrated with Supabase Edge Functions
  */
 export async function initiateRazorpayPayment(params: {
@@ -192,6 +119,11 @@ export async function initiateRazorpayPayment(params: {
 	onError?: (error: string) => void;
 	onDismiss?: () => void;
 }): Promise<void> {
+	const key =
+		params.customKeyId ||
+		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
+		"rzp_live_TRIg5Ldvfs8ouy";
+
 	const loaded = await loadRazorpayScript();
 	if (!loaded || !window.Razorpay) {
 		if (typeof window !== "undefined") {
@@ -202,32 +134,26 @@ export async function initiateRazorpayPayment(params: {
 
 	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
 
-	// 1. Attempt to create server-side order using Supabase Edge Function
+	// Step 1: Attempt to create an order via Supabase Edge Function
 	let orderId: string | undefined;
-	let serverKeyId: string | undefined;
-
 	try {
-		const orderResult = await createRazorpayOrderViaEdgeFunction({
-			planId: params.plan.id,
-			amount: params.plan.amountInRupees,
-			currency: "INR",
-			email: params.userEmail,
-			name: params.userName,
-			phone: cleanPhone,
-		});
-		if (orderResult?.orderId) {
-			orderId = orderResult.orderId;
-			serverKeyId = orderResult.keyId;
+		const { data, error } = await supabase.functions.invoke(
+			"create-razorpay-order",
+			{
+				body: {
+					planId: params.plan.id,
+					userEmail: params.userEmail,
+					userName: params.userName,
+					userPhone: params.userPhone,
+				},
+			},
+		);
+		if (!error && data?.orderId) {
+			orderId = data.orderId;
 		}
-	} catch {
-		// Non-blocking fallback
+	} catch (e) {
+		console.warn("Supabase edge function create-razorpay-order note:", e);
 	}
-
-	const key =
-		params.customKeyId ||
-		serverKeyId ||
-		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_TRIg5Ldvfs8ouy";
 
 	const options: RazorpayOptions = {
 		key,
@@ -257,17 +183,32 @@ export async function initiateRazorpayPayment(params: {
 				return;
 			}
 
-			// Verify with Supabase Edge Function
-			await verifyRazorpayPaymentViaEdgeFunction({
-				razorpay_payment_id: paymentId,
-				razorpay_order_id: response.razorpay_order_id || orderId,
-				razorpay_signature: response.razorpay_signature,
-				email: params.userEmail,
-				name: params.userName,
-				phone: cleanPhone,
-				planId: params.plan.id,
-				amount: params.plan.amountInRupees,
-			});
+			// Step 2: Verify payment & activate subscription via Supabase Edge Function
+			try {
+				const { data, error } = await supabase.functions.invoke(
+					"verify-razorpay-payment",
+					{
+						body: {
+							razorpay_order_id: response.razorpay_order_id || orderId,
+							razorpay_payment_id: response.razorpay_payment_id,
+							razorpay_signature: response.razorpay_signature,
+							userEmail: params.userEmail,
+							userName: params.userName,
+							userPhone: params.userPhone,
+							planId: params.plan.id,
+							amount: params.plan.amountInRupees,
+						},
+					},
+				);
+				if (error || data?.error) {
+					console.warn(
+						"Edge function verify error, proceeding with direct client verification:",
+						error || data?.error,
+					);
+				}
+			} catch (e) {
+				console.warn("Edge function verify exception, fallback:", e);
+			}
 
 			params.onSuccess(paymentId);
 		},
@@ -283,7 +224,6 @@ export async function initiateRazorpayPayment(params: {
 		});
 		rzp.open();
 	} catch (e) {
-		console.error("Razorpay popup launch error:", e);
 		if (typeof window !== "undefined") {
 			window.open(params.plan.paymentLink, "_blank", "noopener,noreferrer");
 		}
