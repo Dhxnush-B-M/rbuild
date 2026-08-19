@@ -45,6 +45,51 @@ function OnboardingPage() {
 
 	useEffect(() => {
 		let isMounted = true;
+		if (typeof window !== "undefined") {
+			const searchParams = new URLSearchParams(window.location.search);
+			const razorpayPaymentId = searchParams.get("razorpay_payment_id");
+			const razorpayPaymentLinkId = searchParams.get(
+				"razorpay_payment_link_id",
+			);
+			const razorpayPaymentLinkStatus = searchParams.get(
+				"razorpay_payment_link_status",
+			);
+			const paymentStatus = searchParams.get("payment_status");
+
+			if (
+				razorpayPaymentId ||
+				razorpayPaymentLinkStatus === "paid" ||
+				paymentStatus === "success"
+			) {
+				const paymentRef =
+					razorpayPaymentId ||
+					razorpayPaymentLinkId ||
+					`rzp_link_${Date.now()}`;
+				void getCurrentSupabaseUser().then(async (profile) => {
+					if (!isMounted) return;
+					const userEmail =
+						profile?.email || email || "user@rbuilder.space";
+					const userName =
+						profile?.name || fullName || "Resume Creator";
+					const activeProfile = {
+						name: userName,
+						username: userName.toLowerCase().replace(/\s+/g, "-"),
+						email: userEmail,
+						phone: profile?.phone || phone || "",
+						subscription_status: "active" as const,
+						subscription_plan: selectedPlan.id,
+						subscription_amount: selectedPlan.amountInRupees,
+						payment_id: paymentRef,
+						onboarding_completed: true,
+					};
+					await saveUserToSupabase(activeProfile);
+					toast.success("🎉 Payment verified! Pro access activated.");
+					void navigate({ to: "/dashboard/resumes", replace: true });
+				});
+				return;
+			}
+		}
+
 		void getCurrentSupabaseUser().then((profile) => {
 			if (!isMounted) return;
 			if (
@@ -61,7 +106,7 @@ function OnboardingPage() {
 		return () => {
 			isMounted = false;
 		};
-	}, [navigate]);
+	}, [navigate, email, fullName, phone, selectedPlan]);
 
 	const handleNextStep = () => {
 		if (currentStep === 1) {

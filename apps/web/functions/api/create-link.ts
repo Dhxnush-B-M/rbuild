@@ -34,6 +34,8 @@ export const onRequestPost: PagesFunction = async (context) => {
 					email: body.userEmail || "user@rbuilder.space",
 				},
 				notify: { email: false, sms: false },
+				callback_url: "https://rbuilder.space/onboarding?payment_status=success",
+				callback_method: "get",
 			}),
 		});
 

@@ -173,7 +173,7 @@ export async function createDynamicPaymentLink(params: {
 }
 
 /**
- * Initiates Razorpay Live Checkout payment modal integrated with Supabase Edge Functions
+ * Initiates Razorpay Live Checkout payment via reliable hosted checkout
  */
 export async function initiateRazorpayPayment(params: {
 	plan: SubscriptionPlanOption;
@@ -185,102 +185,16 @@ export async function initiateRazorpayPayment(params: {
 	onError?: (error: string) => void;
 	onDismiss?: () => void;
 }): Promise<void> {
-	const key =
-		params.customKeyId ||
-		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_TRXEpVGtuAA9yX";
-
-	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
-
-	// Step 1: Attempt to create an authenticated order via backend endpoint
-	let orderId: string | undefined;
-	const directOrderId = await createDirectRazorpayOrder(params);
-	if (directOrderId) {
-		orderId = directOrderId;
-	}
-
-	const loaded = await loadRazorpayScript();
-	if (!loaded || !window.Razorpay) {
-		const dynamicLink = await createDynamicPaymentLink(params);
-		const paymentUrl = dynamicLink || params.plan.paymentLink;
-		if (typeof window !== "undefined") {
-			window.open(paymentUrl, "_blank", "noopener,noreferrer");
-		}
-		return;
-	}
-
-	const options: RazorpayOptions = {
-		key,
-		amount: params.plan.amountInPaise,
-		currency: "INR",
-		name: "rbuilder",
-		description: `Payment for ${params.plan.name}`,
-		image: "https://rbuilder.space/apple-touch-icon-180x180.png",
-		order_id: orderId,
-		prefill: {
-			name: params.userName || undefined,
-			email: params.userEmail || undefined,
-			contact: cleanPhone || undefined,
-		},
-		theme: {
-			color: "#9333ea",
-		},
-		modal: {
-			ondismiss: () => {
-				params.onDismiss?.();
-			},
-		},
-		handler: async (response) => {
-			const paymentId = response.razorpay_payment_id;
-			if (!paymentId) {
-				params.onError?.("No payment ID received.");
-				return;
-			}
-
-			// Verify payment & activate subscription
-			try {
-				await supabase.functions.invoke("verify-razorpay-payment", {
-					body: {
-						razorpay_order_id: response.razorpay_order_id || orderId,
-						razorpay_payment_id: response.razorpay_payment_id,
-						razorpay_signature: response.razorpay_signature,
-						userEmail: params.userEmail,
-						userName: params.userName,
-						userPhone: params.userPhone,
-						planId: params.plan.id,
-						amount: params.plan.amountInRupees,
-					},
-				});
-			} catch (e) {
-				console.warn("verify note:", e);
-			}
-
-			params.onSuccess(paymentId);
-		},
-	};
-
 	try {
-		const rzp = new window.Razorpay(options);
-		rzp.on("payment.failed", async (response: unknown) => {
-			const err = response as { error?: { description?: string } };
-			const errMsg = err?.error?.description || "";
-			if (errMsg.toLowerCase().includes("website") || errMsg.toLowerCase().includes("block")) {
-				const dynamicLink = await createDynamicPaymentLink(params);
-				if (dynamicLink && typeof window !== "undefined") {
-					window.location.href = dynamicLink;
-					return;
-				}
-			}
-			params.onError?.(
-				err?.error?.description || "Payment was not completed.",
-			);
-		});
-		rzp.open();
-	} catch (e) {
 		const dynamicLink = await createDynamicPaymentLink(params);
 		const paymentUrl = dynamicLink || params.plan.paymentLink;
+
 		if (typeof window !== "undefined") {
-			window.open(paymentUrl, "_blank", "noopener,noreferrer");
+			window.location.href = paymentUrl;
+		}
+	} catch (e) {
+		if (typeof window !== "undefined") {
+			window.location.href = params.plan.paymentLink;
 		}
 	}
 }
