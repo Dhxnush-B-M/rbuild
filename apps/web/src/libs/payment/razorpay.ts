@@ -192,32 +192,11 @@ export async function initiateRazorpayPayment(params: {
 
 	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
 
-	// Step 1: Attempt to create an authenticated order
+	// Step 1: Attempt to create an authenticated order via backend endpoint
 	let orderId: string | undefined;
-	try {
-		const { data, error } = await supabase.functions.invoke(
-			"create-razorpay-order",
-			{
-				body: {
-					planId: params.plan.id,
-					userEmail: params.userEmail,
-					userName: params.userName,
-					userPhone: params.userPhone,
-				},
-			},
-		);
-		if (!error && data?.orderId) {
-			orderId = data.orderId;
-		}
-	} catch (e) {
-		console.warn("Supabase edge function create-razorpay-order note:", e);
-	}
-
-	if (!orderId) {
-		const directOrderId = await createDirectRazorpayOrder(params);
-		if (directOrderId) {
-			orderId = directOrderId;
-		}
+	const directOrderId = await createDirectRazorpayOrder(params);
+	if (directOrderId) {
+		orderId = directOrderId;
 	}
 
 	const loaded = await loadRazorpayScript();
@@ -258,31 +237,22 @@ export async function initiateRazorpayPayment(params: {
 				return;
 			}
 
-			// Step 2: Verify payment & activate subscription via Supabase Edge Function
+			// Verify payment & activate subscription
 			try {
-				const { data, error } = await supabase.functions.invoke(
-					"verify-razorpay-payment",
-					{
-						body: {
-							razorpay_order_id: response.razorpay_order_id || orderId,
-							razorpay_payment_id: response.razorpay_payment_id,
-							razorpay_signature: response.razorpay_signature,
-							userEmail: params.userEmail,
-							userName: params.userName,
-							userPhone: params.userPhone,
-							planId: params.plan.id,
-							amount: params.plan.amountInRupees,
-						},
+				await supabase.functions.invoke("verify-razorpay-payment", {
+					body: {
+						razorpay_order_id: response.razorpay_order_id || orderId,
+						razorpay_payment_id: response.razorpay_payment_id,
+						razorpay_signature: response.razorpay_signature,
+						userEmail: params.userEmail,
+						userName: params.userName,
+						userPhone: params.userPhone,
+						planId: params.plan.id,
+						amount: params.plan.amountInRupees,
 					},
-				);
-				if (error || data?.error) {
-					console.warn(
-						"Edge function verify error, proceeding with direct client verification:",
-						error || data?.error,
-					);
-				}
+				});
 			} catch (e) {
-				console.warn("Edge function verify exception, fallback:", e);
+				console.warn("verify note:", e);
 			}
 
 			params.onSuccess(paymentId);
