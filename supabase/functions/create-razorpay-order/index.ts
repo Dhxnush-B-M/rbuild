@@ -9,7 +9,7 @@ interface OrderRequest {
 
 const PLAN_AMOUNTS: Record<string, { amountInPaise: number; name: string }> = {
 	"1_month": { amountInPaise: 1100, name: "1 Month Starter Plan" },
-	"3_months": { amountInPaive: 2100, name: "3 Months Pro Plan" },
+	"3_months": { amountInPaise: 2100, name: "3 Months Pro Plan" },
 };
 
 Deno.serve(async (req: Request) => {
