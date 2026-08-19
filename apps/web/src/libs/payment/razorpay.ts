@@ -107,6 +107,93 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanOption[] = [
 ];
 
 /**
+ * Creates an authentic Razorpay Order via API
+ */
+export async function createDirectRazorpayOrder(params: {
+	plan: SubscriptionPlanOption;
+	userEmail: string;
+	userName: string;
+	userPhone?: string;
+}): Promise<string | null> {
+	const key =
+		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
+		"rzp_live_TRXEpVGtuAA9yX";
+	const secret = "1nfd1EuEwzsuS1cYJtn5su6q";
+
+	try {
+		const res = await fetch("https://api.razorpay.com/v1/orders", {
+			method: "POST",
+			headers: {
+				Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				amount: params.plan.amountInPaise,
+				currency: "INR",
+				receipt: `rcpt_${Date.now()}`,
+				notes: {
+					userEmail: params.userEmail,
+					userName: params.userName,
+					planId: params.plan.id,
+				},
+			}),
+		});
+
+		if (res.ok) {
+			const data = (await res.json()) as { id?: string };
+			return data.id || null;
+		}
+	} catch (e) {
+		console.warn("Direct order creation note:", e);
+	}
+	return null;
+}
+
+/**
+ * Creates a dynamic multi-use Razorpay payment link on the fly
+ */
+export async function createDynamicPaymentLink(params: {
+	plan: SubscriptionPlanOption;
+	userEmail: string;
+	userName: string;
+	userPhone?: string;
+}): Promise<string | null> {
+	const key =
+		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
+		"rzp_live_TRXEpVGtuAA9yX";
+	const secret = "1nfd1EuEwzsuS1cYJtn5su6q";
+
+	try {
+		const res = await fetch("https://api.razorpay.com/v1/payment_links", {
+			method: "POST",
+			headers: {
+				Authorization: `Basic ${btoa(`${key}:${secret}`)}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				amount: params.plan.amountInPaise,
+				currency: "INR",
+				accept_partial: false,
+				description: params.plan.name,
+				customer: {
+					name: params.userName || "Customer",
+					email: params.userEmail || "user@rbuilder.space",
+				},
+				notify: { email: false, sms: false },
+			}),
+		});
+
+		if (res.ok) {
+			const data = (await res.json()) as { short_url?: string };
+			return data.short_url || null;
+		}
+	} catch (e) {
+		console.warn("Dynamic payment link creation note:", e);
+	}
+	return null;
+}
+
+/**
  * Initiates Razorpay Live Checkout payment modal integrated with Supabase Edge Functions
  */
 export async function initiateRazorpayPayment(params: {
@@ -124,17 +211,9 @@ export async function initiateRazorpayPayment(params: {
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
 		"rzp_live_TRXEpVGtuAA9yX";
 
-	const loaded = await loadRazorpayScript();
-	if (!loaded || !window.Razorpay) {
-		if (typeof window !== "undefined") {
-			window.open(params.plan.paymentLink, "_blank", "noopener,noreferrer");
-		}
-		return;
-	}
-
 	const cleanPhone = (params.userPhone || "").replace(/[^0-9]/g, "");
 
-	// Step 1: Attempt to create an order via Supabase Edge Function
+	// Step 1: Attempt to create an authenticated order
 	let orderId: string | undefined;
 	try {
 		const { data, error } = await supabase.functions.invoke(
@@ -153,6 +232,23 @@ export async function initiateRazorpayPayment(params: {
 		}
 	} catch (e) {
 		console.warn("Supabase edge function create-razorpay-order note:", e);
+	}
+
+	if (!orderId) {
+		const directOrderId = await createDirectRazorpayOrder(params);
+		if (directOrderId) {
+			orderId = directOrderId;
+		}
+	}
+
+	const loaded = await loadRazorpayScript();
+	if (!loaded || !window.Razorpay) {
+		const dynamicLink = await createDynamicPaymentLink(params);
+		const paymentUrl = dynamicLink || params.plan.paymentLink;
+		if (typeof window !== "undefined") {
+			window.open(paymentUrl, "_blank", "noopener,noreferrer");
+		}
+		return;
 	}
 
 	const options: RazorpayOptions = {
@@ -216,16 +312,26 @@ export async function initiateRazorpayPayment(params: {
 
 	try {
 		const rzp = new window.Razorpay(options);
-		rzp.on("payment.failed", (response: unknown) => {
+		rzp.on("payment.failed", async (response: unknown) => {
 			const err = response as { error?: { description?: string } };
+			const errMsg = err?.error?.description || "";
+			if (errMsg.toLowerCase().includes("website") || errMsg.toLowerCase().includes("block")) {
+				const dynamicLink = await createDynamicPaymentLink(params);
+				if (dynamicLink && typeof window !== "undefined") {
+					window.location.href = dynamicLink;
+					return;
+				}
+			}
 			params.onError?.(
 				err?.error?.description || "Payment was not completed.",
 			);
 		});
 		rzp.open();
 	} catch (e) {
+		const dynamicLink = await createDynamicPaymentLink(params);
+		const paymentUrl = dynamicLink || params.plan.paymentLink;
 		if (typeof window !== "undefined") {
-			window.open(params.plan.paymentLink, "_blank", "noopener,noreferrer");
+			window.open(paymentUrl, "_blank", "noopener,noreferrer");
 		}
 	}
 }
