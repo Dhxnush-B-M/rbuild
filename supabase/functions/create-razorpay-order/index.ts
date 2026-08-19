@@ -20,9 +20,9 @@ Deno.serve(async (req: Request) => {
 
 	try {
 		const keyId =
-			Deno.env.get("RAZORPAY_KEY_ID") || "rzp_live_TRIg5Ldvfs8ouy";
+			Deno.env.get("RAZORPAY_KEY_ID") || "rzp_live_TRXEpVGtuAA9yX";
 		const keySecret =
-			Deno.env.get("RAZORPAY_KEY_SECRET") || "UixGiGOA56S9qHTfOFODvx8s";
+			Deno.env.get("RAZORPAY_KEY_SECRET") || "1nfd1EuEwzsuS1cYJtn5su6q";
 
 		if (!keyId || !keySecret) {
 			return new Response(

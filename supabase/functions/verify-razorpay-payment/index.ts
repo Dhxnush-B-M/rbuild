@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
 
 	try {
 		const keySecret =
-			Deno.env.get("RAZORPAY_KEY_SECRET") || "UixGiGOA56S9qHTfOFODvx8s";
+			Deno.env.get("RAZORPAY_KEY_SECRET") || "1nfd1EuEwzsuS1cYJtn5su6q";
 		const supabaseUrl =
 			Deno.env.get("SUPABASE_URL") ||
 			"https://auxppvofumzpvpzvgfdw.supabase.co";

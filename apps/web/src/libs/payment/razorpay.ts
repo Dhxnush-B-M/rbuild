@@ -122,7 +122,7 @@ export async function initiateRazorpayPayment(params: {
 	const key =
 		params.customKeyId ||
 		(import.meta.env.VITE_RAZORPAY_KEY_ID as string) ||
-		"rzp_live_TRIg5Ldvfs8ouy";
+		"rzp_live_TRXEpVGtuAA9yX";
 
 	const loaded = await loadRazorpayScript();
 	if (!loaded || !window.Razorpay) {
