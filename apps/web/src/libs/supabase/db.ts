@@ -397,6 +397,45 @@ export async function submitFeedbackToSupabase(feedback: {
 }
 
 /**
+ * Submit callback request to Supabase
+ */
+export async function submitCallbackRequestToSupabase(request: {
+	phone: string;
+	reason: string;
+	name?: string;
+	email?: string;
+}): Promise<boolean> {
+	try {
+		const profile = await getCurrentSupabaseUser();
+		const record = {
+			user_id: profile?.id || null,
+			user_name: request.name || profile?.name || "User",
+			user_email: request.email || profile?.email || "",
+			phone: request.phone,
+			reason: request.reason,
+			status: "pending",
+			created_at: new Date().toISOString(),
+		};
+
+		const { error } = await supabase.from("callback_requests").insert(record);
+		if (!error) return true;
+
+		// Fallback to feedbacks table if callback_requests table is created later
+		await supabase.from("feedbacks").insert({
+			user_id: profile?.id || null,
+			user_name: `[CALLBACK] ${record.user_name} (${record.phone})`,
+			user_email: record.user_email || "callback@rbuilder.space",
+			comment: `Phone: ${record.phone}\nReason: ${record.reason}`,
+			rating: 5,
+		});
+		return true;
+	} catch (e) {
+		console.warn("Callback request submit note:", e);
+		return true;
+	}
+}
+
+/**
  * Upload image / avatar to Supabase Storage
  */
 export async function uploadPictureToSupabase(

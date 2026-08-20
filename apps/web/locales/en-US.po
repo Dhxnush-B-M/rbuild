@@ -39,6 +39,10 @@ msgstr "{column, plural, one {# Column} other {# Columns}}"
 msgid "© {0} rbuilder. All rights reserved."
 msgstr "© {0} rbuilder. All rights reserved."
 
+#: src/routes/dashboard/support/index.tsx
+msgid "🎉 Callback request submitted! Our team will call you soon."
+msgstr "🎉 Callback request submitted! Our team will call you soon."
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "A4"
 msgstr "A4"
@@ -346,10 +350,6 @@ msgstr "Company"
 msgid "Confirm"
 msgstr "Confirm"
 
-#: src/routes/dashboard/support/index.tsx
-msgid "Connecting to live customer support agent..."
-msgstr "Connecting to live customer support agent..."
-
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
 msgid "Content"
@@ -389,6 +389,10 @@ msgstr "Copy Backup Codes"
 #: src/features/resume/stylesheet/toolbar.tsx
 msgid "Copy stylesheet"
 msgstr "Copy stylesheet"
+
+#: src/routes/dashboard/support/index.tsx
+msgid "Could not submit callback request. Please try again."
+msgstr "Could not submit callback request. Please try again."
 
 #. Fallback title for a custom cover letter item in resume builder when recipient is empty
 #. Fallback title for a custom cover letter item in resume builder when recipient is unavailable
@@ -1286,9 +1290,17 @@ msgstr "Pick an icon"
 msgid "Picture"
 msgstr "Picture"
 
+#: src/routes/dashboard/support/index.tsx
+msgid "Please briefly describe what you need help with."
+msgstr "Please briefly describe what you need help with."
+
 #: src/features/auth/pages/reset-password.tsx
 msgid "Please enter a new password for your account"
 msgstr "Please enter a new password for your account"
+
+#: src/routes/dashboard/support/index.tsx
+msgid "Please enter a valid phone number with at least 10 digits."
+msgstr "Please enter a valid phone number with at least 10 digits."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "Please enter the password shared with you by the owner of the resume to continue."
@@ -1694,6 +1706,10 @@ msgstr "Skip to main content"
 #: src/components/layout/error-screen.tsx
 msgid "Something went wrong"
 msgstr "Something went wrong"
+
+#: src/routes/dashboard/support/index.tsx
+msgid "Something went wrong. Please try again."
+msgstr "Something went wrong. Please try again."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Spacing (Horizontal)"

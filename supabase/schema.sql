@@ -248,3 +248,29 @@ drop policy if exists "Allow resume asset delete" on storage.objects;
 create policy "Allow resume asset delete"
     on storage.objects for delete
     using (bucket_id = 'resumes');
+
+-- ------------------------------------------------------------------------------
+-- 5. CALLBACK REQUESTS TABLE (Customer Support Callbacks)
+-- ------------------------------------------------------------------------------
+create table if not exists public.callback_requests (
+    id text primary key default gen_random_uuid()::text,
+    user_id text,
+    user_name text not null default 'User',
+    user_email text not null default '',
+    phone text not null,
+    reason text not null default '',
+    status text not null default 'pending',
+    created_at timestamptz default now() not null
+);
+
+alter table public.callback_requests enable row level security;
+
+drop policy if exists "Allow insert on callback_requests" on public.callback_requests;
+create policy "Allow insert on callback_requests"
+    on public.callback_requests for insert
+    with check (true);
+
+drop policy if exists "Allow read on callback_requests" on public.callback_requests;
+create policy "Allow read on callback_requests"
+    on public.callback_requests for select
+    using (true);
