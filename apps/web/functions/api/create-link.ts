@@ -17,6 +17,15 @@ export const onRequestPost: PagesFunction = async (context) => {
 				? "3 Months Pro Plan (rbuilder)"
 				: "1 Month Starter Plan (rbuilder)";
 
+		const cleanPhone = (body.userPhone || "").replace(/[^0-9]/g, "");
+		const customerPayload: Record<string, string> = {
+			name: body.userName || "Customer",
+			email: body.userEmail || "user@rbuilder.space",
+		};
+		if (cleanPhone && cleanPhone.length >= 10) {
+			customerPayload.contact = cleanPhone.slice(-10);
+		}
+
 		const auth = btoa(`${keyId}:${keySecret}`);
 		const rzpRes = await fetch("https://api.razorpay.com/v1/payment_links", {
 			method: "POST",
@@ -29,10 +38,7 @@ export const onRequestPost: PagesFunction = async (context) => {
 				currency: "INR",
 				accept_partial: false,
 				description: desc,
-				customer: {
-					name: body.userName || "Customer",
-					email: body.userEmail || "user@rbuilder.space",
-				},
+				customer: customerPayload,
 				notify: { email: false, sms: false },
 				callback_url: "https://rbuilder.space/onboarding?payment_status=success",
 				callback_method: "get",
