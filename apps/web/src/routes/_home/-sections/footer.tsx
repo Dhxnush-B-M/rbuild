@@ -18,7 +18,7 @@ type SocialLink = {
 
 const socialLinks: SocialLink[] = [
 	{
-		url: "mailto:karthikdhanush686@gmail.com",
+		url: "mailto:contact@rbuilder.space",
 		label: "Gmail / Email Support",
 		icon: EnvelopeSimpleIcon,
 	},
@@ -72,7 +72,7 @@ export function Footer() {
 					title="Support"
 					links={[
 						{
-							url: "mailto:karthikdhanush686@gmail.com",
+							url: "mailto:contact@rbuilder.space",
 							label: "24/7 Email Support",
 						},
 						{ url: "#frequently-asked-questions", label: "FAQ" },

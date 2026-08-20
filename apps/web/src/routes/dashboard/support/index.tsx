@@ -22,7 +22,7 @@ function SupportRouteComponent() {
 	const [copied, setCopied] = useState(false);
 
 	const handleCopyEmail = async () => {
-		await navigator.clipboard.writeText("support@resume-builder.com");
+		await navigator.clipboard.writeText("contact@rbuilder.space");
 		setCopied(true);
 		toast.success(t`Support email copied to clipboard!`);
 		setTimeout(() => setCopied(false), 2000);
@@ -88,7 +88,7 @@ function SupportRouteComponent() {
 								className="group mt-4 flex w-full cursor-pointer items-center justify-between gap-2 rounded-2xl border border-white/10 bg-background/50 px-4 py-3 text-left transition-colors hover:border-primary/40 hover:bg-background/80"
 							>
 								<span className="truncate font-mono text-foreground text-xs sm:text-sm">
-									support@resume-builder.com
+									contact@rbuilder.space
 								</span>
 								<span className="flex shrink-0 items-center gap-1 text-muted-foreground text-xs transition-colors group-hover:text-primary">
 									{copied ? (
@@ -107,7 +107,7 @@ function SupportRouteComponent() {
 								className="w-full gap-2 font-bold"
 								nativeButton={false}
 								render={
-									<a href="mailto:support@resume-builder.com">
+									<a href="mailto:contact@rbuilder.space">
 										<ArrowSquareOutIcon className="size-5" />
 										<span>Send Email</span>
 									</a>

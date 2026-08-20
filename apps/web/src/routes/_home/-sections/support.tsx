@@ -114,12 +114,12 @@ export function Support() {
 
 						<div className="mt-8 overflow-hidden border-border/50 border-t pt-6">
 							<a
-								href="mailto:karthikdhanush686@gmail.com"
-								title="karthikdhanush686@gmail.com"
+								href="mailto:contact@rbuilder.space"
+								title="contact@rbuilder.space"
 								className="inline-flex max-w-full items-center gap-2 overflow-hidden font-semibold text-emerald-500 text-xs hover:underline sm:text-sm"
 							>
 								<EnvelopeSimpleIcon weight="bold" className="size-4 shrink-0" />
-								<span className="truncate">karthikdhanush686@gmail.com</span>
+								<span className="truncate">contact@rbuilder.space</span>
 							</a>
 						</div>
 					</div>
