@@ -1,8 +1,8 @@
 import type { Icon } from "@phosphor-icons/react";
 import {
 	CheckCircleIcon,
-	FileArrowUpIcon,
 	FilePdfIcon,
+	FilesIcon,
 	LightningIcon,
 	PaletteIcon,
 	ShieldCheckIcon,
@@ -43,9 +43,9 @@ const features: Feature[] = [
 	{
 		id: "export-options",
 		icon: FilePdfIcon,
-		title: "Instant PDF & Shareable Links",
+		title: "Instant PDF",
 		description:
-			"Download pixel-perfect PDFs anytime or generate password-protected public web links.",
+			"Download pixel-perfect PDFs anytime with high-precision rendering and styling.",
 	},
 	{
 		id: "customization",
@@ -55,11 +55,11 @@ const features: Feature[] = [
 			"Customize colors, typography, section order, and spacing to match your personal brand.",
 	},
 	{
-		id: "smart-import",
-		icon: FileArrowUpIcon,
-		title: "Smart Import & Multi-Resume",
+		id: "multi-resume",
+		icon: FilesIcon,
+		title: "Create Multi-Resume",
 		description:
-			"Import existing data and manage unlimited tailored resume versions.",
+			"Create and manage unlimited tailored resume versions for different roles and opportunities.",
 	},
 ];
 
