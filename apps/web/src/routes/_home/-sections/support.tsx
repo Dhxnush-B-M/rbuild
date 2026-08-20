@@ -86,29 +86,30 @@ export function Support() {
 
 				{/* THREE FEATURE CARDS */}
 				<div className="mt-16 grid gap-8 md:grid-cols-3">
+					{/* CARD 1: Email Support (7 PM - 7 AM) */}
 					<div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-background/60 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/50 hover:shadow-2xl">
 						<div>
 							<div className="flex items-center justify-between">
 								<div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-500 shadow-inner">
-									<PhoneCallIcon
+									<EnvelopeSimpleIcon
 										weight="fill"
 										className="size-7 animate-pulse"
 									/>
 								</div>
 								<span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-bold text-[11px] text-emerald-500">
 									<span className="size-2 animate-ping rounded-full bg-emerald-500" />
-									24/7 Active
+									7 PM – 7 AM Active
 								</span>
 							</div>
 
 							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">
-								24/7 Dedicated Email Support
+								Dedicated Email Support
 							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-								Direct help available round the clock. Get immediate assistance
-								with template customization, PDF exports, and account management
-								anytime.
+								Email support is available daily from 7:00 PM to 7:00 AM. Send an
+								email to our dedicated team during support hours for quick
+								assistance with templates, PDF exports, and account queries.
 							</p>
 						</div>
 
@@ -124,6 +125,7 @@ export function Support() {
 						</div>
 					</div>
 
+					{/* CARD 2: Resume Building */}
 					<div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-background/60 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-primary/50 hover:shadow-2xl">
 						<div>
 							<div className="flex items-center justify-between">
@@ -157,6 +159,7 @@ export function Support() {
 						</div>
 					</div>
 
+					{/* CARD 3: Multi-Language Support */}
 					<div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-background/60 p-8 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-purple-500/50 hover:shadow-2xl">
 						<div>
 							<div className="flex items-center justify-between">
@@ -164,25 +167,25 @@ export function Support() {
 									<GlobeIcon weight="fill" className="size-7 animate-pulse" />
 								</div>
 								<span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 font-bold text-[11px] text-purple-500">
-									50+ Languages
+									Multi-Language
 								</span>
 							</div>
 
 							<h3 className="mt-6 font-bold text-foreground text-xl tracking-tight">
-								Most Multi-Language Support
+								Multi-Language Support
 							</h3>
 
 							<p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-								Create resumes in over 50+ languages with full RTL support,
-								localized date formats, and global typography for international
-								career opportunities.
+								Create standout resumes in Kannada, Telugu, English, Hindi, and
+								other languages with localized date formatting, RTL capabilities,
+								and clean global typography.
 							</p>
 						</div>
 
 						<div className="mt-8 border-border/50 border-t pt-6">
-							<span className="inline-flex items-center gap-2 font-semibold text-purple-500 text-sm">
-								<TranslateIcon weight="bold" className="size-4" />
-								<span>50+ Languages Supported</span>
+							<span className="inline-flex items-center gap-2 font-semibold text-purple-500 text-xs sm:text-sm">
+								<TranslateIcon weight="bold" className="size-4 shrink-0" />
+								<span>Kannada • Telugu • English • Hindi • More Languages</span>
 							</span>
 						</div>
 					</div>
