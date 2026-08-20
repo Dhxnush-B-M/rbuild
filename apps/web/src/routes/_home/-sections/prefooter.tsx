@@ -24,13 +24,12 @@ export function Prefooter() {
 					transition={{ duration: 0.45 }}
 				>
 					<h2 className="font-semibold text-2xl tracking-tight md:text-4xl">
-						Crafted for modern professionals worldwide.
+						The fastest way to build an interview-winning resume.
 					</h2>
 
 					<p className="text-muted-foreground leading-relaxed">
-						rbuilder empowers job seekers with powerful design tools, instant
-						PDF generation, and full data privacy. Build your resume with
-						confidence and land your dream role.
+						Designed for students, developers, and professionals to create
+						clean, ATS-proof resumes in minutes.
 					</p>
 				</m.div>
 			</div>
