@@ -51,7 +51,7 @@ export function Support() {
 				<div className="flex flex-col items-center text-center">
 					<div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 font-medium text-primary text-xs shadow-inner">
 						<HeadsetIcon className="size-4 animate-bounce text-primary" />
-						<span>24/7 Dedicated Support & Assistance</span>
+						<span>Dedicated Support & Assistance (7 PM – 7 AM)</span>
 					</div>
 
 					<h2 className="mt-6 max-w-3xl font-extrabold text-3xl tracking-tight sm:text-4xl md:text-5xl">
