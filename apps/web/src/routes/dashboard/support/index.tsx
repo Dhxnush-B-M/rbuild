@@ -3,7 +3,6 @@ import {
 	ArrowLeftIcon,
 	ArrowRightIcon,
 	ArrowSquareOutIcon,
-	ChatCircleDotsIcon,
 	CheckIcon,
 	CopySimpleIcon,
 	EnvelopeSimpleIcon,
@@ -120,18 +119,18 @@ function SupportRouteComponent() {
 
 			<div className="mx-auto max-w-4xl pt-4">
 				<div className="grid gap-6 md:grid-cols-2">
-					{/* Live Support Card (Image 1) */}
+					{/* Call Support Card */}
 					<div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-card/40 p-6 backdrop-blur-xl transition-all duration-300 hover:border-primary/40 sm:p-8">
 						<div>
 							<div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-								<ChatCircleDotsIcon size={32} />
+								<PhoneCallIcon size={32} />
 							</div>
 							<h3 className="mt-6 font-bold text-2xl text-foreground tracking-tight">
-								24/7 Live Support
+								Call Support
 							</h3>
 							<p className="mt-2 text-muted-foreground text-sm leading-relaxed">
-								Chat directly with our support specialists for real-time help
-								with resume editing, templates, and downloads.
+								Call our support team between 7 PM and 7 AM. We’ll call you back
+								within 24–48 hours, as soon as possible.
 							</p>
 						</div>
 
@@ -141,8 +140,8 @@ function SupportRouteComponent() {
 								className="w-full gap-2 font-bold"
 								onClick={handleOpenModal}
 							>
-								<ChatCircleDotsIcon className="size-5" />
-								<span>Start Live Chat</span>
+								<PhoneCallIcon className="size-5" />
+								<span>Request a Call Back</span>
 							</Button>
 						</div>
 					</div>
