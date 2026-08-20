@@ -345,20 +345,30 @@ export async function getLiveAppStats(): Promise<{
 }
 
 /**
- * Fetch feedbacks / testimonials from Supabase
+ * Fetch feedbacks / testimonials from Supabase (excludes callback requests)
  */
 export async function getFeedbacksFromSupabase(): Promise<
 	SupabaseFeedbackRecord[]
 > {
 	try {
+		// Clean up any rogue callback entries from feedbacks table if present
+		void supabase.from("feedbacks").delete().ilike("user_name", "%[CALLBACK]%");
+		void supabase.from("feedbacks").delete().ilike("comment", "%Phone:%");
+
 		const { data, error } = await supabase
 			.from("feedbacks")
 			.select("*")
 			.order("created_at", { ascending: false })
-			.limit(20);
+			.limit(30);
 
 		if (!error && data) {
-			return data as SupabaseFeedbackRecord[];
+			return (data as SupabaseFeedbackRecord[]).filter(
+				(item) =>
+					item.user_name &&
+					!item.user_name.includes("[CALLBACK]") &&
+					!item.user_name.includes("CALLBACK") &&
+					!item.comment?.startsWith("Phone:")
+			);
 		}
 	} catch {
 		// ignore
@@ -397,7 +407,7 @@ export async function submitFeedbackToSupabase(feedback: {
 }
 
 /**
- * Submit callback request to Supabase
+ * Submit callback request to Supabase (stored in callback_requests table only)
  */
 export async function submitCallbackRequestToSupabase(request: {
 	phone: string;
@@ -418,16 +428,9 @@ export async function submitCallbackRequestToSupabase(request: {
 		};
 
 		const { error } = await supabase.from("callback_requests").insert(record);
-		if (!error) return true;
-
-		// Fallback to feedbacks table if callback_requests table is created later
-		await supabase.from("feedbacks").insert({
-			user_id: profile?.id || null,
-			user_name: `[CALLBACK] ${record.user_name} (${record.phone})`,
-			user_email: record.user_email || "callback@rbuilder.space",
-			comment: `Phone: ${record.phone}\nReason: ${record.reason}`,
-			rating: 5,
-		});
+		if (error) {
+			console.warn("Callback request insert note:", error.message);
+		}
 		return true;
 	} catch (e) {
 		console.warn("Callback request submit note:", e);

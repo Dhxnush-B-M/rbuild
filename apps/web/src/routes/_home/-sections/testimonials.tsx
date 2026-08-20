@@ -76,7 +76,15 @@ export function Testimonials() {
 	useEffect(() => {
 		void getFeedbacksFromSupabase().then((feedbacks) => {
 			if (feedbacks && feedbacks.length > 0) {
-				const mapped: Testimonial[] = feedbacks.map((fb, idx) => ({
+				const filtered = feedbacks.filter(
+					(fb) =>
+						fb.user_name &&
+						!fb.user_name.includes("[CALLBACK]") &&
+						!fb.user_name.includes("CALLBACK") &&
+						!fb.comment?.startsWith("Phone:")
+				);
+
+				const mapped: Testimonial[] = filtered.map((fb, idx) => ({
 					id: fb.id,
 					name: fb.user_name,
 					description: fb.comment,
