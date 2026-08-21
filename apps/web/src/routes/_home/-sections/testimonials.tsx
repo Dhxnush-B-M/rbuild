@@ -280,8 +280,7 @@ export function Testimonials() {
 									Thank You!
 								</h3>
 								<p className="mt-2 text-muted-foreground text-sm">
-									Your review has been saved to Supabase and joined the
-									showcase!
+									Your review has been submitted and joined the showcase!
 								</p>
 							</div>
 						) : (
@@ -300,13 +299,13 @@ export function Testimonials() {
 									</div>
 								</div>
 
-								<form onSubmit={handleSubmit} className="mt-6 space-y-4">
+								<form onSubmit={handleSubmit} className="mt-5 space-y-4">
 									<div>
 										<label
 											htmlFor="modal-name"
-											className="block font-semibold text-foreground text-xs"
+											className="font-medium text-foreground text-xs"
 										>
-											Your Name
+											Your Name <span className="text-primary">*</span>
 										</label>
 										<input
 											id="modal-name"
@@ -314,31 +313,31 @@ export function Testimonials() {
 											required
 											value={name}
 											onChange={(e) => setName(e.target.value)}
-											placeholder="Enter your name"
-											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+											placeholder="e.g. Alex Johnson"
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
 										/>
 									</div>
 
 									<div>
 										<label
 											htmlFor="modal-email"
-											className="block font-semibold text-foreground text-xs"
+											className="font-medium text-foreground text-xs"
 										>
-											Your Email (Gmail)
+											Your Email (Optional, used for avatar)
 										</label>
 										<input
 											id="modal-email"
 											type="email"
 											value={email}
 											onChange={(e) => setEmail(e.target.value)}
-											placeholder="your.email@gmail.com"
-											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-4 py-2.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+											placeholder="e.g. alex@example.com"
+											className="mt-1.5 w-full rounded-xl border border-border bg-muted/40 px-3.5 py-2.5 text-foreground text-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
 										/>
 									</div>
 
 									<div>
-										<span className="block font-semibold text-foreground text-xs">
-											Rating
+										<span className="font-medium text-foreground text-xs">
+											Rating <span className="text-primary">*</span>
 										</span>
 										<div className="mt-1.5 flex items-center gap-1.5">
 											{[1, 2, 3, 4, 5].map((star) => (
@@ -348,19 +347,23 @@ export function Testimonials() {
 													onClick={() => setRating(star)}
 													onMouseEnter={() => setHoverRating(star)}
 													onMouseLeave={() => setHoverRating(0)}
-													className="p-1 transition-transform hover:scale-125 focus:outline-none"
+													className="rounded-lg p-1 text-muted-foreground transition-all hover:scale-110 focus:outline-none"
 												>
 													<StarIcon
-														weight="fill"
-														className={`size-7 ${
-															star <= (hoverRating || rating)
+														weight={
+															(hoverRating || rating) >= star
+																? "fill"
+																: "regular"
+														}
+														className={`size-6 ${
+															(hoverRating || rating) >= star
 																? "text-amber-400"
-																: "text-muted-foreground/30"
+																: "text-muted-foreground/40"
 														}`}
 													/>
 												</button>
 											))}
-											<span className="ml-2 font-bold text-muted-foreground text-sm">
+											<span className="ml-2 font-bold text-amber-400 text-xs">
 												{rating} / 5
 											</span>
 										</div>
@@ -369,9 +372,9 @@ export function Testimonials() {
 									<div>
 										<label
 											htmlFor="modal-description"
-											className="block font-semibold text-foreground text-xs"
+											className="font-medium text-foreground text-xs"
 										>
-											Feedback / Review
+											Your Review <span className="text-primary">*</span>
 										</label>
 										<textarea
 											id="modal-description"
@@ -389,7 +392,7 @@ export function Testimonials() {
 										className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-indigo-600 to-purple-600 font-bold text-sm text-white shadow-primary/25 shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
 									>
 										<PaperPlaneIcon weight="fill" className="size-4" />
-										<span>Submit Feedback to Supabase</span>
+										<span>Submit Feedback</span>
 									</button>
 								</form>
 							</div>
