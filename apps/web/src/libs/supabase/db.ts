@@ -143,6 +143,24 @@ export async function getCurrentSupabaseUser(): Promise<SupabaseUserProfile | nu
 }
 
 /**
+ * Compute subscription expiration ISO date based on chosen plan
+ */
+export function computeSubscriptionExpiry(plan?: string): string {
+	const now = new Date();
+	if (plan === "3_months") {
+		now.setMonth(now.getMonth() + 3);
+	} else if (plan === "6_months") {
+		now.setMonth(now.getMonth() + 6);
+	} else if (plan === "1_year") {
+		now.setFullYear(now.getFullYear() + 1);
+	} else {
+		// default: 1_month
+		now.setMonth(now.getMonth() + 1);
+	}
+	return now.toISOString();
+}
+
+/**
  * Save / Update user profile directly in Supabase Database ('profiles' table)
  */
 export async function saveUserToSupabase(
@@ -152,6 +170,15 @@ export async function saveUserToSupabase(
 		(await getCurrentSupabaseUser()) ?? {};
 	const email = user.email.trim().toLowerCase();
 	const userId = user.id || current.id || `user_${Date.now()}`;
+
+	const plan = user.subscription_plan || current.subscription_plan;
+	const status = user.subscription_status || current.subscription_status || "inactive";
+
+	// Ensure subscription_expires_at is always computed and saved whenever subscription is active
+	let expiresAt = user.subscription_expires_at || current.subscription_expires_at;
+	if (status === "active" && !expiresAt) {
+		expiresAt = computeSubscriptionExpiry(plan);
+	}
 
 	const profileData: SupabaseUserProfile = {
 		id: userId,
@@ -164,13 +191,11 @@ export async function saveUserToSupabase(
 		username: user.username || current.username || email.split("@")[0],
 		phone: user.phone || current.phone || "",
 		provider: user.provider || current.provider || "google_oauth2",
-		subscription_plan: user.subscription_plan || current.subscription_plan,
-		subscription_status:
-			user.subscription_status || current.subscription_status || "inactive",
+		subscription_plan: plan,
+		subscription_status: status,
 		subscription_amount:
 			user.subscription_amount ?? current.subscription_amount,
-		subscription_expires_at:
-			user.subscription_expires_at || current.subscription_expires_at,
+		subscription_expires_at: expiresAt,
 		payment_id: user.payment_id || current.payment_id,
 		onboarding_completed:
 			user.onboarding_completed ?? current.onboarding_completed ?? false,

@@ -113,6 +113,17 @@ Deno.serve(async (req: Request) => {
 		const cleanEmail = userEmail.trim().toLowerCase();
 		const planAmount = amount || (planId === "3_months" ? 21 : 11);
 
+		const expiryDate = new Date();
+		if (planId === "3_months") {
+			expiryDate.setMonth(expiryDate.getMonth() + 3);
+		} else if (planId === "6_months") {
+			expiryDate.setMonth(expiryDate.getMonth() + 6);
+		} else if (planId === "1_year") {
+			expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+		} else {
+			expiryDate.setMonth(expiryDate.getMonth() + 1);
+		}
+
 		const { data, error } = await supabase
 			.from("profiles")
 			.upsert(
@@ -127,6 +138,7 @@ Deno.serve(async (req: Request) => {
 					subscription_status: "active",
 					subscription_plan: planId || "1_month",
 					subscription_amount: planAmount,
+					subscription_expires_at: expiryDate.toISOString(),
 					payment_id: razorpay_payment_id,
 					onboarding_completed: true,
 					updated_at: new Date().toISOString(),

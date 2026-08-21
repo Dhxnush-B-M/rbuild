@@ -20,7 +20,11 @@ import {
 	SUBSCRIPTION_PLANS,
 	type SubscriptionPlanOption,
 } from "@/libs/payment/razorpay";
-import { getCurrentSupabaseUser, saveUserToSupabase } from "@/libs/supabase/db";
+import {
+	computeSubscriptionExpiry,
+	getCurrentSupabaseUser,
+	saveUserToSupabase,
+} from "@/libs/supabase/db";
 
 export const Route = createFileRoute("/onboarding")({
 	component: OnboardingPage,
@@ -130,6 +134,7 @@ function OnboardingPage() {
 						subscription_status: "active" as const,
 						subscription_plan: savedPlanId,
 						subscription_amount: savedPlanId === "3_months" ? 21 : 11,
+						subscription_expires_at: computeSubscriptionExpiry(savedPlanId),
 						payment_id: paymentRef,
 						onboarding_completed: true,
 					};
@@ -275,6 +280,7 @@ function OnboardingPage() {
 					subscription_status: "active" as const,
 					subscription_plan: planToPay.id,
 					subscription_amount: planToPay.amountInRupees,
+					subscription_expires_at: computeSubscriptionExpiry(planToPay.id),
 					payment_id: paymentId,
 					onboarding_completed: true,
 				};
